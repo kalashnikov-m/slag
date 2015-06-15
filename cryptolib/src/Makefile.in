@@ -132,7 +132,7 @@ libhuge_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 PROGRAMS = $(bin_PROGRAMS)
 am_huge_main_OBJECTS = huge_main-main.$(OBJEXT)
 huge_main_OBJECTS = $(am_huge_main_OBJECTS)
-huge_main_DEPENDENCIES = libhuge.la
+huge_main_DEPENDENCIES = libhuge.la libgtest.a libgtest_main.a
 huge_main_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(huge_main_CXXFLAGS) \
 	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
@@ -317,8 +317,15 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 lib_LTLIBRARIES = libhuge.la
+AM_CPPFLAGS = -I../include 
 huge_main_SOURCES = main.cpp
-huge_main_LDADD = libhuge.la
+huge_main_LDADD = libhuge.la \
+	libgtest.a \
+	libgtest_main.a \
+	-lpthread
+
+
+#huge_main_LDFLAGS = -lpthread
 huge_main_CXXFLAGS = -std=c++11
 libhuge_la_SOURCES = huge.cpp
 libhuge_la_LDFLAGS = -shared
