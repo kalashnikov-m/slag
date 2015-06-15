@@ -141,6 +141,7 @@ TEST(HUGE_TEST, usub_test)
     byte actual[8]  = { 0x00 };
 
     auto ptr = usub(end(actual), begin(a), end(a), begin(b), end(b));
+    dump(ptr, end(actual));
 
     bool eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), /* std::begin(actual) */ ptr, std::end(actual));
 
