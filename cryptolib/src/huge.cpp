@@ -135,22 +135,17 @@ byte * udiv(byte* div_first, byte* div_last,
         const byte* first1, const byte* last1,
         const byte* first2, const byte* last2)
 {
-    //byte one[] = {0x00, 0x01};  // 1
-    //byte Down[] = {0x00, 0x00}; // 0
-    //byte Up[] = {0x01, 0x00};   // 256
-    //byte Up_1[] = {0x00, 0x00}; // Up - 1
-    
     unsigned short Down = 0x00;
     unsigned short Up = 0x0100;
     
     byte C[BUF_SIZE] = {0x00};
-    byte r[BUF_SIZE] = {0x00}; // делимое
-    byte d[BUF_SIZE] = {0x00}; // делитель
+    //byte r[BUF_SIZE] = {0x00}; // делимое
+    //byte d[BUF_SIZE] = {0x00}; // делитель
     
-    const byte* a1 = nullptr;
-    const byte* a2 = nullptr;
-    const byte* b1 = nullptr;
-    const byte* b2 = nullptr;
+    const byte* r_first = nullptr;
+    const byte* r_last = nullptr;
+    const byte* d_first = nullptr;
+    const byte* d_last = nullptr;
 
     while(first1 != last1 && *first1 == 0x00)
         ++first1;
@@ -166,30 +161,28 @@ byte * udiv(byte* div_first, byte* div_last,
 
     auto shift = d1 - d2;
 
-    b1 = first2;
-    b2 = last2;
-
-    //*(std::prev(std::prev(std::end(Up)))) = 0x01; // Up <-- 256;
+    d_first = first2;
+    d_last = last2;
 
     while(shift > 0)
     {
-	a1 = first1; a2 = a1 + d2;
+	r_first = first1; r_last = r_first + d2;
 	
-	//dump(a1, a2);
-	//dump(b1, b2);
-	auto cmp = ucmp(a1, a2, b1, b2);
+	//dump("r: ", r_first, r_last);
+	//dump("d: ", d_first, d_last);
+	auto cmp = ucmp(r_first, r_last, first2, last2);
 	if(cmp == -1)
 	{	
-	    ++a2;
+	    ++first1;
 	}
 
 	//dump(a1, a2);
 	
-	std::copy_backward(a1, a2, std::end(r)); // r <-- a
-	std::copy_backward(b1, b2, std::end(d)); // d <-- b
+	//std::copy_backward(r_first, r_last, std::end(r)); // r <-- a
+	//std::copy_backward(first2, last2, std::end(d)); // d <-- b
 
-	dump("r:    ", std::begin(r), std::end(r));
-	dump("d:    ", std::begin(d), std::end(d));
+	dump("r:    ", r_first, r_last);
+	dump("d:    ", d_first, d_last);
 	//dump(std::begin(C), std::end(C));
 	
 	for(; Down < Up - 1; ) 
@@ -197,7 +190,7 @@ byte * udiv(byte* div_first, byte* div_last,
 	    dump("down: ", Down);
 	    dump("up:   ", Up);
 	        
-	    // 1. c <-- (down + up);
+	    // 1. c <-- (down + up) / 2;
     	    auto C = (Down + Up) / 2;
 	    dump("c <-- (down + up) / 2: ", C);
 	    
@@ -205,12 +198,12 @@ byte * udiv(byte* div_first, byte* div_last,
 	    byte mul[BUF_SIZE] = {0x00};
 	    byte c[] = {0x00, 0x00};
 	    ushort2bytes(std::end(c), C);
-    	    dump("Ch:  ", std::begin(c), std::end(c));
-    	    umul(std::begin(mul), std::end(mul), std::begin(d), std::end(d), std::begin(c), std::end(c));
+    	    dump("C(hex):  ", std::begin(c), std::end(c));
+    	    umul(std::begin(mul), std::end(mul), d_first, d_last, std::begin(c), std::end(c));
 	    
 	    dump("m <-- (d * c):  ", std::begin(mul), std::end(mul));
 	    
-	    short mulr_cmp = ucmp(std::begin(mul), std::end(mul), std::begin(r), std::end(r));
+	    short mulr_cmp = ucmp(std::begin(mul), std::end(mul), r_first, r_last);
 
 	    if (mulr_cmp == -1)
 	    {	// if(c < a): down <-- c
@@ -219,9 +212,8 @@ byte * udiv(byte* div_first, byte* div_last,
 		dump("down <-- c: ", Down);
     	    } else if (mulr_cmp == 1)
 	    {	// if(c > a) Up <-- c
-		//std::copy_backward(std::begin(C), std::end(C), std::end(Up));
-		//std::cout<<"mul > r"<<"\n";
 		Up = C;
+		std::cout<<"mul > r"<<"\n";
 		dump("up <-- c: ", Up);
     	    } else if(mulr_cmp == 0)
 	    {	// if(mul == a) Up <-- C; Down <-- Up;
@@ -236,39 +228,21 @@ byte * udiv(byte* div_first, byte* div_last,
 	    std::cout<<"============================"<<std::endl;
 	}
 
+	byte tmp[BUF_SIZE] = {0x00};
+	byte down[] = {0x00, 0x00};
+	ushort2bytes(std::end(down), Down);
+	dump("Down(hex): ", std::begin(down), std::end(down));
+	// Down * d
+	umul(std::begin(tmp), std::end(tmp), d_first, d_last, std::begin(down), std::end(down));
+	dump("Down * d: ", std::begin(tmp), std::end(tmp));
+	//r - (Down * d);
+	//usub(std::end(r), std::begin(r), std::end(r), std::begin(tmp), std::end(tmp));
+
+	//dump("OST: ", std::begin(r), std::end(r));
+
 	--shift;
     }
     
-    /*std::prev(std::prev(std::end(up))) = 0x01; // up = 256;
-
-    std::copy_backward(first1, last1, std::end(r));
-    std::copy_backward(first2, last2, std::end(d));
-
-    for (; ucmp(std::begin(down), std::end(down), std::begin(up), std::end(up)) == -1;) {
-
-        // 1. c = (down + up);
-        uadd(std::end(c), std::begin(down), std::end(down), std::begin(up), std::end(up)); 
-
-        // 2. c = c / 2;
-        shift_right(std::begin(c), std::end(c)); // c = c / 2;
-
-        // 3. d * c;
-        umul(std::begin(mul), std::end(mul), std::begin(d), std::end(d), std::begin(c), std::end(c));
-
-	short cmp = ucmp(std::begin(mul), std::end(mul), std::begin(r), std::end(r));
-        if (cmp == -1)
-	{
-	 // if(c < a)
-            //uadd(std::end(down), std::begin(down), std::end(down), std::begin(c), std::end(c));
-        } else if (cmp == 1)
-	{ // if(c >= a)
-            //usub(std::end(up), std::begin(up), std::end(up), std::begin(c), std::end(c));
-        } else if(cmp ==0)
-	{
-	
-	}
-    }*/
-
     return nullptr;
 }
 

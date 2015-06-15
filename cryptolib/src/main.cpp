@@ -19,16 +19,16 @@ using namespace std;
  */
 int main(int argc, char** argv)
 {
-    byte a[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x10};
-    byte b[] = {0x00, 0x00, 0x00, 0x10};
+    byte a[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1a, 0x03};
+    byte b[] = {0x00, 0x00, 0x00, 0x11};
     byte c[8] = {0x00};
     byte d[8] = {0x00};
 
     { // ===== UDIV =====
 	byte* result = udiv(std::begin(c), std::end(c),
 	std::begin(d), std::end(d), 
-	begin(a), end(a), 
-	begin(b), end(b));
+	std::begin(a), std::end(a), 
+	std::begin(b), std::end(b));
 
     /*for_each(begin(c), end(c), [](byte b)
     {
