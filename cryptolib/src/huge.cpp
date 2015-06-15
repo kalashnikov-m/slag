@@ -4,7 +4,7 @@
 #include <vector>
 #include <algorithm>
 
-static void dump(byte* b, byte* c)
+static void dump(const byte* b, const byte* c)
 {
     while (b != c) {
         printf("%02x:", *b);
@@ -114,18 +114,92 @@ byte * umul(byte* first_result, byte* last_result, const byte* first1, const byt
     return iter;
 }
 
-byte * udiv(byte* div_first, byte* div_last, byte* rem_first, byte* rem_last,
+byte * udiv(byte* div_first, byte* div_last, 
+        byte* rem_first, byte* rem_last,
         const byte* first1, const byte* last1,
         const byte* first2, const byte* last2)
 {
-    byte down[BUF_SIZE] = {0x00}; // 
-    byte up[BUF_SIZE] = {0x00}; // 
-    byte c[BUF_SIZE] = {0x00};
+    byte Down[BUF_SIZE] = {0x00}; // 
+    byte Up[BUF_SIZE] = {0x00}; // 
+    byte C[BUF_SIZE] = {0x00};
     byte r[BUF_SIZE] = {0x00}; // делимое
     byte d[BUF_SIZE] = {0x00}; // делитель
     byte mul[BUF_SIZE] = {0x00}; // 
+    
+    const byte* a1 = nullptr;
+    const byte* a2 = nullptr;
+    const byte* b1 = nullptr;
+    const byte* b2 = nullptr;
 
-    *std::prev(std::prev(std::end(up))) = 0x01; // up = 256;
+    while(first1 != last1 && *first1 == 0x00)
+        ++first1;
+    
+    while(first2 != last2 && *first2 == 0x00)
+        ++first2;
+    
+    //dump(first1, last1);
+    //dump(first2, last2);
+    
+    auto d1 = std::distance(first1, last1);
+    auto d2 = std::distance(first2, last2);
+
+    auto shift = d1 - d2;
+
+    b1 = first2;
+    b2 = last2;
+
+    *(std::prev(std::prev(std::end(Up)))) = 0x01; // Up <-- 256;
+
+    while(shift > 0)
+    {
+	a1 = first1; a2 = a1 + d2;
+	
+	//dump(a1, a2);
+	//dump(b1, b2);
+	auto cmp = ucmp(a1, a2, b1, b2);
+	if(cmp == -1)
+	{	
+	    ++a2;
+	}
+
+	//dump(a1, a2);
+	
+	std::copy_backward(a1, a2, std::end(r)); // r <-- a
+	std::copy_backward(b1, b2, std::end(d)); // d <-- b
+
+	//dump(std::begin(r), std::end(r));
+	auto updown_cmp = ucmp(std::begin(Down), std::end(Down), std::begin(Up), std::end(Up));
+	for(;updown_cmp == -1;) {
+	    
+	    // 1. c <-- (down + up);
+    	    uadd(std::end(C), std::begin(Down), std::end(Down), std::begin(Up), std::end(Up));
+
+	    // 2. c <-- c / 2;
+    	    shift_right(std::begin(C), std::end(C));
+
+	    // 3. mul <-- d * c;
+    	    umul(std::begin(mul), std::end(mul), std::begin(d), std::end(d), std::begin(C), std::end(C));
+
+	    short mulr_cmp = ucmp(std::begin(mul), std::end(mul), std::begin(r), std::end(r));
+
+	    if (mulr_cmp == -1)
+	    {
+	    // if(c < a)
+            //uadd(std::end(down), std::begin(down), std::end(down), std::begin(c), std::end(c));
+    	    } else if (mulr_cmp == 1)
+	    { // if(c >= a)
+            //usub(std::end(up), std::begin(up), std::end(up), std::begin(c), std::end(c));
+    	    } else if(mulr_cmp ==0)
+	    {
+	
+	    }
+	}
+
+	--shift;
+    }
+    
+    
+    /*std::prev(std::prev(std::end(up))) = 0x01; // up = 256;
 
     std::copy_backward(first1, last1, std::end(r));
     std::copy_backward(first2, last2, std::end(d));
@@ -141,12 +215,19 @@ byte * udiv(byte* div_first, byte* div_last, byte* rem_first, byte* rem_last,
         // 3. d * c;
         umul(std::begin(mul), std::end(mul), std::begin(d), std::end(d), std::begin(c), std::end(c));
 
-        if (ucmp(std::begin(mul), std::end(mul), std::begin(r), std::end(r)) == -1) { // if(c < a)
-            uadd(std::end(down), std::begin(down), std::end(down), std::begin(c), std::end(c));
-        } else { // if(c >= a)
-            usub(std::end(up), std::begin(up), std::end(up), std::begin(c), std::end(c));
-        }
-    }
+	short cmp = ucmp(std::begin(mul), std::end(mul), std::begin(r), std::end(r));
+        if (cmp == -1)
+	{
+	 // if(c < a)
+            //uadd(std::end(down), std::begin(down), std::end(down), std::begin(c), std::end(c));
+        } else if (cmp == 1)
+	{ // if(c >= a)
+            //usub(std::end(up), std::begin(up), std::end(up), std::begin(c), std::end(c));
+        } else if(cmp ==0)
+	{
+	
+	}
+    }*/
 
     return nullptr;
 }
