@@ -3,9 +3,13 @@
 #include <cstdio>
 #include <vector>
 #include <algorithm>
+#include <iostream>
+#include <string>
 
-static void dump(const byte* b, const byte* c)
+static void dump(const std::string& prefix, const byte* b, const byte* c)
 {
+    std::cout<<prefix;
+
     while (b != c) {
         printf("%02x:", *b);
         ++b;
@@ -104,7 +108,7 @@ byte * umul(byte* first_result, byte* last_result, const byte* first1, const byt
         if (get_low_bit(std::begin(b), std::end(b)) == 0x01) {
 
             iter = uadd(last_result, first_result, last_result, std::begin(a), std::end(a));
-            dump(first_result, last_result);
+            //dump(first_result, last_result);
         }
 
         shift_left(std::begin(a), std::end(a));
@@ -167,32 +171,53 @@ byte * udiv(byte* div_first, byte* div_last,
 	std::copy_backward(a1, a2, std::end(r)); // r <-- a
 	std::copy_backward(b1, b2, std::end(d)); // d <-- b
 
-	//dump(std::begin(r), std::end(r));
+	dump("r:    ", std::begin(r), std::end(r));
+	dump("d:    ", std::begin(d), std::end(d));
+	//dump(std::begin(C), std::end(C));
 	auto updown_cmp = ucmp(std::begin(Down), std::end(Down), std::begin(Up), std::end(Up));
 	for(;updown_cmp == -1;) {
-	    
+	    dump("down: ", std::begin(Down), std::end(Down));
+	    dump("up:   ", std::begin(Up), std::end(Up));
+	        
 	    // 1. c <-- (down + up);
     	    uadd(std::end(C), std::begin(Down), std::end(Down), std::begin(Up), std::end(Up));
-
+	    dump("c <-- (down + up): ", std::begin(C), std::end(C));
+	    
 	    // 2. c <-- c / 2;
     	    shift_right(std::begin(C), std::end(C));
+    	    dump("c <-- (c / 2):     ", std::begin(C), std::end(C));
 
 	    // 3. mul <-- d * c;
     	    umul(std::begin(mul), std::end(mul), std::begin(d), std::end(d), std::begin(C), std::end(C));
-
+	    dump("m <-- (d * c):     ", std::begin(mul), std::end(mul));
+	    
 	    short mulr_cmp = ucmp(std::begin(mul), std::end(mul), std::begin(r), std::end(r));
 
 	    if (mulr_cmp == -1)
-	    {
-	    // if(c < a)
-            //uadd(std::end(down), std::begin(down), std::end(down), std::begin(c), std::end(c));
+	    {	// if(c < a): down <-- c
+		//Down = std::begin(C);
+		//std::end(Down) = std::end(C);
+		//std::iter_swap(std::begin(Down), std::begin(C));
+		//std::iter_swap(std::end(Down), std::end(C));
+		std::cout<<"mul < r"<<"\n";
+		dump("down <-- c:      ", std::begin(Down), std::end(Down));
     	    } else if (mulr_cmp == 1)
-	    { // if(c >= a)
-            //usub(std::end(up), std::begin(up), std::end(up), std::begin(c), std::end(c));
-    	    } else if(mulr_cmp ==0)
-	    {
-	
+	    {	// if(c > a) Up <-- c
+        	std::iter_swap(std::begin(Up), std::begin(C));
+		std::iter_swap(std::end(Up), std::end(C));
+		std::cout<<"mul > r"<<"\n";
+		dump("up <-- c:       ", std::begin(Up), std::end(Up));
+    	    } else if(mulr_cmp == 0)
+	    {	// if(mul == a) Up <-- C; Down <-- Up;
+		std::iter_swap(std::begin(Up), std::begin(C));
+		std::iter_swap(std::end(Up), std::end(C));
+		
+		std::iter_swap(std::begin(Down), std::begin(Up));
+		std::iter_swap(std::end(Down), std::end(Up));
 	    }
+	    
+	    std::cout<<"============================"<<std::endl;
+	    //break;
 	}
 
 	--shift;
