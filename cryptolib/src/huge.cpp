@@ -6,6 +6,12 @@
 #include <iostream>
 #include <string>
 
+
+static void dump(const std::string& prefix, unsigned long value)
+{
+    std::cout<<prefix<<value<<"\n";
+}
+
 static void dump(const std::string& prefix, const byte* b, const byte* c)
 {
     std::cout<<prefix;
@@ -118,17 +124,28 @@ byte * umul(byte* first_result, byte* last_result, const byte* first1, const byt
     return iter;
 }
 
+static void ushort2bytes(byte* result, unsigned short x)
+{
+    *(--result) = x & 0xff;
+    *(--result) = (x >> 8) & 0xff;
+}
+
 byte * udiv(byte* div_first, byte* div_last, 
         byte* rem_first, byte* rem_last,
         const byte* first1, const byte* last1,
         const byte* first2, const byte* last2)
 {
-    byte Down[BUF_SIZE] = {0x00}; // 
-    byte Up[BUF_SIZE] = {0x00}; // 
+    //byte one[] = {0x00, 0x01};  // 1
+    //byte Down[] = {0x00, 0x00}; // 0
+    //byte Up[] = {0x01, 0x00};   // 256
+    //byte Up_1[] = {0x00, 0x00}; // Up - 1
+    
+    unsigned short Down = 0x00;
+    unsigned short Up = 0x0100;
+    
     byte C[BUF_SIZE] = {0x00};
     byte r[BUF_SIZE] = {0x00}; // делимое
     byte d[BUF_SIZE] = {0x00}; // делитель
-    //byte mul[BUF_SIZE] = {0x00}; // 
     
     const byte* a1 = nullptr;
     const byte* a2 = nullptr;
@@ -152,7 +169,7 @@ byte * udiv(byte* div_first, byte* div_last,
     b1 = first2;
     b2 = last2;
 
-    *(std::prev(std::prev(std::end(Up)))) = 0x01; // Up <-- 256;
+    //*(std::prev(std::prev(std::end(Up)))) = 0x01; // Up <-- 256;
 
     while(shift > 0)
     {
@@ -174,66 +191,53 @@ byte * udiv(byte* div_first, byte* div_last,
 	dump("r:    ", std::begin(r), std::end(r));
 	dump("d:    ", std::begin(d), std::end(d));
 	//dump(std::begin(C), std::end(C));
-	auto updown_cmp = ucmp(std::begin(Down), std::end(Down), std::begin(Up), std::end(Up));
-	for(;updown_cmp == -1;) {
-	    dump("down: ", std::begin(Down), std::end(Down));
-	    dump("up:   ", std::begin(Up), std::end(Up));
+	
+	for(; Down < Up - 1; ) 
+	{ 
+	    dump("down: ", Down);
+	    dump("up:   ", Up);
 	        
 	    // 1. c <-- (down + up);
-    	    uadd(std::end(C), std::begin(Down), std::end(Down), std::begin(Up), std::end(Up));
-	    dump("c <-- (down + up): ", std::begin(C), std::end(C));
+    	    auto C = (Down + Up) / 2;
+	    dump("c <-- (down + up) / 2: ", C);
 	    
-	    // 2. c <-- c / 2;
-    	    shift_right(std::begin(C), std::end(C));
-    	    dump("c <-- (c / 2):     ", std::begin(C), std::end(C));
-
 	    // 3. mul <-- d * c;
 	    byte mul[BUF_SIZE] = {0x00};
-    	    umul(std::begin(mul), std::end(mul), std::begin(d), std::end(d), std::begin(C), std::end(C));
+	    byte c[] = {0x00, 0x00};
+	    ushort2bytes(std::end(c), C);
+    	    dump("Ch:  ", std::begin(c), std::end(c));
+    	    umul(std::begin(mul), std::end(mul), std::begin(d), std::end(d), std::begin(c), std::end(c));
 	    
-	    dump("m <-- (d * c):     ", std::begin(mul), std::end(mul));
+	    dump("m <-- (d * c):  ", std::begin(mul), std::end(mul));
 	    
 	    short mulr_cmp = ucmp(std::begin(mul), std::end(mul), std::begin(r), std::end(r));
 
 	    if (mulr_cmp == -1)
 	    {	// if(c < a): down <-- c
-		std::copy(std::begin(C), std::end(C), std::begin(Down));
+		Down = C;
 		std::cout<<"mul < r"<<"\n";
-		
-		dump("down <-- c:      ", std::begin(Down), std::end(Down));
+		dump("down <-- c: ", Down);
     	    } else if (mulr_cmp == 1)
 	    {	// if(c > a) Up <-- c
-        	//std::iter_swap(std::begin(Up), std::begin(C));
-		//std::iter_swap(std::end(Up), std::end(C));
-		std::copy(std::begin(C), std::end(C), std::begin(Up));
-		std::cout<<"mul > r"<<"\n";
-		
-		dump("up <-- c:       ", std::begin(Up), std::end(Up));
+		//std::copy_backward(std::begin(C), std::end(C), std::end(Up));
+		//std::cout<<"mul > r"<<"\n";
+		Up = C;
+		dump("up <-- c: ", Up);
     	    } else if(mulr_cmp == 0)
 	    {	// if(mul == a) Up <-- C; Down <-- Up;
-		std::copy(std::begin(C), std::end(C), std::begin(Up));
-		std::copy(std::begin(Up), std::end(Up), std::begin(Down));
 		
+		Up = C;
+		Down = Up;
 		std::cout<<"mul == r"<<"\n";
-		dump("down <-- up:    ", std::begin(Down), std::end(Down));
-		dump("up <-- c:       ", std::begin(Up), std::end(Up));
-		
-		//std::iter_swap(std::begin(Up), std::begin(C));
-		//std::iter_swap(std::end(Up), std::end(C));
-		
-		//std::iter_swap(std::begin(Down), std::begin(Up));
-		//std::iter_swap(std::end(Down), std::end(Up));
-		
+		dump("down <-- up: ", Down);
+		dump("up <-- c:    ", Up);
 	    }
 	    
-	    updown_cmp = ucmp(std::begin(Down), std::end(Down), std::begin(Up), std::end(Up));
 	    std::cout<<"============================"<<std::endl;
-	    //break;
 	}
 
 	--shift;
     }
-    
     
     /*std::prev(std::prev(std::end(up))) = 0x01; // up = 256;
 
