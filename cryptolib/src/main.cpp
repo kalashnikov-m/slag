@@ -24,34 +24,36 @@ int main(int argc, char** argv)
     byte c[8] = {0x00};
     byte d[8] = {0x00};
 
-    /*shift_left(begin(a), end(a));
-    for_each(begin(a), end(a), [](byte bt)
+    { // ===== UDIV =====
+	byte* result = udiv(std::begin(c), std::end(c),
+	std::begin(d), std::end(d), 
+	begin(a), end(a), 
+	begin(b), end(b));
+
+    /*for_each(begin(c), end(c), [](byte b)
     {
-        printf("%02x.", bt);
+        printf("%02x.", b);
     });
+    
     printf("\n");*/
+    }
 
-
-    byte* result = udiv(std::begin(c), std::end(c),
-            std::begin(d), std::end(d),
+    /*{ // ===== UMUL =====
+	byte a[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10};
+	byte b[] = {0x00, 0x00, 0x00, 0xc0};
+	byte c[8] = {0x00};
+	
+	byte* result = umul(begin(c), end(c),
             begin(a), end(a),
             begin(b), end(b));
 
-    for_each(begin(c), end(c), [](byte b)
-    {
-        //printf("%02x.", b);
-    });
-    printf("\n");
-
-    /*byte* result = umul(begin(c), end(c),
-            begin(a), end(a),
-            begin(b), end(b));
-
-    for_each(begin(c), result, end(c), [](byte b)
-    {
-        //printf("%02x.", b);
-    });
-    printf("\n");*/
+	for(int i = 0; i < sizeof(c); ++i)
+	{
+	    printf("%02x.", c[i]);
+	}
+	
+	printf("\n");
+    }*/
 
     //cout << get_high_bit(begin(a), end(a));
 
