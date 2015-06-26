@@ -161,19 +161,22 @@ byte * udiv(byte* div_first, byte* div_last,
 
     auto shift = d1 - d2;
 
+    r_first = first1; 
+    r_last = r_first + d2;
+
     d_first = first2;
     d_last = last2;
 
     while(shift > 0)
     {
-	r_first = first1; r_last = r_first + d2;
+	//r_first = first1; r_last = r_first + d2;
 	
 	//dump("r: ", r_first, r_last);
 	//dump("d: ", d_first, d_last);
-	auto cmp = ucmp(r_first, r_last, first2, last2);
+	auto cmp = ucmp(r_first, r_last, d_first, d_last);
 	if(cmp == -1)
 	{	
-	    ++first1;
+	    ++r_last;
 	}
 
 	//dump(a1, a2);
@@ -191,34 +194,34 @@ byte * udiv(byte* div_first, byte* div_last,
 	    dump("up:   ", Up);
 	        
 	    // 1. c <-- (down + up) / 2;
-    	    auto C = (Down + Up) / 2;
-	    dump("c <-- (down + up) / 2: ", C);
+    	    auto Middle = (Down + Up) >> 1;
+	    dump("Middle <-- (down + up) / 2: ", Middle);
 	    
-	    // 3. mul <-- d * c;
+	    // 2. mul <-- d * c;
 	    byte mul[BUF_SIZE] = {0x00};
-	    byte c[] = {0x00, 0x00};
-	    ushort2bytes(std::end(c), C);
-    	    dump("C(hex):  ", std::begin(c), std::end(c));
-    	    umul(std::begin(mul), std::end(mul), d_first, d_last, std::begin(c), std::end(c));
-	    
-	    dump("m <-- (d * c):  ", std::begin(mul), std::end(mul));
+	    byte middle[] = {0x00, 0x00};
+	    ushort2bytes(std::end(middle), Middle);
+    	    dump("Middle(hex):  ", std::begin(middle), std::end(middle));
+    	    
+    	    umul(std::begin(mul), std::end(mul), std::begin(middle), std::end(middle), d_first, d_last);
+	    dump("mul <-- (middle * d):  ", std::begin(mul), std::end(mul));
 	    
 	    short mulr_cmp = ucmp(std::begin(mul), std::end(mul), r_first, r_last);
 
 	    if (mulr_cmp == -1)
 	    {	// if(c < a): down <-- c
-		Down = C;
+		Down = Middle;
 		std::cout<<"mul < r"<<"\n";
-		dump("down <-- c: ", Down);
+		dump("down <-- (middle): ", Down);
     	    } else if (mulr_cmp == 1)
 	    {	// if(c > a) Up <-- c
-		Up = C;
+		Up = Middle;
 		std::cout<<"mul > r"<<"\n";
-		dump("up <-- c: ", Up);
+		dump("up <-- (middle): ", Up);
     	    } else if(mulr_cmp == 0)
 	    {	// if(mul == a) Up <-- C; Down <-- Up;
 		
-		Up = C;
+		Up = Middle;
 		Down = Up;
 		std::cout<<"mul == r"<<"\n";
 		dump("down <-- up: ", Down);
