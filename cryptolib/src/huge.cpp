@@ -135,17 +135,14 @@ byte * udiv(byte* div_first, byte* div_last,
         const byte* first1, const byte* last1,
         const byte* first2, const byte* last2)
 {
-    unsigned short Down = 0x00;
-    unsigned short Up = 0x0100;
-    
-    byte C[BUF_SIZE] = {0x00};
+    //byte C[BUF_SIZE] = {0x00};
     //byte r[BUF_SIZE] = {0x00}; // делимое
     //byte d[BUF_SIZE] = {0x00}; // делитель
     
-    const byte* r_first = nullptr;
-    const byte* r_last = nullptr;
-    const byte* d_first = nullptr;
-    const byte* d_last = nullptr;
+    byte* r_first = nullptr;
+    byte* r_last = nullptr;
+    byte* d_first = nullptr;
+    byte* d_last = nullptr;
 
     while(first1 != last1 && *first1 == 0x00)
         ++first1;
@@ -161,14 +158,16 @@ byte * udiv(byte* div_first, byte* div_last,
 
     auto shift = d1 - d2;
 
-    r_first = first1; 
-    r_last = r_first + d2;
+    r_first = (byte*)first1; 
+    r_last = (byte*)r_first + d2;
 
-    d_first = first2;
-    d_last = last2;
+    d_first = (byte*)first2;
+    d_last = (byte*)last2;
 
     while(shift > 0)
     {
+	unsigned char Down = 0x00;
+	unsigned short Up = 0x0100;
 	//r_first = first1; r_last = r_first + d2;
 	
 	//dump("r: ", r_first, r_last);
@@ -184,8 +183,8 @@ byte * udiv(byte* div_first, byte* div_last,
 	//std::copy_backward(r_first, r_last, std::end(r)); // r <-- a
 	//std::copy_backward(first2, last2, std::end(d)); // d <-- b
 
-	dump("r:    ", r_first, r_last);
-	dump("d:    ", d_first, d_last);
+	dump("[r_first..r_last]: ", r_first, r_last);
+	dump("[d_first..d_last]: ", d_first, d_last);
 	//dump(std::begin(C), std::end(C));
 	
 	for(; Down < Up - 1; ) 
@@ -234,14 +233,18 @@ byte * udiv(byte* div_first, byte* div_last,
 	byte tmp[BUF_SIZE] = {0x00};
 	byte down[] = {0x00, 0x00};
 	ushort2bytes(std::end(down), Down);
-	dump("Down(hex): ", std::begin(down), std::end(down));
+	dump("digit(hex): ", std::begin(down), std::end(down));
 	// Down * d
+	//dump("[r_first, r_last]: ", r_first, r_last);
 	umul(std::begin(tmp), std::end(tmp), d_first, d_last, std::begin(down), std::end(down));
-	dump("Down * d: ", std::begin(tmp), std::end(tmp));
+	dump("[tmp, tmp]: ", std::begin(tmp), std::end(tmp));
+	//dump("[r_first, r_last]: ", r_first, r_last);
+	
 	//r - (Down * d);
-	//usub(std::end(r), std::begin(r), std::end(r), std::begin(tmp), std::end(tmp));
+	r_first = usub(r_last, r_first, r_last, std::begin(tmp), std::end(tmp));
+	dump("[r_first, r_last] - [tmp, tmp]: ", r_first, r_last);
 
-	//dump("OST: ", std::begin(r), std::end(r));
+	//dump("XXX: ", r_first, r_last);
 
 	--shift;
     }
