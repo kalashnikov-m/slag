@@ -87,7 +87,7 @@ byte * usub(byte* result, const byte* first1, const byte* last1, const byte* fir
         }
     }
 
-    for (; first1 <= last1; --last1, --result) {
+    for (; first1 <= last1; --last1) {
         *(--result) = *last1 - carry;
         carry = 0;
     }
