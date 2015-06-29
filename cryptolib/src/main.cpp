@@ -203,19 +203,20 @@ TEST(HUGE_TEST, udiv_test)
     {
         0x00, 0x00, 0x00, 0x03
     };
-    byte expected_div[] = { 0x00, 0x80, 0x83 };
+    byte expected_div[] = { 0x00, 0x55, 0xad };
     byte actual_div[8]  = { 0x00 };
 
     byte expected_rem[] = { 0x00, 0x00, 0x0c };
     byte actual_rem[8]  = { 0x00 };
 
-    udiv(begin(actual_div), end(actual_div),
+    auto it = udiv(begin(actual_div), end(actual_div),
     begin(actual_rem), end(actual_rem),
     
     begin(a), end(a), 
     begin(b), end(b));
 
-    bool eq = false;//ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
+    dump(it, end(actual_div));
+    bool eq = ASSERT_BYTES_EQ(std::begin(expected_div), std::end(expected_div), std::begin(actual_div), std::end(actual_div));
 
     EXPECT_TRUE(eq);
 }

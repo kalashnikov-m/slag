@@ -139,6 +139,8 @@ byte * udiv(byte* div_first, byte* div_last,
     //byte r[BUF_SIZE] = {0x00}; // делимое
     //byte d[BUF_SIZE] = {0x00}; // делитель
     
+    byte* ret = nullptr;
+    
     byte* r_first = nullptr;
     byte* r_last = nullptr;
     byte* d_first = nullptr;
@@ -163,6 +165,9 @@ byte * udiv(byte* div_first, byte* div_last,
 
     d_first = (byte*)first2;
     d_last = (byte*)last2;
+
+    std::advance(div_last, -shift);
+    ret = div_last;
 
     while(shift > 0)
     {
@@ -244,12 +249,13 @@ byte * udiv(byte* div_first, byte* div_last,
 	r_first = usub(r_last, r_first, r_last, std::begin(tmp), std::end(tmp));
 	dump("[r_first, r_last] - [tmp, tmp]: ", r_first, r_last);
 
+	*(div_last++) = Down;
 	//dump("XXX: ", r_first, r_last);
 
 	--shift;
     }
     
-    return nullptr;
+    return ret;
 }
 
 void rotate_left(byte* first, byte * last)
