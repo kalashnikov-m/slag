@@ -191,9 +191,28 @@ TEST(HUGE_TEST, usub_test)
     begin(b1), end(b1));
     
     eq = ASSERT_BYTES_EQ(std::begin(expected1), std::end(expected1), /*std::begin(actual)*/ptr, std::end(actual1));
+    
+    byte a2[] =
+    {
+        0x00, 0x01, 0x00,
+    };
+    
+    byte b2[] =
+    {
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00
+    };
+    
+    byte expected2[] = { 0x00 };
+    byte actual2[4]  = { 0x00 };
+    
+    ptr = usub(end(actual2),
+    begin(a2), end(a2), 
+    begin(b2), end(b2));
+    
+    eq = ASSERT_BYTES_EQ(std::begin(expected2), std::end(expected2), std::begin(actual), std::end(actual2));
 }
 
-TEST(HUGE_TEST, udiv_test)
+/*TEST(HUGE_TEST, udiv_test)
 {
     byte a[]        =
     {
@@ -201,7 +220,7 @@ TEST(HUGE_TEST, udiv_test)
     };
     byte b[]        =
     {
-        0x00, 0x00, 0x00, 0x03
+        0x00, 0x00, 0x00, 0x02
     };
     byte expected_div[] = { 0x00, 0x55, 0xad };
     byte actual_div[8]  = { 0x00 };
@@ -216,10 +235,11 @@ TEST(HUGE_TEST, udiv_test)
     begin(b), end(b));
 
     dump(it, end(actual_div));
+    dump(begin(actual_rem), end(actual_rem));
     bool eq = ASSERT_BYTES_EQ(std::begin(expected_div), std::end(expected_div), std::begin(actual_div), std::end(actual_div));
 
     EXPECT_TRUE(eq);
-}
+}*/
 
 int main(int argc, char** argv)
 {
