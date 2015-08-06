@@ -15,12 +15,12 @@
 using namespace std;
 
 static void dump(byte* b, byte* e)
-{
-    while (b != e)
+{	//printf("dump: b == %p, e == %p\n", b, e);
+    for (;b != e; ++b)
     {
         printf("%02x:", *b);
 
-        ++b;
+//        ++b;
     }
 
     printf("\n");
@@ -33,17 +33,23 @@ static bool ASSERT_BYTES_EQ(byte* f1, byte* l1, byte* f2, byte* l2)
 {
     bool ret = false;
 
-    while ((f1 != l1) && (*f1 == 0x00))
+    //dump(f1, l1);
+    //dump(f2, l2);
+
+    for(;(f1 != l1) && (*f1 == 0x00); ++f1);
+    /*while ((f1 != l1) && (*f1 == 0x00))
     {
         ++f1;
-    }
+    }*/
 
-    while ((f2 != l2) && (*f2 == 0x00))
+    for(;(f2 != l2) && (*f2 == 0x00); ++f2);
+    /*while ((f2 != l2) && (*f2 == 0x00))
     {
         ++f2;
-    }
+    }*/
 
-    while ((f1 != l1) && (f2 != l2))
+    for(; (f1 != l1) && (f2 != l2) && (*f1) == (*f2); ++f1, ++f2);
+    /*while ((f1 != l1) && (f2 != l2))
     {
         if (*f1 != *f2)
         {
@@ -52,47 +58,72 @@ static bool ASSERT_BYTES_EQ(byte* f1, byte* l1, byte* f2, byte* l2)
 
         ++f1;
         ++f2;
-    }
+    }*/
 
-    return true;
+    return (f1 == l1) && (f2 == l2);
 }
 
 TEST(HUGE_TEST, uadd_test)
 {
-    byte a[]        = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1a, 0x03 };
-    byte b[]        = { 0x00, 0x00, 0x00, 0x11 };
-    byte expected[] = { 0x1a, 0x14 };
-    byte actual[8]  = { 0x00 };
+    {
+	byte a[]        = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1a, 0x03 };
+	byte b[]        = { 0x00, 0x00, 0x00, 0x11 };
+	byte expected[] = { 0x1a, 0x14 };
+	byte actual[8]  = { 0x00 };
 
-    uadd(end(actual), begin(a), end(a), begin(b), end(b));
+	auto ptr = uadd(end(actual), begin(a), end(a), begin(b), end(b));
+	//dump(ptr, end(actual));
 
-    bool eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
+	bool eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
 
-    EXPECT_TRUE(eq);
-
-    // ==============================================================
-    byte a2[]        = { 0x00, 0xff, 0xff };
-    byte b2[]        = { 0x00, 0x00, 0xff, 0xff };
-    byte expected2[] = { 0x01, 0xFF, 0xFE };
-
-    std::fill(std::begin(actual), std::end(actual), 0x00);
-    uadd(end(actual), begin(a2), end(a2), begin(b2), end(b2));
-
-    eq = ASSERT_BYTES_EQ(std::begin(expected2), std::end(expected2), std::begin(actual), std::end(actual));
-
-    EXPECT_TRUE(eq);
+	EXPECT_TRUE(eq);
+    }
 
     // ==============================================================
-    byte a3[]        = { 0x00, 0xff };
-    byte b3[]        = { 0x00 };
-    byte expected3[] = { 0xFF };
+    {
+	byte a[]        = { 0x00, 0xff, 0xff };
+	byte b[]        = { 0x00, 0x00, 0xff, 0xff };
+	byte expected2[] = { 0x01, 0xFF, 0xFE };
+	byte actual[8]  = { 0x00 };
 
-    std::fill(std::begin(actual), std::end(actual), 0x00);
-    uadd(end(actual), begin(a3), end(a3), begin(b3), end(b3));
+	std::fill(std::begin(actual), std::end(actual), 0x00);
+	uadd(end(actual), begin(a), end(a), begin(b), end(b));
+    
+    
+	auto eq = ASSERT_BYTES_EQ(std::begin(expected2), std::end(expected2), std::begin(actual), std::end(actual));
 
-    eq = ASSERT_BYTES_EQ(std::begin(expected3), std::end(expected3), std::begin(actual), std::end(actual));
+	EXPECT_TRUE(eq);
+    }
 
-    EXPECT_TRUE(eq);
+    // ==============================================================
+    {
+	byte a[]        = { 0x00, 0xff };
+	byte b[]        = { 0x00 };
+        byte expected3[] = { 0xFF };
+	byte actual[8]  = { 0x00 };
+
+	std::fill(std::begin(actual), std::end(actual), 0x00);
+        uadd(end(actual), begin(a), end(a), begin(b), end(b));
+
+	auto eq = ASSERT_BYTES_EQ(std::begin(expected3), std::end(expected3), std::begin(actual), std::end(actual));
+
+        EXPECT_TRUE(eq);
+    }
+
+    {
+	byte a[]        = { 0x00, 0x00, 0x01, 0xfa, 0x14, 0xba, 0xce, 0x68, 0x02, 0x35 };
+	byte b[]        = { 0x00, 0x00, 0x0a, 0x14, 0x05, 0xf5, 0xef, 0x38, 0x2a, 0x14 };
+	byte expected[] = { 0x0c, 0x0e, 0x1a, 0xb0, 0xbd, 0xa0, 0x2c, 0x49 };
+	
+	byte actual[16]  = { 0x00 };
+
+	auto ptr = uadd(end(actual), begin(a), end(a), begin(b), end(b));
+	//dump(ptr, end(actual));
+
+	bool eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
+
+	EXPECT_TRUE(eq);
+    }
 }
 
 TEST(HUGE_TEST, umul_test)
@@ -141,9 +172,9 @@ TEST(HUGE_TEST, usub_test)
     byte actual[8]  = { 0x00 };
 
     auto ptr = usub(end(actual), begin(a), end(a), begin(b), end(b));
-    dump(ptr, end(actual));
+    //dump(ptr, end(actual));
 
-    bool eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), /* std::begin(actual) */ ptr, std::end(actual));
+    bool eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
 
     EXPECT_TRUE(eq);
 
@@ -155,7 +186,7 @@ TEST(HUGE_TEST, usub_test)
 
     ptr = usub(end(actual1), begin(a1), end(a1), begin(b1), end(b1));
 
-    eq  = ASSERT_BYTES_EQ(std::begin(expected1), std::end(expected1), /* std::begin(actual) */ ptr, std::end(actual1));
+    eq  = ASSERT_BYTES_EQ(std::begin(expected1), std::end(expected1), ptr, std::end(actual1));
 
     byte a2[]        = { 0x00, 0x01, 0x00, };
     byte b2[]        = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00 };
@@ -181,7 +212,7 @@ TEST(HUGE_TEST, udiv_test)
 
     auto it = udiv(begin(actual_div), end(actual_div), begin(actual_rem), end(actual_rem), begin(a), end(a), begin(b), end(b));
 
-    dump(it, end(actual_div));
+    //dump(it, end(actual_div));
     //dump(begin(actual_rem), end(actual_rem));
 
     bool eq = ASSERT_BYTES_EQ(std::begin(expected_div), std::end(expected_div), std::begin(actual_div), std::end(actual_div));
@@ -203,7 +234,7 @@ TEST(HUGE_TEST, udiv_test)
 
     it = udiv(begin(actual_div1), end(actual_div1), begin(actual_rem1), end(actual_rem1), begin(a1), end(a1), begin(b1), end(b1));
 
-    dump(it, end(actual_div1));
+    //dump(it, end(actual_div1));
     //dump(begin(actual_rem), end(actual_rem));
 
     eq = ASSERT_BYTES_EQ(std::begin(expected_div1), std::end(expected_div1), std::begin(actual_div1), std::end(actual_div1));
@@ -225,7 +256,7 @@ TEST(HUGE_TEST, udiv_test)
 
     it = udiv(begin(actual_div2), end(actual_div2), begin(actual_rem2), end(actual_rem2), begin(a2), end(a2), begin(b2), end(b2));
 
-    dump(it, end(actual_div2));
+    //dump(it, end(actual_div2));
     //dump(begin(actual_rem), end(actual_rem));
 
     eq = ASSERT_BYTES_EQ(std::begin(expected_div2), std::end(expected_div2), std::begin(actual_div2), std::end(actual_div2));
@@ -247,7 +278,7 @@ TEST(HUGE_TEST, udiv_test)
 
     it = udiv(begin(actual_div3), end(actual_div3), begin(actual_rem3), end(actual_rem3), begin(a3), end(a3), begin(b3), end(b3));
 
-    dump(it, end(actual_div3));
+    //dump(it, end(actual_div3));
     //dump(begin(actual_rem3), end(actual_rem3));
 
     eq = ASSERT_BYTES_EQ(std::begin(expected_div3), std::end(expected_div3), std::begin(actual_div3), std::end(actual_div3));
@@ -269,7 +300,7 @@ TEST(HUGE_TEST, udiv_test)
 
     it = udiv(begin(actual_div4), end(actual_div4), begin(actual_rem4), end(actual_rem4), begin(a4), end(a4), begin(b4), end(b4));
 
-    dump(it, end(actual_div4));
+    //dump(it, end(actual_div4));
     //dump(begin(actual_rem3), end(actual_rem3));
 
     eq = ASSERT_BYTES_EQ(std::begin(expected_div4), std::end(expected_div4), std::begin(actual_div4), std::end(actual_div4));
@@ -277,6 +308,196 @@ TEST(HUGE_TEST, udiv_test)
     
     eq = ASSERT_BYTES_EQ(std::begin(expected_rem4), std::end(expected_rem4), std::begin(actual_rem4), std::end(actual_rem4));
     EXPECT_TRUE(eq);
+}
+
+TEST(HUGE_TEST, uincrement_test)
+{
+    {
+	byte a1[] = {0x00, 0x00, 0x01};
+        byte expected[] = {0x02};
+	//byte actual[8] = {0x00};
+
+        auto it = uincrement(begin(a1), end(a1));
+        //dump(begin(a1), end(a1));
+	auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(a1), end(a1));
+        EXPECT_TRUE(eq);
+    }
+    
+    {
+	byte a[] = {0x00, 0x00, 0xff};
+        byte expected[] = {0x00, 0x01, 0x00};
+	//byte actual[8] = {0x00};
+
+        auto it = uincrement(begin(a), end(a));
+        //dump(begin(a), end(a));
+	auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(a), end(a));
+        EXPECT_TRUE(eq);
+    }
+
+    {
+	byte a[] = {0x00, 0xff, 0xff};
+        byte expected[] = {0x01, 0x00, 0x00};
+	//byte actual[8] = {0x00};
+
+        auto it = uincrement(begin(a), end(a));
+        //dump(begin(a), end(a));
+	auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(a), end(a));
+        EXPECT_TRUE(eq);
+    }
+
+    {
+	byte a[] = {0x00, 0xff, 0xfe};
+        byte expected[] = {0x00, 0xff, 0xff};
+	//byte actual[8] = {0x00};
+
+        auto it = uincrement(begin(a), end(a));
+        //dump(begin(a), end(a));
+	auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(a), end(a));
+        EXPECT_TRUE(eq);
+    }
+}
+
+TEST(HUGE_TEST, udecrement_test)
+{
+    {
+	byte a[] = {0x00, 0x00, 0x02};
+        byte expected[] = {0x00, 0x00, 0x01};
+	//byte actual[8] = {0x00};
+
+        auto it = udecrement(begin(a), end(a));
+        //dump(begin(a), end(a));
+	auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(a), end(a));
+        EXPECT_TRUE(eq);
+    }
+
+    {
+	byte a[] = {0x00, 0x01, 0x00};
+        byte expected[] = {0x00, 0x00, 0xff};
+	//byte actual[8] = {0x00};
+
+        auto it = udecrement(begin(a), end(a));
+        //dump(begin(a), end(a));
+	auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(a), end(a));
+        EXPECT_TRUE(eq);
+    }
+
+    {
+	byte a[] = {0x00, 0x00, 0x01};
+        byte expected[] = {0x00, 0x00, 0x00};
+	//byte actual[8] = {0x00};
+
+        auto it = udecrement(begin(a), end(a));
+        //dump(begin(a), end(a));
+	auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(a), end(a));
+        EXPECT_TRUE(eq);
+    }
+}
+
+TEST(HUGE_TEST, reverse_test)
+{
+    {
+	byte a[] = {0x01, 0x02, 0x03};
+	byte expected[] = {0x03, 0x02, 0x01};
+
+	reverse(begin(a), end(a));
+	auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(a), end(a));
+	EXPECT_TRUE(eq);
+    }
+}
+
+TEST(HUGE_TEST, and_test)
+{
+    {
+	byte a[] = {0x01, 0x00, 0x00, 0x00, 0x00, 0xff, 0x10, 0x32};
+	byte b[] = {0x01, 0x00, 0x00, 0x00, 0x00, 0xff, 0x10, 0x31};
+
+	byte expected[] = {0x01, 0x00, 0x00, 0x00, 0x00, 0xff, 0x10, 0x30};
+	byte actual[8] = {0x00};
+
+	op_and(end(actual), begin(a), end(a), begin(b), end(b));
+
+	//dump(begin(actual), end(actual));
+
+	auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(actual), end(actual));
+	EXPECT_TRUE(eq);
+    }
+}
+
+TEST(HUGE_TEST, xor_test)
+{
+    {
+	byte a[] = {0x01, 0x00, 0x00, 0x00, 0x00, 0xff, 0x10, 0x32};
+	byte b[] = {0x01, 0x00, 0x00, 0x00, 0x00, 0xff, 0x10, 0x32};
+
+	byte expected[8] = {0x00};
+	byte actual[8] = {0x00};
+
+	//dump(begin(expected), end(expected));
+	//dump(begin(actual), end(actual));
+
+	op_xor(end(actual), begin(a), end(a), begin(b), end(b));
+
+	//dump(begin(expected), end(expected));
+	//dump(begin(actual), end(actual));
+
+	//printf("XOR1: %p, %p\n", begin(expected), end(expected));
+	//printf("XOR2: %p, %p\n", begin(actual), end(actual));
+	
+	auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(actual), end(actual));
+	EXPECT_TRUE(eq);
+    }
+
+    {
+	byte a[] = {0x01, 0x00, 0x00, 0x00, 0x00, 0xff, 0x10, 0x32};
+	byte b[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+	byte expected[] = {0x01, 0x00, 0x00, 0x00, 0x00, 0xff, 0x10, 0x32};
+	byte actual[8] = {0x00};
+
+	//dump(begin(expected), end(expected));
+	//dump(begin(actual), end(actual));
+
+	op_xor(end(actual), begin(a), end(a), begin(b), end(b));
+
+	//dump(begin(expected), end(expected));
+	//dump(begin(actual), end(actual));
+
+	//printf("XOR1: %p, %p\n", begin(expected), end(expected));
+	//printf("XOR2: %p, %p\n", begin(actual), end(actual));
+	
+	auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(actual), end(actual));
+	EXPECT_TRUE(eq);
+    }
+}
+
+TEST(HUGE_TEST, or_test)
+{
+    {
+	byte a[] = {0x01, 0x00, 0x00, 0x00, 0x00, 0xff, 0x10, 0x32};
+	byte b[] = {0x01, 0x00, 0x00, 0x00, 0x00, 0xff, 0x10, 0x31};
+
+	byte actual[8] = {0x00};
+	byte expected[] = {0x01, 0x00, 0x00, 0x00, 0x00, 0xff, 0x10, 0x33};
+
+	op_or(end(actual), begin(a), end(a), begin(b), end(b));
+
+	//dump(begin(actual), end(actual));
+
+	auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(actual), end(actual));
+	EXPECT_TRUE(eq);
+    }
+}
+
+TEST(HUGE_TEST, not_test)
+{
+    {
+	byte a[] =        {0x01, 0x00, 0x00, 0x00, 0x00, 0xff, 0x10, 0x32};
+	byte expected[] = {0xfe, 0xff, 0xff, 0xff, 0xff, 0x00, 0xef, 0xcd};
+
+	op_not(begin(a), end(a));
+	auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(a), end(a));
+	EXPECT_TRUE(eq);
+    }
 }
 
 int main(int argc, char** argv)

@@ -28,7 +28,7 @@ static void dump(const std::string& prefix, const byte* b, const byte* c)
 
 #define BUF_SIZE 8
 
-static int heighBitIdx(byte x)
+/*static int heighBitIdx(byte x)
 {
     int result = -1;
 
@@ -44,7 +44,7 @@ static int heighBitIdx(byte x)
     }
 
     return result;
-}
+}*/
 
 byte* uadd(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
@@ -106,9 +106,29 @@ byte* usub(byte* result, const byte* first1, const byte* last1, const byte* firs
     return result;
 }
 
-byte* usub_strong(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+/*bool ssub(byte* result1, byte* result2, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
-}
+    short cmp = ucmp(first1, last1, first2, last2);
+    
+    // a == b
+    if(cmp == 0)
+    {
+	std::fill(result1, result2, 0x00);
+	return false;
+    }
+
+    // a < b
+    if(cmp == -1)
+    {	
+	usub(result2, first2, last2, first1, last1);
+	return true;
+    }
+
+    // a > b
+    usub(result2, first1, last1, first2, last2);
+    
+    return false;
+}*/
 
 byte* umul(byte* first_result, byte* last_result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
@@ -134,6 +154,7 @@ byte* umul(byte* first_result, byte* last_result, const byte* first1, const byte
 
     return iter;
 }
+
 
 static void ushort2bytes(byte* result, unsigned short x)
 {
@@ -252,6 +273,77 @@ byte* udiv(byte* div_first, byte* div_last, byte* rem_first, byte* rem_last, con
     return ret;
 }
 
+byte* uincrement(byte* first, byte* last) 
+{
+    unsigned short tmp = 0x00;
+    byte carry = 0x00;
+
+    --last;
+
+    tmp = (*last) + 0x01 + carry;
+    *(last) = (byte)tmp;
+    carry = tmp >> 8;
+
+    --last;
+
+    for(;first <= last && carry; --last)
+    {
+	tmp = (*last) + carry;
+	*(last) = (byte)tmp;
+	carry = tmp >> 8;
+    }
+
+    return last;
+}
+
+byte* udecrement(byte* first, byte* last)
+{
+    unsigned short carry = 0;
+
+    --last;
+
+    if (*last < 0x01)
+    {
+        *(last) = (*last) - (0x01) - carry + 256;
+        carry       = 1;
+    }
+    else
+    {
+        *(last) = (*last) - (0x01) - carry;
+        carry       = 0;
+    }
+
+    --last;
+    for (; (first <= last); --last )
+    {
+        if (*last < carry)
+        {
+            *(last) = (*last) - carry + 256;
+            carry       = 1;
+        }
+        else
+        {
+            *(last) = (*last) - carry;
+            carry       = 0;
+        }
+    }
+}
+
+bool is_odd(byte* first, byte* last)
+{
+    return *(--last) & 0x01 == 0x01;
+}
+
+bool is_even(byte* first, byte* last) 
+{
+    return *(--last) & 0x01 == 0x00;
+}
+
+void reverse(byte* first, byte* last) 
+{
+    std::reverse(first, last);
+}
+
 void rotate_left(byte* first, byte* last)
 {
     int carry = (*first >> 7) & 0x01;
@@ -346,59 +438,61 @@ void shift_right_n(byte* first, byte* last, int n)
 
 void op_or(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
-    for (; (first1 <= last1) && (first2 <= last2); --last1, --last2, --result)
+    --last1; --last2;
+
+    for (; (first1 <= last1) && (first2 <= last2); --last1, --last2/*, --result*/)
     {
-        *result = *last1 | *last2;
+        *(--result) = *last1 | *last2;
     }
 
-    for (; first1 <= last1; --last1, --result)
+    for (; first1 <= last1; --last1/*, --result*/)
     {
-        *result = *first1;
+        *(--result) = *first1;
     }
 
-    for (; first2 <= last2; --last2, --result)
+    for (; first2 <= last2; --last2/*, --result*/)
     {
-        *result = *first2;
+        *(--result) = *first2;
     }
 }
 
 void op_xor(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
-    --last1, --last2, --result;
+    --last1, --last2;//, --result;
 
-    for (; (first1 != last1) && (first2 <= last2); --last1, --last2, --result)
+    for (; (first1 <= last1) && (first2 <= last2); --last1, --last2/*, --result*/)
     {
-        (*result) = (*last1--) ^ (*last2);
+        *(--result) = (*last1) ^ (*last2);
     }
 
-    for (; first1 <= last1; --last1, --result)
+    for (; first1 <= last1; --last1/*, --result*/)
     {
-        (*result) = (*first1);
+        *(--result) = 0x00;//(*first1);
     }
 
-    for (; first2 <= last2; --last2, --result)
+    for (; first2 <= last2; --last2/*, --result*/)
     {
-        (*result) = (*first2);
+        *(--result) = 0x00; //(*first2);
     }
 }
 
 void op_and(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
-    --last1, --last2, --result;
+    --last1, --last2;//, --result;
 
-    for (; (first1 <= last1) && (first2 <= last2); --last1, --last2, --result)
+    for (; (first1 <= last1) && (first2 <= last2); --last1, --last2/*, --result*/)
     {
-        *result-- = *last1-- & *last2--;
+        *(--result) = (*last1) & (*last2);
     }
 
-    for (; first1 != last1; --last1, --result)
+    for (; first1 <= last1; --last1/*, --result*/)
     {
-        *result = 0x00;    // *first1;
+        *(--result) = 0x00;    // *first1;
     }
 
-    for (; first2 != last2; --last2, --result)
+    for (; first2 <= last2; --last2/*, --result*/)
     {
-        *result = 0x00;    // *first2;
+        *(--result) = 0x00;    // *first2;
     }
 }
 

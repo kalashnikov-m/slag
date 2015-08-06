@@ -14,12 +14,24 @@ byte* uadd(byte* result, const byte* first1, const byte* last1, const byte* firs
 
 byte* usub(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
+//byte* usub_strong(bool& neg, byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
+
 byte* umul(byte* first_result, byte* last_result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
 byte* udiv(byte* div_first, byte* div_last, byte* rem_first, byte* rem_last, const byte* first1, const byte* last1, const byte* first2,
            const byte* last2);
 
-byte* usub_strong(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
+//byte* ssub(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
+
+byte* uincrement(byte* first1, byte* last1);
+
+byte* udecrement(byte* first1, byte* last1);
+
+bool is_even(byte* first, byte* last);
+
+bool is_odd(byte* first, byte* last);
+
+void reverse(byte* first, byte* last);
 
 void rotate_left(byte* first, byte* last);
 
