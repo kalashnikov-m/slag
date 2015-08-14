@@ -331,12 +331,12 @@ byte* udecrement(byte* first, byte* last)
 
 bool is_odd(byte* first, byte* last)
 {
-    return *(--last) & 0x01 == 0x01;
+    return (*(--last) & 0x01) == 0x01;
 }
 
 bool is_even(byte* first, byte* last) 
 {
-    return *(--last) & 0x01 == 0x00;
+    return (*(--last) & 0x01) == 0x00;
 }
 
 void reverse(byte* first, byte* last) 
