@@ -6,45 +6,8 @@
 #include <iostream>
 #include <string>
 
-static void dump(const std::string& prefix, unsigned long value)
-{
-    std::cout << prefix << value << "\n";
-}
-
-static void dump(const std::string& prefix, const byte* b, const byte* c)
-{
-    std::cout << prefix;
-
-    while (b != c)
-    {
-        printf("%02x:", *b);
-
-        ++b;
-    }
-
-    printf("\n");
-}
 #define BUF_SIZE 8
 
-/*
- * static int heighBitIdx(byte x)
- * {
- *   int result = -1;
- *
- *   x |= x >> 1;
- *   x |= x >> 2;
- *   x |= x >> 4;
- *
- *   x = x - (x >> 1);
- *
- *   for (; x != 0; x >>= 1)
- *   {
- *       ++result;
- *   }
- *
- *   return result;
- * }
- */
 void HUGE_Add(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
     byte           carry = 0;
@@ -497,3 +460,6 @@ int HUGE_GetHighestSetBit(const byte* first, const byte* last)
 {
     return (*first & 0x80);
 }
+
+
+//~ Formatted by Jindent --- http://www.jindent.com
