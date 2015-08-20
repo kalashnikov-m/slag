@@ -10,60 +10,57 @@
 
 typedef unsigned char byte;
 
-byte* uadd(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
+void HUGE_Add(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
-byte* usub(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
+void HUGE_Subtract(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
-//byte* usub_strong(bool& neg, byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
+void HUGE_Multiply(byte* first_result, byte* last_result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
-byte* umul(byte* first_result, byte* last_result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
+void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_last, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
-byte* udiv(byte* div_first, byte* div_last, byte* rem_first, byte* rem_last, const byte* first1, const byte* last1, const byte* first2,
-           const byte* last2);
+void HUGE_Increment(byte* first1, byte* last1);
 
-//byte* ssub(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
+void HUGE_Decrement(byte* first1, byte* last1);
 
-byte* uincrement(byte* first1, byte* last1);
+bool HUGE_IsEven(byte* first, byte* last);
 
-byte* udecrement(byte* first1, byte* last1);
+bool HUGE_IsOdd(byte* first, byte* last);
 
-bool is_even(byte* first, byte* last);
+void HUGE_Reverse(byte* first, byte* last);
 
-bool is_odd(byte* first, byte* last);
+void HUGE_RotateLeft(byte* first, byte* last);
 
-void reverse(byte* first, byte* last);
+void HUGE_RotateRight(byte* first, byte* last);
 
-void rotate_left(byte* first, byte* last);
+void HUGE_ShiftRight(byte* first, byte* last);
 
-void rotate_right(byte* first, byte* last);
+void HUGE_ShiftLeft(byte* first, byte* last);
 
-void shift_right(byte* first, byte* last);
+void HUGE_RotateLeftN(byte* first, byte* last, int n);
 
-void shift_left(byte* first, byte* last);
+void HUGE_RotateRightN(byte* first, byte* last, int n);
 
-void rotate_left_n(byte* first, byte* last, int n);
+void HUGE_ShiftLeftN(byte* first, byte* last, int n);
 
-void rotate_right_n(byte* first, byte* last, int n);
+void HUGE_ShiftRightN(byte* first, byte* last, int n);
 
-void shift_left_n(byte* first, byte* last, int n);
+void HUGE_Or(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
-void shift_right_n(byte* first, byte* last, int n);
+void HUGE_Xor(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
-void op_or(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
+void HUGE_And(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
-void op_xor(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
+void HUGE_Not(byte* first, byte* last);
 
-void op_and(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
+short HUGE_Compare(const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
-void op_not(byte* first, byte* last);
+bool HUGE_IsZero(const byte* first, const byte* last);
 
-short ucmp(const byte* first1, const byte* last1, const byte* first2, const byte* last2);
+int HUGE_GetLowestSetBit(const byte* first, const byte* last);
 
-bool is_zero(const byte* first, const byte* last);
+int HUGE_GetHighestSetBit(const byte* first, const byte* last);
 
-int get_low_bit(const byte* first, const byte* last);
-
-int get_high_bit(const byte* first, const byte* last);
+// TODO HUGE_isOne(), isPowerOfTwo()
 
 #endif   /* ALGORITHM_H */
 
