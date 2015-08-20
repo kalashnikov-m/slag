@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <iterator>
 #include <iostream>
-#include "huge.h"
+#include "hugecore.h"
 #include "gtest/gtest.h"
 
 using namespace std;
