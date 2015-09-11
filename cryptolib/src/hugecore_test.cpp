@@ -20,13 +20,13 @@ static bool ASSERT_BYTES_EQ(byte* f1, byte* l1, byte* f2, byte* l2)
     return (f1 == l1) && (f2 == l2);
 }
 
-class Huge_Test:
+class HugeCore_Test:
     public ::testing::Test
 {
 };
 
 
-TEST(Huge_Test, HUGE_Add)
+TEST(HugeCore_Test, HUGE_Add)
 {
     {
         bool eq(true);
@@ -83,7 +83,7 @@ TEST(Huge_Test, HUGE_Add)
     }
 }
 
-TEST(Huge_Test, HUGE_Multiply)
+TEST(HugeCore_Test, HUGE_Multiply)
 {
     byte a[]        = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1a, 0x03 };
     byte b[]        = { 0x00, 0x00, 0x00, 0x11 };
@@ -121,7 +121,7 @@ TEST(Huge_Test, HUGE_Multiply)
     EXPECT_TRUE(eq);
 }
 
-TEST(Huge_Test, HUGE_Subtract)
+TEST(HugeCore_Test, HUGE_Subtract)
 {
     byte a[]        = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01 };
     byte b[]        = { 0x00, 0x00, 0x00, 0x80 };
@@ -153,7 +153,7 @@ TEST(Huge_Test, HUGE_Subtract)
     eq = ASSERT_BYTES_EQ(std::begin(expected2), std::end(expected2), std::begin(actual2), std::end(actual2));
 }
 
-TEST(Huge_Test, HUGE_DivRem)
+TEST(HugeCore_Test, HUGE_DivRem)
 {
     byte a[]            = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x07 };
     byte b[]            = { 0x00, 0x00, 0x02 };
@@ -245,7 +245,7 @@ TEST(Huge_Test, HUGE_DivRem)
     EXPECT_TRUE(eq);
 }
 
-TEST(Huge_Test, HUGE_Increment)
+TEST(HugeCore_Test, HUGE_Increment)
 {
     {
         byte a1[]       = { 0x00, 0x00, 0x01 };
@@ -297,7 +297,7 @@ TEST(Huge_Test, HUGE_Increment)
     }
 }
 
-TEST(Huge_Test, HUGE_Decrement)
+TEST(HugeCore_Test, HUGE_Decrement)
 {
     {
         byte a[]        = { 0x00, 0x00, 0x02 };
@@ -337,7 +337,7 @@ TEST(Huge_Test, HUGE_Decrement)
     }
 }
 
-TEST(Huge_Test, HUGE_Reverse)
+TEST(HugeCore_Test, HUGE_Reverse)
 {
     {
         byte a[]        = { 0x01, 0x02, 0x03 };
@@ -351,7 +351,7 @@ TEST(Huge_Test, HUGE_Reverse)
     }
 }
 
-TEST(Huge_Test, HUGE_And)
+TEST(HugeCore_Test, HUGE_And)
 {
     {
         byte a[]        = { 0x01, 0x00, 0x00, 0x00, 0x00, 0xff, 0x10, 0x32 };
@@ -367,7 +367,7 @@ TEST(Huge_Test, HUGE_And)
     }
 }
 
-TEST(Huge_Test, HUGE_Xor)
+TEST(HugeCore_Test, HUGE_Xor)
 {
     {
         byte a[]         = { 0x01, 0x00, 0x00, 0x00, 0x00, 0xff, 0x10, 0x32 };
@@ -395,7 +395,7 @@ TEST(Huge_Test, HUGE_Xor)
     }
 }
 
-TEST(Huge_Test, HUGE_Or)
+TEST(HugeCore_Test, HUGE_Or)
 {
     {
         byte a[]        = { 0x01, 0x00, 0x00, 0x00, 0x00, 0xff, 0x10, 0x32 };
@@ -411,7 +411,7 @@ TEST(Huge_Test, HUGE_Or)
     }
 }
 
-TEST(Huge_Test, HUGE_Not)
+TEST(HugeCore_Test, HUGE_Not)
 {
     {
         byte a[]        = { 0x01, 0x00, 0x00, 0x00, 0x00, 0xff, 0x10, 0x32 };

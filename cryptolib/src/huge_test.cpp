@@ -4,47 +4,83 @@
 #include <iterator>
 
 #include "hugecore.h"
+#include "huge.h"
 
 using namespace std;
 
-class HugePlus_Test:
-    testing::Test
+TEST(HugePlus, Plus)
 {
-};
+    Huge<int> a;
+    Huge<int> b;
+    Huge<int> c;
 
-
-class HugeSubtract_Test:
-    testing::Test
-{
-};
-
-
-class HugeMultiply_Test:
-    testing::Test
-{
-};
-
-
-class HugeDivRem_Test:
-    testing::Test
-{
-};
-
-
-TEST(HugePlus_Test, Plus)
-{
+    c = a + b;
 }
 
-TEST(HugeSubtract_Test, Plus)
+TEST(HugeSubtract, Subtract)
 {
+    Huge<int> a;
+    Huge<int> b;
+    Huge<int> c;
+
+    c = a - b;
 }
 
-TEST(HugeMultiply_Test, Plus)
+TEST(HugeMultiply, Multiply)
 {
+    Huge<int> a;
+    Huge<int> b;
+    Huge<int> c;
+
+    c = a * b;
 }
 
-TEST(HugeDivRem_Test, Plus)
+TEST(HugeDivRem, DivRem)
 {
+    Huge<int> a;
+    Huge<int> b;
+    Huge<int> div;
+    Huge<int> rem;
+
+    div = a / b;
+    rem = a % b;
+}
+
+TEST(HugeShiftLeft, ShiftLeft)
+{
+    Huge<int> a;
+
+    a << 3;
+}
+
+TEST(HugeShiftRigth, ShiftRight)
+{
+    Huge<int> a;
+    a >> 7;
+}
+
+TEST(HugeLess, Less)
+{
+    Huge<int> a;
+    Huge<int> b;
+
+    a < b;
+}
+
+TEST(HugeGreather, Greather)
+{
+    Huge<int> a;
+    Huge<int> b;
+
+    a > b;
+}
+
+TEST(HugeEqual, Equal)
+{
+    Huge<int> a;
+    Huge<int> b;
+
+    a == b;
 }
 
 
