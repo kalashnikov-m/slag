@@ -3,7 +3,7 @@
 
 #include <iterator>
 
-#include "hugecore.h"
+#include "HugeCore.h"
 
 using namespace std;
 

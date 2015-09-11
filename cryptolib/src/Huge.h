@@ -59,6 +59,24 @@ class Huge
 
         bool operator ==(const Huge&);
 
+        bool operator !=(const Huge&);
+
+        Huge& operator <<= (int);
+
+        Huge& operator >>= (int);
+
+        Huge& operator ++(int);
+
+        Huge& operator --(int);
+
+        Huge& operator += (const Huge&);
+
+        Huge& operator -= (const Huge&);
+
+        Huge& operator +();
+
+        Huge operator -();
+
         // Huge& operator=(Huge&& other);
 
         template<class X>
@@ -116,6 +134,54 @@ template<class T>
 bool Huge<T>::operator ==(const Huge<T>&)
 {
     return false;
+}
+
+template<class T>
+Huge<T>& Huge<T>::operator <<= (int)
+{
+    return *this;
+}
+
+template<class T>
+Huge<T>& Huge<T>::operator >>= (int)
+{
+    return *this;
+}
+
+template<class T>
+Huge<T>& Huge<T>::operator ++(int)
+{
+    return *this;
+}
+
+template<class T>
+Huge<T>& Huge<T>::operator --(int)
+{
+    return *this;
+}
+
+template<class T>
+Huge<T>& Huge<T>::operator += (const Huge&)
+{
+    return *this;
+}
+
+template<class T>
+Huge<T>& Huge<T>::operator -= (const Huge&)
+{
+    return *this;
+}
+
+template<class T>
+Huge<T>& Huge<T>::operator +()
+{
+    return *this;
+}
+
+template<class T>
+Huge<T> Huge<T>::operator -()
+{
+    return Huge<T>();
 }
 
 template<class X>

@@ -1,5 +1,5 @@
 
-#include "hugecore.h"
+#include "HugeCore.h"
 
 #include <cstdio>
 #include <vector>

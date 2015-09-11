@@ -3,8 +3,8 @@
 
 #include <iterator>
 
-#include "hugecore.h"
-#include "huge.h"
+#include "HugeCore.h"
+#include "Huge.h"
 
 using namespace std;
 
@@ -95,6 +95,6 @@ TEST(HugeEqual, Equal)
 {
     Huge<byte> a = { 0x22, 0x12 };
     Huge<byte> b = { 0x20, 0x12 };
-
+    
     EXPECT_TRUE(a == b);
 }
