@@ -26,7 +26,7 @@ class HugeCore_Test:
 };
 
 
-TEST(HugeCore_Test, HUGE_Add)
+TEST(HugeCore_Test, Addition)
 {
     {
         bool eq(true);

@@ -3,152 +3,157 @@
 
 #include <iterator>
 
-#include "HugeCore.h"
 #include "Huge.h"
 
 using namespace std;
 
-TEST(Huge, LogicalNOT)
+class HugeTest:
+    public ::testing::Test
 {
-    EXPECT_TRUE(false);
+};
+
+
+TEST(HugeTest, LogicalNOT)
+{
+    FAIL();
 }
 
-TEST(Huge, Modulus)
+TEST(HugeTest, Modulus)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, ModulusAssignment)
+TEST(HugeTest, ModulusAssignment)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, BitwiseAND)
+TEST(HugeTest, BitwiseAND)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, BitwiseANDassignment)
+TEST(HugeTest, BitwiseANDassignment)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, LogicalAND)
+TEST(HugeTest, LogicalAND)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, UnaryPlus)
+TEST(HugeTest, UnaryPlus)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, UnaryNegation)
+TEST(HugeTest, UnaryNegation)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, Decrement)
+TEST(HugeTest, Decrement)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, LogicalOR)
+TEST(HugeTest, LogicalOR)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, BitwiseORassignment)
+TEST(HugeTest, BitwiseORassignment)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, BitwiseOR)
+TEST(HugeTest, BitwiseOR)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, ExclusiveOR)
+TEST(HugeTest, ExclusiveOR)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, ExclusiveORassignment)
+TEST(HugeTest, ExclusiveORassignment)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, OneComplement)
+TEST(HugeTest, OneComplement)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, Addition)
+TEST(HugeTest, Addition)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, AdditionAssigment)
+TEST(HugeTest, AdditionAssigment)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, Increment)
+TEST(HugeTest, Increment)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, Subtraction)
+TEST(HugeTest, Subtraction)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, SubtractionAssigment)
+TEST(HugeTest, SubtractionAssigment)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, Multiplication)
+TEST(HugeTest, Multiplication)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, MultiplicationAssignment)
+TEST(HugeTest, MultiplicationAssignment)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, Division)
+TEST(HugeTest, Division)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, DivisionAssignment)
+TEST(HugeTest, DivisionAssignment)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, LeftShift)
+TEST(HugeTest, LeftShift)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, LeftShiftAssigment)
+TEST(HugeTest, LeftShiftAssigment)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, RightShift)
+TEST(HugeTest, RightShift)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, RightShiftAssignment)
+TEST(HugeTest, RightShiftAssignment)
 {
-    EXPECT_TRUE(false);
+    FAIL();
 }
 
-TEST(Huge, Less)
+TEST(HugeTest, Less)
 {
     {
         Huge<byte> a = { 0x22, 0x12 };
@@ -194,7 +199,7 @@ TEST(Huge, Less)
 
 }
 
-TEST(Huge, LessEqual)
+TEST(HugeTest, LessEqual)
 {
     {
         Huge<byte> a = { 0x22, 0x12 };
@@ -240,7 +245,7 @@ TEST(Huge, LessEqual)
 
 }
 
-TEST(Huge, Greather)
+TEST(HugeTest, Greather)
 {
     {
         Huge<byte> a = { 0x22, 0x12 };
@@ -285,7 +290,7 @@ TEST(Huge, Greather)
     }
 }
 
-TEST(Huge, GreatherEqual)
+TEST(HugeTest, GreatherEqual)
 {
     {
         Huge<byte> a = { 0x22, 0x12 };
@@ -331,7 +336,7 @@ TEST(Huge, GreatherEqual)
 
 }
 
-TEST(Huge, Equal)
+TEST(HugeTest, Equal)
 {
     {
         Huge<byte> a = { 0x22, 0x12 };
@@ -376,7 +381,7 @@ TEST(Huge, Equal)
     }
 }
 
-TEST(Huge, Inequality)
+TEST(HugeTest, Inequality)
 {
     {
         Huge<byte> a = { 0x22, 0x12 };

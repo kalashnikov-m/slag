@@ -5,7 +5,7 @@
 #include <vector>
 #include <algorithm>
 
-#include "hugecore.h"
+#include "HugeCore.h"
 
 using namespace std;
 
