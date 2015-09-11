@@ -54,8 +54,8 @@ TEST(HugeDivRem, DivRem)
 {
     Huge<byte> a = { 0x22, 0x12 };
     Huge<byte> b = { 0x20, 0x12 };
-    Huge<int>  div;
-    Huge<int>  rem;
+    Huge<byte> div;
+    Huge<byte> rem;
 
     div = a / b;
     rem = a % b;

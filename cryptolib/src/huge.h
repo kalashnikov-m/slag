@@ -49,6 +49,16 @@ class Huge
 
         }
 
+        Huge& operator <<(int);
+
+        Huge& operator >>(int);
+
+        bool operator <(const Huge&);
+
+        bool operator >(const Huge&);
+
+        bool operator ==(const Huge&);
+
         // Huge& operator=(Huge&& other);
 
         template<class X>
@@ -66,21 +76,6 @@ class Huge
         template<class X>
         friend Huge operator %(const Huge&, const Huge&);
 
-        template<class X>
-        friend Huge& operator <<(Huge&, int);
-
-        template<class X>
-        friend Huge& operator >>(Huge&, int);
-
-        template<class X>
-        friend bool operator <(const Huge&, const Huge&);
-
-        template<class X>
-        friend bool operator >(const Huge&, const Huge&);
-
-        template<class X>
-        friend bool operator ==(const Huge&, const Huge&);
-
     protected:
         void swap(Huge&) throw ()
         {
@@ -92,6 +87,36 @@ class Huge
         std::vector<T> m_Buffer;
 };
 
+
+template<class T>
+Huge<T>& Huge<T>::operator <<(int)
+{
+    return *this;
+}
+
+template<class T>
+Huge<T>& Huge<T>::operator >>(int)
+{
+    return *this;
+}
+
+template<class T>
+bool Huge<T>::operator <(const Huge<T>&)
+{
+    return false;
+}
+
+template<class T>
+bool Huge<T>::operator >(const Huge<T>&)
+{
+    return false;
+}
+
+template<class T>
+bool Huge<T>::operator ==(const Huge<T>&)
+{
+    return false;
+}
 
 template<class X>
 Huge<X> operator +(const Huge<X>&, const Huge<X>&)
@@ -121,36 +146,6 @@ template<class X>
 Huge<X> operator %(const Huge<X>&, const Huge<X>&)
 {
     return Huge<X>();
-}
-
-template<class X>
-Huge<X>& operator <<(Huge<X>& self, int)
-{
-    return self;
-}
-
-template<class X>
-Huge<X>& operator >>(Huge<X>& self, int)
-{
-    return self;
-}
-
-template<class X>
-bool operator <(const Huge<X>&, const Huge<X>&)
-{
-    return false;
-}
-
-template<class X>
-bool operator >(const Huge<X>&, const Huge<X>&)
-{
-    return false;
-}
-
-template<class X>
-bool operator ==(const Huge<X>&, const Huge<X>&)
-{
-    return false;
 }
 
 #endif
