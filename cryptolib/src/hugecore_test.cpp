@@ -424,6 +424,3 @@ TEST(HugeCore_Test, HUGE_Not)
         EXPECT_TRUE(eq);
     }
 }
-
-
-//~ Formatted by Jindent --- http://www.jindent.com

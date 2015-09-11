@@ -65,5 +65,3 @@ int HUGE_GetHighestSetBit(const byte* first, const byte* last);
 
 #endif   /* ALGORITHM_H */
 
-
-//~ Formatted by Jindent --- http://www.jindent.com

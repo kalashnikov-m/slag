@@ -10,37 +10,52 @@ using namespace std;
 
 TEST(HugePlus, Plus)
 {
-    Huge<int> a;
-    Huge<int> b;
-    Huge<int> c;
+    Huge<byte> a = { 0x02, 0x12 };
+    Huge<byte> b = { 0x20, 0x12 };
+    Huge<byte> c;
+    Huge<byte> e = { 0x22, 0x24 };
 
-    c = a + b;
+    c          = a + b;
+
+    auto equal = (c == e);
+
+    EXPECT_TRUE(equal);
 }
 
 TEST(HugeSubtract, Subtract)
 {
-    Huge<int> a;
-    Huge<int> b;
-    Huge<int> c;
+    Huge<byte> a = { 0x22, 0x12 };
+    Huge<byte> b = { 0x20, 0x12 };
+    Huge<byte> c;
+    Huge<byte> e = { 0x22, 0x24 };
 
-    c = a - b;
+    c          = a - b;
+
+    auto equal = (c == e);
+
+    EXPECT_TRUE(equal);
 }
 
 TEST(HugeMultiply, Multiply)
 {
-    Huge<int> a;
-    Huge<int> b;
-    Huge<int> c;
+    Huge<byte> a = { 0x22, 0x12 };
+    Huge<byte> b = { 0x20, 0x12 };
+    Huge<byte> c;
+    Huge<byte> e = { 0x22, 0x24 };
 
-    c = a * b;
+    c          = a * b;
+
+    auto equal = (c == e);
+
+    EXPECT_TRUE(equal);
 }
 
 TEST(HugeDivRem, DivRem)
 {
-    Huge<int> a;
-    Huge<int> b;
-    Huge<int> div;
-    Huge<int> rem;
+    Huge<byte> a = { 0x22, 0x12 };
+    Huge<byte> b = { 0x20, 0x12 };
+    Huge<int>  div;
+    Huge<int>  rem;
 
     div = a / b;
     rem = a % b;
@@ -56,32 +71,30 @@ TEST(HugeShiftLeft, ShiftLeft)
 TEST(HugeShiftRigth, ShiftRight)
 {
     Huge<int> a;
+
     a >> 7;
 }
 
 TEST(HugeLess, Less)
 {
-    Huge<int> a;
-    Huge<int> b;
+    Huge<byte> a = { 0x22, 0x12 };
+    Huge<byte> b = { 0x20, 0x12 };
 
-    a < b;
+    EXPECT_TRUE(a < b);
 }
 
 TEST(HugeGreather, Greather)
 {
-    Huge<int> a;
-    Huge<int> b;
+    Huge<byte> a = { 0x22, 0x12 };
+    Huge<byte> b = { 0x20, 0x12 };
 
-    a > b;
+    EXPECT_TRUE(a > b);
 }
 
 TEST(HugeEqual, Equal)
 {
-    Huge<int> a;
-    Huge<int> b;
+    Huge<byte> a = { 0x22, 0x12 };
+    Huge<byte> b = { 0x20, 0x12 };
 
-    a == b;
+    EXPECT_TRUE(a == b);
 }
-
-
-//~ Formatted by Jindent --- http://www.jindent.com

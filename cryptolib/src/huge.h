@@ -29,6 +29,11 @@ class Huge
 
         // HugeInt(HugeInt&& other);
 
+        Huge(const std::initializer_list<T>& il):
+            m_Buffer(il)
+        {
+        }
+
         Huge& operator = (const Huge& other)
         {
             cout << "Huge<T>& Huge<T>::operator = (const Huge<T>& other)" << "\n";
@@ -84,7 +89,7 @@ class Huge
 
     private:
 
-        T m_Buffer;
+        std::vector<T> m_Buffer;
 };
 
 

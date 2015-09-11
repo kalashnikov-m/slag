@@ -464,6 +464,3 @@ int HUGE_GetHighestSetBit(const byte* first, const byte* last)
 {
     return (*first & 0x80);
 }
-
-
-//~ Formatted by Jindent --- http://www.jindent.com

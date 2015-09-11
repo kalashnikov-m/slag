@@ -31,6 +31,3 @@ int main(int argc, char** argv)
 
     return RUN_ALL_TESTS();
 }
-
-
-//~ Formatted by Jindent --- http://www.jindent.com
