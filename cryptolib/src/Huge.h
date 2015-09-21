@@ -59,6 +59,10 @@ class Huge
         bool operator <(const Huge&);
 
         bool operator >(const Huge&);
+        
+        bool operator <=(const Huge&);
+
+        bool operator >= (const Huge&);
 
         bool operator ==(const Huge&);
 
@@ -177,6 +181,27 @@ bool Huge<T>::operator ==(const Huge<T>& rhs)
 	
     short cmp = __compare(*this, rhs);
     return (cmp == 0);
+}
+
+template<class T>
+bool Huge<T>::operator <=(const Huge<T>& rhs) {
+
+    short cmp = __compare(*this, rhs);
+    return (cmp == -1 || cmp == 0);
+}
+
+template<class T>
+bool Huge<T>::operator >= (const Huge<T>& rhs) {
+
+    short cmp = __compare(*this, rhs);
+    return (cmp == 1 || cmp == 0);
+}
+
+template<class T>
+bool Huge<T>::operator !=(const Huge<T>& rhs) {
+
+    short cmp = __compare(*this, rhs);
+    return (cmp != 0);
 }
 
 template<class X>
