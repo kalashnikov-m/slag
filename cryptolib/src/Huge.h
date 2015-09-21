@@ -74,19 +74,95 @@ class Huge
 
         Huge& operator >>= (int);
 
-        Huge& operator ++(int);
+        Huge& operator ++()
+        {    /* TODO */
+        }
 
-        Huge& operator --(int);
+        Huge& operator --()
+        {    /* TODO */
+        }
 
-        Huge& operator += (const Huge&);
+        Huge operator ++(int)
+        {    /* TODO */
+        }
 
-        Huge& operator -= (const Huge&);
+        Huge operator --(int)
+        {    /* TODO */
+        }
 
-        Huge& operator +();
+        Huge& operator += (const Huge&)
+        {    /* TODO */
+        }
 
-        Huge operator -();
+        Huge& operator -= (const Huge&)
+        {    /* TODO */
+        }
+
+        Huge& operator +()
+        {    /* TODO */
+        }
+
+        Huge operator -()
+        {    /* TODO */
+        }
+
+        Huge operator !()
+        { /* TODO */
+        }
+
+        Huge operator &&(const Huge&)
+        { /* TODO */
+        }
+
+        Huge operator ||(const Huge&)
+        { /* TODO */
+        }
+
+        Huge operator ~()
+        { /* TODO */
+        }
+
+        Huge operator %= (const Huge&)
+        { /* TODO */
+        }
+
+        Huge operator &()
+        { /* TODO */
+        }
+
+        Huge operator &= (const Huge&)
+        { /* TODO */
+        }
+
+        Huge operator |(const Huge&)
+        { /* TODO */
+        }
+
+        Huge operator |= (const Huge&)
+        { /* TODO */
+        }
+
+        Huge operator ^(const Huge&)
+        { /* TODO */
+        }
+
+        Huge operator ^= (const Huge&)
+        { /* TODO */
+        }
+
+        Huge operator *= (const Huge&)
+        { /* TODO */
+        }
+
+        Huge operator /= (const Huge&)
+        { /* TODO */
+        }
 
         // Huge& operator=(Huge&& other);
+
+        friend ostream& operator <<(ostream&, const Huge&)
+        { /* TODO */
+        }
 
         template<class X>
         friend Huge operator +(const Huge&, const Huge&);
