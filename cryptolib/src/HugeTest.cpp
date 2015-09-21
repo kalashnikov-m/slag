@@ -8,74 +8,147 @@
 
 using namespace std;
 
-TEST(HugePlus, Plus)
+TEST(Huge, LogicalNOT)
 {
-    Huge<byte> a = { 0x02, 0x12 };
-    Huge<byte> b = { 0x20, 0x12 };
-    Huge<byte> c;
-    Huge<byte> e = { 0x22, 0x24 };
-
-    c          = a + b;
-
-    auto equal = (c == e);
-
-    EXPECT_TRUE(equal);
+    EXPECT_TRUE(false);
 }
 
-TEST(HugeSubtract, Subtract)
+TEST(Huge, Modulus)
 {
-    Huge<byte> a = { 0x22, 0x12 };
-    Huge<byte> b = { 0x20, 0x12 };
-    Huge<byte> c;
-    Huge<byte> e = { 0x22, 0x24 };
-
-    c          = a - b;
-
-    auto equal = (c == e);
-
-    EXPECT_TRUE(equal);
+    EXPECT_TRUE(false);
 }
 
-TEST(HugeMultiply, Multiply)
+TEST(Huge, ModulusAssignment)
 {
-    Huge<byte> a = { 0x22, 0x12 };
-    Huge<byte> b = { 0x20, 0x12 };
-    Huge<byte> c;
-    Huge<byte> e = { 0x22, 0x24 };
-
-    c          = a * b;
-
-    auto equal = (c == e);
-
-    EXPECT_TRUE(equal);
+    EXPECT_TRUE(false);
 }
 
-TEST(HugeDivRem, DivRem)
+TEST(Huge, BitwiseAND)
 {
-    Huge<byte> a = { 0x22, 0x12 };
-    Huge<byte> b = { 0x20, 0x12 };
-    Huge<byte> div;
-    Huge<byte> rem;
-
-    div = a / b;
-    rem = a % b;
+    EXPECT_TRUE(false);
 }
 
-TEST(HugeShiftLeft, ShiftLeft)
+TEST(Huge, BitwiseANDassignment)
 {
-    Huge<int> a;
-
-    a << 3;
+    EXPECT_TRUE(false);
 }
 
-TEST(HugeShiftRigth, ShiftRight)
+TEST(Huge, LogicalAND)
 {
-    Huge<int> a;
-
-    a >> 7;
+    EXPECT_TRUE(false);
 }
 
-TEST(HugeLess, Less)
+TEST(Huge, UnaryPlus)
+{
+    EXPECT_TRUE(false);
+}
+
+TEST(Huge, UnaryNegation)
+{
+    EXPECT_TRUE(false);
+}
+
+TEST(Huge, Decrement)
+{
+    EXPECT_TRUE(false);
+}
+
+TEST(Huge, LogicalOR)
+{
+    EXPECT_TRUE(false);
+}
+
+TEST(Huge, BitwiseORassignment)
+{
+    EXPECT_TRUE(false);
+}
+
+TEST(Huge, BitwiseOR)
+{
+    EXPECT_TRUE(false);
+}
+
+TEST(Huge, ExclusiveOR)
+{
+    EXPECT_TRUE(false);
+}
+
+TEST(Huge, ExclusiveORassignment)
+{
+    EXPECT_TRUE(false);
+}
+
+TEST(Huge, OneComplement)
+{
+    EXPECT_TRUE(false);
+}
+
+TEST(Huge, Addition)
+{
+    EXPECT_TRUE(false);
+}
+
+TEST(Huge, AdditionAssigment)
+{
+    EXPECT_TRUE(false);
+}
+
+TEST(Huge, Increment)
+{
+    EXPECT_TRUE(false);
+}
+
+TEST(Huge, Subtraction)
+{
+    EXPECT_TRUE(false);
+}
+
+TEST(Huge, SubtractionAssigment)
+{
+    EXPECT_TRUE(false);
+}
+
+TEST(Huge, Multiplication)
+{
+    EXPECT_TRUE(false);
+}
+
+TEST(Huge, MultiplicationAssignment)
+{
+    EXPECT_TRUE(false);
+}
+
+TEST(Huge, Division)
+{
+    EXPECT_TRUE(false);
+}
+
+TEST(Huge, DivisionAssignment)
+{
+    EXPECT_TRUE(false);
+}
+
+TEST(Huge, LeftShift)
+{
+    EXPECT_TRUE(false);
+}
+
+TEST(Huge, LeftShiftAssigment)
+{
+    EXPECT_TRUE(false);
+}
+
+TEST(Huge, RightShift)
+{
+    EXPECT_TRUE(false);
+}
+
+TEST(Huge, RightShiftAssignment)
+{
+    EXPECT_TRUE(false);
+}
+
+TEST(Huge, Less)
 {
     {
         Huge<byte> a = { 0x22, 0x12 };
@@ -121,7 +194,7 @@ TEST(HugeLess, Less)
 
 }
 
-TEST(HugeLessEqual, LessEqual)
+TEST(Huge, LessEqual)
 {
     {
         Huge<byte> a = { 0x22, 0x12 };
@@ -167,7 +240,7 @@ TEST(HugeLessEqual, LessEqual)
 
 }
 
-TEST(HugeGreather, Greather)
+TEST(Huge, Greather)
 {
     {
         Huge<byte> a = { 0x22, 0x12 };
@@ -212,7 +285,7 @@ TEST(HugeGreather, Greather)
     }
 }
 
-TEST(HugeGreatherEqual, GreatherEqual)
+TEST(Huge, GreatherEqual)
 {
     {
         Huge<byte> a = { 0x22, 0x12 };
@@ -258,7 +331,7 @@ TEST(HugeGreatherEqual, GreatherEqual)
 
 }
 
-TEST(HugeEqual, Equal)
+TEST(Huge, Equal)
 {
     {
         Huge<byte> a = { 0x22, 0x12 };
@@ -303,7 +376,7 @@ TEST(HugeEqual, Equal)
     }
 }
 
-TEST(HugeNotEqual, NotEqual)
+TEST(Huge, Inequality)
 {
     {
         Huge<byte> a = { 0x22, 0x12 };
