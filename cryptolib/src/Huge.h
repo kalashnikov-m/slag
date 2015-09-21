@@ -16,7 +16,8 @@ class Huge
 {
     public:
 
-        Huge() : m_Negative(false)
+        Huge():
+            m_Negative(false)
         {
             cout << "Huge<T>::Huge()" << "\n";
         }
@@ -33,7 +34,8 @@ class Huge
         // HugeInt(HugeInt&& other);
 
         Huge(const std::initializer_list<T>& il):
-            m_Buffer(il), m_Negative(false)
+            m_Buffer(il),
+            m_Negative(false)
         {
         }
 
@@ -59,10 +61,10 @@ class Huge
         bool operator <(const Huge&);
 
         bool operator >(const Huge&);
-        
+
         bool operator <=(const Huge&);
 
-        bool operator >= (const Huge&);
+        bool operator >=(const Huge&);
 
         bool operator ==(const Huge&);
 
@@ -106,44 +108,46 @@ class Huge
         {
             cout << "Huge<T>::swap(Huge<T>& other)" << "\n";
         }
-        
+
         short __compare(const Huge& lhs, const Huge& rhs);
 
     private:
 
         std::vector<T> m_Buffer;
-        bool m_Negative;
+        bool           m_Negative;
 };
 
 
 template<class T>
-short Huge<T>::__compare(const Huge<T>& lhs, const Huge<T>& rhs) 
+short Huge<T>::__compare(const Huge<T>& lhs, const Huge<T>& rhs)
 {
-    auto* b1 = &(*lhs.m_Buffer.begin());
-    auto* e1 = &(*lhs.m_Buffer.end());
-    auto* b2 = &(*rhs.m_Buffer.begin());
-    auto* e2 = &(*rhs.m_Buffer.end());
-    
+    auto *b1 = &(*lhs.m_Buffer.begin());
+    auto *e1 = &(*lhs.m_Buffer.end());
+    auto *b2 = &(*rhs.m_Buffer.begin());
+    auto *e2 = &(*rhs.m_Buffer.end());
+
     short cmp = HUGE_Compare(b1, e1, b2, e2);
 
-    if(lhs.m_Negative && rhs.m_Negative)
+    if (lhs.m_Negative && rhs.m_Negative)
     {
-	if(cmp == -1) {
-	    return 1;
-	}
-	else if(cmp == 1) {
-	    return -1;
-	}
-	
-	return 0;
+        if (cmp == -1)
+        {
+            return 1;
+        }
+        else if (cmp == 1)
+        {
+            return -1;
+        }
+
+        return 0;
     }
-    else if(!lhs.m_Negative && !rhs.m_Negative) 
+    else if (!lhs.m_Negative &&!rhs.m_Negative)
     {
-	return cmp;
+        return cmp;
     }
-    else {
-    
-	return lhs.m_Negative ? -1 : 1;
+    else
+    {
+        return lhs.m_Negative ? -1 : 1;
     }
 }
 
@@ -163,6 +167,7 @@ template<class T>
 bool Huge<T>::operator <(const Huge<T>& rhs)
 {
     short cmp = __compare(*this, rhs);
+
     return (cmp == -1);
 }
 
@@ -170,37 +175,44 @@ template<class T>
 bool Huge<T>::operator >(const Huge<T>& rhs)
 {
     short cmp = __compare(*this, rhs);
+
     return (cmp == 1);
 }
 
 template<class T>
 bool Huge<T>::operator ==(const Huge<T>& rhs)
 {
-    if(m_Negative != rhs.m_Negative)
-	return false;
-	
+    if (m_Negative != rhs.m_Negative)
+    {
+        return false;
+    }
+
     short cmp = __compare(*this, rhs);
+
     return (cmp == 0);
 }
 
 template<class T>
-bool Huge<T>::operator <=(const Huge<T>& rhs) {
-
+bool Huge<T>::operator <=(const Huge<T>& rhs)
+{
     short cmp = __compare(*this, rhs);
-    return (cmp == -1 || cmp == 0);
+
+    return ((cmp == -1) || (cmp == 0));
 }
 
 template<class T>
-bool Huge<T>::operator >= (const Huge<T>& rhs) {
-
+bool Huge<T>::operator >=(const Huge<T>& rhs)
+{
     short cmp = __compare(*this, rhs);
-    return (cmp == 1 || cmp == 0);
+
+    return ((cmp == 1) || (cmp == 0));
 }
 
 template<class T>
-bool Huge<T>::operator !=(const Huge<T>& rhs) {
-
+bool Huge<T>::operator !=(const Huge<T>& rhs)
+{
     short cmp = __compare(*this, rhs);
+
     return (cmp != 0);
 }
 
@@ -236,5 +248,3 @@ Huge<X> operator %(const Huge<X>&, const Huge<X>&)
 
 #endif
 
-
-//~ Formatted by Jindent --- http://www.jindent.com
