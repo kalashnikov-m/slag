@@ -165,36 +165,8 @@ bool Huge<T>::operator <(const Huge<T>& rhs)
 template<class T>
 bool Huge<T>::operator >(const Huge<T>& rhs)
 {
-    auto* b1 = &(*m_Buffer.begin()); 
-    auto* e1 = &(*m_Buffer.end());
-    auto* b2 = &(*rhs.m_Buffer.begin()); 
-    auto* e2 = &(*rhs.m_Buffer.end());
-
-    short cmp = 0;
-
-    // a < 0 && b < 0
-    if(m_Negative && rhs.m_Negative) {
-    
     short cmp = __compare(*this, rhs);
     return (cmp == 1);
-	    return true;
-	if(cmp == 1)
-	    return false;
-	    
-	return false;    
-    }
-    // a >= 0 && b >= 0
-    else if(!m_Negative && !rhs.m_Negative) {
-    
-	cmp = HUGE_Compare(b1, e1, b2, e2);
-	if(cmp == -1)
-	    return false;
-	if(cmp == 1)
-	    return true;
-	return false;
-    }
-
-    return (m_Negative ? false : true);
 }
 
 template<class T>
@@ -203,13 +175,7 @@ bool Huge<T>::operator ==(const Huge<T>& rhs)
     if(m_Negative != rhs.m_Negative)
 	return false;
 	
-	auto* b1 = &(*m_Buffer.begin()); 
-	auto* e1 = &(*m_Buffer.end());
-	auto* b2 = &(*rhs.m_Buffer.begin()); 
-	auto* e2 = &(*rhs.m_Buffer.end());
-	
     short cmp = __compare(*this, rhs);
-
     return (cmp == 0);
 }
 
