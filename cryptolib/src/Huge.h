@@ -135,8 +135,11 @@ class Huge
             return ret;
         }
 
-        Huge operator %= (const Huge&)
-        {    /* TODO */
+        Huge operator %= (const Huge& rhs)
+        {
+            *this = *this % rhs;
+
+            return *this;
         }
 
         Huge operator &(const Huge& rhs)
@@ -157,8 +160,11 @@ class Huge
             return Huge(temp);
         }
 
-        Huge operator &= (const Huge&)
-        {    /* TODO */
+        Huge& operator &= (const Huge& rhs)
+        {
+            *this = *this & rhs;
+
+            return *this;
         }
 
         Huge operator |(const Huge& rhs)
@@ -179,8 +185,11 @@ class Huge
             return Huge(temp);
         }
 
-        Huge operator |= (const Huge&)
-        {    /* TODO */
+        Huge& operator |= (const Huge& rhs)
+        {
+            *this = *this | rhs;
+
+            return *this;
         }
 
         Huge operator ^(const Huge& rhs)
@@ -201,16 +210,25 @@ class Huge
             return Huge(temp);
         }
 
-        Huge operator ^= (const Huge&)
-        {    /* TODO */
+        Huge& operator ^= (const Huge& rhs)
+        {
+            *this = *this ^ rhs;
+
+            return *this;
         }
 
-        Huge operator *= (const Huge&)
-        {    /* TODO */
+        Huge& operator *= (const Huge& rhs)
+        {
+            *this = *this * rhs;
+
+            return *this;
         }
 
-        Huge operator /= (const Huge&)
-        {    /* TODO */
+        Huge& operator /= (const Huge& rhs)
+        {
+            *this = *this / rhs;
+
+            return *this;
         }
 
         // Huge& operator=(Huge&& other);

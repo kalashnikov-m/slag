@@ -40,14 +40,33 @@ TEST(HugeTest, BitwiseAND)
         c = (a & b);
 
         EXPECT_TRUE(c == ex);
-
-        // EXPECT_TRUE(a == +b);
     }
 }
 
 TEST(HugeTest, BitwiseANDassignment)
 {
-    FAIL();
+    {
+        Huge<byte> a      = { 0x11, 0x22, 0x33 };
+        Huge<byte> b      = { 0x00, 0x00, 0x00 };
+
+        Huge<byte> expect = { 0x00, 0x00, 0x00 };
+
+        a &= b;
+
+        EXPECT_TRUE(a == expect);
+    }
+
+    {
+        Huge<byte> a      = { 0x11, 0x22, 0x33 };
+        Huge<byte> b      = { 0x10, 0x20, 0x30 };
+        Huge<byte> c      = { 0x01, 0x02, 0x03 };
+
+        Huge<byte> expect = { 0x00, 0x00, 0x00 };
+
+        (b &= a) &= c;
+
+        EXPECT_TRUE(b == expect);
+    }
 }
 
 TEST(HugeTest, LogicalAND)
@@ -105,7 +124,28 @@ TEST(HugeTest, LogicalOR)
 
 TEST(HugeTest, BitwiseORassignment)
 {
-    FAIL();
+    {
+        Huge<byte> a      = { 0x11, 0x22, 0x33 };
+        Huge<byte> b      = { 0x00, 0x00, 0x00 };
+
+        Huge<byte> expect = { 0x11, 0x22, 0x33 };
+
+        a |= b;
+
+        EXPECT_TRUE(a == expect);
+    }
+
+    {
+        Huge<byte> a      = { 0x11, 0x22, 0x33 };
+        Huge<byte> b      = { 0x10, 0x20, 0x30 };
+        Huge<byte> c      = { 0x04, 0x04, 0x04 };
+
+        Huge<byte> expect = { 0x15, 0x26, 0x37 };
+
+        (b |= a) |= c;
+
+        EXPECT_TRUE(b == expect);
+    }
 }
 
 TEST(HugeTest, BitwiseOR)
@@ -136,7 +176,28 @@ TEST(HugeTest, ExclusiveOR)
 
 TEST(HugeTest, ExclusiveORassignment)
 {
-    FAIL();
+    {
+        Huge<byte> a      = { 0x11, 0x22, 0x33 };
+        Huge<byte> b      = { 0x00, 0x00, 0x00 };
+
+        Huge<byte> expect = { 0x11, 0x22, 0x33 };
+
+        a ^= b;
+
+        EXPECT_TRUE(a == expect);
+    }
+
+    {
+        Huge<byte> a      = { 0x11, 0x22, 0x33 };
+        Huge<byte> b      = { 0x10, 0x20, 0x30 };
+        Huge<byte> c      = { 0x04, 0x04, 0x04 };
+
+        Huge<byte> expect = { 0x05, 0x06, 0x07 };
+
+        (b ^= a) ^= c;
+
+        EXPECT_TRUE(b == expect);
+    }
 }
 
 TEST(HugeTest, BitwiseInverse)
