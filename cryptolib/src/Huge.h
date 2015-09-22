@@ -305,7 +305,7 @@ Huge<T> Huge<T>::operator <<(int nbits)
 {
     Huge<T> temp(*this);
 
-    HUGE_ShiftLeftN(&(*std::begin(temp.m_Buffer)), &(*std::end(temp.m_Buffer)), nbits);
+    HUGE_ShiftLeft(&(*std::begin(temp.m_Buffer)), &(*std::end(temp.m_Buffer)), nbits);
 
     return temp;
 }
@@ -315,7 +315,7 @@ Huge<T> Huge<T>::operator >>(int nbits)
 {
     Huge<T> temp(*this);
 
-    HUGE_ShiftRightN(&(*std::begin(temp.m_Buffer)), &(*std::end(temp.m_Buffer)), nbits);
+    HUGE_ShiftRight(&(*std::begin(temp.m_Buffer)), &(*std::end(temp.m_Buffer)), nbits);
 
     return temp;
 }

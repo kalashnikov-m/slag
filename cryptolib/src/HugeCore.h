@@ -37,13 +37,13 @@ void HUGE_ShiftRight(byte* first, byte* last);
 
 void HUGE_ShiftLeft(byte* first, byte* last);
 
-void HUGE_RotateLeftN(byte* first, byte* last, int n);
+void HUGE_RotateLeft(byte* first, byte* last, int n);
 
-void HUGE_RotateRightN(byte* first, byte* last, int n);
+void HUGE_RotateRight(byte* first, byte* last, int n);
 
-void HUGE_ShiftLeftN(byte* first, byte* last, int n);
+void HUGE_ShiftLeft(byte* first, byte* last, int n);
 
-void HUGE_ShiftRightN(byte* first, byte* last, int n);
+void HUGE_ShiftRight(byte* first, byte* last, int n);
 
 void HUGE_Or(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
