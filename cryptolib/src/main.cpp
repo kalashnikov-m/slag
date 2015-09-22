@@ -14,17 +14,6 @@
 
 using namespace std;
 
-// class Fake : public ::testing::Test {};
-
-TEST(Fake, fake)
-{
-    {
-        byte a[] = { 0x01 };
-
-        HUGE_Not(begin(a), end(a));
-    }
-}
-
 int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);

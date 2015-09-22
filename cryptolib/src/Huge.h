@@ -19,39 +19,42 @@ class Huge
         Huge():
             m_Negative(false)
         {
-            cout << "Huge<T>::Huge()" << "\n";
         }
 
         ~Huge()
         {
         }
 
-        Huge(const Huge& other)
+        Huge(const Huge& other):
+            m_Buffer(other.m_Buffer),
+            m_Negative(other.m_Negative)
         {
-            cout << "Huge<T>::Huge(const Huge<T>& other);" << "\n";
         }
 
         // HugeInt(HugeInt&& other);
 
-        Huge(const std::initializer_list<T>& il):
+        Huge(const std::initializer_list<T>& il, bool negative = false):
             m_Buffer(il),
-            m_Negative(false)
+            m_Negative(negative)
+        {
+        }
+
+        Huge(const std::vector<T>& iv, bool negative = false):
+            m_Buffer(iv),
+            m_Negative(negative)
         {
         }
 
         Huge& operator = (const Huge& other)
         {
-            cout << "Huge<T>& Huge<T>::operator = (const Huge<T>& other)" << "\n";
-
             if (this != &other)
             {
-                Huge<T> temp(other);
+                Huge temp(other);
 
-                temp.__swap(*this);
+                this->__swap(temp);
             }
 
             return *this;
-
         }
 
         Huge& operator <<(int);
@@ -99,11 +102,13 @@ class Huge
         }
 
         Huge& operator +()
-        {    /* TODO */
+        {
+            return (*this);
         }
 
         Huge operator -()
-        {    /* TODO */
+        {
+            return Huge(m_Buffer, !m_Negative);
         }
 
         Huge operator !()
@@ -119,7 +124,15 @@ class Huge
         }
 
         Huge operator ~()
-        {    /* TODO */
+        {
+            Huge ret(*this);
+
+            auto *b = &(*ret.m_Buffer.begin());
+            auto *e = &(*ret.m_Buffer.end());
+
+            HUGE_Inverse(b, e);
+
+            return ret;
         }
 
         Huge operator %= (const Huge&)
@@ -180,9 +193,11 @@ class Huge
         friend Huge operator %(const Huge&, const Huge&);
 
     protected:
-        void __swap(Huge&) throw ()
+        void __swap(Huge& other) throw ()
         {
-            cout << "Huge<T>::swap(Huge<T>& other)" << "\n";
+            m_Buffer.swap(other.m_Buffer);
+
+            std::swap(m_Negative, other.m_Negative);
         }
 
         short __compare(const Huge& lhs, const Huge& rhs);

@@ -45,12 +45,40 @@ TEST(HugeTest, LogicalAND)
 
 TEST(HugeTest, UnaryPlus)
 {
-    FAIL();
+    {
+        Huge<byte> a = { 0x01, 0x02, 0x03 };
+        Huge<byte> b = { 0x01, 0x02, 0x03 };
+
+        EXPECT_TRUE(a == b);
+        EXPECT_TRUE(a == +b);
+    }
+
+    {
+        Huge<byte> a = { 0x02, 0x02, 0x03 };
+        Huge<byte> b = { 0x01, 0x02, 0x03 };
+
+        EXPECT_FALSE(a == b);
+        EXPECT_FALSE(a == +b);
+    }
+
 }
 
 TEST(HugeTest, UnaryNegation)
 {
-    FAIL();
+    {
+        Huge<byte> a = { 0x01, 0x02, 0x03 };
+        Huge<byte> b = { 0x01, 0x02, 0x03 };
+
+        EXPECT_TRUE(a == b);
+
+        a = -b;
+
+        EXPECT_TRUE(a != b);
+
+        a = -a;
+
+        EXPECT_TRUE(a == b);
+    }
 }
 
 TEST(HugeTest, Decrement)
@@ -83,9 +111,27 @@ TEST(HugeTest, ExclusiveORassignment)
     FAIL();
 }
 
-TEST(HugeTest, OneComplement)
+TEST(HugeTest, BitwiseInverse)
 {
-    FAIL();
+    {
+        Huge<byte> a = { 0x05 };
+        Huge<byte> b(~a);
+
+        Huge<byte> ex = { 0xFA };
+
+        EXPECT_TRUE(ex == b);
+    }
+
+    {
+        Huge<byte> a = { 0x05 };
+        Huge<byte> b;
+
+        b = ~a;
+
+        Huge<byte> ex = { 0xFA };
+
+        EXPECT_TRUE(ex == b);
+    }
 }
 
 TEST(HugeTest, Addition)
