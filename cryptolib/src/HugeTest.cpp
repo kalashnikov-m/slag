@@ -125,9 +125,9 @@ TEST(HugeTest, Decrement)
 
     {
         Huge<byte> a      = { 0x01, 0x02, 0x03 };
-        Huge<byte> expect = { 0x01, 0x02, 0x01 };
+        Huge<byte> expect = { 0x01, 0x02, 0x02 };
 
-        (a--)--;
+        --a;
 
         EXPECT_TRUE(a == expect);
     }
@@ -275,9 +275,9 @@ TEST(HugeTest, Increment)
 
     {
         Huge<byte> a      = { 0x01, 0x02, 0x03 };
-        Huge<byte> expect = { 0x01, 0x02, 0x05 };
+        Huge<byte> expect = { 0x01, 0x02, 0x04 };
 
-        (a++)++;
+        ++a;
 
         EXPECT_TRUE(a == expect);
     }

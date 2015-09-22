@@ -90,23 +90,21 @@ class Huge
 
         Huge& operator ++()
         {
-            auto *b1                             = &(*m_Buffer.begin()), *e1 = &(*m_Buffer.end());
-
-            HUGE_Increment(b1, e1);
+            HUGE_Increment(&(*std::begin(m_Buffer)), &(*std::end(m_Buffer)));
 
             return *this;
         }
 
         Huge& operator --()
         {
-            // HUGE_Decrement(&(*std::begin(m_Buffer)), &(*std::end(m_Buffer)));
+            HUGE_Decrement(&(*std::begin(m_Buffer)), &(*std::end(m_Buffer)));
 
             return *this;
         }
 
         Huge operator ++(int)
         {
-            Huge temp;
+            Huge temp(*this);
 
             ++(*this);
 
@@ -115,7 +113,7 @@ class Huge
 
         Huge operator --(int)
         {
-            Huge temp;
+            Huge temp(*this);
 
             --(*this);
 
@@ -154,14 +152,11 @@ class Huge
 
         Huge operator ~()
         {
-            Huge ret(*this);
+            Huge temp(*this);
 
-            auto *b = &(*ret.m_Buffer.begin());
-            auto *e = &(*ret.m_Buffer.end());
+            HUGE_Inverse(&(*std::begin(temp.m_Buffer)), &(*std::end(temp.m_Buffer)));
 
-            HUGE_Inverse(b, e);
-
-            return ret;
+            return temp;
         }
 
         Huge operator %= (const Huge& rhs)
@@ -177,14 +172,7 @@ class Huge
 
             std::vector<T> temp((std::vector<T>(max)));
 
-            auto *er = &(*temp.end());
-            auto *b1 = &(*m_Buffer.begin());
-            auto *e1 = &(*m_Buffer.end());
-
-            auto *b2 = &(*rhs.m_Buffer.begin());
-            auto *e2 = &(*rhs.m_Buffer.end());
-
-            HUGE_And(er, b1, e1, b2, e2);
+            HUGE_And(&(*std::end(temp)), &(*std::begin(m_Buffer)), &(*std::end(m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
 
             return Huge(temp);
         }
@@ -202,14 +190,7 @@ class Huge
 
             std::vector<T> temp((std::vector<T>(max)));
 
-            auto *er = &(*temp.end());
-            auto *b1 = &(*m_Buffer.begin());
-            auto *e1 = &(*m_Buffer.end());
-
-            auto *b2 = &(*rhs.m_Buffer.begin());
-            auto *e2 = &(*rhs.m_Buffer.end());
-
-            HUGE_Or(er, b1, e1, b2, e2);
+            HUGE_Or(&(*std::end(temp)), &(*std::begin(m_Buffer)), &(*std::end(m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
 
             return Huge(temp);
         }
@@ -227,14 +208,7 @@ class Huge
 
             std::vector<T> temp((std::vector<T>(max)));
 
-            auto *er = &(*temp.end());
-            auto *b1 = &(*m_Buffer.begin());
-            auto *e1 = &(*m_Buffer.end());
-
-            auto *b2 = &(*rhs.m_Buffer.begin());
-            auto *e2 = &(*rhs.m_Buffer.end());
-
-            HUGE_Xor(er, b1, e1, b2, e2);
+            HUGE_Xor(&(*std::end(temp)), &(*std::begin(m_Buffer)), &(*std::end(m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
 
             return Huge(temp);
         }
@@ -301,12 +275,7 @@ class Huge
 template<class T>
 short Huge<T>::__compare(const Huge<T>& lhs, const Huge<T>& rhs)
 {
-    auto *b1 = &(*lhs.m_Buffer.begin());
-    auto *e1 = &(*lhs.m_Buffer.end());
-    auto *b2 = &(*rhs.m_Buffer.begin());
-    auto *e2 = &(*rhs.m_Buffer.end());
-
-    short cmp = HUGE_Compare(b1, e1, b2, e2);
+    short cmp = HUGE_Compare(&(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
 
     if (lhs.m_Negative && rhs.m_Negative)
     {
@@ -336,9 +305,7 @@ Huge<T> Huge<T>::operator <<(int nbits)
 {
     Huge<T> temp(*this);
 
-    auto *b1                                      = &(*std::begin(temp.m_Buffer)), *e1 = &(*std::end(temp.m_Buffer));
-
-    HUGE_ShiftLeftN(b1, e1, nbits);
+    HUGE_ShiftLeftN(&(*std::begin(temp.m_Buffer)), &(*std::end(temp.m_Buffer)), nbits);
 
     return temp;
 }
@@ -348,9 +315,7 @@ Huge<T> Huge<T>::operator >>(int nbits)
 {
     Huge<T> temp(*this);
 
-    auto *b1                                      = &(*std::begin(temp.m_Buffer)), *e1 = &(*std::end(temp.m_Buffer));
-
-    HUGE_ShiftRightN(b1, e1, nbits);
+    HUGE_ShiftRightN(&(*std::begin(temp.m_Buffer)), &(*std::end(temp.m_Buffer)), nbits);
 
     return temp;
 }
