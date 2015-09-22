@@ -270,22 +270,84 @@ TEST(HugeTest, DivisionAssignment)
 
 TEST(HugeTest, LeftShift)
 {
-    FAIL();
+    {
+        Huge<byte> a = { 0x22, 0x12 };
+        Huge<byte> b(a << 1);
+        Huge<byte> expect = { 0x44, 0x24 };
+
+        EXPECT_TRUE(expect == b);
+    }
+
+    {
+        Huge<byte> a = { 0x32, 0x06, 0x12, 0x22, 0x12 };
+        Huge<byte> c(a << 2);
+        Huge<byte> expect = { 0xC8, 0x18, 0x48, 0x88, 0x48 };
+
+        EXPECT_TRUE(expect == c);
+    }
 }
 
 TEST(HugeTest, LeftShiftAssigment)
 {
-    FAIL();
+    {
+        Huge<byte> a = { 0x22, 0x12 };
+
+        a <<= 1;
+
+        Huge<byte> expect = { 0x44, 0x24 };
+
+        EXPECT_TRUE(expect == a);
+    }
+
+    {
+        Huge<byte> a = { 0x32, 0x06, 0x12, 0x22, 0x12 };
+        Huge<byte> c(a << 2);
+        Huge<byte> expect = { 0xC8, 0x18, 0x48, 0x88, 0x48 };
+
+        EXPECT_TRUE(expect == c);
+    }
 }
 
 TEST(HugeTest, RightShift)
 {
-    FAIL();
+    {
+        Huge<byte> a = { 0x22, 0x12 };
+        Huge<byte> b(a >> 1);
+        Huge<byte> expect = { 0x11, 0x09 };
+
+        EXPECT_TRUE(expect == b);
+    }
+
+    {
+        Huge<byte> a = { 0x32, 0x06, 0x12, 0x22, 0x12 };
+        Huge<byte> c(a >> 2);
+        Huge<byte> expect = { 0x0C, 0x81, 0x84, 0x88, 0x84 };
+
+        EXPECT_TRUE(expect == c);
+    }
 }
 
 TEST(HugeTest, RightShiftAssignment)
 {
-    FAIL();
+    {
+        Huge<byte> a = { 0x22, 0x12 };
+
+        a >>= 1;
+
+        Huge<byte> expect = { 0x11, 0x09 };
+
+        EXPECT_TRUE(expect == a);
+    }
+
+    {
+        Huge<byte> a = { 0x32, 0x06, 0x12, 0x22, 0x12 };
+
+        a >>= 2;
+
+        Huge<byte> expect = { 0x0C, 0x81, 0x84, 0x88, 0x84 };
+
+        EXPECT_TRUE(expect == a);
+    }
 }
 
 TEST(HugeTest, Less)

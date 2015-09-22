@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <iterator>
 
 #include "HugeCore.h"
 
@@ -57,9 +58,9 @@ class Huge
             return *this;
         }
 
-        Huge& operator <<(int);
+        Huge operator <<(int);
 
-        Huge& operator >>(int);
+        Huge operator >>(int);
 
         bool operator <(const Huge&);
 
@@ -73,9 +74,19 @@ class Huge
 
         bool operator !=(const Huge&);
 
-        Huge& operator <<= (int);
+        Huge& operator <<= (int nbits)
+        {
+            *this = *this << nbits;
 
-        Huge& operator >>= (int);
+            return *this;
+        }
+
+        Huge& operator >>= (int nbits)
+        {
+            *this = *this >> nbits;
+
+            return *this;
+        }
 
         Huge& operator ++()
         {    /* TODO */
@@ -303,15 +314,27 @@ short Huge<T>::__compare(const Huge<T>& lhs, const Huge<T>& rhs)
 }
 
 template<class T>
-Huge<T>& Huge<T>::operator <<(int)
+Huge<T> Huge<T>::operator <<(int nbits)
 {
-    return *this;
+    Huge<T> temp(*this);
+
+    auto *b1                                      = &(*std::begin(temp.m_Buffer)), *e1 = &(*std::end(temp.m_Buffer));
+
+    HUGE_ShiftLeftN(b1, e1, nbits);
+
+    return temp;
 }
 
 template<class T>
-Huge<T>& Huge<T>::operator >>(int)
+Huge<T> Huge<T>::operator >>(int nbits)
 {
-    return *this;
+    Huge<T> temp(*this);
+
+    auto *b1                                      = &(*std::begin(temp.m_Buffer)), *e1 = &(*std::end(temp.m_Buffer));
+
+    HUGE_ShiftRightN(b1, e1, nbits);
+
+    return temp;
 }
 
 template<class T>
