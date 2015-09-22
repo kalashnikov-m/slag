@@ -410,7 +410,7 @@ void HUGE_And(byte* result, const byte* first1, const byte* last1, const byte* f
     }
 }
 
-void HUGE_Not(byte* first, byte* last)
+void HUGE_Inverse(byte* first, byte* last)
 {
     for (; first != last; ++first)
     {

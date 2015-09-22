@@ -411,13 +411,13 @@ TEST(HugeCore_Test, HUGE_Or)
     }
 }
 
-TEST(HugeCore_Test, HUGE_Not)
+TEST(HugeCore_Test, HUGE_Inverse)
 {
     {
         byte a[]        = { 0x01, 0x00, 0x00, 0x00, 0x00, 0xff, 0x10, 0x32 };
         byte expected[] = { 0xfe, 0xff, 0xff, 0xff, 0xff, 0x00, 0xef, 0xcd };
 
-        HUGE_Not(begin(a), end(a));
+        HUGE_Inverse(begin(a), end(a));
 
         auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(a), end(a));
 

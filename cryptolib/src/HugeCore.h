@@ -51,7 +51,7 @@ void HUGE_Xor(byte* result, const byte* first1, const byte* last1, const byte* f
 
 void HUGE_And(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
-void HUGE_Not(byte* first, byte* last);
+void HUGE_Inverse(byte* first, byte* last);
 
 short HUGE_Compare(const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
