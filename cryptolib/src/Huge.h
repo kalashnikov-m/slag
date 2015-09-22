@@ -139,24 +139,66 @@ class Huge
         {    /* TODO */
         }
 
-        Huge operator &()
-        {    /* TODO */
+        Huge operator &(const Huge& rhs)
+        {
+            auto max = std::max(m_Buffer.size(), rhs.m_Buffer.size());
+
+            std::vector<T> temp((std::vector<T>(max)));
+
+            auto *er = &(*temp.end());
+            auto *b1 = &(*m_Buffer.begin());
+            auto *e1 = &(*m_Buffer.end());
+
+            auto *b2 = &(*rhs.m_Buffer.begin());
+            auto *e2 = &(*rhs.m_Buffer.end());
+
+            HUGE_And(er, b1, e1, b2, e2);
+
+            return Huge(temp);
         }
 
         Huge operator &= (const Huge&)
         {    /* TODO */
         }
 
-        Huge operator |(const Huge&)
-        {    /* TODO */
+        Huge operator |(const Huge& rhs)
+        {
+            auto max = std::max(m_Buffer.size(), rhs.m_Buffer.size());
+
+            std::vector<T> temp((std::vector<T>(max)));
+
+            auto *er = &(*temp.end());
+            auto *b1 = &(*m_Buffer.begin());
+            auto *e1 = &(*m_Buffer.end());
+
+            auto *b2 = &(*rhs.m_Buffer.begin());
+            auto *e2 = &(*rhs.m_Buffer.end());
+
+            HUGE_Or(er, b1, e1, b2, e2);
+
+            return Huge(temp);
         }
 
         Huge operator |= (const Huge&)
         {    /* TODO */
         }
 
-        Huge operator ^(const Huge&)
-        {    /* TODO */
+        Huge operator ^(const Huge& rhs)
+        {
+            auto max = std::max(m_Buffer.size(), rhs.m_Buffer.size());
+
+            std::vector<T> temp((std::vector<T>(max)));
+
+            auto *er = &(*temp.end());
+            auto *b1 = &(*m_Buffer.begin());
+            auto *e1 = &(*m_Buffer.end());
+
+            auto *b2 = &(*rhs.m_Buffer.begin());
+            auto *e2 = &(*rhs.m_Buffer.end());
+
+            HUGE_Xor(er, b1, e1, b2, e2);
+
+            return Huge(temp);
         }
 
         Huge operator ^= (const Huge&)

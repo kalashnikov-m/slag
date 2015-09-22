@@ -30,7 +30,19 @@ TEST(HugeTest, ModulusAssignment)
 
 TEST(HugeTest, BitwiseAND)
 {
-    FAIL();
+    {
+        Huge<byte> a = { 0x01, 0x02, 0x03 };
+        Huge<byte> b = { 0x01, 0x02, 0x03 };
+
+        Huge<byte> c;
+        Huge<byte> ex = { 0x01, 0x02, 0x03 };
+
+        c = (a & b);
+
+        EXPECT_TRUE(c == ex);
+
+        // EXPECT_TRUE(a == +b);
+    }
 }
 
 TEST(HugeTest, BitwiseANDassignment)
@@ -98,12 +110,28 @@ TEST(HugeTest, BitwiseORassignment)
 
 TEST(HugeTest, BitwiseOR)
 {
-    FAIL();
+    {
+        Huge<byte> a        = { 0x01, 0x02, 0x03 };
+        Huge<byte> b        = { 0x11, 0x00, 0x33 };
+        Huge<byte> expected = { 0x11, 0x02, 0x33 };
+
+        Huge<byte> c        = a | b;
+
+        EXPECT_TRUE(expected == c);
+    }
 }
 
 TEST(HugeTest, ExclusiveOR)
 {
-    FAIL();
+    {
+        Huge<byte> a        = { 0x01, 0x02, 0x03 };
+        Huge<byte> b        = { 0x11, 0x00, 0x33 };
+        Huge<byte> expected = { 0x10, 0x02, 0x30 };
+
+        Huge<byte> c        = a ^ b;
+
+        EXPECT_TRUE(expected == c);
+    }
 }
 
 TEST(HugeTest, ExclusiveORassignment)
