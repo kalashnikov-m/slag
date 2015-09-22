@@ -89,19 +89,37 @@ class Huge
         }
 
         Huge& operator ++()
-        {    /* TODO */
+        {
+            auto *b1                             = &(*m_Buffer.begin()), *e1 = &(*m_Buffer.end());
+
+            HUGE_Increment(b1, e1);
+
+            return *this;
         }
 
         Huge& operator --()
-        {    /* TODO */
+        {
+            // HUGE_Decrement(&(*std::begin(m_Buffer)), &(*std::end(m_Buffer)));
+
+            return *this;
         }
 
         Huge operator ++(int)
-        {    /* TODO */
+        {
+            Huge temp;
+
+            ++(*this);
+
+            return temp;
         }
 
         Huge operator --(int)
-        {    /* TODO */
+        {
+            Huge temp;
+
+            --(*this);
+
+            return temp;
         }
 
         Huge& operator += (const Huge&)

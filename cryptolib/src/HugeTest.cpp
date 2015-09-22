@@ -114,7 +114,36 @@ TEST(HugeTest, UnaryNegation)
 
 TEST(HugeTest, Decrement)
 {
-    FAIL();
+    {
+        Huge<byte> a      = { 0x01, 0x02, 0x03 };
+        Huge<byte> expect = { 0x01, 0x02, 0x02 };
+
+        a--;
+
+        EXPECT_TRUE(a == expect);
+    }
+
+    {
+        Huge<byte> a      = { 0x01, 0x02, 0x03 };
+        Huge<byte> expect = { 0x01, 0x02, 0x01 };
+
+        (a--)--;
+
+        EXPECT_TRUE(a == expect);
+    }
+
+    {
+        Huge<byte> a = { 0x45, 0x38, 0x17 };
+        Huge<byte> b;
+        Huge<byte> expect1 = { 0x45, 0x38, 0x17 };
+        Huge<byte> expect2 = { 0x45, 0x38, 0x16 };
+
+        b = a--;
+
+        EXPECT_TRUE(b == expect1);
+        EXPECT_TRUE(a == expect2);
+
+    }
 }
 
 TEST(HugeTest, LogicalOR)
@@ -235,7 +264,36 @@ TEST(HugeTest, AdditionAssigment)
 
 TEST(HugeTest, Increment)
 {
-    FAIL();
+    {
+        Huge<byte> a      = { 0x01, 0x02, 0x03 };
+        Huge<byte> expect = { 0x01, 0x02, 0x04 };
+
+        a++;
+
+        EXPECT_TRUE(a == expect);
+    }
+
+    {
+        Huge<byte> a      = { 0x01, 0x02, 0x03 };
+        Huge<byte> expect = { 0x01, 0x02, 0x05 };
+
+        (a++)++;
+
+        EXPECT_TRUE(a == expect);
+    }
+
+    {
+        Huge<byte> a = { 0x45, 0x38, 0x17 };
+        Huge<byte> b;
+        Huge<byte> expect1 = { 0x45, 0x38, 0x17 };
+        Huge<byte> expect2 = { 0x45, 0x38, 0x18 };
+
+        b = a++;
+
+        EXPECT_TRUE(b == expect1);
+        EXPECT_TRUE(a == expect2);
+
+    }
 }
 
 TEST(HugeTest, Subtraction)
