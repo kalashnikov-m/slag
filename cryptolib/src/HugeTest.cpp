@@ -464,8 +464,11 @@ TEST(HugeTest, LessEqual)
     }
 
     {
-        Huge<byte> a = { 0x38, 0x22, 0x12 };
-        Huge<byte> b = { 0x22, 0x12 };
+        std::initializer_list<byte> il1 = { 0x38, 0x22, 0x12 };
+        std::initializer_list<byte> il2 = { 0x22, 0x12 };
+
+        Huge<byte>                  a(il1);
+        Huge<byte>                  b(il2, true);
 
         EXPECT_FALSE(a <= b);
     }
@@ -494,6 +497,16 @@ TEST(HugeTest, LessEqual)
     {
         Huge<byte> a = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c };
         Huge<byte> b = { 0x01, 0x02, 0x03, 0x05, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c };
+
+        EXPECT_TRUE(a <= b);
+    }
+
+    {
+        std::initializer_list<byte> il1({0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c});
+        std::initializer_list<byte> il2({0x01, 0x02, 0x03, 0x18, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c});
+
+        Huge<byte> a(il1, true);
+        Huge<byte> b(il2);
 
         EXPECT_TRUE(a <= b);
     }
@@ -634,6 +647,23 @@ TEST(HugeTest, Equal)
 
         EXPECT_FALSE(a == b);
     }
+
+    std::initializer_list<byte> il({0x01, 0x02});
+
+    {
+        Huge<byte> a(il, true);    // -258
+        Huge<byte> b(il, true);    // -258
+
+        EXPECT_TRUE(a == b);
+    }
+
+    {
+        Huge<byte> a(il, false);    // 258
+        Huge<byte> b(il, true);     // -258
+
+        EXPECT_FALSE(a == b);
+    }
+
 }
 
 TEST(HugeTest, Inequality)

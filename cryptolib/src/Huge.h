@@ -62,18 +62,6 @@ class Huge
 
         Huge operator >>(int);
 
-        bool operator <(const Huge&);
-
-        bool operator >(const Huge&);
-
-        bool operator <=(const Huge&);
-
-        bool operator >=(const Huge&);
-
-        bool operator ==(const Huge&);
-
-        bool operator !=(const Huge&);
-
         Huge& operator <<= (int nbits)
         {
             *this = *this << nbits;
@@ -263,7 +251,8 @@ class Huge
             std::swap(m_Negative, other.m_Negative);
         }
 
-        short __compare(const Huge& lhs, const Huge& rhs);
+        template<class X>
+        friend short compare(const Huge<X>& lhs, const Huge<X>& rhs);
 
     private:
 
@@ -273,7 +262,7 @@ class Huge
 
 
 template<class T>
-short Huge<T>::__compare(const Huge<T>& lhs, const Huge<T>& rhs)
+short compare(const Huge<T>& lhs, const Huge<T>& rhs)
 {
     short cmp = HUGE_Compare(&(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
 
@@ -320,55 +309,50 @@ Huge<T> Huge<T>::operator >>(int nbits)
     return temp;
 }
 
-template<class T>
-bool Huge<T>::operator <(const Huge<T>& rhs)
+template<class X>
+bool operator <(const Huge<X>& lhs, const Huge<X>& rhs)
 {
-    short cmp = __compare(*this, rhs);
+    short cmp = compare(lhs, rhs);
 
     return (cmp == -1);
 }
 
 template<class T>
-bool Huge<T>::operator >(const Huge<T>& rhs)
+bool operator >(const Huge<T>& lhs, const Huge<T>& rhs)
 {
-    short cmp = __compare(*this, rhs);
+    short cmp = compare(lhs, rhs);
 
     return (cmp == 1);
 }
 
 template<class T>
-bool Huge<T>::operator ==(const Huge<T>& rhs)
+bool operator ==(const Huge<T>& lhs, const Huge<T>& rhs)
 {
-    if (m_Negative != rhs.m_Negative)
-    {
-        return false;
-    }
-
-    short cmp = __compare(*this, rhs);
+    short cmp = compare(lhs, rhs);
 
     return (cmp == 0);
 }
 
 template<class T>
-bool Huge<T>::operator <=(const Huge<T>& rhs)
+bool operator <=(const Huge<T>& lhs, const Huge<T>& rhs)
 {
-    short cmp = __compare(*this, rhs);
+    short cmp = compare(lhs, rhs);
 
     return ((cmp == -1) || (cmp == 0));
 }
 
 template<class T>
-bool Huge<T>::operator >=(const Huge<T>& rhs)
+bool operator >=(const Huge<T>& lhs, const Huge<T>& rhs)
 {
-    short cmp = __compare(*this, rhs);
+    short cmp = compare(lhs, rhs);
 
     return ((cmp == 1) || (cmp == 0));
 }
 
 template<class T>
-bool Huge<T>::operator !=(const Huge<T>& rhs)
+bool operator !=(const Huge<T>& lhs, const Huge<T>& rhs)
 {
-    short cmp = __compare(*this, rhs);
+    short cmp = compare(lhs, rhs);
 
     return (cmp != 0);
 }
