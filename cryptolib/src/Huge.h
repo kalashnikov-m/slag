@@ -62,14 +62,14 @@ class Huge
 
         Huge operator >>(int);
 
-        Huge& operator <<= (int nbits)
+        Huge& operator <<= (int nbits);
         {
             *this = *this << nbits;
 
             return *this;
         }
 
-        Huge& operator >>= (int nbits)
+        Huge& operator >>= (int nbits);
         {
             *this = *this >> nbits;
 
@@ -108,12 +108,18 @@ class Huge
             return temp;
         }
 
-        Huge& operator += (const Huge&)
-        {    /* TODO */
+        Huge& operator += (const Huge& rhs)
+        {
+            *this = *this + rhs;
+
+            return *this;
         }
 
-        Huge& operator -= (const Huge&)
-        {    /* TODO */
+        Huge& operator -= (const Huge& rhs)
+        {
+            *this = *this - rhs;
+
+            return *this;
         }
 
         Huge& operator +()
@@ -229,19 +235,19 @@ class Huge
         }
 
         template<class X>
-        friend Huge operator +(const Huge&, const Huge&);
+        friend Huge<X> operator +(const Huge<X>&, const Huge<X>&);
 
         template<class X>
-        friend Huge operator -(const Huge&, const Huge&);
+        friend Huge<X> operator -(const Huge<X>&, const Huge<X>&);
 
         template<class X>
-        friend Huge operator *(const Huge&, const Huge&);
+        friend Huge<X> operator *(const Huge<X>&, const Huge<X>&);
 
         template<class X>
-        friend Huge operator /(const Huge&, const Huge&);
+        friend Huge<X> operator /(const Huge<X>&, const Huge<X>&);
 
         template<class X>
-        friend Huge operator %(const Huge&, const Huge&);
+        friend Huge<X> operator %(const Huge<X>&, const Huge<X>&);
 
     protected:
         void __swap(Huge& other) throw ()
@@ -300,6 +306,14 @@ Huge<T> Huge<T>::operator <<(int nbits)
 }
 
 template<class T>
+Huge<T>& Huge<T>::operator <<= (int nbits)
+{
+    HUGE_ShiftLeft(&(*std::begin(m_Buffer)), &(*std::end(m_Buffer)), nbits);
+
+    return *this;
+}
+
+template<class T>
 Huge<T> Huge<T>::operator >>(int nbits)
 {
     Huge<T> temp(*this);
@@ -307,6 +321,14 @@ Huge<T> Huge<T>::operator >>(int nbits)
     HUGE_ShiftRight(&(*std::begin(temp.m_Buffer)), &(*std::end(temp.m_Buffer)), nbits);
 
     return temp;
+}
+
+template<class T>
+Huge<T>& Huge<T>::operator >>= (int nbits)
+{
+    HUGE_ShiftRight(&(*std::begin(m_Buffer)), &(*std::end(m_Buffer)), nbits);
+
+    return *this;
 }
 
 template<class X>
@@ -358,14 +380,91 @@ bool operator !=(const Huge<T>& lhs, const Huge<T>& rhs)
 }
 
 template<class X>
-Huge<X> operator +(const Huge<X>&, const Huge<X>&)
+Huge<X> operator +(const Huge<X>& lhs, const Huge<X>& rhs)
 {
+    // если знаки аргументов различны: (a)+(-b), (-a)+(b) ==> ?(a-b)
+    if (lhs.m_Negative ^ rhs.m_Negative)
+    {
+        short cmp = HUGE_Compare(&(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
+
+        if (cmp == -1)
+        {    // (|a| < |b|) ==> (|b| - |a|)
+            Huge<X> temp(rhs);
+
+            HUGE_Subtract(&(*std::end(temp.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)), &(*std::begin(lhs.m_Buffer)),
+                          &(*std::end(lhs.m_Buffer)));
+
+            return temp;
+        }
+        else if (cmp == +1)
+        {
+            // (|a| > |b|) ==> (|a| - |b|)
+            Huge<X> temp(lhs);
+
+            HUGE_Subtract(&(*std::end(temp.m_Buffer)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)),
+                          &(*std::end(rhs.m_Buffer)));
+
+            return temp;
+        }
+    }
+    else
+    {    // если знаки аргументов одинаковы
+        Huge<X> temp(std::max(lhs, rhs));
+
+        HUGE_Add(&(*std::end(temp.m_Buffer)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)),
+                 &(*std::end(rhs.m_Buffer)));
+
+        temp.m_Negative = lhs.m_Negative & rhs.m_Negative;
+
+        return temp;
+    }
+
     return Huge<X>();
 }
 
 template<class X>
-Huge<X> operator -(const Huge<X>&, const Huge<X>&)
+Huge<X> operator -(const Huge<X>& lhs, const Huge<X>& rhs)
 {
+    short cmp = HUGE_Compare(&(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
+
+    // если знаки аргументов различны: (a)-(-b), (-a)-(b) ==> ?(a+b)
+    if (lhs.m_Negative ^ rhs.m_Negative)
+    {
+        Huge<X> temp((cmp == -1) ? rhs : lhs);
+
+        HUGE_Add(&(*std::end(temp.m_Buffer)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)),
+                 &(*std::end(rhs.m_Buffer)));
+
+        temp.m_Negative = lhs.m_Negative;
+
+        return temp;
+    }
+
+    // если знаки аргументов одинаковы:
+    if (cmp == -1)
+    {    // (|a| < |b|) ==> (|b| - |a|)
+        Huge<X> temp(rhs);
+
+        HUGE_Subtract(&(*std::end(temp.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)), &(*std::begin(lhs.m_Buffer)),
+                      &(*std::end(lhs.m_Buffer)));
+
+        temp.m_Negative = (!lhs.m_Negative & !rhs.m_Negative);
+
+        return temp;
+    }
+    else if (cmp == +1)
+    {
+        // (|a| > |b|) ==> (|a| - |b|)
+        Huge<X> temp(lhs);
+
+        HUGE_Subtract(&(*std::end(temp.m_Buffer)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)),
+                      &(*std::end(rhs.m_Buffer)));
+
+        temp.m_Negative = (lhs.m_Negative & rhs.m_Negative);
+
+        return temp;
+    }
+
     return Huge<X>();
 }
 

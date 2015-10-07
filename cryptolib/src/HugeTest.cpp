@@ -254,12 +254,62 @@ TEST(HugeTest, BitwiseInverse)
 
 TEST(HugeTest, Addition)
 {
-    FAIL();
+    {
+        Huge<byte> a      = { 0x01, 0x02, 0x03 };
+        Huge<byte> b      = { 0x17, 0x20, 0x11 };
+
+        Huge<byte> expect = { 0x18, 0x22, 0x14 };
+
+        auto c = a + b;
+
+        EXPECT_TRUE(c == expect);
+    }
+
+    {
+        Huge<byte> a      = { 0x01, 0x02, 0x03 };
+        Huge<byte> b      = { 0x17, 0x20, 0x11 };
+
+        Huge<byte> expect = { 0x16, 0x1e, 0x0e };
+
+        auto c = a + (-b);
+
+        EXPECT_TRUE(c == -expect);
+    }
+
+    {
+        Huge<byte> a      = { 0x01, 0x02, 0x03 };
+        Huge<byte> b      = { 0x17, 0x20, 0x11 };
+
+        Huge<byte> expect = { 0x18, 0x22, 0x14 };
+
+        auto c = -a + (-b);
+
+        EXPECT_TRUE(c == -expect);
+    }
+
+    {
+        Huge<byte> a      = { 0x01, 0x02, 0x03 };
+        Huge<byte> b      = { 0x17, 0x20, 0x11 };
+
+        Huge<byte> expect = { 0x16, 0x1e, 0x0e };
+
+        auto c = -a + (b);
+
+        EXPECT_TRUE(c == expect);
+    }
 }
 
 TEST(HugeTest, AdditionAssigment)
 {
-    FAIL();
+    {
+        Huge<byte> a      = { 0x01, 0x02, 0x03 };
+        Huge<byte> b      = { 0x11, 0x27, 0x0a };
+        Huge<byte> expect = { 0x12, 0x29, 0x0d };
+
+        a += b;
+
+        EXPECT_TRUE(a == expect);
+    }
 }
 
 TEST(HugeTest, Increment)
@@ -298,12 +348,143 @@ TEST(HugeTest, Increment)
 
 TEST(HugeTest, Subtraction)
 {
-    FAIL();
+    {    // (-a)-(b), |a|>|b|
+        std::initializer_list<byte> il1 = { 0x38, 0x22, 0x12 };
+        std::initializer_list<byte> il2 = { 0x22, 0x12 };
+        std::initializer_list<byte> il3 = { 0x38, 0x44, 0x24 };
+
+        Huge<byte>                  a(il1, true);
+        Huge<byte>                  b(il2);
+        Huge<byte>                  expected(il3, true);
+
+        auto c = a - b;
+
+        EXPECT_TRUE(c == expected);
+    }
+
+    {    // (a)-(-b), |a|>|b|
+        std::initializer_list<byte> il1 = { 0x38, 0x22, 0x12 };
+        std::initializer_list<byte> il2 = { 0x17, 0x11, 0x99 };
+        std::initializer_list<byte> il3 = { 0x4f, 0x33, 0xab };
+
+        Huge<byte>                  a(il1);
+        Huge<byte>                  b(il2, true);
+
+        Huge<byte>                  expected(il3);
+
+        auto c = a - b;
+
+        EXPECT_TRUE(c == expected);
+    }
+
+    {    // (-a)-(b), |a|<|b|
+        std::initializer_list<byte> il1 = { 0x22, 0x12 };
+        std::initializer_list<byte> il2 = { 0x38, 0x22, 0x12 };
+        std::initializer_list<byte> il3 = { 0x38, 0x44, 0x24 };
+
+        Huge<byte>                  a(il1, true);
+        Huge<byte>                  b(il2);
+        Huge<byte>                  expected(il3, true);
+
+        auto c = a - b;
+
+        EXPECT_TRUE(c == expected);
+    }
+
+    {    // (a)-(-b), |a|<|b|
+        std::initializer_list<byte> il1 = { 0x17, 0x11, 0x99 };
+        std::initializer_list<byte> il2 = { 0x38, 0x22, 0x12 };
+        std::initializer_list<byte> il3 = { 0x4f, 0x33, 0xab };
+
+        Huge<byte>                  a(il1);
+        Huge<byte>                  b(il2, true);
+
+        Huge<byte>                  expected(il3);
+
+        auto c = a - b;
+
+        EXPECT_TRUE(c == expected);
+    }
+
+    // =========================================================
+
+    {    // (-a)-(-b), |a|<|b|
+        std::initializer_list<byte> il1 = { 0x17, 0x22, 0x12 };
+        std::initializer_list<byte> il2 = { 0x28, 0x11, 0x99 };
+        std::initializer_list<byte> il3 = { 0x10, 0xef, 0x87 };
+
+        Huge<byte>                  a(il1, true);
+        Huge<byte>                  b(il2, true);
+
+        Huge<byte>                  expected(il3);
+
+        auto c = a - b;
+
+        EXPECT_TRUE(c == expected);
+    }
+
+    {    // (a)-(b), |a|<|b|
+        std::initializer_list<byte> il1 = { 0x17, 0x22, 0x12 };
+        std::initializer_list<byte> il2 = { 0x28, 0x11, 0x99 };
+        std::initializer_list<byte> il3 = { 0x10, 0xef, 0x87 };
+
+        Huge<byte>                  a(il1);
+        Huge<byte>                  b(il2);
+
+        Huge<byte>                  expected(il3, true);
+
+        auto c = a - b;
+
+        EXPECT_TRUE(c == expected);
+    }
+
+    {    // (-a)-(-b), |a|>|b|
+        std::initializer_list<byte> il1 = { 0x28, 0x11, 0x99 };
+        std::initializer_list<byte> il2 = { 0x17, 0x22, 0x12 };
+        std::initializer_list<byte> il3 = { 0x10, 0xef, 0x87 };
+
+        Huge<byte>                  a(il1, true);
+        Huge<byte>                  b(il2, true);
+
+        Huge<byte>                  expected(il3, true);
+
+        auto c = a - b;
+
+        EXPECT_TRUE(c == expected);
+    }
+
+    {    // (a)-(b), |a|>|b|
+        std::initializer_list<byte> il1 = { 0x28, 0x11, 0x99 };
+        std::initializer_list<byte> il2 = { 0x17, 0x22, 0x12 };
+        std::initializer_list<byte> il3 = { 0x10, 0xef, 0x87 };
+
+        Huge<byte>                  a(il1);
+        Huge<byte>                  b(il2);
+
+        Huge<byte>                  expected(il3);
+
+        auto c = a - b;
+
+        EXPECT_TRUE(c == expected);
+    }
 }
 
 TEST(HugeTest, SubtractionAssigment)
 {
-    FAIL();
+    {    // (a)-(b), |a|>|b|
+        std::initializer_list<byte> il1 = { 0x0a };
+        std::initializer_list<byte> il2 = { 0x06 };
+        std::initializer_list<byte> il3 = { 0x04 };
+
+        Huge<byte>                  a(il1);
+        Huge<byte>                  b(il2);
+
+        Huge<byte>                  expected(il3);
+
+        a -= b;
+
+        EXPECT_TRUE(a == expected);
+    }
 }
 
 TEST(HugeTest, Multiplication)
@@ -502,11 +683,11 @@ TEST(HugeTest, LessEqual)
     }
 
     {
-        std::initializer_list<byte> il1({0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c});
-        std::initializer_list<byte> il2({0x01, 0x02, 0x03, 0x18, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c});
+        std::initializer_list<byte> il1 = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c };
+        std::initializer_list<byte> il2 = { 0x01, 0x02, 0x03, 0x18, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c };
 
-        Huge<byte> a(il1, true);
-        Huge<byte> b(il2);
+        Huge<byte>                  a(il1, true);
+        Huge<byte>                  b(il2);
 
         EXPECT_TRUE(a <= b);
     }
@@ -648,7 +829,7 @@ TEST(HugeTest, Equal)
         EXPECT_FALSE(a == b);
     }
 
-    std::initializer_list<byte> il({0x01, 0x02});
+    std::initializer_list<byte> il = { 0x01, 0x02 };
 
     {
         Huge<byte> a(il, true);    // -258
