@@ -63,18 +63,8 @@ class Huge
         Huge operator >>(int);
 
         Huge& operator <<= (int nbits);
-        {
-            *this = *this << nbits;
-
-            return *this;
-        }
 
         Huge& operator >>= (int nbits);
-        {
-            *this = *this >> nbits;
-
-            return *this;
-        }
 
         Huge& operator ++()
         {
