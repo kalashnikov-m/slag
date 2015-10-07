@@ -381,8 +381,7 @@ Huge<X> operator +(const Huge<X>& lhs, const Huge<X>& rhs)
         {    // (|a| < |b|) ==> (|b| - |a|)
             Huge<X> temp(rhs);
 
-            HUGE_Subtract(&(*std::end(temp.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)), &(*std::begin(lhs.m_Buffer)),
-                          &(*std::end(lhs.m_Buffer)));
+            HUGE_Subtract(&(*std::end(temp.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)));
 
             return temp;
         }
@@ -391,8 +390,7 @@ Huge<X> operator +(const Huge<X>& lhs, const Huge<X>& rhs)
             // (|a| > |b|) ==> (|a| - |b|)
             Huge<X> temp(lhs);
 
-            HUGE_Subtract(&(*std::end(temp.m_Buffer)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)),
-                          &(*std::end(rhs.m_Buffer)));
+            HUGE_Subtract(&(*std::end(temp.m_Buffer)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
 
             return temp;
         }
@@ -401,8 +399,7 @@ Huge<X> operator +(const Huge<X>& lhs, const Huge<X>& rhs)
     {    // если знаки аргументов одинаковы
         Huge<X> temp(std::max(lhs, rhs));
 
-        HUGE_Add(&(*std::end(temp.m_Buffer)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)),
-                 &(*std::end(rhs.m_Buffer)));
+        HUGE_Add(&(*std::end(temp.m_Buffer)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
 
         temp.m_Negative = lhs.m_Negative & rhs.m_Negative;
 
@@ -422,8 +419,7 @@ Huge<X> operator -(const Huge<X>& lhs, const Huge<X>& rhs)
     {
         Huge<X> temp((cmp == -1) ? rhs : lhs);
 
-        HUGE_Add(&(*std::end(temp.m_Buffer)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)),
-                 &(*std::end(rhs.m_Buffer)));
+        HUGE_Add(&(*std::end(temp.m_Buffer)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
 
         temp.m_Negative = lhs.m_Negative;
 
@@ -435,8 +431,7 @@ Huge<X> operator -(const Huge<X>& lhs, const Huge<X>& rhs)
     {    // (|a| < |b|) ==> (|b| - |a|)
         Huge<X> temp(rhs);
 
-        HUGE_Subtract(&(*std::end(temp.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)), &(*std::begin(lhs.m_Buffer)),
-                      &(*std::end(lhs.m_Buffer)));
+        HUGE_Subtract(&(*std::end(temp.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)));
 
         temp.m_Negative = (!lhs.m_Negative & !rhs.m_Negative);
 
@@ -447,8 +442,7 @@ Huge<X> operator -(const Huge<X>& lhs, const Huge<X>& rhs)
         // (|a| > |b|) ==> (|a| - |b|)
         Huge<X> temp(lhs);
 
-        HUGE_Subtract(&(*std::end(temp.m_Buffer)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)),
-                      &(*std::end(rhs.m_Buffer)));
+        HUGE_Subtract(&(*std::end(temp.m_Buffer)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
 
         temp.m_Negative = (lhs.m_Negative & rhs.m_Negative);
 

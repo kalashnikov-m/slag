@@ -16,8 +16,7 @@ void HUGE_Subtract(byte* result, const byte* first1, const byte* last1, const by
 
 void HUGE_Multiply(byte* first_result, byte* last_result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
-void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_last, const byte* first1, const byte* last1, const byte* first2,
-                 const byte* last2);
+void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_last, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
 void HUGE_Increment(byte* first1, byte* last1);
 
