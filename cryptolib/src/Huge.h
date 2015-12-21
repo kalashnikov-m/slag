@@ -57,6 +57,12 @@ class Huge
 
             return *this;
         }
+        
+        operator bool() const
+        {
+    	    bool flag = HUGE_IsZero(&(*std::begin(m_Buffer)), &(*std::end(m_Buffer)));
+    	    return !flag;
+        }
 
         Huge operator <<(int);
 
