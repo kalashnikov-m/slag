@@ -328,6 +328,29 @@ Huge<T>& Huge<T>::operator >>= (int nbits)
 }
 
 template<class X>
+bool operator &&(const Huge<X>& lhs, const Huge<X>& rhs)
+{
+    bool f1 = lhs;
+    bool f2 = rhs;
+    return (f1 && f2);
+}
+
+template<class X>
+bool operator ||(const Huge<X>& lhs, const Huge<X>& rhs)
+{
+    bool f1 = lhs;
+    bool f2 = rhs;
+    return (f1 || f2);
+}
+
+template<class X>
+bool operator !(const Huge<X>& h)
+{
+    bool f = h;
+    return !f;
+}
+
+template<class X>
 bool operator <(const Huge<X>& lhs, const Huge<X>& rhs)
 {
     short cmp = compare(lhs, rhs);

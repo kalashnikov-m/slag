@@ -15,7 +15,17 @@ class HugeTest:
 
 TEST(HugeTest, LogicalNOT)
 {
-    FAIL();
+    {
+        Huge<byte> a = { 0x01, 0x02, 0x03 };
+
+        EXPECT_FALSE(!a);
+    }
+
+    {
+        Huge<byte> a = { 0x00, 0x00, 0x00 };
+
+        EXPECT_TRUE(!a);
+    }
 }
 
 TEST(HugeTest, Modulus)
@@ -71,7 +81,26 @@ TEST(HugeTest, BitwiseANDassignment)
 
 TEST(HugeTest, LogicalAND)
 {
-    FAIL();
+    {
+        Huge<byte> a = { 0x01, 0x02, 0x03 };
+        Huge<byte> b = { 0x01, 0x02, 0x03 };
+
+        EXPECT_TRUE(a && b);
+    }
+
+    {
+        Huge<byte> a = { 0x00, 0x00, 0x00 };
+        Huge<byte> b = { 0x01, 0x02, 0x03 };
+
+        EXPECT_FALSE(a && b);
+    }
+    
+    {
+        Huge<byte> a = { 0x00, 0x00, 0x00 };
+        Huge<byte> b = { 0x00, 0x00, 0x00 };
+
+        EXPECT_FALSE(a && b);
+    }
 }
 
 TEST(HugeTest, UnaryPlus)
@@ -148,7 +177,26 @@ TEST(HugeTest, Decrement)
 
 TEST(HugeTest, LogicalOR)
 {
-    FAIL();
+    {
+        Huge<byte> a = { 0x01, 0x02, 0x03 };
+        Huge<byte> b = { 0x01, 0x02, 0x03 };
+
+        EXPECT_TRUE(a || b);
+    }
+
+    {
+        Huge<byte> a = { 0x00, 0x00, 0x00 };
+        Huge<byte> b = { 0x01, 0x02, 0x03 };
+
+        EXPECT_TRUE(a || b);
+    }
+    
+    {
+        Huge<byte> a = { 0x00, 0x00, 0x00 };
+        Huge<byte> b = { 0x00, 0x00, 0x00 };
+
+        EXPECT_FALSE(a || b);
+    }
 }
 
 TEST(HugeTest, BitwiseORassignment)
