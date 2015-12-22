@@ -128,18 +128,6 @@ class Huge
             return Huge(m_Buffer, !m_Negative);
         }
 
-        Huge operator !()
-        {    /* TODO */
-        }
-
-        Huge operator &&(const Huge&)
-        {    /* TODO */
-        }
-
-        Huge operator ||(const Huge&)
-        {    /* TODO */
-        }
-
         Huge operator ~()
         {
             Huge temp(*this);
