@@ -72,7 +72,7 @@ void HUGE_Subtract(byte* result, const byte* first1, const byte* last1, const by
 
 void HUGE_Multiply(byte* first_result, byte* last_result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
-    byte a[BUF_SIZE] = { 0x00 };
+    /*byte a[BUF_SIZE] = { 0x00 };
     byte b[BUF_SIZE] = { 0x00 };
 
     std::copy_backward(first1, last1, std::end(a));
@@ -87,11 +87,36 @@ void HUGE_Multiply(byte* first_result, byte* last_result, const byte* first1, co
 
         HUGE_ShiftLeft(std::begin(a), std::end(a));
         HUGE_ShiftRight(std::begin(b), std::end(b));
+    }*/
+}
+
+    --last1;
+    --last2;
+
+    byte carry       = 0x00;
+    byte *resultIter = nullptr;
+
+    for (; first1 <= last1; --last1) {
+        --last_result;
+        resultIter         = last_result;
+        const byte *last_2 = last2;
+
+        for (; first2 <= last_2; --last_2) {
+            unsigned short temp = 0x0000;
+
+            temp = (*resultIter) + (*last_2) * (*last1) + carry;
+
+            carry = temp / 256;
+
+            *(resultIter) = temp % 256;
+            --resultIter;
+        }
+
+        *(resultIter) = carry;
     }
 }
 
-static void ushort2bytes(byte* result, unsigned short x)
-{
+static void ushort2bytes(byte *result, unsigned short x) {
     *(--result) = x & 0xff;
     *(--result) = (x >> 8) & 0xff;
 }
