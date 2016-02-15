@@ -72,24 +72,6 @@ void HUGE_Subtract(byte* result, const byte* first1, const byte* last1, const by
 
 void HUGE_Multiply(byte* first_result, byte* last_result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
-    /*byte a[BUF_SIZE] = { 0x00 };
-    byte b[BUF_SIZE] = { 0x00 };
-
-    std::copy_backward(first1, last1, std::end(a));
-    std::copy_backward(first2, last2, std::end(b));
-
-    while (!HUGE_IsZero(std::begin(b), std::end(b)))
-    {
-        if (HUGE_GetLowestSetBit(std::begin(b), std::end(b)) == 0x01)
-        {
-            HUGE_Add(last_result, first_result, last_result, std::begin(a), std::end(a));
-        }
-
-        HUGE_ShiftLeft(std::begin(a), std::end(a));
-        HUGE_ShiftRight(std::begin(b), std::end(b));
-    }*/
-}
-
     --last1;
     --last2;
 
