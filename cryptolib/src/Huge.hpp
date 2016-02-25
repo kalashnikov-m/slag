@@ -1,10 +1,11 @@
 
-#ifndef HUGE_H
-#define HUGE_H
+#ifndef HUGE_HPP
+#define HUGE_HPP
 
 #include <vector>
 #include <algorithm>
 #include <iterator>
+#include <initializer_list>
 
 #include "HugeCore.h"
 

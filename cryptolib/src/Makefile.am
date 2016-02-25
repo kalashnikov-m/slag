@@ -1,22 +1,19 @@
-bin_PROGRAMS = huge_main
+bin_PROGRAMS = hugeTests
 
-AM_CPPFLAGS = -I../include 
+AM_CXXFLAGS = -I../include -std=c++14
 
-huge_main_SOURCES = main.cpp
-huge_main_LDADD = libhugecore.la \
+hugeTests_SOURCES = main.cpp
+hugeTests_LDADD = libtests.la \
+	libhuge.la \
 	libgtest.a \
 	libgtest_main.a \
 	-lpthread
 
-huge_main_CXXFLAGS = -std=c++11
+lib_LTLIBRARIES = libhuge.la libtests.la
+
+libhuge_la_SOURCES = HugeCore.cpp Huge.hpp
+libhuge_la_LDFLAGS = -shared
 
 
-
-lib_LTLIBRARIES = libhugecore.la
-
-libhugecore_la_SOURCES = HugeCore.cpp \
-	HugeCoreTest.cpp \
-	HugeTest.cpp
-	
-libhugecore_la_LDFLAGS = -shared
-libhugecore_la_CXXFLAGS = -std=c++11
+libtests_la_SOURCES = HugeCoreTest.cpp HugeTest.cpp
+libtests_la_LDFLAGS = -shared
