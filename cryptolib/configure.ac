@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([huge], [0.1], [fgsdgds])
+AC_INIT([huge], [0.1], [maxim_1981@inbox.ru])
 AC_CONFIG_SRCDIR([src/main.cpp])
 
 AM_INIT_AUTOMAKE
