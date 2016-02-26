@@ -98,6 +98,26 @@ void HUGE_Multiply(byte* first_result, byte* last_result, const byte* first1, co
     }
 }
 
+void HUGE_Multiply(byte* first_result, byte* last_result, const byte* first1, const byte* last1, byte x)
+{
+    --last1;
+    --last_result;
+    
+    uint16_t temp = 0;
+    uint8_t carry = 0x00;
+    
+    for(; first1 <= last1; --last1)
+    {
+	temp = (*last1) * x + carry;
+	
+	carry = temp / 256;
+	*(last_result) = temp % 256; //printf("%02x ", *last_result);
+	--last_result;
+    }
+    
+    *last_result = carry;
+}
+
 static void ushort2bytes(byte *result, unsigned short x) {
     *(--result) = x & 0xff;
     *(--result) = (x >> 8) & 0xff;
