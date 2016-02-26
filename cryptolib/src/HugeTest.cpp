@@ -7,8 +7,8 @@
 
 using namespace std;
 
-class HugeTest:
-    public ::testing::Test
+class HugeTest
+        : public ::testing::Test
 {
 };
 
@@ -94,7 +94,7 @@ TEST(HugeTest, LogicalAND)
 
         EXPECT_FALSE(a && b);
     }
-    
+
     {
         Huge<byte> a = { 0x00, 0x00, 0x00 };
         Huge<byte> b = { 0x00, 0x00, 0x00 };
@@ -190,7 +190,7 @@ TEST(HugeTest, LogicalOR)
 
         EXPECT_TRUE(a || b);
     }
-    
+
     {
         Huge<byte> a = { 0x00, 0x00, 0x00 };
         Huge<byte> b = { 0x00, 0x00, 0x00 };
@@ -945,15 +945,17 @@ TEST(HugeTest, BOOL)
 {
     {
         Huge<byte> a = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c };
-        
-        bool f = a;
+
+        bool       f = a;
+
         EXPECT_TRUE(f);
     }
-    
+
     {
-	Huge<byte> a = { 0x00, 0x00, 0x00 };
-        
-        bool f = a;
+        Huge<byte> a = { 0x00, 0x00, 0x00 };
+
+        bool       f = a;
+
         EXPECT_FALSE(f);
     }
 }

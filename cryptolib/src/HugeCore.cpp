@@ -75,22 +75,27 @@ void HUGE_Multiply(byte* first_result, byte* last_result, const byte* first1, co
     --last1;
     --last2;
 
-    byte carry       = 0x00;
-    byte *resultIter = nullptr;
+    byte  carry      = 0x00;
+    byte* resultIter = nullptr;
 
-    for (; first1 <= last1; --last1) {
+    for (; first1 <= last1; --last1)
+    {
         --last_result;
-        resultIter         = last_result;
-        const byte *last_2 = last2;
 
-        for (; first2 <= last_2; --last_2) {
+        resultIter = last_result;
+
+        const byte* last_2 = last2;
+
+        for (; first2 <= last_2; --last_2)
+        {
             unsigned short temp = 0x0000;
 
-            temp = (*resultIter) + (*last_2) * (*last1) + carry;
+            temp          = (*resultIter) + (*last_2) * (*last1) + carry;
 
-            carry = temp / 256;
+            carry         = temp / 256;
 
             *(resultIter) = temp % 256;
+
             --resultIter;
         }
 
@@ -102,23 +107,25 @@ void HUGE_Multiply(byte* first_result, byte* last_result, const byte* first1, co
 {
     --last1;
     --last_result;
-    
-    uint16_t temp = 0;
-    uint8_t carry = 0x00;
-    
-    for(; first1 <= last1; --last1)
+
+    uint16_t temp  = 0;
+    uint8_t  carry = 0x00;
+
+    for (; first1 <= last1; --last1)
     {
-	temp = (*last1) * x + carry;
-	
-	carry = temp / 256;
-	*(last_result) = temp % 256; //printf("%02x ", *last_result);
-	--last_result;
+        temp           = (*last1) * x + carry;
+
+        carry          = temp / 256;
+        *(last_result) = temp % 256;
+
+        --last_result;
     }
-    
+
     *last_result = carry;
 }
 
-static void ushort2bytes(byte *result, unsigned short x) {
+static void ushort2bytes(byte* result, unsigned short x)
+{
     *(--result) = x & 0xff;
     *(--result) = (x >> 8) & 0xff;
 }

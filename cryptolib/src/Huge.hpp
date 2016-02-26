@@ -18,8 +18,8 @@ class Huge
 {
     public:
 
-        Huge():
-            m_Negative(false)
+        Huge()
+                : m_Negative(false)
         {
         }
 
@@ -27,23 +27,20 @@ class Huge
         {
         }
 
-        Huge(const Huge& other):
-            m_Buffer(other.m_Buffer),
-            m_Negative(other.m_Negative)
+        Huge(const Huge& other)
+                : m_Buffer(other.m_Buffer), m_Negative(other.m_Negative)
         {
         }
 
         // HugeInt(HugeInt&& other);
 
-        Huge(const std::initializer_list<T>& il, bool negative = false):
-            m_Buffer(il),
-            m_Negative(negative)
+        Huge(const std::initializer_list<T>& il, bool negative = false)
+                : m_Buffer(il), m_Negative(negative)
         {
         }
 
-        Huge(const std::vector<T>& iv, bool negative = false):
-            m_Buffer(iv),
-            m_Negative(negative)
+        Huge(const std::vector<T>& iv, bool negative = false)
+                : m_Buffer(iv), m_Negative(negative)
         {
         }
 
@@ -58,11 +55,12 @@ class Huge
 
             return *this;
         }
-        
+
         operator bool() const
         {
-    	    bool flag = HUGE_IsZero(&(*std::begin(m_Buffer)), &(*std::end(m_Buffer)));
-    	    return !flag;
+            bool flag = HUGE_IsZero(&(*std::begin(m_Buffer)), &(*std::end(m_Buffer)));
+
+            return !flag;
         }
 
         Huge operator <<(int);
@@ -321,6 +319,7 @@ bool operator &&(const Huge<X>& lhs, const Huge<X>& rhs)
 {
     bool f1 = lhs;
     bool f2 = rhs;
+
     return (f1 && f2);
 }
 
@@ -329,6 +328,7 @@ bool operator ||(const Huge<X>& lhs, const Huge<X>& rhs)
 {
     bool f1 = lhs;
     bool f2 = rhs;
+
     return (f1 || f2);
 }
 
@@ -336,6 +336,7 @@ template<class X>
 bool operator !(const Huge<X>& h)
 {
     bool f = h;
+
     return !f;
 }
 

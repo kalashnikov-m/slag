@@ -20,8 +20,8 @@ static bool ASSERT_BYTES_EQ(byte* f1, byte* l1, byte* f2, byte* l2)
     return (f1 == l1) && (f2 == l2);
 }
 
-class HugeCore_Test:
-    public ::testing::Test
+class HugeCore_Test
+        : public ::testing::Test
 {
 };
 
@@ -86,45 +86,45 @@ TEST(HugeCore_Test, Addition)
 TEST(HugeCore_Test, HUGE_Multiply_1)
 {
     {
-	byte a[] = {0x12, 0x02, 0x30};
-	byte b = 0x03;
-	
-	byte expected[] = {0x36, 0x06, 0x90};
-	byte actual[3] = {0x00};
-	
-	HUGE_Multiply(begin(actual), end(actual), begin(a), end(a), b);
+        byte a[]        = { 0x12, 0x02, 0x30 };
+        byte b          = 0x03;
 
-	bool eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
+        byte expected[] = { 0x36, 0x06, 0x90 };
+        byte actual[3]  = { 0x00 };
 
-	EXPECT_TRUE(eq);
+        HUGE_Multiply(begin(actual), end(actual), begin(a), end(a), b);
+
+        bool eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
+
+        EXPECT_TRUE(eq);
     }
-    
+
     {
-	byte a[] = {0x12, 0x02, 0x30};
-	byte b = 0x11;
-	
-	byte expected[] = {0x01, 0x32, 0x25, 0x30};
-	byte actual[4] = {0x00};
-	
-	HUGE_Multiply(begin(actual), end(actual), begin(a), end(a), b);
+        byte a[]        = { 0x12, 0x02, 0x30 };
+        byte b          = 0x11;
 
-	bool eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
+        byte expected[] = { 0x01, 0x32, 0x25, 0x30 };
+        byte actual[4]  = { 0x00 };
 
-	EXPECT_TRUE(eq);
+        HUGE_Multiply(begin(actual), end(actual), begin(a), end(a), b);
+
+        bool eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
+
+        EXPECT_TRUE(eq);
     }
-    
+
     {
-	byte a[] = {0x12, 0x02, 0x30};
-	byte b = 0xfa;
-	
-	byte expected[] = {0x11, 0x96, 0x22, 0xE0};
-	byte actual[4] = {0x00};
-	
-	HUGE_Multiply(begin(actual), end(actual), begin(a), end(a), b);
+        byte a[]        = { 0x12, 0x02, 0x30 };
+        byte b          = 0xfa;
 
-	bool eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
+        byte expected[] = { 0x11, 0x96, 0x22, 0xE0 };
+        byte actual[4]  = { 0x00 };
 
-	EXPECT_TRUE(eq);
+        HUGE_Multiply(begin(actual), end(actual), begin(a), end(a), b);
+
+        bool eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
+
+        EXPECT_TRUE(eq);
     }
 }
 
