@@ -12,8 +12,8 @@ hugeTests_LDADD = libtests.la \
 lib_LTLIBRARIES = libhuge.la libtests.la
 
 libhuge_la_SOURCES = HugeCore.cpp Huge.hpp
-libhuge_la_LDFLAGS = -shared
+libhuge_la_LDFLAGS = -static
 
 
 libtests_la_SOURCES = HugeCoreTest.cpp HugeTest.cpp
-libtests_la_LDFLAGS = -shared
+libtests_la_LDFLAGS = -static
