@@ -28,6 +28,8 @@ bool HUGE_IsEven(byte* first, byte* last);
 
 bool HUGE_IsOdd(byte* first, byte* last);
 
+bool HUGE_isOne(const byte* first, const byte* last);
+
 void HUGE_Reverse(byte* first, byte* last);
 
 void HUGE_RotateLeft(byte* first, byte* last);
@@ -62,7 +64,6 @@ int HUGE_GetLowestSetBit(const byte* first, const byte* last);
 
 int HUGE_GetHighestSetBit(const byte* first, const byte* last);
 
-// TODO HUGE_isOne(), isPowerOfTwo()
+// TODO isPowerOfTwo()
 
-#endif   /* ALGORITHM_H */
-
+#endif /* ALGORITHM_H */
