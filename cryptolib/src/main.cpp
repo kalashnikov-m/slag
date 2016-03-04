@@ -6,6 +6,8 @@
  */
 
 #include "gtest/gtest.h"
+#include "HugeCoreTest.cpp"
+#include "HugeTest.cpp"
 
 using namespace std;
 
