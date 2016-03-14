@@ -88,19 +88,17 @@ void HUGE_Multiply(byte* first_result, byte* last_result, const byte* first1, co
     byte carry       = 0x00;
     byte* resultIter = nullptr;
 
-    for (; first1 <= last1; --last1)
+    for (; first2 <= last2; --last2)
     {
         --last_result;
 
         resultIter = last_result;
 
-        const byte* last_2 = last2;
-
-        for (; first2 <= last_2; --last_2)
+        for (const byte* last_1 = last1; first1 <= last_1; --last_1)
         {
-            unsigned short temp = 0x0000;
+            uint16_t temp = 0x0000;
 
-            temp = (*resultIter) + (*last_2) * (*last1) + carry;
+            temp = (*resultIter) + (*last_1) * (*last2) + carry;
 
             carry = temp / 256;
 
@@ -110,6 +108,7 @@ void HUGE_Multiply(byte* first_result, byte* last_result, const byte* first1, co
         }
 
         *(resultIter) = carry;
+        carry = 0x00;
     }
 }
 

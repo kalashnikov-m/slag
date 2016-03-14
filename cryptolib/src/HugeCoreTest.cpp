@@ -7,6 +7,16 @@
 
 using namespace std;
 
+static void dump(const byte* f, const byte* l)
+{
+    for(; f != l; ++f)
+    {
+        printf("%02x ", *f);
+    }
+    
+    printf("\n");
+}
+
 static bool ASSERT_BYTES_EQ(byte* f1, byte* l1, byte* f2, byte* l2)
 {
     bool ret = false;
@@ -165,6 +175,20 @@ TEST(HugeCore_Test, HUGE_Multiply)
     eq = ASSERT_BYTES_EQ(std::begin(expected3), std::end(expected3), std::begin(actual), std::end(actual));
 
     EXPECT_TRUE(eq);
+    
+    {
+        byte a[]        = {0x02};
+        byte b[]        = {0x00, 0x80};
+        byte expected[] = {0x00, 0x01, 0x00};
+        byte actual[8]  = {0x00};
+
+        HUGE_Multiply(begin(actual), end(actual), begin(a), end(a), begin(b), end(b));
+        //dump(begin(actual), end(actual));
+
+        bool eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
+
+        EXPECT_TRUE(eq);
+    }
 }
 
 TEST(HugeCore_Test, HUGE_Subtract)
