@@ -232,7 +232,7 @@ TEST(HugeCore_Test, HUGE_Subtract)
 TEST(HugeCore_Test, HUGE_DivRem)
 {
     byte a[]            = {0x01, 0x01, 0x07};
-    byte b[]            = {0x02, 0x02};
+    byte b[]            = {0x00, 0x02};
     byte expected_div[] = {0x00, 0x80, 0x83};
     byte expected_rem[] = {0x00, 0x00, 0x01};
     byte actual_div[8]  = {0x00};

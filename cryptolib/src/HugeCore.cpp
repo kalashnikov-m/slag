@@ -12,13 +12,12 @@ using namespace std;
 
 #define BUF_SIZE 8
 
-static void dump(const byte* b, const byte* c)
+static void dump(const byte* f, const byte* l)
 {
-    while (b != c) {
-        printf("%02x:", *b);
-        ++b;
+    for(; f != l; ++f)
+    {
+        printf("%02x ", *f);
     }
-
     printf("\n");
 }
 
@@ -152,26 +151,22 @@ void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_las
     while ((first2 != last2) && (*first2 == 0x00))
         ++first2;
 
-    // dump(first1, last1);
-    // dump(first2, last2);
     auto d1    = std::distance(first1, last1);
     auto d2    = std::distance(first2, last2);
     auto shift = d1 - d2;
     r_first    = (byte*)first1;
-    r_last     = (byte*)r_first + d2;
+    r_last     = (byte*)first1 + d2;
     d_first    = (byte*)first2;
     d_last     = (byte*)last2;
 
     std::advance(div_last, -shift);
 
-    // ret = div_last;
     while (shift > 0)
     {
-        unsigned char Down = 0x00;
-        unsigned short Up  = 0x0100;
+        uint8_t Down = 0x00;
+        uint8_t Up  = 0xFF;
+        uint8_t Middle = 0x00;
 
-        // dump("r: ", r_first, r_last);
-        // dump("d: ", d_first, d_last);
         auto cmp = HUGE_Compare(r_first, r_last, d_first, d_last);
 
         if (cmp == -1)
@@ -179,29 +174,18 @@ void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_las
             ++r_last;
         }
 
-        // dump("[r_first..r_last]: ", r_first, r_last);
-        // dump("[d_first..d_last]: ", d_first, d_last);
         for (; Down < Up - 1;)
         {
-            // dump("down: ", Down);
-            // dump("up:   ", Up);
             // 1. c <-- (down + up) / 2;
-            auto Middle = (Down + Up) >> 1;
+            Middle = ((Down + Up) / 2);
 
             // 2. mul <-- d * c;
             byte mul[BUF_SIZE] = {0x00};
-            byte middle[]      = {0x00, 0x00};
 
-            // printf("------1------\n");
-            ushort2bytes(std::end(middle), Middle);
+            HUGE_Multiply(std::begin(mul), std::end(mul), d_first, d_last, Middle);
 
-            // printf("------1.1------\n");
-            HUGE_Multiply(std::begin(mul), std::end(mul), std::begin(middle), std::end(middle), d_first, d_last);
-
-            // printf("------2------\n");
             short mulr_cmp = HUGE_Compare(std::begin(mul), std::end(mul), r_first, r_last);
 
-            // printf("------3------\n");
             if (mulr_cmp == -1)
             { // if(c < a): down <-- c
                 Down = Middle;
@@ -215,21 +199,12 @@ void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_las
                 Up   = Middle;
                 Down = Up;
             }
-
-            // printf("------4------\n");
         }
 
         byte tmp[BUF_SIZE] = {0x00};
-        byte down[]        = {0x00, 0x00};
 
-        ushort2bytes(std::end(down), Down);
-
-        // Down * d
-        // dump("[r_first..r_last]: ", r_first, r_last);
-        HUGE_Multiply(std::begin(tmp), std::end(tmp), d_first, d_last, std::begin(down), std::end(down));
-
-        // r - (Down * d);
-
+        HUGE_Multiply(std::begin(tmp), std::end(tmp), d_first, d_last, Down);
+        
         HUGE_Subtract(r_last, r_first, r_last, std::begin(tmp), std::end(tmp));
 
         *(div_last++) = Down;
