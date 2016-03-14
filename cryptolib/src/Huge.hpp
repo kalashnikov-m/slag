@@ -28,8 +28,6 @@ class Huge
     {
     }
 
-    // HugeInt(HugeInt&& other);
-
     Huge(const std::initializer_list<T>& il, bool negative = false) : m_Buffer(il), m_Negative(negative)
     {
     }
@@ -38,25 +36,10 @@ class Huge
     {
     }
 
-    Huge& operator=(const Huge& other)
-    {
-        if (this != &other)
-        {
-            Huge temp(other);
+    Huge& operator=(const Huge& other);
 
-            this->__swap(temp);
-        }
-
-        return *this;
-    }
-
-    operator bool() const
-    {
-        bool flag = HUGE_IsZero(&(*std::begin(m_Buffer)), &(*std::end(m_Buffer)));
-
-        return !flag;
-    }
-
+    operator bool() const;
+    
     Huge operator<<(int);
 
     Huge operator>>(int);
@@ -65,167 +48,45 @@ class Huge
 
     Huge& operator>>=(int nbits);
 
-    Huge& operator++()
-    {
-        HUGE_Increment(&(*std::begin(m_Buffer)), &(*std::end(m_Buffer)));
-
-        return *this;
-    }
-
-    Huge& operator--()
-    {
-        HUGE_Decrement(&(*std::begin(m_Buffer)), &(*std::end(m_Buffer)));
-
-        return *this;
-    }
-
-    Huge operator++(int)
-    {
-        Huge temp(*this);
-
-        ++(*this);
-
-        return temp;
-    }
-
-    Huge operator--(int)
-    {
-        Huge temp(*this);
-
-        --(*this);
-
-        return temp;
-    }
-
-    Huge& operator+=(const Huge& rhs)
-    {
-        *this = *this + rhs;
-
-        return *this;
-    }
-
-    Huge& operator-=(const Huge& rhs)
-    {
-        *this = *this - rhs;
-
-        return *this;
-    }
-
-    Huge& operator+()
-    {
-        return (*this);
-    }
-
-    Huge operator-()
-    {
-        return Huge(m_Buffer, !m_Negative);
-    }
-
-    Huge operator~()
-    {
-        Huge temp(*this);
-
-        HUGE_Inverse(&(*std::begin(temp.m_Buffer)), &(*std::end(temp.m_Buffer)));
-
-        return temp;
-    }
-
-    Huge operator%=(const Huge& rhs)
-    {
-        *this = *this % rhs;
-
-        return *this;
-    }
-
-    Huge operator&(const Huge& rhs)
-    {
-        auto max = std::max(m_Buffer.size(), rhs.m_Buffer.size());
-
-        std::vector<T> temp((std::vector<T>(max)));
-
-        HUGE_And(&(*std::end(temp)), &(*std::begin(m_Buffer)), &(*std::end(m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
-
-        return Huge(temp);
-    }
-
-    Huge& operator&=(const Huge& rhs)
-    {
-        *this = *this & rhs;
-
-        return *this;
-    }
-
-    Huge operator|(const Huge& rhs)
-    {
-        auto max = std::max(m_Buffer.size(), rhs.m_Buffer.size());
-
-        std::vector<T> temp((std::vector<T>(max)));
-
-        HUGE_Or(&(*std::end(temp)), &(*std::begin(m_Buffer)), &(*std::end(m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
-
-        return Huge(temp);
-    }
-
-    Huge& operator|=(const Huge& rhs)
-    {
-        *this = *this | rhs;
-
-        return *this;
-    }
-
-    Huge operator^(const Huge& rhs)
-    {
-        auto max = std::max(m_Buffer.size(), rhs.m_Buffer.size());
-
-        std::vector<T> temp((std::vector<T>(max)));
-
-        HUGE_Xor(&(*std::end(temp)), &(*std::begin(m_Buffer)), &(*std::end(m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
-
-        return Huge(temp);
-    }
-
-    Huge&
-    operator^=(const Huge& rhs)
-    {
-        *this = *this ^ rhs;
-
-        return *this;
-    }
-
-    Huge& operator*=(const Huge& rhs)
-    {
-        *this = *this * rhs;
-
-        return *this;
-    }
-
-    Huge& operator/=(const Huge& rhs)
-    {
-        *this = *this / rhs;
-
-        return *this;
-    }
-
-    // Huge& operator=(Huge&& other);
-
-    friend ostream& operator<<(ostream& stream, const Huge& huge)
-    {
-        stringstream ss;
-
-        ss.flags(std::ios::hex | std::ios::uppercase);
-        ss.width(2);
-        ss.fill('0');
-
-        const std::vector<byte>& buf = huge.m_Buffer;
-        for (const auto& x : buf)
-        {
-            ss << (uint16_t)x;
-        }
-
-        stream << ss.str();
-        return stream;
-    }
-
+    Huge& operator++();
+    
+    Huge& operator--();
+    
+    Huge operator++(int);
+    
+    Huge operator--(int);
+    
+    Huge& operator+=(const Huge& rhs);
+    
+    Huge& operator-=(const Huge& rhs);
+    
+    Huge& operator+();
+    
+    Huge operator-();
+    
+    Huge operator~();
+    
+    Huge operator%=(const Huge& rhs);
+    
+    Huge operator&(const Huge& rhs);
+    
+    Huge& operator&=(const Huge& rhs);
+    
+    Huge operator|(const Huge& rhs);
+   
+    Huge& operator|=(const Huge& rhs);
+   
+    Huge operator^(const Huge& rhs);
+   
+    Huge& operator^=(const Huge& rhs);
+   
+    Huge& operator*=(const Huge& rhs);
+    
+    Huge& operator/=(const Huge& rhs);
+    
+    template<class X>
+    friend ostream& operator<<(ostream& stream, const Huge& huge);
+    
     template <class X>
     friend Huge<X> operator+(const Huge<X>&, const Huge<X>&);
 
@@ -256,6 +117,206 @@ class Huge
     std::vector<T> m_Buffer;
     bool m_Negative;
 };
+
+// =================================================================================
+
+template<class X>
+Huge<X>& Huge<X>::operator=(const Huge<X>& other)
+{
+        if (this != &other)
+        {
+            Huge temp(other);
+
+            this->__swap(temp);
+        }
+
+        return *this;
+}
+
+template<class X>
+Huge<X>::operator bool() const
+{
+    bool flag = HUGE_IsZero(&(*std::begin(m_Buffer)), &(*std::end(m_Buffer)));
+
+    return !flag;
+}
+
+template<class X>
+Huge<X>& Huge<X>::operator++()
+{
+    HUGE_Increment(&(*std::begin(m_Buffer)), &(*std::end(m_Buffer)));
+
+    return *this;
+}
+
+template<class X>
+Huge<X>& Huge<X>::operator--()
+{
+    HUGE_Decrement(&(*std::begin(m_Buffer)), &(*std::end(m_Buffer)));
+
+    return *this;
+}
+
+template<class X>
+Huge<X> Huge<X>::operator++(int)
+{
+    Huge temp(*this);
+
+    ++(*this);
+
+    return temp;
+}
+
+template<class X>
+Huge<X> Huge<X>::operator--(int)
+{
+    Huge temp(*this);
+
+    --(*this);
+
+    return temp;
+}
+
+template<class X>
+Huge<X>& Huge<X>::operator+=(const Huge& rhs)
+{
+    *this = *this + rhs;
+
+    return *this;
+}
+
+template<class X>
+Huge<X>& Huge<X>::operator-=(const Huge& rhs)
+    {
+        *this = *this - rhs;
+
+        return *this;
+    }
+
+template<class X>
+    Huge<X>& Huge<X>::operator+()
+    {
+        return (*this);
+    }
+    
+template<class X>
+    Huge<X> Huge<X>::operator-()
+    {
+        return Huge(m_Buffer, !m_Negative);
+    }
+    
+template<class X>
+    Huge<X> Huge<X>::operator~()
+    {
+        Huge temp(*this);
+
+        HUGE_Inverse(&(*std::begin(temp.m_Buffer)), &(*std::end(temp.m_Buffer)));
+
+        return temp;
+    }
+    
+template<class X>
+    Huge<X> Huge<X>::operator%=(const Huge& rhs)
+    {
+        *this = *this % rhs;
+
+        return *this;
+    }
+    
+template<class X>
+Huge<X> Huge<X>::operator&(const Huge& rhs)
+{
+    auto max = std::max(m_Buffer.size(), rhs.m_Buffer.size());
+
+    std::vector<X> temp((std::vector<X>(max)));
+
+    HUGE_And(&(*std::end(temp)), &(*std::begin(m_Buffer)), &(*std::end(m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
+
+    return Huge(temp);
+}
+
+template<class X>
+    Huge<X>& Huge<X>::operator&=(const Huge& rhs)
+    {
+        *this = *this & rhs;
+
+        return *this;
+    }
+
+template<class X>
+    Huge<X> Huge<X>::operator|(const Huge& rhs)
+    {
+        auto max = std::max(m_Buffer.size(), rhs.m_Buffer.size());
+
+        std::vector<X> temp((std::vector<X>(max)));
+
+        HUGE_Or(&(*std::end(temp)), &(*std::begin(m_Buffer)), &(*std::end(m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
+
+        return Huge(temp);
+    }
+    
+template<class X>
+    Huge<X>& Huge<X>::operator|=(const Huge& rhs)
+    {
+        *this = *this | rhs;
+
+        return *this;
+    }
+
+template<class X>
+Huge<X> Huge<X>::operator^(const Huge& rhs)
+{
+        auto max = std::max(m_Buffer.size(), rhs.m_Buffer.size());
+
+        std::vector<X> temp((std::vector<X>(max)));
+
+        HUGE_Xor(&(*std::end(temp)), &(*std::begin(m_Buffer)), &(*std::end(m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
+
+        return Huge(temp);
+}
+
+template<class X>
+Huge<X>& Huge<X>::operator^=(const Huge& rhs)
+{
+    *this = *this ^ rhs;
+
+    return *this;
+}
+    
+template<class X>
+Huge<X>& Huge<X>::operator*=(const Huge& rhs)
+{
+        *this = *this * rhs;
+
+        return *this;
+}
+
+ template<class X>
+ Huge<X>& Huge<X>::operator/=(const Huge& rhs)
+{
+        *this = *this / rhs;
+
+        return *this;
+}
+
+template<class X>
+ostream& operator<<(ostream& stream, const Huge<X>& huge)
+{
+        stringstream ss;
+
+        ss.flags(std::ios::hex | std::ios::uppercase);
+        ss.width(2);
+        ss.fill('0');
+
+        const std::vector<byte>& buf = huge.m_Buffer;
+        for (const auto& x : buf)
+        {
+            ss << (uint16_t)x;
+        }
+
+        stream << ss.str();
+        return stream;
+}
 
 template <class T>
 short compare(const Huge<T>& lhs, const Huge<T>& rhs)
