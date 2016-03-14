@@ -532,12 +532,46 @@ TEST(HugeTest, SubtractionAssigment)
 
 TEST(HugeTest, Multiplication)
 {
-    FAIL();
+    {
+        std::initializer_list<byte> il1 = {0x0a};
+        std::initializer_list<byte> il2 = {0x06};
+        std::initializer_list<byte> il3 = {0x3c};
+        
+        Huge<byte> a(il1);
+        Huge<byte> b(il2);
+        Huge<byte> expected(il3);
+        
+        Huge<byte> c = a*b;
+        EXPECT_TRUE( c == expected);
+    }
+    
+    {
+        std::initializer_list<byte> il1 = {0xfa, 0x0a};
+        std::initializer_list<byte> il2 = {0x06};
+        std::initializer_list<byte> il3 = {0x05, 0xdc, 0x3c};
+        
+        Huge<byte> a(il1);
+        Huge<byte> b(il2);
+        Huge<byte> expected(il3);
+        
+        Huge<byte> c = a*b;
+        EXPECT_TRUE( c == expected);
+    }
 }
 
 TEST(HugeTest, MultiplicationAssignment)
 {
-    FAIL();
+    std::initializer_list<byte> il1 = {0xfa, 0x0a};
+    std::initializer_list<byte> il2 = {0x06};
+    std::initializer_list<byte> il3 = {0x05, 0xdc, 0x3c};
+        
+    Huge<byte> a(il1);
+    Huge<byte> b(il2);
+    Huge<byte> expected(il3);
+        
+    a *= b;
+    
+    EXPECT_TRUE( a == expected);
 }
 
 TEST(HugeTest, Division)
