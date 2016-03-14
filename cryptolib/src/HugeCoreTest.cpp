@@ -17,7 +17,8 @@ static void dump(const byte* f, const byte* l)
     printf("\n");
 }
 
-static bool ASSERT_BYTES_EQ(const byte* f1, const byte* l1, const byte* f2, const byte* l2)
+template<class InputIterator>
+static bool ASSERT_BYTES_EQ(InputIterator f1, InputIterator l1, InputIterator f2, InputIterator l2)
 {
     bool ret = false;
 
@@ -45,7 +46,7 @@ TEST(HugeCore_Test, Addition)
 
         HUGE_Add(end(actual), begin(a), end(a), begin(b), end(b));
 
-        bool eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
+        bool eq = ASSERT_BYTES_EQ<const byte*>(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
         EXPECT_TRUE(eq);
     };
 
@@ -63,7 +64,7 @@ TEST(HugeCore_Test, Multiply_1)
 
         HUGE_Multiply(begin(actual), end(actual), begin(a), end(a), b);
 
-        bool eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
+        bool eq = ASSERT_BYTES_EQ<const byte*>(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
         EXPECT_TRUE(eq);
     };
 
@@ -79,7 +80,7 @@ TEST(HugeCore_Test, Multiply)
         byte actual[8] = {0x00};
         HUGE_Multiply(begin(actual), end(actual), begin(a), end(a), begin(b), end(b));
 
-        bool eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
+        bool eq = ASSERT_BYTES_EQ<const byte*>(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
 
         EXPECT_TRUE(eq);
     };
@@ -98,7 +99,7 @@ TEST(HugeCore_Test, Subtract)
 
         HUGE_Subtract(end(actual), begin(a), end(a), begin(b), end(b));
 
-        bool eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
+        bool eq = ASSERT_BYTES_EQ<const byte*>(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
         EXPECT_TRUE(eq);
     };
 
@@ -109,17 +110,17 @@ TEST(HugeCore_Test, Subtract)
 
 TEST(HugeCore_Test, DivRem)
 {
-    auto DivRemTest = [](const std::initializer_list<byte>& a, const std::initializer_list<byte>& b, const std::initializer_list<byte>& expected_div, const std::initializer_list<byte>& expected_rem) -> void
+    auto DivRemTest = [](const std::vector<byte>& _arg1, const std::vector<byte>& _arg2, const std::vector<byte>& _expected_div, const std::vector<byte>& _expected_rem) -> void
     {
-        byte div[8] = {0x00};
-        byte rem[8] = {0x00};
+        std::vector<byte> div(8);
+        std::vector<byte> rem(8);
 
-        HUGE_DivRem(begin(div), end(div), begin(rem), end(rem), begin(a), end(a), begin(b), end(b));
-
-        bool eq = ASSERT_BYTES_EQ(begin(expected_div), end(expected_div), begin(div), end(div));
+        HUGE_DivRem(&(*begin(div)), &(*end(div)), &(*begin(rem)), &(*end(rem)), &(*begin(_arg1)), &(*end(_arg1)), &(*begin(_arg2)), &(*end(_arg2)));
+        
+        bool eq = ASSERT_BYTES_EQ<const byte*>(&(*_expected_div.begin()), &(*_expected_div.end()), (byte*)&(*begin(div)), (byte*)&(*end(div)));
         EXPECT_TRUE(eq);
 
-        eq = ASSERT_BYTES_EQ(begin(expected_rem), end(expected_rem), begin(rem), end(rem));
+        eq = ASSERT_BYTES_EQ<const byte*>(&(*_expected_rem.begin()), &(*_expected_rem.end()), (byte*)&(*begin(rem)), (byte*)&(*end(rem)));
         EXPECT_TRUE(eq);
     };
 
@@ -135,11 +136,14 @@ TEST(HugeCore_Test, DivRem)
 
 TEST(HugeCore_Test, Increment)
 {
-    auto IncrementTest = [](const std::initializer_list<byte>& a, const std::initializer_list<byte>& expected) -> void
+    auto IncrementTest = [](const std::initializer_list<byte>& _arg, const std::initializer_list<byte>& _expected) -> void
     {
-        HUGE_Increment((byte*)begin(a), (byte*)end(a));
+        std::vector<byte> arg(_arg);
+        std::vector<byte> expected(_expected);
+        
+        HUGE_Increment(&(*begin(arg)), &(*end(arg)));
 
-        auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(a), end(a));
+        auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(arg), end(arg));
         EXPECT_TRUE(eq);
     };
 
@@ -151,27 +155,32 @@ TEST(HugeCore_Test, Increment)
 
 TEST(HugeCore_Test, Decrement)
 {
-    auto DecrementTest = [](const std::initializer_list<byte>& a, const std::initializer_list<byte>& expected) -> void
+    auto DecrementTest = [](const std::initializer_list<byte>& _arg, const std::initializer_list<byte>& _expected) -> void
     {
+        std::vector<byte> arg(_arg);
+        std::vector<byte> expected(_expected);
+        
+        HUGE_Decrement(&(*begin(arg)), &(*end(arg)));
 
-        HUGE_Decrement((byte*)begin(a), (byte*)end(a));
-
-        auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(a), end(a));
+        auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(arg), end(arg));
         EXPECT_TRUE(eq);
     };
 
     DecrementTest({0x00, 0x00, 0x02}, {0x00, 0x00, 0x01});
     DecrementTest({0x00, 0x01, 0x00}, {0x00, 0x00, 0xff});
-    DecrementTest({0x00, 0x01, 0x1}, {0x00, 0x01, 0x00});
+    DecrementTest({0x00, 0x01, 0x01}, {0x00, 0x01, 0x00});
 }
 
 TEST(HugeCore_Test, Reverse)
 {
-    auto ReverseTest = [](const std::initializer_list<byte>& arg, const std::initializer_list<byte>& expected)
-    {
-        HUGE_Reverse((byte*)begin(arg), (byte*)end(arg));
-
-        auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(arg), end(arg));
+    auto ReverseTest = [](const std::initializer_list<byte>& _arg, const std::initializer_list<byte>& _expected)
+    {                     
+        std::vector<byte> arg(_arg);
+        std::vector<byte> expected(_expected);
+        
+        HUGE_Reverse(&(*std::begin(arg)), &(*std::end(arg)));
+        
+        auto eq = ASSERT_BYTES_EQ(std::begin(expected),std::end(expected), std::begin(arg), std::end(arg));
 
         EXPECT_TRUE(eq);
     };
@@ -186,7 +195,7 @@ TEST(HugeCore_Test, And)
         byte actual[8] = {0x00};
         HUGE_And((byte*)end(actual), begin(arg1), end(arg1), begin(arg2), end(arg2));
 
-        auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(actual), end(actual));
+        auto eq = ASSERT_BYTES_EQ<const byte*>(begin(expected), end(expected), begin(actual), end(actual));
 
         EXPECT_TRUE(eq);
     };
@@ -201,7 +210,7 @@ TEST(HugeCore_Test, Xor)
         byte actual[8] = {0x00};
         HUGE_Xor(end(actual), begin(a), end(a), begin(b), end(b));
 
-        auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(actual), end(actual));
+        auto eq = ASSERT_BYTES_EQ<const byte*>(begin(expected), end(expected), begin(actual), end(actual));
 
         EXPECT_TRUE(eq);
     };
@@ -217,7 +226,7 @@ TEST(HugeCore_Test, Or)
         byte actual[8] = {0x00};
         HUGE_Or(end(actual), begin(a), end(a), begin(b), end(b));
 
-        auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(actual), end(actual));
+        auto eq = ASSERT_BYTES_EQ<const byte*>(begin(expected), end(expected), begin(actual), end(actual));
 
         EXPECT_TRUE(eq);
     };
@@ -227,9 +236,12 @@ TEST(HugeCore_Test, Or)
 
 TEST(HugeCore_Test, Inverse)
 {
-    auto InverseTest = [](const std::initializer_list<byte>& arg, const std::initializer_list<byte>& expected) -> void
+    auto InverseTest = [](const std::initializer_list<byte>& _arg, const std::initializer_list<byte>& _expected) -> void
     {
-        HUGE_Inverse((byte*)begin(arg), (byte*)end(arg));
+        std::vector<byte> arg(_arg);
+        std::vector<byte> expected(_expected);
+        
+        HUGE_Inverse(&(*begin(arg)), &(*end(arg)));
 
         auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(arg), end(arg));
 
