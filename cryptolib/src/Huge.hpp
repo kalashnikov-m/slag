@@ -11,8 +11,6 @@
 
 using namespace std;
 
-typedef unsigned char byte;
-
 template <class T>
 class Huge
 {
