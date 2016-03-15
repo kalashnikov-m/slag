@@ -10,8 +10,6 @@
 
 using namespace std;
 
-#define BUF_SIZE 8
-
 static void dump(const byte* f, const byte* l)
 {
     for (; f != l; ++f)
@@ -163,6 +161,9 @@ void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_las
         --shift;
     }
 
+    size_t nbytes = d2 + 1;
+    byte* mul     = new byte[nbytes];
+
     while (shift > 0)
     {
         uint8_t Down   = 0x00;
@@ -181,37 +182,39 @@ void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_las
             Middle = ((Down + Up) / 2);
 
             // 2. mul <-- d * c;
-            byte mul[BUF_SIZE] = {0x00};
+            std::fill(mul, mul + nbytes, 0x00);
 
-            HUGE_Multiply(std::begin(mul), std::end(mul), d_first, d_last, Middle);
+            HUGE_Multiply(mul, mul + nbytes, d_first, d_last, Middle);
 
-            short mulr_cmp = HUGE_Compare(std::begin(mul), std::end(mul), r_first, r_last);
+            short mul_cmp = HUGE_Compare(mul, mul + nbytes, r_first, r_last);
 
-            if (mulr_cmp == -1)
+            if (mul_cmp == -1)
             { // if(c < a): down <-- c
                 Down = Middle;
             }
-            else if (mulr_cmp == 1)
+            else if (mul_cmp == 1)
             { // if(c > a) Up <-- c
                 Up = Middle;
             }
-            else if (mulr_cmp == 0)
+            else if (mul_cmp == 0)
             { // if(mul == a) Up <-- C; Down <-- Up;
                 Up   = Middle;
                 Down = Up;
             }
         }
 
-        byte tmp[BUF_SIZE] = {0x00};
+        std::fill(mul, mul + nbytes, 0x00);
 
-        HUGE_Multiply(std::begin(tmp), std::end(tmp), d_first, d_last, Down);
+        HUGE_Multiply(mul, mul + nbytes, d_first, d_last, Down);
 
-        HUGE_Subtract(r_last, r_first, r_last, std::begin(tmp), std::end(tmp));
+        HUGE_Subtract(r_last, r_first, r_last, mul, mul + nbytes);
 
         *(div_last++) = Down;
 
         --shift;
     }
+
+    delete[] mul;
 
     std::copy_backward(r_first, r_last, rem_last);
 }
