@@ -132,12 +132,6 @@ void HUGE_Multiply(byte* first_result, byte* last_result, const byte* first1, co
     *last_result = carry;
 }
 
-static void ushort2bytes(byte* result, unsigned short x)
-{
-    *(--result) = x & 0xff;
-    *(--result) = (x >> 8) & 0xff;
-}
-
 void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_last, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
     byte* r_first = nullptr;
