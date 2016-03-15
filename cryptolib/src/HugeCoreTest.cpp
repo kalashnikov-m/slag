@@ -9,11 +9,11 @@ using namespace std;
 
 static void dump(const byte* f, const byte* l)
 {
-    for(; f != l; ++f)
+    for (; f != l; ++f)
     {
         printf("%02x ", *f);
     }
-    
+
     printf("\n");
 }
 
@@ -175,7 +175,7 @@ TEST(HugeCore_Test, HUGE_Multiply)
     eq = ASSERT_BYTES_EQ(std::begin(expected3), std::end(expected3), std::begin(actual), std::end(actual));
 
     EXPECT_TRUE(eq);
-    
+
     {
         byte a[]        = {0x02};
         byte b[]        = {0x00, 0x80};
@@ -183,7 +183,6 @@ TEST(HugeCore_Test, HUGE_Multiply)
         byte actual[8]  = {0x00};
 
         HUGE_Multiply(begin(actual), end(actual), begin(a), end(a), begin(b), end(b));
-        //dump(begin(actual), end(actual));
 
         bool eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
 

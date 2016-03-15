@@ -14,7 +14,7 @@ using namespace std;
 
 static void dump(const byte* f, const byte* l)
 {
-    for(; f != l; ++f)
+    for (; f != l; ++f)
     {
         printf("%02x ", *f);
     }
@@ -163,8 +163,8 @@ void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_las
 
     while (shift > 0)
     {
-        uint8_t Down = 0x00;
-        uint8_t Up  = 0xFF;
+        uint8_t Down   = 0x00;
+        uint8_t Up     = 0xFF;
         uint8_t Middle = 0x00;
 
         auto cmp = HUGE_Compare(r_first, r_last, d_first, d_last);
@@ -204,7 +204,7 @@ void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_las
         byte tmp[BUF_SIZE] = {0x00};
 
         HUGE_Multiply(std::begin(tmp), std::end(tmp), d_first, d_last, Down);
-        
+
         HUGE_Subtract(r_last, r_first, r_last, std::begin(tmp), std::end(tmp));
 
         *(div_last++) = Down;
