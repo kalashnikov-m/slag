@@ -153,13 +153,21 @@ void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_las
 
     auto d1    = std::distance(first1, last1);
     auto d2    = std::distance(first2, last2);
-    auto shift = d1 - d2;
+    auto shift = d1 - d2 + 1;
     r_first    = (byte*)first1;
     r_last     = (byte*)first1 + d2;
     d_first    = (byte*)first2;
     d_last     = (byte*)last2;
 
     std::advance(div_last, -shift);
+
+    auto cmp = HUGE_Compare(r_first, r_last, d_first, d_last);
+    if (cmp == -1)
+    {
+        ++r_last;
+        ++div_last;
+        --shift;
+    }
 
     while (shift > 0)
     {
@@ -168,7 +176,6 @@ void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_las
         uint8_t Middle = 0x00;
 
         auto cmp = HUGE_Compare(r_first, r_last, d_first, d_last);
-
         if (cmp == -1)
         {
             ++r_last;

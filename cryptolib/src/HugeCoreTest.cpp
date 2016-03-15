@@ -318,6 +318,62 @@ TEST(HugeCore_Test, HUGE_DivRem)
     eq = ASSERT_BYTES_EQ(std::begin(expected_rem4), std::end(expected_rem4), std::begin(actual_rem4), std::end(actual_rem4));
 
     EXPECT_TRUE(eq);
+
+    {
+        byte a[]            = {0x03, 0x03, 0x03};
+        byte b[]            = {0x01, 0x02, 0x03};
+        byte expected_div[] = {0x00, 0x00, 0x02};
+        byte expected_rem[] = {0x00, 0xfe, 0xfd};
+        byte actual_div[8]  = {0x00};
+        byte actual_rem[8]  = {0x00};
+
+        HUGE_DivRem(begin(actual_div), end(actual_div), begin(actual_rem), end(actual_rem), begin(a), end(a), begin(b), end(b));
+
+        bool eq = ASSERT_BYTES_EQ(std::begin(expected_div), std::end(expected_div), std::begin(actual_div), std::end(actual_div));
+
+        EXPECT_TRUE(eq);
+
+        eq = ASSERT_BYTES_EQ(std::begin(expected_rem), std::end(expected_rem), std::begin(actual_rem), std::end(actual_rem));
+
+        EXPECT_TRUE(eq);
+    }
+
+    {
+        byte a[]            = {0x00, 0x08, 0x08};
+        byte b[]            = {0x00, 0x00, 0x09};
+        byte expected_div[] = {0x00, 0x00, 0xe4};
+        byte expected_rem[] = {0x00, 0x00, 0x04};
+        byte actual_div[8]  = {0x00};
+        byte actual_rem[8]  = {0x00};
+
+        HUGE_DivRem(begin(actual_div), end(actual_div), begin(actual_rem), end(actual_rem), begin(a), end(a), begin(b), end(b));
+        bool eq = ASSERT_BYTES_EQ(std::begin(expected_div), std::end(expected_div), std::begin(actual_div), std::end(actual_div));
+
+        EXPECT_TRUE(eq);
+
+        eq = ASSERT_BYTES_EQ(std::begin(expected_rem), std::end(expected_rem), std::begin(actual_rem), std::end(actual_rem));
+
+        EXPECT_TRUE(eq);
+    }
+
+    {
+        byte a[]            = {0x00, 0x00, 0x08};
+        byte b[]            = {0x00, 0x00, 0x04};
+        byte expected_div[] = {0x00, 0x00, 0x02};
+        byte expected_rem[] = {0x00, 0x00, 0x00};
+        byte actual_div[8]  = {0x00};
+        byte actual_rem[8]  = {0x00};
+
+        HUGE_DivRem(begin(actual_div), end(actual_div), begin(actual_rem), end(actual_rem), begin(a), end(a), begin(b), end(b));
+        // dump(begin(actual_div), end(actual_div));
+        bool eq = ASSERT_BYTES_EQ(std::begin(expected_div), std::end(expected_div), std::begin(actual_div), std::end(actual_div));
+
+        EXPECT_TRUE(eq);
+
+        eq = ASSERT_BYTES_EQ(std::begin(expected_rem), std::end(expected_rem), std::begin(actual_rem), std::end(actual_rem));
+
+        EXPECT_TRUE(eq);
+    }
 }
 
 TEST(HugeCore_Test, HUGE_Increment)
