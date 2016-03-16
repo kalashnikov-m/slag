@@ -16,7 +16,7 @@ template <class T>
 class Huge
 {
   public:
-    Huge() : m_Negative(false)
+    Huge() : m_Buffer(1), m_Negative(false)
     {
     }
 
