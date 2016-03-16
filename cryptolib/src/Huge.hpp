@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <iterator>
 #include <initializer_list>
+#include <iostream>
 
 #include "HugeCore.h"
 
@@ -207,8 +208,22 @@ class Huge
 
     // Huge& operator=(Huge&& other);
 
-    friend ostream& operator<<(ostream&, const Huge&)
-    { /* TODO */
+    friend ostream& operator<<(ostream& stream, const Huge& huge)
+    {
+        stringstream ss;
+
+        ss.flags(std::ios::hex | std::ios::uppercase);
+        ss.width(2);
+        ss.fill('0');
+
+        const std::vector<byte>& buf = huge.m_Buffer;
+        for (const auto& x : buf)
+        {
+            ss << (uint16_t)x;
+        }
+
+        stream << ss.str();
+        return stream;
     }
 
     template <class X>
@@ -383,16 +398,19 @@ bool operator!=(const Huge<T>& lhs, const Huge<T>& rhs)
 template <class X>
 Huge<X> operator+(const Huge<X>& lhs, const Huge<X>& rhs)
 {
+    const auto& lhsBuf = lhs.m_Buffer;
+    const auto& rhsBuf = rhs.m_Buffer;
+
     // если знаки аргументов различны: (a)+(-b), (-a)+(b) ==> ?(a-b)
     if (lhs.m_Negative ^ rhs.m_Negative)
     {
-        short cmp = HUGE_Compare(&(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
+        short cmp = HUGE_Compare(&(*std::begin(lhsBuf)), &(*std::end(lhsBuf)), &(*std::begin(rhsBuf)), &(*std::end(rhsBuf)));
 
         if (cmp == -1)
         { // (|a| < |b|) ==> (|b| - |a|)
             Huge<X> temp(rhs);
 
-            HUGE_Subtract(&(*std::end(temp.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)));
+            HUGE_Subtract(&(*std::end(temp.m_Buffer)), &(*std::begin(rhsBuf)), &(*std::end(rhsBuf)), &(*std::begin(lhsBuf)), &(*std::end(lhsBuf)));
 
             return temp;
         }
@@ -401,7 +419,7 @@ Huge<X> operator+(const Huge<X>& lhs, const Huge<X>& rhs)
             // (|a| > |b|) ==> (|a| - |b|)
             Huge<X> temp(lhs);
 
-            HUGE_Subtract(&(*std::end(temp.m_Buffer)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
+            HUGE_Subtract(&(*std::end(temp.m_Buffer)), &(*std::begin(lhsBuf)), &(*std::end(lhsBuf)), &(*std::begin(rhsBuf)), &(*std::end(rhsBuf)));
 
             return temp;
         }
@@ -410,7 +428,7 @@ Huge<X> operator+(const Huge<X>& lhs, const Huge<X>& rhs)
     { // если знаки аргументов одинаковы
         Huge<X> temp(std::max(lhs, rhs));
 
-        HUGE_Add(&(*std::end(temp.m_Buffer)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
+        HUGE_Add(&(*std::end(temp.m_Buffer)), &(*std::begin(lhsBuf)), &(*std::end(lhsBuf)), &(*std::begin(rhsBuf)), &(*std::end(rhsBuf)));
 
         temp.m_Negative = lhs.m_Negative & rhs.m_Negative;
 
