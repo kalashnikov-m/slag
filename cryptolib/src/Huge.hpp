@@ -466,30 +466,61 @@ Huge<X> operator-(const Huge<X>& lhs, const Huge<X>& rhs)
 template <class X>
 Huge<X> operator*(const Huge<X>& lhs, const Huge<X>& rhs)
 {
-    size_t l_size = lhs.m_Buffer.size ();
-    size_t r_size = rhs.m_Buffer.size ();
-    
+    size_t l_size = lhs.m_Buffer.size();
+    size_t r_size = rhs.m_Buffer.size();
+
     const std::vector<byte>& lhsBuf = lhs.m_Buffer;
     const std::vector<byte>& rhsBuf = rhs.m_Buffer;
-    
-    Huge<X> result(std::vector<byte>(l_size + r_size));
-    
-    std::vector<byte>& buf = result.m_Buffer;
+
+    Huge<X> tmp((std::vector<byte>(l_size + r_size)));
+
+    std::vector<byte>& buf = tmp.m_Buffer;
     HUGE_Multiply(&(*std::begin(buf)), &(*std::end(buf)), &(*std::begin(lhsBuf)), &(*std::end(lhsBuf)), &(*std::begin(rhsBuf)), &(*std::end(rhsBuf)));
-    
-    return result;
+    tmp.m_Negative = lhs.m_Negative ^ rhs.m_Negative;
+
+    return tmp;
 }
 
 template <class X>
-Huge<X> operator/(const Huge<X>&, const Huge<X>&)
+Huge<X> operator/(const Huge<X>& lhs, const Huge<X>& rhs)
 {
-    return Huge<X>();
+    size_t l_size = lhs.m_Buffer.size();
+
+    const std::vector<byte>& lhsBuf = lhs.m_Buffer;
+    const std::vector<byte>& rhsBuf = rhs.m_Buffer;
+
+    Huge<X> div((std::vector<byte>(l_size)));
+    Huge<X> rem((std::vector<byte>(l_size)));
+
+    std::vector<byte>& divBuf = div.m_Buffer;
+    std::vector<byte>& remBuf = rem.m_Buffer;
+
+    div.m_Negative = lhs.m_Negative ^ rhs.m_Negative;
+
+    HUGE_DivRem(&(*std::begin(divBuf)), &(*std::end(divBuf)), &(*std::begin(remBuf)), &(*std::end(remBuf)), &(*std::begin(lhsBuf)), &(*std::end(lhsBuf)), &(*std::begin(rhsBuf)), &(*std::end(rhsBuf)));
+
+    return div;
 }
 
 template <class X>
-Huge<X> operator%(const Huge<X>&, const Huge<X>&)
+Huge<X> operator%(const Huge<X>& lhs, const Huge<X>& rhs)
 {
-    return Huge<X>();
+    size_t l_size = lhs.m_Buffer.size();
+
+    const std::vector<byte>& lhsBuf = lhs.m_Buffer;
+    const std::vector<byte>& rhsBuf = rhs.m_Buffer;
+
+    Huge<X> div((std::vector<byte>(l_size)));
+    Huge<X> rem((std::vector<byte>(l_size)));
+
+    std::vector<byte>& divBuf = div.m_Buffer;
+    std::vector<byte>& remBuf = rem.m_Buffer;
+
+    rem.m_Negative = lhs.m_Negative ^ rhs.m_Negative;
+
+    HUGE_DivRem(&(*std::begin(divBuf)), &(*std::end(divBuf)), &(*std::begin(remBuf)), &(*std::end(remBuf)), &(*std::begin(lhsBuf)), &(*std::end(lhsBuf)), &(*std::begin(rhsBuf)), &(*std::end(rhsBuf)));
+
+    return rem;
 }
 
 #endif

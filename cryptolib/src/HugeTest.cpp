@@ -28,12 +28,64 @@ TEST(HugeTest, LogicalNOT)
 
 TEST(HugeTest, Modulus)
 {
-    FAIL();
+    {
+        std::initializer_list<byte> il1 = {0xff, 0xff};
+        std::initializer_list<byte> il2 = {0xf6, 0xf5};
+        std::initializer_list<byte> il3 = {0x09, 0x0a};
+
+        Huge<byte> a(il1);
+        Huge<byte> b(il2);
+        Huge<byte> expected_rem(il3);
+
+        auto c = a % b;
+
+        EXPECT_TRUE(c == expected_rem);
+    }
+
+    {
+        std::initializer_list<byte> il1 = {0xff, 0xff};
+        std::initializer_list<byte> il2 = {0xf6, 0xf5};
+        std::initializer_list<byte> il3 = {0x09, 0x0a};
+
+        Huge<byte> a(il1, true);
+        Huge<byte> b(il2);
+        Huge<byte> expected_rem(il3, true);
+
+        auto c = a % b;
+
+        EXPECT_TRUE(c == expected_rem);
+    }
+
+    {
+        std::initializer_list<byte> il1 = {0x6f, 0x17, 0x23};
+        std::initializer_list<byte> il2 = {0x17, 0x12};
+        std::initializer_list<byte> il3 = {0x10, 0x83};
+
+        Huge<byte> a(il1);
+        Huge<byte> b(il2, true);
+        Huge<byte> expected_rem(il3, true);
+
+        auto c = a % b;
+
+        EXPECT_TRUE(c == expected_rem);
+    }
 }
 
 TEST(HugeTest, ModulusAssignment)
 {
-    FAIL();
+    {
+        std::initializer_list<byte> il1 = {0xff, 0xff};
+        std::initializer_list<byte> il2 = {0xf6, 0xf5};
+        std::initializer_list<byte> il3 = {0x09, 0x0a};
+
+        Huge<byte> a(il1);
+        Huge<byte> b(il2);
+        Huge<byte> expected_div(il3);
+
+        a %= b;
+
+        EXPECT_TRUE(a == expected_div);
+    }
 }
 
 TEST(HugeTest, BitwiseAND)
@@ -536,26 +588,26 @@ TEST(HugeTest, Multiplication)
         std::initializer_list<byte> il1 = {0x0a};
         std::initializer_list<byte> il2 = {0x06};
         std::initializer_list<byte> il3 = {0x3c};
-        
+
         Huge<byte> a(il1);
         Huge<byte> b(il2);
         Huge<byte> expected(il3);
-        
-        Huge<byte> c = a*b;
-        EXPECT_TRUE( c == expected);
+
+        Huge<byte> c = a * b;
+        EXPECT_TRUE(c == expected);
     }
-    
+
     {
         std::initializer_list<byte> il1 = {0xfa, 0x0a};
         std::initializer_list<byte> il2 = {0x06};
         std::initializer_list<byte> il3 = {0x05, 0xdc, 0x3c};
-        
+
         Huge<byte> a(il1);
         Huge<byte> b(il2);
         Huge<byte> expected(il3);
-        
-        Huge<byte> c = a*b;
-        EXPECT_TRUE( c == expected);
+
+        Huge<byte> c = a * b;
+        EXPECT_TRUE(c == expected);
     }
 }
 
@@ -564,24 +616,90 @@ TEST(HugeTest, MultiplicationAssignment)
     std::initializer_list<byte> il1 = {0xfa, 0x0a};
     std::initializer_list<byte> il2 = {0x06};
     std::initializer_list<byte> il3 = {0x05, 0xdc, 0x3c};
-        
+
     Huge<byte> a(il1);
     Huge<byte> b(il2);
     Huge<byte> expected(il3);
-        
+
     a *= b;
-    
-    EXPECT_TRUE( a == expected);
+
+    EXPECT_TRUE(a == expected);
 }
 
 TEST(HugeTest, Division)
 {
-    FAIL();
+    {
+        std::initializer_list<byte> il1 = {0xff, 0xff};
+        std::initializer_list<byte> il2 = {0x06};
+        std::initializer_list<byte> il3 = {0x2a, 0xaa};
+
+        Huge<byte> a(il1);
+        Huge<byte> b(il2);
+        Huge<byte> expected_div(il3);
+
+        auto c = a / b;
+
+        EXPECT_TRUE(c == expected_div);
+    }
+
+    {
+        std::initializer_list<byte> il1 = {0xff, 0xff};
+        std::initializer_list<byte> il2 = {0xf6, 0xf5};
+        std::initializer_list<byte> il3 = {0x01};
+
+        Huge<byte> a(il1);
+        Huge<byte> b(il2);
+        Huge<byte> expected_div(il3);
+
+        auto c = a / b;
+
+        EXPECT_TRUE(c == expected_div);
+    }
+
+    {
+        std::initializer_list<byte> il1 = {0xff, 0xf1, 0xff, 0xfa, 0x56, 0x28, 0xff};
+        std::initializer_list<byte> il2 = {0xf6, 0xf5, 0x03, 17};
+        std::initializer_list<byte> il3 = {0x01, 0x09, 0x51, 0x3e};
+
+        Huge<byte> a(il1);
+        Huge<byte> b(il2);
+        Huge<byte> expected_div(il3);
+
+        auto c = a / b;
+
+        EXPECT_TRUE(c == expected_div);
+    }
+
+    {
+        std::initializer_list<byte> il1 = {0x6f, 0x17, 0x23};
+        std::initializer_list<byte> il2 = {0x17, 0x12};
+        std::initializer_list<byte> il3 = {0x04, 0xd0};
+
+        Huge<byte> a(il1);
+        Huge<byte> b(il2, true);
+        Huge<byte> expected_div(il3, true);
+
+        auto c = a / b;
+
+        EXPECT_TRUE(c == expected_div);
+    }
 }
 
 TEST(HugeTest, DivisionAssignment)
 {
-    FAIL();
+    {
+        std::initializer_list<byte> il1 = {0xff, 0xff};
+        std::initializer_list<byte> il2 = {0x06};
+        std::initializer_list<byte> il3 = {0x2a, 0xaa};
+
+        Huge<byte> a(il1);
+        Huge<byte> b(il2);
+        Huge<byte> expected_div(il3);
+
+        a /= b;
+
+        EXPECT_TRUE(a == expected_div);
+    }
 }
 
 TEST(HugeTest, LeftShift)
