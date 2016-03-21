@@ -104,6 +104,8 @@ class Huge
 
     Huge Gcd(const Huge& other);
 
+    void DivRem(Huge& q, Huge& r, const Huge& other);
+
   protected:
     void __swap(Huge& other) throw()
     {
@@ -620,6 +622,23 @@ Huge<T> Huge<T>::Gcd(const Huge<T>& other)
     }
 
     return r1;
+}
+
+template <class T>
+void Huge<T>::DivRem(Huge<T>& q, Huge<T>& r, const Huge<T>& other)
+{
+    size_t l_size = this->m_Buffer.size();
+
+    Huge<T> div((std::vector<byte>(l_size)));
+    Huge<T> rem((std::vector<byte>(l_size)));
+
+    div.m_Negative = this->m_Negative ^ other.m_Negative;
+    rem.m_Negative = this->m_Negative ^ other.m_Negative;
+
+    HUGE_DivRem(&(*std::begin(div.m_Buffer)), &(*std::end(div.m_Buffer)), &(*std::begin(rem.m_Buffer)), &(*std::end(rem.m_Buffer)), &(*std::begin(this->m_Buffer)), &(*std::end(this->m_Buffer)), &(*std::begin(other.m_Buffer)), &(*std::end(other.m_Buffer)));
+
+    q = div;
+    r = rem;
 }
 
 #endif
