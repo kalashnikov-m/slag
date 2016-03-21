@@ -102,6 +102,8 @@ class Huge
     template <class X>
     friend Huge<X> operator%(const Huge<X>&, const Huge<X>&);
 
+    Huge Gcd(const Huge& other);
+
   protected:
     void __swap(Huge& other) throw()
     {
@@ -600,6 +602,24 @@ Huge<X> operator%(const Huge<X>& lhs, const Huge<X>& rhs)
     HUGE_DivRem(&(*std::begin(divBuf)), &(*std::end(divBuf)), &(*std::begin(remBuf)), &(*std::end(remBuf)), &(*std::begin(lhsBuf)), &(*std::end(lhsBuf)), &(*std::begin(rhsBuf)), &(*std::end(rhsBuf)));
 
     return rem;
+}
+
+template <class T>
+Huge<T> Huge<T>::Gcd(const Huge<T>& other)
+{
+    auto pair = std::minmax(*this, other);
+
+    Huge<byte> r1(pair.second);
+    Huge<byte> r2(pair.first);
+
+    while (r2 != 0)
+    {
+        Huge<byte> rem = r1 % r2;
+        r1             = r2;
+        r2             = rem;
+    }
+
+    return r1;
 }
 
 #endif
