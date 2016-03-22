@@ -28,15 +28,16 @@ class Huge
     {
     }
 
+    Huge(Huge&& other)
+    {
+        *this = std::move(other);
+    }
+
     Huge(const std::initializer_list<T>& il, bool negative = false) : m_Buffer(il), m_Negative(negative)
     {
     }
 
     Huge(const std::vector<T>& iv, bool negative = false) : m_Buffer(iv), m_Negative(negative)
-    {
-    }
-
-    Huge(Huge&& other) : m_Buffer(std::move(other.m_Buffer)), m_Negative(other.m_Negative)
     {
     }
 
@@ -146,8 +147,11 @@ Huge<X>& Huge<X>::operator=(const Huge<X>& other)
 template <class X>
 Huge<X>& Huge<X>::operator=(Huge<X>&& other)
 {
-    m_Buffer   = std::move(other.m_Buffer);
-    m_Negative = other.m_Negative;
+    if (this != &other)
+    {
+        m_Buffer   = std::move(other.m_Buffer);
+        m_Negative = other.m_Negative;
+    }
 
     return *this;
 }
