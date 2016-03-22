@@ -36,7 +36,13 @@ class Huge
     {
     }
 
+    Huge(Huge&& other) : m_Buffer(std::move(other.m_Buffer)), m_Negative(other.m_Negative)
+    {
+    }
+
     Huge& operator=(const Huge& other);
+
+    Huge& operator=(Huge&& other);
 
     operator bool() const;
 
@@ -133,6 +139,15 @@ Huge<X>& Huge<X>::operator=(const Huge<X>& other)
 
         this->__swap(temp);
     }
+
+    return *this;
+}
+
+template <class X>
+Huge<X>& Huge<X>::operator=(Huge<X>&& other)
+{
+    m_Buffer   = std::move(other.m_Buffer);
+    m_Negative = other.m_Negative;
 
     return *this;
 }
@@ -309,12 +324,12 @@ ostream& operator<<(ostream& stream, const Huge<X>& huge)
     stringstream ss;
 
     ss.flags(std::ios::hex | std::ios::uppercase);
-    ss.width(2);
     ss.fill('0');
 
     const std::vector<byte>& buf = huge.m_Buffer;
     for (const auto& x : buf)
     {
+        ss.width(2);
         ss << (uint16_t)x;
     }
 
