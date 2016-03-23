@@ -39,104 +39,35 @@ class HugeCore_Test : public ::testing::Test
 
 TEST(HugeCore_Test, Addition)
 {
-    {
-        bool eq(true);
-        byte a[]        = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1a, 0x03};
-        byte b[]        = {0x00, 0x00, 0x00, 0x11};
-        byte expected[] = {0x1a, 0x14};
-        byte actual[8]  = {0x00};
-
-        HUGE_Add(end(actual), begin(a), end(a), begin(b), end(b));
-
-        eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
-
-        EXPECT_TRUE(eq);
-    }
-
-    // ==============================================================
-    {
-        byte a[]         = {0x00, 0xff, 0xff};
-        byte b[]         = {0x00, 0x00, 0xff, 0xff};
-        byte expected2[] = {0x01, 0xFF, 0xFE};
-        byte actual[8]   = {0x00};
-
-        HUGE_Add(end(actual), begin(a), end(a), begin(b), end(b));
-
-        auto eq = ASSERT_BYTES_EQ(std::begin(expected2), std::end(expected2), std::begin(actual), std::end(actual));
-
-        EXPECT_TRUE(eq);
-    }
-
-    // ==============================================================
-    {
-        byte a[]         = {0x00, 0xff};
-        byte b[]         = {0x00};
-        byte expected3[] = {0xFF};
-        byte actual[8]   = {0x00};
-
-        HUGE_Add(end(actual), begin(a), end(a), begin(b), end(b));
-
-        auto eq = ASSERT_BYTES_EQ(std::begin(expected3), std::end(expected3), std::begin(actual), std::end(actual));
-
-        EXPECT_TRUE(eq);
-    }
-    {
-        byte a[]        = {0x00, 0x00, 0x01, 0xfa, 0x14, 0xba, 0xce, 0x68, 0x02, 0x35};
-        byte b[]        = {0x00, 0x00, 0x0a, 0x14, 0x05, 0xf5, 0xef, 0x38, 0x2a, 0x14};
-        byte expected[] = {0x0c, 0x0e, 0x1a, 0xb0, 0xbd, 0xa0, 0x2c, 0x49};
-        byte actual[16] = {0x00};
+    auto AdditionTest = [](const std::initializer_list<byte>& a, const std::initializer_list<byte>& b, const std::initializer_list<byte>& expected) -> void {
+        byte actual[8] = {0x00};
 
         HUGE_Add(end(actual), begin(a), end(a), begin(b), end(b));
 
         bool eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
-
         EXPECT_TRUE(eq);
-    }
+    };
+
+    AdditionTest({0x00, 0xff}, {0x00}, {0xff});
+    AdditionTest({0x00, 0x1a, 0x03}, {0x00, 0x00, 0x11}, {0x1a, 0x14});
+    AdditionTest({0x00, 0xff, 0xff}, {0x00, 0x00, 0xff, 0xff}, {0x01, 0xFF, 0xFE});
+    AdditionTest({0x00, 0x00, 0x01, 0xfa, 0x14, 0xba, 0xce, 0x68, 0x02, 0x35}, {0x00, 0x00, 0x0a, 0x14, 0x05, 0xf5, 0xef, 0x38, 0x2a, 0x14}, {0x0c, 0x0e, 0x1a, 0xb0, 0xbd, 0xa0, 0x2c, 0x49});
 }
 
-TEST(HugeCore_Test, HUGE_Multiply_1)
+TEST(HugeCore_Test, Multiply_1)
 {
-    {
-        byte a[] = {0x12, 0x02, 0x30};
-        byte b   = 0x03;
-
-        byte expected[] = {0x36, 0x06, 0x90};
-        byte actual[3]  = {0x00};
+    auto Multiply1Test = [](const std::initializer_list<byte>& a, byte b, const std::initializer_list<byte>& expected) -> void {
+        byte actual[8] = {0x00};
 
         HUGE_Multiply(begin(actual), end(actual), begin(a), end(a), b);
 
         bool eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
-
         EXPECT_TRUE(eq);
-    }
+    };
 
-    {
-        byte a[] = {0x12, 0x02, 0x30};
-        byte b   = 0x11;
-
-        byte expected[] = {0x01, 0x32, 0x25, 0x30};
-        byte actual[4]  = {0x00};
-
-        HUGE_Multiply(begin(actual), end(actual), begin(a), end(a), b);
-
-        bool eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
-
-        EXPECT_TRUE(eq);
-    }
-
-    {
-        byte a[] = {0x12, 0x02, 0x30};
-        byte b   = 0xfa;
-
-        byte expected[] = {0x11, 0x96, 0x22, 0xE0};
-        byte actual[4]  = {0x00};
-
-        HUGE_Multiply(begin(actual), end(actual), begin(a), end(a), b);
-
-        bool eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
-
-        EXPECT_TRUE(eq);
-    }
+    Multiply1Test({0x12, 0x02, 0x30}, 0x03, {0x36, 0x06, 0x90});
+    Multiply1Test({0x12, 0x02, 0x30}, 0x11, {0x01, 0x32, 0x25, 0x30});
+    Multiply1Test({0x12, 0x02, 0x30}, 0xfa, {0x11, 0x96, 0x22, 0xE0});
 }
 
 TEST(HugeCore_Test, HUGE_Multiply)
@@ -190,85 +121,45 @@ TEST(HugeCore_Test, HUGE_Multiply)
     }
 }
 
-TEST(HugeCore_Test, HUGE_Subtract)
+TEST(HugeCore_Test, Subtract)
 {
-    byte a[]        = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01};
-    byte b[]        = {0x00, 0x00, 0x00, 0x80};
-    byte expected[] = {0x00, 0x81};
-    byte actual[8]  = {0x00};
+    auto SubtractTest = [](const std::initializer_list<byte>& a, const std::initializer_list<byte>& b, const std::initializer_list<byte>& expected) -> void {
+        byte actual[8] = {0x00};
 
-    HUGE_Subtract(end(actual), begin(a), end(a), begin(b), end(b));
+        HUGE_Subtract(end(actual), begin(a), end(a), begin(b), end(b));
 
-    bool eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
-
-    EXPECT_TRUE(eq);
-
-    byte a1[] = {
-        0x01, 0x01,
+        bool eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
+        EXPECT_TRUE(eq);
     };
-    byte b1[] = {
-        0x02,
-    };
-    byte expected1[] = {0xff};
-    byte actual1[4]  = {0x00};
 
-    HUGE_Subtract(end(actual1), begin(a1), end(a1), begin(b1), end(b1));
-
-    eq = ASSERT_BYTES_EQ(std::begin(expected1), std::end(expected1), std::begin(actual1), std::end(actual1));
-    EXPECT_TRUE(eq);
-
-    byte a2[] = {
-        0x00, 0x01, 0x00,
-    };
-    byte b2[]        = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00};
-    byte expected2[] = {0x00};
-    byte actual2[4]  = {0x00};
-
-    HUGE_Subtract(end(actual2), begin(a2), end(a2), begin(b2), end(b2));
-
-    eq = ASSERT_BYTES_EQ(std::begin(expected2), std::end(expected2), std::begin(actual2), std::end(actual2));
-    EXPECT_TRUE(eq);
+    SubtractTest({0x01, 0x01}, {0x02}, {0xff});
+    SubtractTest({0x00, 0x01, 0x00}, {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00}, {0x00});
+    SubtractTest({0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01}, {0x00, 0x00, 0x00, 0x80}, {0x00, 0x81});
 }
 
-TEST(HugeCore_Test, HUGE_DivRem)
+TEST(HugeCore_Test, DivRem)
 {
-    struct TestParams
-    {
-        std::vector<byte> a;
-        std::vector<byte> b;
-        std::vector<byte> expected_div;
-        std::vector<byte> expected_rem;
+    auto DivRemTest = [](const std::initializer_list<byte>& a, const std::initializer_list<byte>& b, const std::initializer_list<byte>& expected_div, const std::initializer_list<byte>& expected_rem) -> void {
+        byte div[8] = {0x00};
+        byte rem[8] = {0x00};
 
-        TestParams(const std::vector<byte>& arg1, const std::vector<byte>& arg2, const std::vector<byte>& arg3, const std::vector<byte>& arg4) : a(arg1), b(arg2), expected_div(arg3), expected_rem(arg4)
-        {
-        }
+        HUGE_DivRem(begin(div), end(div), begin(rem), end(rem), begin(a), end(a), begin(b), end(b));
+
+        bool eq = ASSERT_BYTES_EQ(begin(expected_div), end(expected_div), begin(div), end(div));
+        EXPECT_TRUE(eq);
+
+        eq = ASSERT_BYTES_EQ(begin(expected_rem), end(expected_rem), begin(rem), end(rem));
+        EXPECT_TRUE(eq);
     };
 
-    TestParams tp1({0x01, 0x01, 0x07}, {0x00, 0x02}, {0x00, 0x80, 0x83}, {0x00, 0x00, 0x01});
-    TestParams tp2({0x01, 0x01, 0x07}, {0x00, 0x03}, {0x00, 0x55, 0xad}, {0x00, 0x00, 0x00});
-    TestParams tp3({0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x07}, {0x00, 0x03, 0x03}, {0x00, 0x55}, {0x00, 0x01, 0x08});
-    TestParams tp4({0x00, 0x00, 0x16, 0x14, 0x55, 0xD6, 0x42, 0x21, 0x22, 0x41}, {0x00, 0x43, 0x15, 0x55, 0x22, 0x24, 0x41, 0x4F}, {0x00, 0x54}, {0x00, 0x11, 0x55, 0xE7, 0x0E, 0x3B, 0xB4, 0x55});
-    TestParams tp5({0x00, 0x00, 0x16, 0x14, 0x55, 0xD6, 0x42, 0x21, 0x22, 0x41}, {0x00, 0x24, 0x41, 0x4F}, {0x00, 0x9B, 0xE7, 0x8D, 0xBE, 0xAA}, {0x12, 0x21, 0xCB});
-    TestParams tp6({0x00, 0x08, 0x08}, {0x00, 0x00, 0x09}, {0x00, 0x00, 0xe4}, {0x00, 0x00, 0x04});
-    TestParams tp7({0x03, 0x03, 0x03}, {0x01, 0x02, 0x03}, {0x00, 0x00, 0x02}, {0x00, 0xfe, 0xfd});
-    TestParams tp8({0x00, 0x00, 0x08}, {0x00, 0x00, 0x04}, {0x00, 0x00, 0x02}, {0x00, 0x00, 0x00});
-
-    std::vector<TestParams> params = {tp1, tp2, tp3, tp4, tp5, tp6, tp7, tp8};
-
-    for (const TestParams& p : params)
-    {
-        byte actual_div[8] = {0x00};
-        byte actual_rem[8] = {0x00};
-
-        HUGE_DivRem(begin(actual_div), end(actual_div), begin(actual_rem), end(actual_rem), &(*begin(p.a)), &(*end(p.a)), &(*begin(p.b)), &(*end(p.b)));
-
-        bool eq = ASSERT_BYTES_EQ(&(*begin(p.expected_div)), &(*end(p.expected_div)), begin(actual_div), end(actual_div));
-        EXPECT_TRUE(eq);
-
-        eq = ASSERT_BYTES_EQ(&(*std::begin(p.expected_rem)), &(*std::end(p.expected_rem)), std::begin(actual_rem), std::end(actual_rem));
-
-        EXPECT_TRUE(eq);
-    }
+    DivRemTest({0x01, 0x01, 0x07}, {0x00, 0x02}, {0x00, 0x80, 0x83}, {0x00, 0x00, 0x01});
+    DivRemTest({0x01, 0x01, 0x07}, {0x00, 0x03}, {0x00, 0x55, 0xad}, {0x00, 0x00, 0x00});
+    DivRemTest({0x00, 0x00, 0x00, 0x01, 0x01, 0x07}, {0x00, 0x03, 0x03}, {0x00, 0x55}, {0x00, 0x01, 0x08});
+    DivRemTest({0x00, 0x00, 0x16, 0x14, 0x55, 0xD6, 0x42, 0x21, 0x22, 0x41}, {0x00, 0x43, 0x15, 0x55, 0x22, 0x24, 0x41, 0x4F}, {0x00, 0x54}, {0x00, 0x11, 0x55, 0xE7, 0x0E, 0x3B, 0xB4, 0x55});
+    DivRemTest({0x00, 0x00, 0x16, 0x14, 0x55, 0xD6, 0x42, 0x21, 0x22, 0x41}, {0x00, 0x24, 0x41, 0x4F}, {0x00, 0x9B, 0xE7, 0x8D, 0xBE, 0xAA}, {0x12, 0x21, 0xCB});
+    DivRemTest({0x00, 0x08, 0x08}, {0x00, 0x00, 0x09}, {0x00, 0x00, 0xe4}, {0x00, 0x00, 0x04});
+    DivRemTest({0x03, 0x03, 0x03}, {0x01, 0x02, 0x03}, {0x00, 0x00, 0x02}, {0x00, 0xfe, 0xfd});
+    DivRemTest({0x00, 0x00, 0x08}, {0x00, 0x00, 0x04}, {0x00, 0x00, 0x02}, {0x00, 0x00, 0x00});
 }
 
 TEST(HugeCore_Test, HUGE_Increment)
@@ -451,58 +342,18 @@ TEST(HugeCore_Test, HUGE_Inverse)
     }
 }
 
-TEST(HugeCore_Test, HUGE_isOne)
+TEST(HugeCore_Test, isOne)
 {
-    {
-        byte a[] = {0x00, 0x00, 0x01};
+    auto IsOneTest = [](const std::initializer_list<byte>& arg, bool isOne) -> void {
+        bool f = HUGE_isOne(begin(arg), end(arg));
 
-        bool f = HUGE_isOne(begin(a), end(a));
+        EXPECT_TRUE(f == isOne);
+    };
 
-        EXPECT_TRUE(f);
-    }
-
-    {
-        byte a[] = {0x01};
-
-        bool f = HUGE_isOne(begin(a), end(a));
-
-        EXPECT_TRUE(f);
-    }
-
-    {
-        byte a[] = {
-            0x00, 0x00, 0x00, 0x00,
-        };
-
-        bool f = HUGE_isOne(begin(a), end(a));
-
-        EXPECT_FALSE(f);
-    }
-
-    {
-        byte a[] = {0xff, 0x00, 0x00, 0x01};
-
-        bool f = HUGE_isOne(begin(a), end(a));
-
-        EXPECT_FALSE(f);
-    }
-
-    {
-        byte a[] = {0xff};
-
-        bool f = HUGE_isOne(begin(a), end(a));
-
-        EXPECT_FALSE(f);
-    }
-
-    {
-        byte a[] = {0x00};
-
-        bool f = HUGE_isOne(begin(a), end(a));
-
-        EXPECT_FALSE(f);
-
-        f = HUGE_IsZero(begin(a), end(a));
-        EXPECT_TRUE(f);
-    }
+    IsOneTest({0x01}, true);
+    IsOneTest({0xff}, false);
+    IsOneTest({0x00}, false);
+    IsOneTest({0x00, 0x00, 0x01}, true);
+    IsOneTest({0x00, 0x00, 0x00, 0x00}, false);
+    IsOneTest({0xff, 0x00, 0x00, 0x01}, false);
 }
