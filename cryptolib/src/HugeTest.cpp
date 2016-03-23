@@ -28,64 +28,25 @@ TEST(HugeTest, LogicalNOT)
 
 TEST(HugeTest, Modulus)
 {
-    {
-        std::initializer_list<byte> il1 = {0xff, 0xff};
-        std::initializer_list<byte> il2 = {0xf6, 0xf5};
-        std::initializer_list<byte> il3 = {0x09, 0x0a};
+    auto ModulusTest = [](const Huge<byte>& arg1, const Huge<byte>& arg2, const Huge<byte>& expected) -> void {
+        auto mod = arg1 % arg2;
 
-        Huge<byte> a(il1);
-        Huge<byte> b(il2);
-        Huge<byte> expected_rem(il3);
+        EXPECT_TRUE(mod == expected);
+    };
 
-        auto c = a % b;
-
-        EXPECT_TRUE(c == expected_rem);
-    }
-
-    {
-        std::initializer_list<byte> il1 = {0xff, 0xff};
-        std::initializer_list<byte> il2 = {0xf6, 0xf5};
-        std::initializer_list<byte> il3 = {0x09, 0x0a};
-
-        Huge<byte> a(il1, true);
-        Huge<byte> b(il2);
-        Huge<byte> expected_rem(il3, true);
-
-        auto c = a % b;
-
-        EXPECT_TRUE(c == expected_rem);
-    }
-
-    {
-        std::initializer_list<byte> il1 = {0x6f, 0x17, 0x23};
-        std::initializer_list<byte> il2 = {0x17, 0x12};
-        std::initializer_list<byte> il3 = {0x10, 0x83};
-
-        Huge<byte> a(il1);
-        Huge<byte> b(il2, true);
-        Huge<byte> expected_rem(il3, true);
-
-        auto c = a % b;
-
-        EXPECT_TRUE(c == expected_rem);
-    }
+    ModulusTest({0xff, 0xff}, {0xf6, 0xf5}, {0x09, 0x0a});
+    ModulusTest({0xff, 0xff}, {0xf6, 0xf5}, {0x09, 0x0a});
+    ModulusTest({0x6f, 0x17, 0x23}, {0x17, 0x12}, {0x10, 0x83});
 }
 
 TEST(HugeTest, ModulusAssignment)
 {
-    {
-        std::initializer_list<byte> il1 = {0xff, 0xff};
-        std::initializer_list<byte> il2 = {0xf6, 0xf5};
-        std::initializer_list<byte> il3 = {0x09, 0x0a};
+    auto ModulusAssignmentTest = [](Huge<byte>&& arg1, const Huge<byte>& arg2, const Huge<byte>& expected) {
+        arg1 %= arg2;
+        EXPECT_TRUE(arg1 == expected);
+    };
 
-        Huge<byte> a(il1);
-        Huge<byte> b(il2);
-        Huge<byte> expected_div(il3);
-
-        a %= b;
-
-        EXPECT_TRUE(a == expected_div);
-    }
+    ModulusAssignmentTest({0xff, 0xff}, {0xf6, 0xf5}, {0x09, 0x0a});
 }
 
 TEST(HugeTest, BitwiseAND)
