@@ -1101,3 +1101,113 @@ TEST(HugeTest, BOOL)
         EXPECT_FALSE(f);
     }
 }
+
+TEST(HugeTest, Gcd)
+{
+    {
+        Huge<byte> a      = {0x04, 0x2f};       // 1071
+        Huge<byte> b      = {0x01, 0xce};       // 462
+        Huge<byte> nod    = {0x15};             // 21
+        Huge<byte> actual = {0x00, 0x00, 0x00}; //
+
+        actual = a.Gcd(b);
+
+        bool f = (actual == nod);
+
+        EXPECT_TRUE(f);
+    }
+
+    {
+        Huge<byte> a      = {18};   //
+        Huge<byte> b      = {30};   //
+        Huge<byte> nod    = {6};    //
+        Huge<byte> actual = {0x00}; //
+
+        actual = a.Gcd(b);
+
+        bool f = (actual == nod);
+
+        EXPECT_TRUE(f);
+    }
+
+    {
+        Huge<byte> a      = {0x6b, 0x7d}; //
+        Huge<byte> b      = {0x31, 0x4a}; //
+        Huge<byte> nod    = {0x01};       //
+        Huge<byte> actual = {0x00, 0x00}; //
+
+        actual = a.Gcd(b);
+
+        bool f = (actual == nod);
+
+        EXPECT_TRUE(f);
+    }
+}
+
+TEST(HugeTest, ModInvserse)
+{
+    {
+        Huge<byte> a   = {0x1b};       // 27
+        Huge<byte> N   = {0x04, 0x09}; // 1033
+        Huge<byte> inv = {0x03, 0x70}; // 880
+        Huge<byte> actual;
+
+        bool exists = a.ModInverse(actual, N);
+
+        EXPECT_TRUE(exists);
+        bool f = (actual == inv);
+
+        EXPECT_TRUE(f);
+    }
+
+    {
+        Huge<byte> a   = {0x01, 0xf3};       // 499
+        Huge<byte> N   = {0x92, 0xbf, 0xb0}; // 9617328
+        Huge<byte> inv = {0x7a, 0x0b, 0xab}; // 7998379
+        Huge<byte> actual;
+
+        bool exists = a.ModInverse(actual, N);
+
+        EXPECT_TRUE(exists);
+        bool f = (actual == inv);
+
+        EXPECT_TRUE(f);
+    }
+}
+
+TEST(HugeTest, DivRem)
+{
+    {
+        std::initializer_list<byte> il1 = {0xff, 0xff};
+        std::initializer_list<byte> il2 = {0x06};
+        std::initializer_list<byte> il3 = {0x2a, 0xaa};
+
+        Huge<byte> a(il1);
+        Huge<byte> b(il2);
+        Huge<byte> expected_div(il3);
+        Huge<byte> expected_rem({0x03});
+
+        Huge<byte> q;
+        Huge<byte> r;
+
+        a.DivRem(q, r, b);
+
+        EXPECT_TRUE(q == expected_div);
+        EXPECT_TRUE(r == expected_rem);
+    }
+
+    {
+        Huge<byte> a({0x10, 0x22, 0xd2, 0x74, 0x02, 0x72, 0x19, 0x2d});
+        Huge<byte> b({0x98, 0x66, 0x06, 0x3b});
+        Huge<byte> expected_div({0x1b, 0x1a, 0xfb, 0x05});
+        Huge<byte> expected_rem({0x25, 0x5a, 0x21, 0x06});
+
+        Huge<byte> q;
+        Huge<byte> r;
+
+        a.DivRem(q, r, b);
+
+        EXPECT_TRUE(q == expected_div);
+        EXPECT_TRUE(r == expected_rem);
+    }
+}
