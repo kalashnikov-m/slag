@@ -2,11 +2,11 @@
 #ifndef HUGE_HPP
 #define HUGE_HPP
 
-#include <vector>
 #include <algorithm>
-#include <iterator>
 #include <initializer_list>
 #include <iostream>
+#include <iterator>
+#include <vector>
 
 #include "HugeCore.h"
 

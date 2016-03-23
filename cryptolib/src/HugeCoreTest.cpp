@@ -215,6 +215,7 @@ TEST(HugeCore_Test, HUGE_Subtract)
     HUGE_Subtract(end(actual1), begin(a1), end(a1), begin(b1), end(b1));
 
     eq = ASSERT_BYTES_EQ(std::begin(expected1), std::end(expected1), std::begin(actual1), std::end(actual1));
+    EXPECT_TRUE(eq);
 
     byte a2[] = {
         0x00, 0x01, 0x00,
@@ -226,6 +227,7 @@ TEST(HugeCore_Test, HUGE_Subtract)
     HUGE_Subtract(end(actual2), begin(a2), end(a2), begin(b2), end(b2));
 
     eq = ASSERT_BYTES_EQ(std::begin(expected2), std::end(expected2), std::begin(actual2), std::end(actual2));
+    EXPECT_TRUE(eq);
 }
 
 TEST(HugeCore_Test, HUGE_DivRem)
