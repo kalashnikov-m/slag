@@ -162,96 +162,34 @@ TEST(HugeCore_Test, DivRem)
     DivRemTest({0x00, 0x00, 0x08}, {0x00, 0x00, 0x04}, {0x00, 0x00, 0x02}, {0x00, 0x00, 0x00});
 }
 
-TEST(HugeCore_Test, HUGE_Increment)
+TEST(HugeCore_Test, Increment)
 {
-    {
-        byte a1[]       = {0x00, 0x00, 0x01};
-        byte expected[] = {0x02};
-
-        // byte actual[8] = {0x00};
-
-        HUGE_Increment(begin(a1), end(a1));
-
-        auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(a1), end(a1));
-
-        EXPECT_TRUE(eq);
-    }
-    {
-        byte a[]        = {0x00, 0x00, 0xff};
-        byte expected[] = {0x00, 0x01, 0x00};
-
-        // byte actual[8] = {0x00};
-
-        HUGE_Increment(begin(a), end(a));
+    auto IncrementTest = [](const std::initializer_list<byte>& a, const std::initializer_list<byte>& expected) -> void {
+        HUGE_Increment((byte*)begin(a), (byte*)end(a));
 
         auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(a), end(a));
-
         EXPECT_TRUE(eq);
-    }
-    {
-        byte a[]        = {0x00, 0xff, 0xff};
-        byte expected[] = {0x01, 0x00, 0x00};
+    };
 
-        // byte actual[8] = {0x00};
-
-        HUGE_Increment(begin(a), end(a));
-
-        auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(a), end(a));
-
-        EXPECT_TRUE(eq);
-    }
-    {
-        byte a[]        = {0x00, 0xff, 0xfe};
-        byte expected[] = {0x00, 0xff, 0xff};
-
-        // byte actual[8] = {0x00};
-
-        HUGE_Increment(begin(a), end(a));
-
-        auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(a), end(a));
-
-        EXPECT_TRUE(eq);
-    }
+    IncrementTest({0x00, 0x00, 0x01}, {0x02});
+    IncrementTest({0x00, 0x00, 0xff}, {0x00, 0x01, 0x00});
+    IncrementTest({0x00, 0xff, 0xff}, {0x01, 0x00, 0x00});
+    IncrementTest({0x00, 0xff, 0xfe}, {0x00, 0xff, 0xff});
 }
 
-TEST(HugeCore_Test, HUGE_Decrement)
+TEST(HugeCore_Test, Decrement)
 {
-    {
-        byte a[]        = {0x00, 0x00, 0x02};
-        byte expected[] = {0x00, 0x00, 0x01};
+    auto DecrementTest = [](const std::initializer_list<byte>& a, const std::initializer_list<byte>& expected) -> void {
 
-        // byte actual[8] = {0x00};
-
-        HUGE_Decrement(begin(a), end(a));
+        HUGE_Decrement((byte*)begin(a), (byte*)end(a));
 
         auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(a), end(a));
-
         EXPECT_TRUE(eq);
-    }
-    {
-        byte a[]        = {0x00, 0x01, 0x00};
-        byte expected[] = {0x00, 0x00, 0xff};
+    };
 
-        // byte actual[8] = {0x00};
-
-        HUGE_Decrement(begin(a), end(a));
-
-        auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(a), end(a));
-
-        EXPECT_TRUE(eq);
-    }
-    {
-        byte a[]        = {0x00, 0x00, 0x01};
-        byte expected[] = {0x00, 0x00, 0x00};
-
-        // byte actual[8] = {0x00};
-
-        HUGE_Decrement(begin(a), end(a));
-
-        auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(a), end(a));
-
-        EXPECT_TRUE(eq);
-    }
+    DecrementTest({0x00, 0x00, 0x02}, {0x00, 0x00, 0x01});
+    DecrementTest({0x00, 0x01, 0x00}, {0x00, 0x00, 0xff});
+    DecrementTest({0x00, 0x01, 0x1}, {0x00, 0x01, 0x00});
 }
 
 TEST(HugeCore_Test, HUGE_Reverse)
