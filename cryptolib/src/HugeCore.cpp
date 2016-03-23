@@ -1,12 +1,12 @@
 
 #include "HugeCore.h"
 
-#include <cstdio>
-#include <vector>
 #include <algorithm>
+#include <cstdio>
 #include <iostream>
-#include <string>
 #include <iterator>
+#include <string>
+#include <vector>
 
 using namespace std;
 
@@ -29,23 +29,23 @@ void HUGE_Add(byte* result, const byte* first1, const byte* last1, const byte* f
 
     for (; (first1 <= last1) && (first2 <= last2); --last1, --last2)
     {
-        tmp = (*(last1)) + (*(last2)) + (carry);
+        tmp         = (*(last1)) + (*(last2)) + (carry);
         *(--result) = (byte)tmp;
-        carry = tmp >> 8;
+        carry       = tmp >> 8;
     }
 
     for (; first1 <= last1; --last1)
     {
-        tmp = (*last1) + (carry);
+        tmp         = (*last1) + (carry);
         *(--result) = (byte)tmp;
-        carry = tmp >> 8;
+        carry       = tmp >> 8;
     }
 
     for (; first2 <= last2; --last2)
     {
-        tmp = (*last2) + (carry);
+        tmp         = (*last2) + (carry);
         *(--result) = (byte)tmp;
-        carry = tmp >> 8;
+        carry       = tmp >> 8;
     }
 }
 
@@ -61,19 +61,19 @@ void HUGE_Subtract(byte* result, const byte* first1, const byte* last1, const by
         if (*(last1) < *(last2) + carry)
         {
             *(--result) = (*last1) - (*last2) - carry + 256;
-            carry = 1;
+            carry       = 1;
         }
         else
         {
             *(--result) = (*last1) - (*last2) - carry;
-            carry = 0;
+            carry       = 0;
         }
     }
 
     for (; first1 <= last1; --last1)
     {
         *(--result) = *(last1)-carry;
-        carry = 0;
+        carry       = 0;
     }
 }
 
@@ -105,7 +105,7 @@ void HUGE_Multiply(byte* first_result, byte* last_result, const byte* first1, co
         }
 
         *(resultIter) = carry;
-        carry = 0x00;
+        carry         = 0x00;
     }
 }
 
@@ -121,7 +121,7 @@ void HUGE_Multiply(byte* first_result, byte* last_result, const byte* first1, co
     {
         temp = (*last1) * x + carry;
 
-        carry = temp / 256;
+        carry          = temp / 256;
         *(last_result) = temp % 256;
 
         --last_result;
@@ -224,15 +224,15 @@ void HUGE_Increment(byte* first, byte* last)
     unsigned short tmp = 0x00;
     byte carry         = 0x00;
 
-    tmp = (*--last) + 0x01 + carry;
+    tmp     = (*--last) + 0x01 + carry;
     *(last) = (byte)tmp;
-    carry = tmp >> 8;
+    carry   = tmp >> 8;
 
     for (; (first <= last) && carry;)
     {
-        tmp = (*--last) + carry;
+        tmp     = (*--last) + carry;
         *(last) = (byte)tmp;
-        carry = tmp >> 8;
+        carry   = tmp >> 8;
     }
 }
 
@@ -243,12 +243,12 @@ void HUGE_Decrement(byte* first, byte* last)
     if (*--last < 0x01)
     {
         *(last) = (*last) - (0x01) - carry + 256;
-        carry = 1;
+        carry   = 1;
     }
     else
     {
         *(last) = (*last) - (0x01) - carry;
-        carry = 0;
+        carry   = 0;
     }
 
     for (; (first <= last);)
@@ -256,12 +256,12 @@ void HUGE_Decrement(byte* first, byte* last)
         if (*--last < carry)
         {
             *(last) = (*last) - carry + 256;
-            carry = 1;
+            carry   = 1;
         }
         else
         {
             *(last) = (*last) - carry;
-            carry = 0;
+            carry   = 0;
         }
     }
 }
