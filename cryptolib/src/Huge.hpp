@@ -113,6 +113,8 @@ class Huge
 
     void DivRem(Huge& q, Huge& r, const Huge& other);
 
+    bool ModInverse(Huge<T>& inv, const Huge<T>& N);
+
   protected:
     void __swap(Huge& other) throw()
     {
@@ -337,6 +339,8 @@ ostream& operator<<(ostream& stream, const Huge<X>& huge)
         ss << (uint16_t)x;
     }
 
+    if (huge.m_Negative)
+        stream << "-";
     stream << ss.str();
     return stream;
 }
@@ -658,6 +662,45 @@ void Huge<T>::DivRem(Huge<T>& q, Huge<T>& r, const Huge<T>& other)
 
     q = div;
     r = rem;
+}
+
+template <class T>
+bool Huge<T>::ModInverse(Huge<T>& inv, const Huge<T>& N)
+{
+    if (*this >= N)
+        return false;
+
+    Huge<T> r1(N);
+    Huge<T> r2(*this);
+
+    Huge<T> t1 = {0};
+    Huge<T> t2 = {1};
+
+    while (r2 > 0)
+    {
+        Huge<T> q;
+        Huge<T> r;
+
+        r1.DivRem(q, r, r2);
+        r1 = r2;
+        r2 = r;
+
+        Huge<T> t = (t1 - q * t2);
+        t1        = t2;
+        t2        = t;
+    }
+
+    if (r1 != 1)
+        return false;
+
+    if (t1 < Huge<byte>({0}))
+    {
+        t1 += N;
+    }
+
+    inv = t1;
+
+    return true;
 }
 
 #endif
