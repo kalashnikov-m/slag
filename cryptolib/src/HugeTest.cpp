@@ -28,7 +28,8 @@ TEST(HugeTest, LogicalNOT)
 
 TEST(HugeTest, Modulus)
 {
-    auto ModulusTest = [](const Huge<byte>& arg1, const Huge<byte>& arg2, const Huge<byte>& expected) -> void {
+    auto ModulusTest = [](const Huge<byte>& arg1, const Huge<byte>& arg2, const Huge<byte>& expected) -> void
+    {
         auto mod = arg1 % arg2;
 
         EXPECT_TRUE(mod == expected);
@@ -41,7 +42,8 @@ TEST(HugeTest, Modulus)
 
 TEST(HugeTest, ModulusAssignment)
 {
-    auto ModulusAssignmentTest = [](Huge<byte>&& arg1, const Huge<byte>& arg2, const Huge<byte>& expected) {
+    auto ModulusAssignmentTest = [](Huge<byte>&& arg1, const Huge<byte>& arg2, const Huge<byte>& expected)
+    {
         arg1 %= arg2;
         EXPECT_TRUE(arg1 == expected);
     };
@@ -1001,47 +1003,18 @@ TEST(HugeTest, Equal)
 
 TEST(HugeTest, Inequality)
 {
+    auto InequalityTest = [](const Huge<byte>& arg1, const Huge<byte>& arg2, bool expected)
     {
-        Huge<byte> a = {0x22, 0x12};
-        Huge<byte> b = {0x22, 0x12};
+        bool eq = arg1 != arg2;
+        EXPECT_TRUE(eq == expected);
+    };
 
-        EXPECT_FALSE(a != b);
-    }
-
-    {
-        Huge<byte> a = {0x38, 0x22, 0x12};
-        Huge<byte> b = {0x22, 0x12};
-
-        EXPECT_TRUE(a != b);
-    }
-
-    {
-        Huge<byte> a = {0x21, 0x12};
-        Huge<byte> b = {0x22, 0x12};
-
-        EXPECT_TRUE(a != b);
-    }
-
-    {
-        Huge<byte> a = {0x00, 0x00};
-        Huge<byte> b = {0x22, 0x12};
-
-        EXPECT_TRUE(a != b);
-    }
-
-    {
-        Huge<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
-        Huge<byte> b = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
-
-        EXPECT_FALSE(a != b);
-    }
-
-    {
-        Huge<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
-        Huge<byte> b = {0x01, 0x02, 0x03, 0x05, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
-
-        EXPECT_TRUE(a != b);
-    }
+    InequalityTest({0x22, 0x12}, {0x22, 0x12}, false);
+    InequalityTest({0x38, 0x22, 0x12}, {0x22, 0x12}, true);
+    InequalityTest({0x21, 0x12}, {0x22, 0x12}, true);
+    InequalityTest({0x00, 0x00}, {0x22, 0x12}, true);
+    InequalityTest({0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c}, {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c}, false);
+    InequalityTest({0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c}, {0x01, 0x02, 0x03, 0x05, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c}, true);
 }
 
 TEST(HugeTest, BOOL)

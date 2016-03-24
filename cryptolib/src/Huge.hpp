@@ -47,9 +47,9 @@ class Huge
 
     operator bool() const;
 
-    Huge operator<<(int);
+    const Huge operator<<(int) const;
 
-    Huge operator>>(int);
+    const Huge operator>>(int) const;
 
     Huge& operator<<=(int nbits);
 
@@ -59,9 +59,9 @@ class Huge
 
     Huge& operator--();
 
-    Huge operator++(int);
+    const Huge operator++(int);
 
-    Huge operator--(int);
+    const Huge operator--(int);
 
     Huge& operator+=(const Huge& rhs);
 
@@ -69,9 +69,9 @@ class Huge
 
     Huge& operator+();
 
-    Huge operator-();
+    const Huge operator-() const;
 
-    Huge operator~();
+    const Huge operator~() const;
 
     Huge operator%=(const Huge& rhs);
 
@@ -95,25 +95,25 @@ class Huge
     friend ostream& operator<<(ostream& stream, const Huge<X>& huge);
 
     template <class X>
-    friend Huge<X> operator+(const Huge<X>&, const Huge<X>&);
+    friend const Huge<X> operator+(const Huge<X>&, const Huge<X>&);
 
     template <class X>
-    friend Huge<X> operator-(const Huge<X>&, const Huge<X>&);
+    friend const Huge<X> operator-(const Huge<X>&, const Huge<X>&);
 
     template <class X>
-    friend Huge<X> operator*(const Huge<X>&, const Huge<X>&);
+    friend const Huge<X> operator*(const Huge<X>&, const Huge<X>&);
 
     template <class X>
-    friend Huge<X> operator/(const Huge<X>&, const Huge<X>&);
+    friend const Huge<X> operator/(const Huge<X>&, const Huge<X>&);
 
     template <class X>
-    friend Huge<X> operator%(const Huge<X>&, const Huge<X>&);
+    friend const Huge<X> operator%(const Huge<X>&, const Huge<X>&);
 
-    Huge Gcd(const Huge& other);
+    const Huge Gcd(const Huge& other) const;
 
-    void DivRem(Huge& q, Huge& r, const Huge& other);
+    void DivRem(Huge& q, Huge& r, const Huge& other) const;
 
-    bool ModInverse(Huge<T>& inv, const Huge<T>& N);
+    bool ModInverse(Huge<T>& inv, const Huge<T>& N) const;
 
   protected:
     void __swap(Huge& other) throw()
@@ -484,7 +484,7 @@ bool operator!=(const Huge<T>& lhs, const Huge<T>& rhs)
 }
 
 template <class X>
-Huge<X> operator+(const Huge<X>& lhs, const Huge<X>& rhs)
+const Huge<X> operator+(const Huge<X>& lhs, const Huge<X>& rhs)
 {
     const auto& lhsBuf = lhs.m_Buffer;
     const auto& rhsBuf = rhs.m_Buffer;
@@ -527,7 +527,7 @@ Huge<X> operator+(const Huge<X>& lhs, const Huge<X>& rhs)
 }
 
 template <class X>
-Huge<X> operator-(const Huge<X>& lhs, const Huge<X>& rhs)
+const Huge<X> operator-(const Huge<X>& lhs, const Huge<X>& rhs)
 {
     short cmp = HUGE_Compare(&(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
 
@@ -570,7 +570,7 @@ Huge<X> operator-(const Huge<X>& lhs, const Huge<X>& rhs)
 }
 
 template <class X>
-Huge<X> operator*(const Huge<X>& lhs, const Huge<X>& rhs)
+const Huge<X> operator*(const Huge<X>& lhs, const Huge<X>& rhs)
 {
     size_t l_size = lhs.m_Buffer.size();
     size_t r_size = rhs.m_Buffer.size();
@@ -588,7 +588,7 @@ Huge<X> operator*(const Huge<X>& lhs, const Huge<X>& rhs)
 }
 
 template <class X>
-Huge<X> operator/(const Huge<X>& lhs, const Huge<X>& rhs)
+const Huge<X> operator/(const Huge<X>& lhs, const Huge<X>& rhs)
 {
     size_t l_size = lhs.m_Buffer.size();
 
@@ -609,7 +609,7 @@ Huge<X> operator/(const Huge<X>& lhs, const Huge<X>& rhs)
 }
 
 template <class X>
-Huge<X> operator%(const Huge<X>& lhs, const Huge<X>& rhs)
+const Huge<X> operator%(const Huge<X>& lhs, const Huge<X>& rhs)
 {
     size_t l_size = lhs.m_Buffer.size();
 
@@ -630,7 +630,7 @@ Huge<X> operator%(const Huge<X>& lhs, const Huge<X>& rhs)
 }
 
 template <class T>
-Huge<T> Huge<T>::Gcd(const Huge<T>& other)
+const Huge<T> Huge<T>::Gcd(const Huge<T>& other) const
 {
     auto pair = std::minmax(*this, other);
 
@@ -648,7 +648,7 @@ Huge<T> Huge<T>::Gcd(const Huge<T>& other)
 }
 
 template <class T>
-void Huge<T>::DivRem(Huge<T>& q, Huge<T>& r, const Huge<T>& other)
+void Huge<T>::DivRem(Huge<T>& q, Huge<T>& r, const Huge<T>& other) const
 {
     size_t l_size = this->m_Buffer.size();
 
@@ -665,7 +665,7 @@ void Huge<T>::DivRem(Huge<T>& q, Huge<T>& r, const Huge<T>& other)
 }
 
 template <class T>
-bool Huge<T>::ModInverse(Huge<T>& inv, const Huge<T>& N)
+bool Huge<T>::ModInverse(Huge<T>& inv, const Huge<T>& N) const
 {
     if (*this >= N)
         return false;
