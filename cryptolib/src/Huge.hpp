@@ -73,17 +73,11 @@ class Huge
 
     const Huge operator~() const;
 
-    Huge operator%=(const Huge& rhs);
-
-    Huge operator&(const Huge& rhs);
+    Huge& operator%=(const Huge& rhs);
 
     Huge& operator&=(const Huge& rhs);
 
-    Huge operator|(const Huge& rhs);
-
     Huge& operator|=(const Huge& rhs);
-
-    Huge operator^(const Huge& rhs);
 
     Huge& operator^=(const Huge& rhs);
 
@@ -93,6 +87,15 @@ class Huge
 
     template <class X>
     friend ostream& operator<<(ostream& stream, const Huge<X>& huge);
+
+    template <class X>
+    friend const Huge<X> operator&(const Huge<X>& lhs, const Huge<X>& rhs);
+
+    template <class X>
+    friend const Huge<X> operator|(const Huge<X>& lhs, const Huge<X>& rhs);
+
+    template <class X>
+    friend const Huge<X> operator^(const Huge<X>& lhs, const Huge<X>& rhs);
 
     template <class X>
     friend const Huge<X> operator+(const Huge<X>&, const Huge<X>&);
@@ -183,7 +186,7 @@ Huge<X>& Huge<X>::operator--()
 }
 
 template <class X>
-Huge<X> Huge<X>::operator++(int)
+const Huge<X> Huge<X>::operator++(int)
 {
     Huge temp(*this);
 
@@ -193,7 +196,7 @@ Huge<X> Huge<X>::operator++(int)
 }
 
 template <class X>
-Huge<X> Huge<X>::operator--(int)
+const Huge<X> Huge<X>::operator--(int)
 {
     Huge temp(*this);
 
@@ -225,13 +228,13 @@ Huge<X>& Huge<X>::operator+()
 }
 
 template <class X>
-Huge<X> Huge<X>::operator-()
+const Huge<X> Huge<X>::operator-() const
 {
     return Huge(m_Buffer, !m_Negative);
 }
 
 template <class X>
-Huge<X> Huge<X>::operator~()
+const Huge<X> Huge<X>::operator~() const
 {
     Huge temp(*this);
 
@@ -241,23 +244,11 @@ Huge<X> Huge<X>::operator~()
 }
 
 template <class X>
-Huge<X> Huge<X>::operator%=(const Huge<X>& rhs)
+Huge<X>& Huge<X>::operator%=(const Huge<X>& rhs)
 {
     *this = *this % rhs;
 
     return *this;
-}
-
-template <class X>
-Huge<X> Huge<X>::operator&(const Huge<X>& rhs)
-{
-    auto max = std::max(m_Buffer.size(), rhs.m_Buffer.size());
-
-    std::vector<X> temp((std::vector<X>(max)));
-
-    HUGE_And(&(*std::end(temp)), &(*std::begin(m_Buffer)), &(*std::end(m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
-
-    return Huge(temp);
 }
 
 template <class X>
@@ -269,35 +260,11 @@ Huge<X>& Huge<X>::operator&=(const Huge<X>& rhs)
 }
 
 template <class X>
-Huge<X> Huge<X>::operator|(const Huge<X>& rhs)
-{
-    auto max = std::max(m_Buffer.size(), rhs.m_Buffer.size());
-
-    std::vector<X> temp((std::vector<X>(max)));
-
-    HUGE_Or(&(*std::end(temp)), &(*std::begin(m_Buffer)), &(*std::end(m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
-
-    return Huge(temp);
-}
-
-template <class X>
 Huge<X>& Huge<X>::operator|=(const Huge<X>& rhs)
 {
     *this = *this | rhs;
 
     return *this;
-}
-
-template <class X>
-Huge<X> Huge<X>::operator^(const Huge<X>& rhs)
-{
-    auto max = std::max(m_Buffer.size(), rhs.m_Buffer.size());
-
-    std::vector<X> temp((std::vector<X>(max)));
-
-    HUGE_Xor(&(*std::end(temp)), &(*std::begin(m_Buffer)), &(*std::end(m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
-
-    return Huge(temp);
 }
 
 template <class X>
@@ -374,7 +341,7 @@ short compare(const Huge<T>& lhs, const Huge<T>& rhs)
 }
 
 template <class T>
-Huge<T> Huge<T>::operator<<(int nbits)
+const Huge<T> Huge<T>::operator<<(int nbits) const
 {
     Huge<T> temp(*this);
 
@@ -392,7 +359,7 @@ Huge<T>& Huge<T>::operator<<=(int nbits)
 }
 
 template <class T>
-Huge<T> Huge<T>::operator>>(int nbits)
+const Huge<T> Huge<T>::operator>>(int nbits) const
 {
     Huge<T> temp(*this);
 
@@ -481,6 +448,42 @@ bool operator!=(const Huge<T>& lhs, const Huge<T>& rhs)
     short cmp = compare(lhs, rhs);
 
     return (cmp != 0);
+}
+
+template <class X>
+const Huge<X> operator&(const Huge<X>& lhs, const Huge<X>& rhs)
+{
+    auto max = std::max(lhs.m_Buffer.size(), rhs.m_Buffer.size());
+
+    std::vector<X> temp((std::vector<X>(max)));
+
+    HUGE_And(&(*std::end(temp)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
+
+    return Huge<X>(temp);
+}
+
+template <class X>
+const Huge<X> operator|(const Huge<X>& lhs, const Huge<X>& rhs)
+{
+    auto max = std::max(lhs.m_Buffer.size(), rhs.m_Buffer.size());
+
+    std::vector<X> temp((std::vector<X>(max)));
+
+    HUGE_Or(&(*std::end(temp)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
+
+    return Huge<X>(temp);
+}
+
+template <class X>
+const Huge<X> operator^(const Huge<X>& lhs, const Huge<X>& rhs)
+{
+    auto max = std::max(lhs.m_Buffer.size(), rhs.m_Buffer.size());
+
+    std::vector<X> temp((std::vector<X>(max)));
+
+    HUGE_Xor(&(*std::end(temp)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
+
+    return Huge<X>(temp);
 }
 
 template <class X>
