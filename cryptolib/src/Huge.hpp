@@ -59,19 +59,19 @@ class Huge
 
     Huge& operator--();
 
+    Huge& operator+();
+
     const Huge operator++(int);
 
     const Huge operator--(int);
 
-    Huge& operator+=(const Huge& rhs);
-
-    Huge& operator-=(const Huge& rhs);
-
-    Huge& operator+();
-
     const Huge operator-() const;
 
     const Huge operator~() const;
+
+    Huge& operator+=(const Huge& rhs);
+
+    Huge& operator-=(const Huge& rhs);
 
     Huge& operator%=(const Huge& rhs);
 
