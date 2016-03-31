@@ -122,9 +122,9 @@ class Huge
 
     bool IsOdd() const;
 
-    Huge Pow(const Huge& exponent) const;
+    const Huge Pow(const Huge& exponent) const;
 
-    Huge PowMod(const Huge& exponent, const Huge& mod) const;
+    const Huge PowMod(const Huge& exponent, const Huge& mod) const;
 
   protected:
     void __swap(Huge& other) throw()
@@ -601,6 +601,12 @@ const Huge<X> operator*(const Huge<X>& lhs, const Huge<X>& rhs)
 template <class X>
 const Huge<X> operator/(const Huge<X>& lhs, const Huge<X>& rhs)
 {
+    short cmp = HUGE_Compare(&(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
+    if (cmp == -1)
+    {
+        return Huge<X>();
+    }
+
     size_t l_size = lhs.m_Buffer.size();
 
     const std::vector<byte>& lhsBuf = lhs.m_Buffer;
@@ -622,6 +628,12 @@ const Huge<X> operator/(const Huge<X>& lhs, const Huge<X>& rhs)
 template <class X>
 const Huge<X> operator%(const Huge<X>& lhs, const Huge<X>& rhs)
 {
+    short cmp = HUGE_Compare(&(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
+    if (cmp == -1)
+    {
+        return lhs;
+    }
+
     size_t l_size = lhs.m_Buffer.size();
 
     const std::vector<byte>& lhsBuf = lhs.m_Buffer;
@@ -661,6 +673,14 @@ const Huge<T> Huge<T>::Gcd(const Huge<T>& other) const
 template <class T>
 void Huge<T>::DivRem(Huge<T>& q, Huge<T>& r, const Huge<T>& other) const
 {
+    short cmp = HUGE_Compare(&(*std::begin(this->m_Buffer)), &(*std::end(this->m_Buffer)), &(*std::begin(other.m_Buffer)), &(*std::end(other.m_Buffer)));
+    if (cmp == -1)
+    {
+        q = Huge<T>();
+        r = *this;
+        return;
+    }
+
     size_t l_size = this->m_Buffer.size();
 
     Huge<T> div((std::vector<byte>(l_size)));
@@ -729,7 +749,7 @@ bool Huge<T>::IsOdd() const
 }
 
 template <class T>
-Huge<T> Huge<T>::Pow(const Huge<T>& exp) const
+const Huge<T> Huge<T>::Pow(const Huge<T>& exp) const
 {
     Huge<T> y = {0x01};
     Huge<T> a = *this;
@@ -748,9 +768,27 @@ Huge<T> Huge<T>::Pow(const Huge<T>& exp) const
 }
 
 template <class T>
-Huge<T> Huge<T>::PowMod(const Huge<T>& exponent, const Huge<T>& mod) const
+const Huge<T> Huge<T>::PowMod(const Huge<T>& exp, const Huge<T>& mod) const
 {
-    return Huge<T>();
+    Huge<T> y = {0x01};
+    Huge<T> a = *this;
+    Huge<T> e = exp;
+
+    while (e > 0)
+    {
+        if (e.IsOdd())
+        {
+            y *= a;
+            y %= mod;
+        }
+
+        a *= a;
+        a %= mod;
+
+        e >>= 1;
+    }
+
+    return y;
 }
 
 #endif
