@@ -24,9 +24,9 @@ void HUGE_Increment(byte* first1, byte* last1);
 
 void HUGE_Decrement(byte* first1, byte* last1);
 
-bool HUGE_IsEven(byte* first, byte* last);
+bool HUGE_IsEven(const byte* first, const byte* last);
 
-bool HUGE_IsOdd(byte* first, byte* last);
+bool HUGE_IsOdd(const byte* first, const byte* last);
 
 bool HUGE_isOne(const byte* first, const byte* last);
 

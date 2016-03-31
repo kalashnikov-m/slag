@@ -266,12 +266,12 @@ void HUGE_Decrement(byte* first, byte* last)
     }
 }
 
-bool HUGE_IsOdd(byte* first, byte* last)
+bool HUGE_IsOdd(const byte* first, const byte* last)
 {
     return (*(--last) & 0x01) == 0x01;
 }
 
-bool HUGE_IsEven(byte* first, byte* last)
+bool HUGE_IsEven(const byte* first, const byte* last)
 {
     return (*(--last) & 0x01) == 0x00;
 }

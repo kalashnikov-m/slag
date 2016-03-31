@@ -118,6 +118,14 @@ class Huge
 
     bool ModInverse(Huge<T>& inv, const Huge<T>& N) const;
 
+    bool IsEven() const;
+
+    bool IsOdd() const;
+
+    Huge Pow(const Huge& exponent) const;
+
+    Huge PowMod(const Huge& exponent, const Huge& mod) const;
+
   protected:
     void __swap(Huge& other) throw()
     {
@@ -704,6 +712,45 @@ bool Huge<T>::ModInverse(Huge<T>& inv, const Huge<T>& N) const
     inv = t1;
 
     return true;
+}
+
+template <class T>
+bool Huge<T>::IsEven() const
+{
+    bool rv = HUGE_IsEven(&(*std::begin(this->m_Buffer)), &(*std::end(this->m_Buffer)));
+    return rv;
+}
+
+template <class T>
+bool Huge<T>::IsOdd() const
+{
+    bool rv = HUGE_IsOdd(&(*std::begin(this->m_Buffer)), &(*std::end(this->m_Buffer)));
+    return rv;
+}
+
+template <class T>
+Huge<T> Huge<T>::Pow(const Huge<T>& exp) const
+{
+    Huge<T> y = {0x01};
+    Huge<T> a = *this;
+    Huge<T> e = exp;
+
+    while (e > 0)
+    {
+        if (e.IsOdd())
+            y *= a;
+
+        a *= a;
+        e >>= 1;
+    }
+
+    return y;
+}
+
+template <class T>
+Huge<T> Huge<T>::PowMod(const Huge<T>& exponent, const Huge<T>& mod) const
+{
+    return Huge<T>();
 }
 
 #endif
