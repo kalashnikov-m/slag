@@ -243,7 +243,7 @@ TEST(HugeCore_Test, isOne)
 {
     auto IsOneTest = [](const std::initializer_list<byte>& arg, bool isOne) -> void
     {
-        bool f = HUGE_isOne(begin(arg), end(arg));
+        bool f = HUGE_IsOne(begin(arg), end(arg));
 
         EXPECT_TRUE(f == isOne);
     };

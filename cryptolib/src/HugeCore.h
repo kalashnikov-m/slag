@@ -28,7 +28,9 @@ bool HUGE_IsEven(const byte* first, const byte* last);
 
 bool HUGE_IsOdd(const byte* first, const byte* last);
 
-bool HUGE_isOne(const byte* first, const byte* last);
+bool HUGE_IsOne(const byte* first, const byte* last);
+
+bool HUGE_IsZero(const byte* first, const byte* last);
 
 void HUGE_Reverse(byte* first, byte* last);
 
@@ -57,8 +59,6 @@ void HUGE_And(byte* result, const byte* first1, const byte* last1, const byte* f
 void HUGE_Inverse(byte* first, byte* last);
 
 short HUGE_Compare(const byte* first1, const byte* last1, const byte* first2, const byte* last2);
-
-bool HUGE_IsZero(const byte* first, const byte* last);
 
 int HUGE_GetLowestSetBit(const byte* first, const byte* last);
 

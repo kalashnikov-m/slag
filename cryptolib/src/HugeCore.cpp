@@ -493,7 +493,7 @@ bool HUGE_isPowerOfTwo(const byte* first, const byte* last)
     return false;
 }
 
-bool HUGE_isOne(const byte* first, const byte* last)
+bool HUGE_IsOne(const byte* first, const byte* last)
 {
     --last;
 
