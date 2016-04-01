@@ -114,7 +114,7 @@ class Huge
 
     const Huge Gcd(const Huge& other) const;
 
-    void DivRem(Huge& q, Huge& r, const Huge& other) const;
+    void DivRem(Huge& q, Huge& r, const Huge& other) const throw(std::invalid_argument);
 
     bool ModInverse(Huge<T>& inv, const Huge<T>& N) const;
 
@@ -601,26 +601,10 @@ const Huge<X> operator*(const Huge<X>& lhs, const Huge<X>& rhs)
 template <class X>
 const Huge<X> operator/(const Huge<X>& lhs, const Huge<X>& rhs)
 {
-    short cmp = HUGE_Compare(&(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
-    if (cmp == -1)
-    {
-        return Huge<X>();
-    }
+    Huge<X> div;
+    Huge<X> rem;
 
-    size_t l_size = lhs.m_Buffer.size();
-
-    const std::vector<byte>& lhsBuf = lhs.m_Buffer;
-    const std::vector<byte>& rhsBuf = rhs.m_Buffer;
-
-    Huge<X> div((std::vector<byte>(l_size)));
-    Huge<X> rem((std::vector<byte>(l_size)));
-
-    std::vector<byte>& divBuf = div.m_Buffer;
-    std::vector<byte>& remBuf = rem.m_Buffer;
-
-    div.m_Negative = lhs.m_Negative ^ rhs.m_Negative;
-
-    HUGE_DivRem(&(*std::begin(divBuf)), &(*std::end(divBuf)), &(*std::begin(remBuf)), &(*std::end(remBuf)), &(*std::begin(lhsBuf)), &(*std::end(lhsBuf)), &(*std::begin(rhsBuf)), &(*std::end(rhsBuf)));
+    lhs.DivRem(div, rem, rhs);
 
     return div;
 }
@@ -628,26 +612,10 @@ const Huge<X> operator/(const Huge<X>& lhs, const Huge<X>& rhs)
 template <class X>
 const Huge<X> operator%(const Huge<X>& lhs, const Huge<X>& rhs)
 {
-    short cmp = HUGE_Compare(&(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
-    if (cmp == -1)
-    {
-        return lhs;
-    }
+    Huge<X> div;
+    Huge<X> rem;
 
-    size_t l_size = lhs.m_Buffer.size();
-
-    const std::vector<byte>& lhsBuf = lhs.m_Buffer;
-    const std::vector<byte>& rhsBuf = rhs.m_Buffer;
-
-    Huge<X> div((std::vector<byte>(l_size)));
-    Huge<X> rem((std::vector<byte>(l_size)));
-
-    std::vector<byte>& divBuf = div.m_Buffer;
-    std::vector<byte>& remBuf = rem.m_Buffer;
-
-    rem.m_Negative = lhs.m_Negative ^ rhs.m_Negative;
-
-    HUGE_DivRem(&(*std::begin(divBuf)), &(*std::end(divBuf)), &(*std::begin(remBuf)), &(*std::end(remBuf)), &(*std::begin(lhsBuf)), &(*std::end(lhsBuf)), &(*std::begin(rhsBuf)), &(*std::end(rhsBuf)));
+    lhs.DivRem(div, rem, rhs);
 
     return rem;
 }
@@ -671,8 +639,14 @@ const Huge<T> Huge<T>::Gcd(const Huge<T>& other) const
 }
 
 template <class T>
-void Huge<T>::DivRem(Huge<T>& q, Huge<T>& r, const Huge<T>& other) const
+void Huge<T>::DivRem(Huge<T>& q, Huge<T>& r, const Huge<T>& other) const throw(std::invalid_argument)
 {
+    bool isZero = HUGE_IsZero(&(*std::begin(other.m_Buffer)), &(*std::end(other.m_Buffer)));
+    if (isZero)
+    {
+        throw std::invalid_argument("division by zero");
+    }
+
     short cmp = HUGE_Compare(&(*std::begin(this->m_Buffer)), &(*std::end(this->m_Buffer)), &(*std::begin(other.m_Buffer)), &(*std::end(other.m_Buffer)));
     if (cmp == -1)
     {
