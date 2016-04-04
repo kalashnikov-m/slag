@@ -17,7 +17,7 @@ static void dump(const byte* f, const byte* l)
     printf("\n");
 }
 
-template<class InputIterator>
+template <class InputIterator>
 static bool ASSERT_BYTES_EQ(InputIterator f1, InputIterator l1, InputIterator f2, InputIterator l2)
 {
     bool ret = false;
@@ -116,7 +116,7 @@ TEST(HugeCore_Test, DivRem)
         std::vector<byte> rem(8);
 
         HUGE_DivRem(&(*begin(div)), &(*end(div)), &(*begin(rem)), &(*end(rem)), &(*begin(_arg1)), &(*end(_arg1)), &(*begin(_arg2)), &(*end(_arg2)));
-        
+
         bool eq = ASSERT_BYTES_EQ<const byte*>(&(*_expected_div.begin()), &(*_expected_div.end()), (byte*)&(*begin(div)), (byte*)&(*end(div)));
         EXPECT_TRUE(eq);
 
@@ -140,7 +140,7 @@ TEST(HugeCore_Test, Increment)
     {
         std::vector<byte> arg(_arg);
         std::vector<byte> expected(_expected);
-        
+
         HUGE_Increment(&(*begin(arg)), &(*end(arg)));
 
         auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(arg), end(arg));
@@ -159,7 +159,7 @@ TEST(HugeCore_Test, Decrement)
     {
         std::vector<byte> arg(_arg);
         std::vector<byte> expected(_expected);
-        
+
         HUGE_Decrement(&(*begin(arg)), &(*end(arg)));
 
         auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(arg), end(arg));
@@ -174,13 +174,13 @@ TEST(HugeCore_Test, Decrement)
 TEST(HugeCore_Test, Reverse)
 {
     auto ReverseTest = [](const std::initializer_list<byte>& _arg, const std::initializer_list<byte>& _expected)
-    {                     
+    {
         std::vector<byte> arg(_arg);
         std::vector<byte> expected(_expected);
-        
+
         HUGE_Reverse(&(*std::begin(arg)), &(*std::end(arg)));
-        
-        auto eq = ASSERT_BYTES_EQ(std::begin(expected),std::end(expected), std::begin(arg), std::end(arg));
+
+        auto eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(arg), std::end(arg));
 
         EXPECT_TRUE(eq);
     };
@@ -240,7 +240,7 @@ TEST(HugeCore_Test, Inverse)
     {
         std::vector<byte> arg(_arg);
         std::vector<byte> expected(_expected);
-        
+
         HUGE_Inverse(&(*begin(arg)), &(*end(arg)));
 
         auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(arg), end(arg));
