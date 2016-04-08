@@ -33,12 +33,27 @@ class Huge
         *this = std::move(other);
     }
 
-    Huge(const std::initializer_list<T>& il, bool negative = false) : m_Buffer(il), m_Negative(negative)
+    Huge(const std::initializer_list<T>& il, bool negative = false) : Huge(std::begin(il), std::end(il), negative)
     {
     }
 
-    Huge(const std::vector<T>& iv, bool negative = false) : m_Buffer(iv), m_Negative(negative)
+    Huge(const std::vector<T>& iv, bool negative = false) : Huge(std::begin(iv), std::end(iv), negative)
     {
+    }
+
+    template <class InputIterator>
+    Huge(InputIterator first, InputIterator last, bool negative = false)
+        : m_Buffer(1), m_Negative(false)
+    {
+        for (; first != last && *first == 0x00; ++first)
+            ;
+
+        if (first != last)
+        {
+
+            m_Buffer   = std::vector<T>(first, last);
+            m_Negative = negative;
+        }
     }
 
     Huge& operator=(const Huge& other);
@@ -657,13 +672,13 @@ void Huge<T>::DivRem(Huge<T>& q, Huge<T>& r, const Huge<T>& other) const throw(s
 
     size_t l_size = this->m_Buffer.size();
 
-    Huge<T> div((std::vector<byte>(l_size)));
-    Huge<T> rem((std::vector<byte>(l_size)));
+    std::vector<T> v_div(l_size);
+    std::vector<T> v_rem(l_size);
 
-    div.m_Negative = this->m_Negative ^ other.m_Negative;
-    rem.m_Negative = this->m_Negative ^ other.m_Negative;
+    HUGE_DivRem(&(*std::begin(v_div)), &(*std::end(v_div)), &(*std::begin(v_rem)), &(*std::end(v_rem)), &(*std::begin(this->m_Buffer)), &(*std::end(this->m_Buffer)), &(*std::begin(other.m_Buffer)), &(*std::end(other.m_Buffer)));
 
-    HUGE_DivRem(&(*std::begin(div.m_Buffer)), &(*std::end(div.m_Buffer)), &(*std::begin(rem.m_Buffer)), &(*std::end(rem.m_Buffer)), &(*std::begin(this->m_Buffer)), &(*std::end(this->m_Buffer)), &(*std::begin(other.m_Buffer)), &(*std::end(other.m_Buffer)));
+    Huge<T> div(v_div, this->m_Negative ^ other.m_Negative);
+    Huge<T> rem(v_rem, this->m_Negative ^ other.m_Negative);
 
     q = div;
     r = rem;
