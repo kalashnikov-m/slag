@@ -375,27 +375,33 @@ void HUGE_ShiftRight(byte* first, byte* last, int n)
 
 void HUGE_Or(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
-    for (; (first1 <= last1) && (first2 <= last2);)
+    --last1;
+    --last2;
+
+    for (; (first1 <= last1) && (first2 <= last2); --last1, --last2)
     {
-        *(--result) = *(--last1) | *(--last2);
+        *(--result) = *(last1) | *(last2);
     }
 
     for (; first1 <= last1; --last1)
     {
-        *(--result) = *first1;
+        *(--result) = *last1; ;
     }
 
     for (; first2 <= last2; --last2)
     {
-        *(--result) = *first2;
+        *(--result) = *last2; 
     }
 }
 
 void HUGE_Xor(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
-    for (; (first1 <= last1) && (first2 <= last2);)
+    --last1;
+    --last2;
+
+    for (; (first1 <= last1) && (first2 <= last2); --last1, --last2)
     {
-        *(--result) = (*--last1) ^ (*--last2);
+        *(--result) = (*last1) ^ (*last2);
     }
 
     for (; first1 <= last1; --last1)
@@ -411,9 +417,12 @@ void HUGE_Xor(byte* result, const byte* first1, const byte* last1, const byte* f
 
 void HUGE_And(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
-    for (; (first1 <= last1) && (first2 <= last2);)
+    --last1;
+    --last2;
+
+    for (; (first1 <= last1) && (first2 <= last2); --last1, --last2)
     {
-        *(--result) = (*--last1) & (*--last2);
+        *(--result) = *(last1) & *(last2);
     }
 
     for (; first1 <= last1; --last1)
