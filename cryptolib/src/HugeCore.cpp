@@ -385,12 +385,12 @@ void HUGE_Or(byte* result, const byte* first1, const byte* last1, const byte* fi
 
     for (; first1 <= last1; --last1)
     {
-        *(--result) = *last1; ;
+        *(--result) = *last1;
     }
 
     for (; first2 <= last2; --last2)
     {
-        *(--result) = *last2; 
+        *(--result) = *last2;
     }
 }
 
@@ -406,12 +406,12 @@ void HUGE_Xor(byte* result, const byte* first1, const byte* last1, const byte* f
 
     for (; first1 <= last1; --last1)
     {
-        *(--result) = 0x00;
+        *(--result) = *last1;
     }
 
     for (; first2 <= last2; --last2)
     {
-        *(--result) = 0x00;
+        *(--result) = *last2;
     }
 }
 

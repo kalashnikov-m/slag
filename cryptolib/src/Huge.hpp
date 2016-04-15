@@ -50,7 +50,6 @@ class Huge
 
         if (first != last)
         {
-
             m_Buffer   = std::vector<T>(first, last);
             m_Negative = negative;
         }
@@ -598,19 +597,17 @@ const Huge<X> operator-(const Huge<X>& lhs, const Huge<X>& rhs)
 template <class X>
 const Huge<X> operator*(const Huge<X>& lhs, const Huge<X>& rhs)
 {
-    size_t l_size = lhs.m_Buffer.size();
-    size_t r_size = rhs.m_Buffer.size();
-
     const std::vector<byte>& lhsBuf = lhs.m_Buffer;
     const std::vector<byte>& rhsBuf = rhs.m_Buffer;
 
-    Huge<X> tmp((std::vector<byte>(l_size + r_size)));
+    size_t l_size = lhsBuf.size();
+    size_t r_size = rhsBuf.size();
 
-    std::vector<byte>& buf = tmp.m_Buffer;
-    HUGE_Multiply(&(*std::begin(buf)), &(*std::end(buf)), &(*std::begin(lhsBuf)), &(*std::end(lhsBuf)), &(*std::begin(rhsBuf)), &(*std::end(rhsBuf)));
-    tmp.m_Negative = lhs.m_Negative ^ rhs.m_Negative;
+    std::vector<X> out(l_size + r_size);
 
-    return tmp;
+    HUGE_Multiply(&(*std::begin(out)), &(*std::end(out)), &(*std::begin(lhsBuf)), &(*std::end(lhsBuf)), &(*std::begin(rhsBuf)), &(*std::end(rhsBuf)));
+
+    return Huge<X>(out, lhs.m_Negative ^ rhs.m_Negative);
 }
 
 template <class X>
