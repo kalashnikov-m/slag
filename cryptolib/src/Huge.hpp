@@ -5,7 +5,6 @@
 #include <algorithm>
 #include <initializer_list>
 #include <iostream>
-#include <iterator>
 #include <vector>
 
 #include "HugeCore.h"
@@ -477,11 +476,11 @@ const Huge<X> operator&(const Huge<X>& lhs, const Huge<X>& rhs)
 {
     auto max = std::max(lhs.m_Buffer.size(), rhs.m_Buffer.size());
 
-    std::vector<X> temp((std::vector<X>(max)));
+    std::vector<X> out(max);
 
-    HUGE_And(&(*std::end(temp)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
+    HUGE_And(&(*std::end(out)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
 
-    return Huge<X>(temp);
+    return Huge<X>(out);
 }
 
 template <class X>
@@ -489,11 +488,11 @@ const Huge<X> operator|(const Huge<X>& lhs, const Huge<X>& rhs)
 {
     auto max = std::max(lhs.m_Buffer.size(), rhs.m_Buffer.size());
 
-    std::vector<X> temp((std::vector<X>(max)));
+    std::vector<X> out(max);
 
-    HUGE_Or(&(*std::end(temp)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
+    HUGE_Or(&(*std::end(out)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
 
-    return Huge<X>(temp);
+    return Huge<X>(out);
 }
 
 template <class X>
@@ -501,11 +500,11 @@ const Huge<X> operator^(const Huge<X>& lhs, const Huge<X>& rhs)
 {
     auto max = std::max(lhs.m_Buffer.size(), rhs.m_Buffer.size());
 
-    std::vector<X> temp((std::vector<X>(max)));
+    std::vector<X> out(max);
 
-    HUGE_Xor(&(*std::end(temp)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
+    HUGE_Xor(&(*std::end(out)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
 
-    return Huge<X>(temp);
+    return Huge<X>(out);
 }
 
 template <class X>
@@ -513,7 +512,12 @@ const Huge<X> operator+(const Huge<X>& lhs, const Huge<X>& rhs)
 {
     const auto& lhsBuf = lhs.m_Buffer;
     const auto& rhsBuf = rhs.m_Buffer;
+    
+    size_t lsize = lhsBuf.size ();
+    size_t rsize = rhsBuf.size ();
 
+    std::vector<X> out(std::max(lsize, rsize));
+    
     // если знаки аргументов различны: (a)+(-b), (-a)+(b) ==> ?(a-b)
     if (lhs.m_Negative ^ rhs.m_Negative)
     {
@@ -521,31 +525,23 @@ const Huge<X> operator+(const Huge<X>& lhs, const Huge<X>& rhs)
 
         if (cmp == -1)
         { // (|a| < |b|) ==> (|b| - |a|)
-            Huge<X> temp(rhs);
+            HUGE_Subtract(&(*std::end(out)), &(*std::begin(rhsBuf)), &(*std::end(rhsBuf)), &(*std::begin(lhsBuf)), &(*std::end(lhsBuf)));
 
-            HUGE_Subtract(&(*std::end(temp.m_Buffer)), &(*std::begin(rhsBuf)), &(*std::end(rhsBuf)), &(*std::begin(lhsBuf)), &(*std::end(lhsBuf)));
-
-            return temp;
+            return Huge<X>(out, rhs.m_Negative);
         }
         else if (cmp == +1)
         {
             // (|a| > |b|) ==> (|a| - |b|)
-            Huge<X> temp(lhs);
+            HUGE_Subtract(&(*std::end(out)), &(*std::begin(lhsBuf)), &(*std::end(lhsBuf)), &(*std::begin(rhsBuf)), &(*std::end(rhsBuf)));
 
-            HUGE_Subtract(&(*std::end(temp.m_Buffer)), &(*std::begin(lhsBuf)), &(*std::end(lhsBuf)), &(*std::begin(rhsBuf)), &(*std::end(rhsBuf)));
-
-            return temp;
+            return Huge<X>(out, lhs.m_Negative);
         }
     }
     else
     { // если знаки аргументов одинаковы
-        Huge<X> temp(std::max(lhs, rhs));
-
-        HUGE_Add(&(*std::end(temp.m_Buffer)), &(*std::begin(lhsBuf)), &(*std::end(lhsBuf)), &(*std::begin(rhsBuf)), &(*std::end(rhsBuf)));
-
-        temp.m_Negative = lhs.m_Negative & rhs.m_Negative;
-
-        return temp;
+        HUGE_Add(&(*std::end(out)), &(*std::begin(lhsBuf)), &(*std::end(lhsBuf)), &(*std::begin(rhsBuf)), &(*std::end(rhsBuf)));
+        
+        return Huge<X>(out, lhs.m_Negative & rhs.m_Negative);
     }
 
     return Huge<X>();
