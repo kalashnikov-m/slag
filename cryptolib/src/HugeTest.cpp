@@ -68,17 +68,20 @@ TEST(HugeTest, BitwiseAND)
 
 TEST(HugeTest, BitwiseANDassignment)
 {
+    auto Test = [](const std::initializer_list<byte>& arg1, const std::initializer_list<byte>& arg2, const std::initializer_list<byte>& arg3) -> void
     {
-        Huge<byte> a = {0x11, 0x22, 0x33};
-        Huge<byte> b = {0x00, 0x00, 0x00};
-
-        Huge<byte> expect = {0x00, 0x00, 0x00};
-
+        Huge<byte> a(arg1);
+        Huge<byte> b(arg2);
+        Huge<byte> expect(arg3);
+        
         a &= b;
-
+        
         EXPECT_TRUE(a == expect);
-    }
-
+    };
+    
+    Test({0x11, 0x22, 0x33}, {0x00, 0x00, 0x00}, {0x00, 0x00, 0x00});
+    Test({0x11, 0x22, 0x33}, {0x11, 0x22, 0x33}, {0x11, 0x22, 0x33});
+    
     {
         Huge<byte> a = {0x11, 0x22, 0x33};
         Huge<byte> b = {0x10, 0x20, 0x30};
@@ -94,26 +97,17 @@ TEST(HugeTest, BitwiseANDassignment)
 
 TEST(HugeTest, LogicalAND)
 {
+    auto Test = [](const std::initializer_list<byte>& arg1, const std::initializer_list<byte>& arg2, bool expect) -> void
     {
-        Huge<byte> a = {0x01, 0x02, 0x03};
-        Huge<byte> b = {0x01, 0x02, 0x03};
+        Huge<byte> a = arg1;
+        Huge<byte> b = arg2;
 
-        EXPECT_TRUE(a && b);
-    }
-
-    {
-        Huge<byte> a = {0x00, 0x00, 0x00};
-        Huge<byte> b = {0x01, 0x02, 0x03};
-
-        EXPECT_FALSE(a && b);
-    }
-
-    {
-        Huge<byte> a = {0x00, 0x00, 0x00};
-        Huge<byte> b = {0x00, 0x00, 0x00};
-
-        EXPECT_FALSE(a && b);
-    }
+        EXPECT_TRUE((a && b) == expect);
+    };
+    
+    Test({0x01, 0x02, 0x03}, {0x01, 0x02, 0x03}, true);
+    Test({0x00, 0x00, 0x00}, {0x01, 0x02, 0x03}, false);
+    Test({0x00, 0x00, 0x00}, {0x00, 0x00, 0x00}, false);
 }
 
 TEST(HugeTest, UnaryPlus)
