@@ -1149,6 +1149,20 @@ TEST(HugeTest, ModInvserse)
 
         EXPECT_TRUE(f);
     }
+    
+    {
+        Huge<byte> a   = {0x03};             // 3
+        Huge<byte> N   = {0x8B, 0xF9, 0xFF}; // 9177503
+        Huge<byte> inv = {0x5d, 0x41, 0x5b}; // 6111579
+        Huge<byte> actual;
+
+        bool exists = a.ModInverse(actual, N);
+
+        EXPECT_TRUE(exists);
+        bool f = (actual == inv);
+
+        EXPECT_TRUE(f);
+    }
 }
 
 TEST(HugeTest, DivRem)
