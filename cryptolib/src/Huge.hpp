@@ -374,7 +374,7 @@ const Huge<T> Huge<T>::operator<<(int nbits) const
 template <class T>
 Huge<T>& Huge<T>::operator<<=(int nbits)
 {
-    HUGE_ShiftLeft(&(*std::begin(m_Buffer)), &(*std::end(m_Buffer)), nbits);
+   *this = *this << nbits;
 
     return *this;
 }
@@ -392,13 +392,9 @@ const Huge<T> Huge<T>::operator>>(int nbits) const
 template <class T>
 Huge<T>& Huge<T>::operator>>=(int nbits)
 {
-    std::vector<T> out(this->m_Buffer);
-          
-    HUGE_ShiftRight(&(*std::begin(out)), &(*std::end(out)), nbits);
-
-    *this = Huge<T>(out);
-    
-    return *this;
+  *this = *this >> nbits;
+  
+  return *this;
 }
 
 template <class X>
