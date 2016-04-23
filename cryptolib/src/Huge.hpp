@@ -364,11 +364,11 @@ short compare(const Huge<T>& lhs, const Huge<T>& rhs)
 template <class T>
 const Huge<T> Huge<T>::operator<<(int nbits) const
 {
-    Huge<T> temp(*this);
+    std::vector<T> out(this->m_Buffer);
 
-    HUGE_ShiftLeft(&(*std::begin(temp.m_Buffer)), &(*std::end(temp.m_Buffer)), nbits);
+    HUGE_ShiftLeft(&(*std::begin(out)), &(*std::end(out)), nbits);
 
-    return temp;
+    return Huge<T>(out);
 }
 
 template <class T>
@@ -382,11 +382,11 @@ Huge<T>& Huge<T>::operator<<=(int nbits)
 template <class T>
 const Huge<T> Huge<T>::operator>>(int nbits) const
 {
-    Huge<T> temp(*this);
+    std::vector<T> out(this->m_Buffer);
 
-    HUGE_ShiftRight(&(*std::begin(temp.m_Buffer)), &(*std::end(temp.m_Buffer)), nbits);
+    HUGE_ShiftRight(&(*std::begin(out)), &(*std::end(out)), nbits);
 
-    return temp;
+    return Huge<T>(out);
 }
 
 template <class T>
