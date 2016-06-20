@@ -60,6 +60,8 @@ void HUGE_Inverse(byte* first, byte* last);
 
 short HUGE_Compare(const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
+bool HUGE_Equal(const byte* first1, const byte* last1, const byte* first2, const byte* last2);
+
 int HUGE_GetLowestSetBit(const byte* first, const byte* last);
 
 int HUGE_GetHighestSetBit(const byte* first, const byte* last);

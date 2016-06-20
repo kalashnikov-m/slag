@@ -479,6 +479,22 @@ short HUGE_Compare(const byte* first1, const byte* last1, const byte* first2, co
     return 0;
 }
 
+bool HUGE_Equal(const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+{
+    bool ret = false;
+
+    for (; (first1 != last1) && (*first1 == 0x00); ++first1)
+        ;
+
+    for (; (first2 != last2) && (*first2 == 0x00); ++first2)
+        ;
+
+    for (; (first1 != last1) && (first2 != last2) && (*first1) == (*first2); ++first1, ++first2)
+        ;
+
+    return (first1 == last1) && (first2 == last2);
+}
+
 bool HUGE_IsZero(const byte* first, const byte* last)
 {
     for (; (first != last) && (*first == 0x00);)
