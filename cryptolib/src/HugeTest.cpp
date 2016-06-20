@@ -73,15 +73,15 @@ TEST(HugeTest, BitwiseANDassignment)
         Huge<byte> a(arg1);
         Huge<byte> b(arg2);
         Huge<byte> expect(arg3);
-        
+
         a &= b;
-        
+
         EXPECT_TRUE(a == expect);
     };
-    
+
     Test({0x11, 0x22, 0x33}, {0x00, 0x00, 0x00}, {0x00, 0x00, 0x00});
     Test({0x11, 0x22, 0x33}, {0x11, 0x22, 0x33}, {0x11, 0x22, 0x33});
-    
+
     {
         Huge<byte> a = {0x11, 0x22, 0x33};
         Huge<byte> b = {0x10, 0x20, 0x30};
@@ -104,7 +104,7 @@ TEST(HugeTest, LogicalAND)
 
         EXPECT_TRUE((a && b) == expect);
     };
-    
+
     Test({0x01, 0x02, 0x03}, {0x01, 0x02, 0x03}, true);
     Test({0x00, 0x00, 0x00}, {0x01, 0x02, 0x03}, false);
     Test({0x00, 0x00, 0x00}, {0x00, 0x00, 0x00}, false);
@@ -350,7 +350,7 @@ TEST(HugeTest, Addition)
 
         EXPECT_TRUE(c == expect);
     }
-    
+
     {
         Huge<byte> a = {0x01, 0x02, 0x03};
         Huge<byte> b = {0x00};
@@ -361,7 +361,7 @@ TEST(HugeTest, Addition)
 
         EXPECT_TRUE(c == expect);
     }
-    
+
     {
         Huge<byte> a = {0x00};
         Huge<byte> b = {0x17, 0x20, 0x11};
@@ -385,7 +385,7 @@ TEST(HugeTest, AdditionAssigment)
 
         EXPECT_TRUE(a == expect);
     }
-    
+
     {
         Huge<byte> a      = {0x01, 0x02, 0x03};
         Huge<byte> b      = {0x00};
@@ -395,8 +395,6 @@ TEST(HugeTest, AdditionAssigment)
 
         EXPECT_TRUE(a == expect);
     }
-    
-    
 }
 
 TEST(HugeTest, Increment)
@@ -447,7 +445,7 @@ TEST(HugeTest, Subtraction)
 
         EXPECT_TRUE(c == expected);
     }
-    
+
     { // (-a)-(b), |a|>|b|
         std::initializer_list<byte> il1 = {0x38, 0x22, 0x12};
         std::initializer_list<byte> il2 = {0x22, 0x12};
@@ -1149,7 +1147,7 @@ TEST(HugeTest, ModInvserse)
 
         EXPECT_TRUE(f);
     }
-    
+
     {
         Huge<byte> a   = {0x03};             // 3
         Huge<byte> N   = {0x8B, 0xF9, 0xFF}; // 9177503
