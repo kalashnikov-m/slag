@@ -40,6 +40,10 @@ class Huge
     {
     }
 
+    Huge(uint32_t x) : Huge({(T)((x & 0xff000000) >> 24), (T)((x & 0x00ff0000) >> 16), (T)((x & 0x0000ff00) >> 8), (T)(x & 0x000000ff)})
+    {
+    }
+
     template <class InputIterator>
     Huge(InputIterator first, InputIterator last, bool negative = false)
         : m_Buffer(1), m_Negative(false)
@@ -320,7 +324,7 @@ ostream& operator<<(ostream& stream, const Huge<X>& huge)
     ss.flags(std::ios::hex | std::ios::uppercase);
     ss.fill('0');
 
-    const std::vector<byte>& buf = huge.m_Buffer;
+    const std::vector<X>& buf = huge.m_Buffer;
     for (const auto& x : buf)
     {
         ss.width(2);
