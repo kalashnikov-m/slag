@@ -62,7 +62,7 @@ class Huge
 
     Huge& operator=(Huge&& other);
 
-    operator bool() const;
+    explicit operator bool() const;
 
     const Huge operator<<(int) const;
 

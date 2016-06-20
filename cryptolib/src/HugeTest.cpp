@@ -1064,7 +1064,7 @@ TEST(HugeTest, BOOL)
     {
         Huge<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
 
-        bool f = a;
+        bool f = (bool)a;
 
         EXPECT_TRUE(f);
     }
@@ -1072,7 +1072,7 @@ TEST(HugeTest, BOOL)
     {
         Huge<byte> a = {0x00, 0x00, 0x00};
 
-        bool f = a;
+        bool f = (bool)a;
 
         EXPECT_FALSE(f);
     }
