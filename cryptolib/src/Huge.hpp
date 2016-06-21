@@ -644,8 +644,8 @@ bool Huge<T>::ModInverse(Huge<T>& inv, const Huge<T>& N) const
     Huge<T> r1(N);
     Huge<T> r2(*this);
 
-    Huge<T> t1 = {0};
-    Huge<T> t2 = {1};
+    Huge<T> t1 = 0;
+    Huge<T> t2 = 1;
 
     while (r2 > 0)
     {
@@ -664,7 +664,7 @@ bool Huge<T>::ModInverse(Huge<T>& inv, const Huge<T>& N) const
     if (r1 != 1)
         return false;
 
-    if (t1 < Huge<byte>({0}))
+    if (t1 < 0)
     {
         t1 += N;
     }

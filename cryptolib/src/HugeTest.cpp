@@ -1120,47 +1120,22 @@ TEST(HugeTest, Gcd)
 
 TEST(HugeTest, ModInvserse)
 {
+    auto ModInverseTest = [](const Huge<byte>& arg1, const Huge<byte>& mod, const Huge<byte>& inv)
     {
-        Huge<byte> a   = {0x1b};       // 27
-        Huge<byte> N   = {0x04, 0x09}; // 1033
-        Huge<byte> inv = {0x03, 0x70}; // 880
         Huge<byte> actual;
 
-        bool exists = a.ModInverse(actual, N);
+        bool exists = arg1.ModInverse(actual, mod);
 
         EXPECT_TRUE(exists);
         bool f = (actual == inv);
 
         EXPECT_TRUE(f);
-    }
+    };
 
-    {
-        Huge<byte> a   = {0x01, 0xf3};       // 499
-        Huge<byte> N   = {0x92, 0xbf, 0xb0}; // 9617328
-        Huge<byte> inv = {0x7a, 0x0b, 0xab}; // 7998379
-        Huge<byte> actual;
-
-        bool exists = a.ModInverse(actual, N);
-
-        EXPECT_TRUE(exists);
-        bool f = (actual == inv);
-
-        EXPECT_TRUE(f);
-    }
-
-    {
-        Huge<byte> a   = {0x03};             // 3
-        Huge<byte> N   = {0x8B, 0xF9, 0xFF}; // 9177503
-        Huge<byte> inv = {0x5d, 0x41, 0x5b}; // 6111579
-        Huge<byte> actual;
-
-        bool exists = a.ModInverse(actual, N);
-
-        EXPECT_TRUE(exists);
-        bool f = (actual == inv);
-
-        EXPECT_TRUE(f);
-    }
+    ModInverseTest({0x1b}, {0x04, 0x09}, {0x03, 0x70});                   // a = 27, mod = 1033, inv = 880
+    ModInverseTest({0x01, 0xf3}, {0x92, 0xbf, 0xb0}, {0x7a, 0x0b, 0xab}); // a = 499, mod = 9617328, inv = 7998379
+    ModInverseTest({0x03}, {0x8B, 0xF9, 0xFF}, {0x5d, 0x51, 0x55});       // a = 3, mod = 9173503, inv = 6115669
+    ModInverseTest({0x03}, {0x8C, 0x09, 0x9F}, {0x2e, 0xad, 0xe0});       // a = 3, mod = 9177503, inv = 3059168
 }
 
 TEST(HugeTest, DivRem)
