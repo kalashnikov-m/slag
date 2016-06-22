@@ -189,8 +189,7 @@ class Huge
         return Huge(out);
     }
 
-    friend const Huge
-    operator+(const Huge& lhs, const Huge& rhs)
+    friend const Huge operator+(const Huge& lhs, const Huge& rhs)
     {
         const auto& lhsBuf = lhs.m_Buffer;
         const auto& rhsBuf = rhs.m_Buffer;
@@ -691,7 +690,7 @@ bool Huge<T>::IsOdd() const
 template <class T>
 const Huge<T> Huge<T>::Pow(const Huge<T>& exp) const
 {
-    Huge<T> y = {0x01};
+    Huge<T> y = 1;
     Huge<T> a = *this;
     Huge<T> e = exp;
 
@@ -710,7 +709,7 @@ const Huge<T> Huge<T>::Pow(const Huge<T>& exp) const
 template <class T>
 const Huge<T> Huge<T>::PowMod(const Huge<T>& exp, const Huge<T>& mod) const
 {
-    Huge<T> y = {0x01};
+    Huge<T> y = 1;
     Huge<T> a = *this;
     Huge<T> e = exp;
 

@@ -1174,3 +1174,18 @@ TEST(HugeTest, DivRem)
         EXPECT_TRUE(r == expected_rem);
     }
 }
+
+TEST(HugeTest, PowMod)
+{
+    auto ModPowTest = [](const Huge<byte>& a, const Huge<byte>& exponent, const Huge<byte>& modulus, const Huge<byte>& expected)
+    {
+        Huge<byte> actual = a.PowMod(exponent, modulus);
+
+        bool f = (expected == actual);
+
+        EXPECT_TRUE(f);
+    };
+
+    ModPowTest(3, 14, 497, 338);
+    ModPowTest(4, 13, 497, 445);
+}
