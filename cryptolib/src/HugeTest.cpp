@@ -1188,4 +1188,11 @@ TEST(HugeTest, PowMod)
 
     ModPowTest(3, 14, 497, 338);
     ModPowTest(4, 13, 497, 445);
+    
+    ModPowTest(666, 777, 2014, 666);
+    ModPowTest(666, 777, 777, 666);
+    ModPowTest(111111, 3, 9173503, 4051753);
+    ModPowTest(4051753, 4051753, 9173503, 111111);
+    
+    
 }
