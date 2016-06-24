@@ -167,7 +167,7 @@ void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_las
     while (shift > 0)
     {
         uint8_t Down   = 0x00;
-        uint8_t Up     = 0xFF;
+        uint16_t Up    = 0x00100;
         uint8_t Middle = 0x00;
 
         auto cmp = HUGE_Compare(r_first, r_last, d_first, d_last);
