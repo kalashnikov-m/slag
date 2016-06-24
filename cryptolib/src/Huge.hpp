@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <initializer_list>
 #include <iostream>
+#include <sstream>
 #include <vector>
 
 #include "HugeCore.h"
