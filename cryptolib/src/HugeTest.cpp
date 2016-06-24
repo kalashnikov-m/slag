@@ -5,6 +5,8 @@
 
 #include "Huge.hpp"
 
+#include "algorithm.hpp"
+
 using namespace std;
 
 class HugeTest : public ::testing::Test
@@ -1084,7 +1086,7 @@ TEST(HugeTest, Gcd)
         Huge<byte> nod    = {0x15};             // 21
         Huge<byte> actual = {0x00, 0x00, 0x00}; //
 
-        actual = a.Gcd(b);
+        actual = cry::Gcd(a, b);//a.Gcd(b);
 
         bool f = (actual == nod);
 
@@ -1097,7 +1099,7 @@ TEST(HugeTest, Gcd)
         Huge<byte> nod    = {6};    //
         Huge<byte> actual = {0x00}; //
 
-        actual = a.Gcd(b);
+        actual = cry::Gcd(a, b);//a.Gcd(b);
 
         bool f = (actual == nod);
 
@@ -1110,7 +1112,7 @@ TEST(HugeTest, Gcd)
         Huge<byte> nod    = {0x01};       //
         Huge<byte> actual = {0x00, 0x00}; //
 
-        actual = a.Gcd(b);
+        actual = cry::Gcd(a, b);//a.Gcd(b);
 
         bool f = (actual == nod);
 
@@ -1124,7 +1126,7 @@ TEST(HugeTest, ModInvserse)
     {
         Huge<byte> actual;
 
-        bool exists = arg1.ModInverse(actual, mod);
+        bool exists = cry::ModInverse(actual, arg1, mod); //arg1.ModInverse(actual, mod);
 
         EXPECT_TRUE(exists);
         bool f = (actual == inv);
@@ -1194,3 +1196,16 @@ TEST(HugeTest, PowMod)
     ModPowTest(111111, 3, 9173503, 4051753);
     ModPowTest(4051753, 6111579, 9173503, 111111);        
 }
+
+TEST(HugeTest, IsPrime)
+{
+    /*auto IsPrimeTest = [](const Huge<byte>& a)
+    {
+        //Huge<byte> actual = a.PowMod(exponent, modulus);
+
+        //bool f = (expected == actual);
+
+        //EXPECT_TRUE(f);
+    };*/    
+}
+

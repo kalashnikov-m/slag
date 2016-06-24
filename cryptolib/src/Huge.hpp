@@ -12,7 +12,7 @@
 
 using namespace std;
 
-template <class T>
+template <class T = unsigned char>
 class Huge
 {
   public:
@@ -306,20 +306,18 @@ class Huge
         return rem;
     }
 
-    const Huge Gcd(const Huge& other) const;
-
     void DivRem(Huge& q, Huge& r, const Huge& other) const throw(std::invalid_argument);
-
-    bool ModInverse(Huge<T>& inv, const Huge<T>& N) const;
 
     bool IsEven() const;
 
     bool IsOdd() const;
+    
+    bool IsProbablyPrime(int certainty) const;
 
     const Huge Pow(const Huge& exponent) const;
 
     const Huge PowMod(const Huge& exponent, const Huge& mod) const;
-
+        
   protected:
     void __swap(Huge& other) throw()
     {
@@ -587,24 +585,6 @@ bool operator!(const Huge<X>& h)
 }
 
 template <class T>
-const Huge<T> Huge<T>::Gcd(const Huge<T>& other) const
-{
-    auto pair = std::minmax(*this, other);
-
-    Huge<byte> r1(pair.second);
-    Huge<byte> r2(pair.first);
-
-    while (r2 != 0)
-    {
-        Huge<byte> rem = r1 % r2;
-        r1             = r2;
-        r2             = rem;
-    }
-
-    return r1;
-}
-
-template <class T>
 void Huge<T>::DivRem(Huge<T>& q, Huge<T>& r, const Huge<T>& other) const throw(std::invalid_argument)
 {
     bool isZero = HUGE_IsZero(&(*std::begin(other.m_Buffer)), &(*std::end(other.m_Buffer)));
@@ -633,45 +613,6 @@ void Huge<T>::DivRem(Huge<T>& q, Huge<T>& r, const Huge<T>& other) const throw(s
 
     q = div;
     r = rem;
-}
-
-template <class T>
-bool Huge<T>::ModInverse(Huge<T>& inv, const Huge<T>& N) const
-{
-    if (*this >= N)
-        return false;
-
-    Huge<T> r1(N);
-    Huge<T> r2(*this);
-
-    Huge<T> t1 = 0;
-    Huge<T> t2 = 1;
-
-    while (r2 > 0)
-    {
-        Huge<T> q;
-        Huge<T> r;
-
-        r1.DivRem(q, r, r2);
-        r1 = r2;
-        r2 = r;
-
-        Huge<T> t = (t1 - q * t2);
-        t1        = t2;
-        t2        = t;
-    }
-
-    if (r1 != 1)
-        return false;
-
-    if (t1 < 0)
-    {
-        t1 += N;
-    }
-
-    inv = t1;
-
-    return true;
 }
 
 template <class T>
@@ -729,6 +670,18 @@ const Huge<T> Huge<T>::PowMod(const Huge<T>& exp, const Huge<T>& mod) const
     }
 
     return y;
+}
+
+template<class T>
+bool Huge<T>::IsProbablyPrime(int certainty) const
+{
+  
+  if (IsEven ())
+    {
+      return false;
+    }
+  
+  return false;
 }
 
 #endif
