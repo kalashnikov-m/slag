@@ -1,6 +1,6 @@
 bin_PROGRAMS = hugeTests
 
-AM_CXXFLAGS = -I../include -std=c++14
+AM_CXXFLAGS = -I../include -std=c++11
 
 hugeTests_SOURCES = main.cpp
 hugeTests_LDADD = libtests.la \
@@ -11,7 +11,7 @@ hugeTests_LDADD = libtests.la \
 
 lib_LTLIBRARIES = libhuge.la libtests.la
 
-libhuge_la_SOURCES = HugeCore.cpp Huge.hpp
+libhuge_la_SOURCES = HugeCore.cpp Huge.hpp algorithm.hpp
 libhuge_la_LDFLAGS = -static
 
 
