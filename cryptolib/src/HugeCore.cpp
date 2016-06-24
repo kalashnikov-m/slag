@@ -132,10 +132,10 @@ void HUGE_Multiply(byte* first_result, byte* last_result, const byte* first1, co
 
 void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_last, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
-    byte* r_first = nullptr;
-    byte* r_last  = nullptr;
-    byte* d_first = nullptr;
-    byte* d_last  = nullptr;
+    byte* rFirst = nullptr;
+    byte* rLast  = nullptr;
+    const byte* dFirst = nullptr;
+    const byte* dLast  = nullptr;
 
     while ((first1 != last1) && (*first1 == 0x00))
         ++first1;
@@ -148,23 +148,23 @@ void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_las
     auto d1    = std::distance(first1, last1);
     auto d2    = std::distance(first2, last2);
     auto shift = d1 - d2 + 1;
-    r_first    = &rTmp[0];
-    r_last     = r_first + d2;
-    d_first    = (byte*)first2;
-    d_last     = (byte*)last2;
+    rFirst    = &rTmp[0];
+    rLast     = rFirst + d2;
+    dFirst    = first2;
+    dLast     = last2;
 
     std::advance(div_last, -shift);
 
-    auto cmp = HUGE_Compare(r_first, r_last, d_first, d_last);
+    auto cmp = HUGE_Compare(rFirst, rLast, dFirst, dLast);
     if (cmp == -1)
     {
-        ++r_last;
+        ++rLast;
         ++div_last;
         --shift;
     }
 
     size_t nbytes = d2 + 1;
-    byte* mul     = new byte[nbytes];
+    std::vector<byte> mul(nbytes);
 
     while (shift > 0)
     {
@@ -172,10 +172,10 @@ void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_las
         uint16_t Up    = 0x00100;
         uint8_t Middle = 0x00;
 
-        auto cmp = HUGE_Compare(r_first, r_last, d_first, d_last);
+        auto cmp = HUGE_Compare(rFirst, rLast, dFirst, dLast);
         if (cmp == -1)
         {
-            ++r_last;
+            ++rLast;
         }
 
         for (; Down < Up - 1;)
@@ -184,41 +184,39 @@ void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_las
             Middle = ((Down + Up) / 2);
 
             // 2. mul <-- d * c;
-            std::fill(mul, mul + nbytes, 0x00);
+            std::fill(&mul[0], &mul[0] + nbytes, 0x00);
 
-            HUGE_Multiply(mul, mul + nbytes, d_first, d_last, Middle);
+            HUGE_Multiply(&mul[0], &mul[0] + nbytes, dFirst, dLast, Middle);
 
-            short mul_cmp = HUGE_Compare(mul, mul + nbytes, r_first, r_last);
+            short mulCmp = HUGE_Compare(&mul[0], &mul[0] + nbytes, rFirst, rLast);
 
-            if (mul_cmp == -1)
+            if (mulCmp == -1)
             { // if(c < a): down <-- c
                 Down = Middle;
             }
-            else if (mul_cmp == 1)
+            else if (mulCmp == 1)
             { // if(c > a) Up <-- c
                 Up = Middle;
             }
-            else if (mul_cmp == 0)
+            else if (mulCmp == 0)
             { // if(mul == a) Up <-- C; Down <-- Up;
                 Up   = Middle;
                 Down = Up;
             }
         }
 
-        std::fill(mul, mul + nbytes, 0x00);
+        std::fill(&mul[0], &mul[0] + nbytes, 0x00);
 
-        HUGE_Multiply(mul, mul + nbytes, d_first, d_last, Down);
+        HUGE_Multiply(&mul[0], &mul[0] + nbytes, dFirst, dLast, Down);
 
-        HUGE_Subtract(r_last, r_first, r_last, mul, mul + nbytes);
+        HUGE_Subtract(rLast, rFirst, rLast, &mul[0], &mul[0] + nbytes);
 
         *(div_last++) = Down;
 
         --shift;
     }
 
-    delete[] mul;
-
-    std::copy_backward(r_first, r_last, rem_last);
+    std::copy_backward(rFirst, rLast, rem_last);
 }
 
 void HUGE_Increment(byte* first, byte* last)
