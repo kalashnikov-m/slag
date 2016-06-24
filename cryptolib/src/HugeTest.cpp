@@ -1156,7 +1156,7 @@ TEST(HugeTest, DivRem)
         EXPECT_TRUE(r == expected_rem);       
     }
     
-    /*{
+    {
         std::initializer_list<byte> il1 = {0xff, 0xff};
         std::initializer_list<byte> il2 = {0x06};
         std::initializer_list<byte> il3 = {0x2a, 0xaa};
@@ -1212,13 +1212,14 @@ TEST(HugeTest, PowMod)
 {
     auto ModPowTest = [](const Huge<byte>& a, const Huge<byte>& exponent, const Huge<byte>& modulus, const Huge<byte>& expected)
     {
-        Huge<byte> actual = a.PowMod(exponent, modulus);
+        Huge<byte> actual = cry::PowMod(a, exponent, modulus);
 
         bool f = (expected == actual);
 
         EXPECT_TRUE(f);
     };
 
+    ModPowTest(3, 4, 11, 4);
     ModPowTest(3, 14, 497, 338);
     ModPowTest(4, 13, 497, 445);
     
@@ -1227,16 +1228,3 @@ TEST(HugeTest, PowMod)
     ModPowTest(111111, 3, 9173503, 4051753);
     ModPowTest(4051753, 6111579, 9173503, 111111);        
 }
-
-TEST(HugeTest, IsPrime)
-{
-    /*auto IsPrimeTest = [](const Huge<byte>& a)
-    {
-        //Huge<byte> actual = a.PowMod(exponent, modulus);
-
-        //bool f = (expected == actual);
-
-        //EXPECT_TRUE(f);
-    };*/    
-}
-

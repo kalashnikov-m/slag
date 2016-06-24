@@ -76,6 +76,61 @@ bool IsOdd(const T& arg)
   return f;
 }
 
+template<class T>
+const T Pow(const T& arg, const T& exp) 
+{
+    T y = 1;
+    T a = arg;
+    T e = exp;
+
+    while (e > 0)
+    {
+        if(cry::IsOdd (e))
+            y *= a;
+
+        a *= a;
+        e >>= 1;
+    }
+
+    return y;
+}
+
+template <class T>
+const T PowMod(const T& arg, const T& exp, const T& mod)
+{
+    T y = 1;
+    T a = arg;
+    T e = exp;
+
+    while (e > 0)
+    {
+        if (cry::IsOdd (e))
+        {   
+            y *= a;
+            y %= mod;
+        }
+
+        a *= a;
+        a %= mod;
+
+        e >>= 1;
+    }
+
+    return y;
+}
+
+template<class T>
+bool IsProbablyPrime(const T& arg, int certainty)
+{  
+  if (cry::IsEven (arg))
+    {
+      return false;
+    }
+  
+  return false;
+}
+
+
 }
 
 #endif

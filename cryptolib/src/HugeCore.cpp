@@ -143,11 +143,13 @@ void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_las
     while ((first2 != last2) && (*first2 == 0x00))
         ++first2;
 
+    auto rTmp = std::vector<byte>(first1, last1);
+    
     auto d1    = std::distance(first1, last1);
     auto d2    = std::distance(first2, last2);
     auto shift = d1 - d2 + 1;
-    r_first    = (byte*)first1;
-    r_last     = (byte*)first1 + d2;
+    r_first    = &rTmp[0];
+    r_last     = r_first + d2;
     d_first    = (byte*)first2;
     d_last     = (byte*)last2;
 

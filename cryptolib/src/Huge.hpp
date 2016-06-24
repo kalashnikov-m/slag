@@ -307,17 +307,7 @@ class Huge
     }
 
     void DivRem(Huge& q, Huge& r, const Huge& other) const throw(std::invalid_argument);
-
-    bool IsEven() const;
-
-    bool IsOdd() const;
-    
-    bool IsProbablyPrime(int certainty) const;
-
-    const Huge Pow(const Huge& exponent) const;
-
-    const Huge PowMod(const Huge& exponent, const Huge& mod) const;
-        
+            
   protected:
     void __swap(Huge& other) throw()
     {
@@ -613,75 +603,6 @@ void Huge<T>::DivRem(Huge<T>& q, Huge<T>& r, const Huge<T>& other) const throw(s
 
     q = div;
     r = rem;
-}
-
-template <class T>
-bool Huge<T>::IsEven() const
-{
-    bool rv = HUGE_IsEven(&(*std::begin(this->m_Buffer)), &(*std::end(this->m_Buffer)));
-    return rv;
-}
-
-template <class T>
-bool Huge<T>::IsOdd() const
-{
-    bool rv = HUGE_IsOdd(&(*std::begin(this->m_Buffer)), &(*std::end(this->m_Buffer)));
-    return rv;
-}
-
-template <class T>
-const Huge<T> Huge<T>::Pow(const Huge<T>& exp) const
-{
-    Huge<T> y = 1;
-    Huge<T> a = *this;
-    Huge<T> e = exp;
-
-    while (e > 0)
-    {
-        if (e.IsOdd())
-            y *= a;
-
-        a *= a;
-        e >>= 1;
-    }
-
-    return y;
-}
-
-template <class T>
-const Huge<T> Huge<T>::PowMod(const Huge<T>& exp, const Huge<T>& mod) const
-{
-    Huge<T> y = 1;
-    Huge<T> a = *this;
-    Huge<T> e = exp;
-
-    while (e > 0)
-    {
-        if (e.IsOdd())
-        {
-            y *= a;
-            y %= mod;
-        }
-
-        a *= a;
-        a %= mod;
-
-        e >>= 1;
-    }
-
-    return y;
-}
-
-template<class T>
-bool Huge<T>::IsProbablyPrime(int certainty) const
-{
-  
-  if (IsEven ())
-    {
-      return false;
-    }
-  
-  return false;
 }
 
 #endif
