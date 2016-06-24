@@ -1143,6 +1143,20 @@ TEST(HugeTest, ModInvserse)
 TEST(HugeTest, DivRem)
 {
     {
+        Huge<byte> expected_div(1);
+        Huge<byte> expected_rem(0);
+        
+        Huge<byte> a = 2;
+        Huge<byte> b = 2;
+        
+        Huge<byte> q, r;
+        a.DivRem(q, r, b);
+        
+        EXPECT_TRUE(q == expected_div);
+        EXPECT_TRUE(r == expected_rem);       
+    }
+    
+    /*{
         std::initializer_list<byte> il1 = {0xff, 0xff};
         std::initializer_list<byte> il2 = {0x06};
         std::initializer_list<byte> il3 = {0x2a, 0xaa};
@@ -1175,6 +1189,23 @@ TEST(HugeTest, DivRem)
         EXPECT_TRUE(q == expected_div);
         EXPECT_TRUE(r == expected_rem);
     }
+}
+
+TEST(HugeTest, EvenOdd)
+{
+    auto EvenOddTest = [](const Huge<byte>& argEven, bool flagEven, const Huge<byte>& argOdd, bool flagOdd)
+    {
+        bool even = cry::IsEven(argEven);
+        EXPECT_TRUE(even == flagEven);
+        
+        bool odd = cry::IsOdd(argOdd);
+        EXPECT_TRUE(odd == flagOdd);
+    };
+    
+    EvenOddTest(1, false, 1, true);
+    EvenOddTest(2, true, 2, false);
+    EvenOddTest(3, false, 3, true);
+    EvenOddTest(4, true, 4, false);
 }
 
 TEST(HugeTest, PowMod)

@@ -60,6 +60,22 @@ bool ModInverse(T& inverse, const T& a, const T& modulus)
 
     return true;
 }
+
+template <class T>
+bool IsEven(const T& arg)
+{  
+  bool f = (arg % 2) == 0; 
+  return f;
+}
+
+template <class T>
+bool IsOdd(const T& arg)
+{    
+  bool f = (arg % 2) == 1; 
+    
+  return f;
+}
+
 }
 
 #endif
