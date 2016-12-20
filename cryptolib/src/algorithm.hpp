@@ -113,7 +113,7 @@ const T PowMod(const T& arg, const T& exp, const T& mod)
 
     while (e > 0)
     {
-        if (cry::IsOdd(e))
+        if (e % 2 == 1)
         {
             y *= a;
             y %= mod;
@@ -129,14 +129,55 @@ const T PowMod(const T& arg, const T& exp, const T& mod)
 }
 
 template<class T>
-bool IsProbablyPrime(const T& arg, int certainty)
+bool IsProbablyPrime(const T& p, int t)
 {
-    if (cry::IsEven(arg))
+    if (p % 2 == 0)
     {
         return false;
     }
 
-    return false;
+    auto p_minus_1 = p - 1;
+    int v = 0;
+    auto w = p_minus_1;
+    
+    while (w % 2 == 0)
+      {
+        v++;
+        w /= 2;
+      }
+    
+    int a = 1;
+    
+    nexta;
+    for (;t-- > 0;)
+      {
+        a++;
+        
+        auto b = PowMod(a, w, p);
+        if (b ==1 || b == p_minus_1)
+          {
+            goto nexta;
+          }
+        
+        for (int j = 1; j < v; ++j)
+          {
+            x = PowMod(x, 2, p);
+            if (x == 1)
+              {
+                return false;
+              }
+            
+            if (x == p_minus_1)
+              {
+                goto nexta;
+              }
+          }
+        
+        return false;
+        
+      }
+           
+    return true;
 }
 
 }
