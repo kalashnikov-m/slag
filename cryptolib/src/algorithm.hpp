@@ -2,12 +2,12 @@
 #ifndef ALGORITHM_HPP
 #define ALGORITHM_HPP
 
-namespace cry {
-
-template <class T>
-T Gcd(const T& lhs, const T& rhs) 
+namespace cry
 {
-  auto pair = std::minmax(lhs, rhs);
+template<class T>
+T Gcd(const T& lhs, const T& rhs)
+{
+    auto pair = std::minmax(lhs, rhs);
 
     auto r1(pair.second);
     auto r2(pair.first);
@@ -15,18 +15,20 @@ T Gcd(const T& lhs, const T& rhs)
     while (r2 != 0)
     {
         auto rem = r1 % r2;
-        r1             = r2;
-        r2             = rem;
+        r1       = r2;
+        r2       = rem;
     }
 
     return r1;
 }
 
-template <class T>
-bool ModInverse(T& inverse, const T& a, const T& modulus) 
+template<class T>
+bool ModInverse(T& inverse, const T& a, const T& modulus)
 {
-  if (a >= modulus)
+    if (a >= modulus)
+    {
         return false;
+    }
 
     T r1(modulus);
     T r2(a);
@@ -40,16 +42,20 @@ bool ModInverse(T& inverse, const T& a, const T& modulus)
         T r;
 
         r1.DivRem(q, r, r2);
+
         r1 = r2;
         r2 = r;
 
         T t = (t1 - q * t2);
-        t1        = t2;
-        t2        = t;
+
+        t1 = t2;
+        t2 = t;
     }
 
     if (r1 != 1)
+    {
         return false;
+    }
 
     if (t1 < 0)
     {
@@ -61,23 +67,24 @@ bool ModInverse(T& inverse, const T& a, const T& modulus)
     return true;
 }
 
-template <class T>
+template<class T>
 bool IsEven(const T& arg)
-{  
-  bool f = (arg % 2) == 0; 
-  return f;
-}
+{
+    bool f = (arg % 2) == 0;
 
-template <class T>
-bool IsOdd(const T& arg)
-{    
-  bool f = (arg % 2) == 1; 
-    
-  return f;
+    return f;
 }
 
 template<class T>
-const T Pow(const T& arg, const T& exp) 
+bool IsOdd(const T& arg)
+{
+    bool f = (arg % 2) == 1;
+
+    return f;
+}
+
+template<class T>
+const T Pow(const T& arg, const T& exp)
 {
     T y = 1;
     T a = arg;
@@ -85,8 +92,10 @@ const T Pow(const T& arg, const T& exp)
 
     while (e > 0)
     {
-        if(cry::IsOdd (e))
+        if (cry::IsOdd(e))
+        {
             y *= a;
+        }
 
         a *= a;
         e >>= 1;
@@ -95,7 +104,7 @@ const T Pow(const T& arg, const T& exp)
     return y;
 }
 
-template <class T>
+template<class T>
 const T PowMod(const T& arg, const T& exp, const T& mod)
 {
     T y = 1;
@@ -104,8 +113,8 @@ const T PowMod(const T& arg, const T& exp, const T& mod)
 
     while (e > 0)
     {
-        if (cry::IsOdd (e))
-        {   
+        if (cry::IsOdd(e))
+        {
             y *= a;
             y %= mod;
         }
@@ -121,16 +130,16 @@ const T PowMod(const T& arg, const T& exp, const T& mod)
 
 template<class T>
 bool IsProbablyPrime(const T& arg, int certainty)
-{  
-  if (cry::IsEven (arg))
+{
+    if (cry::IsEven(arg))
     {
-      return false;
+        return false;
     }
-  
-  return false;
-}
 
+    return false;
+}
 
 }
 
 #endif
+

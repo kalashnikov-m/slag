@@ -69,3 +69,4 @@ int HUGE_GetHighestSetBit(const byte* first, const byte* last);
 // TODO isPowerOfTwo()
 
 #endif /* ALGORITHM_H */
+
