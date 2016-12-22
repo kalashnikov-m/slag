@@ -148,7 +148,7 @@ bool IsProbablyPrime(const T& p, int t)
     
     int a = 1;
     
-    nexta;
+    nexta:
     for (;t-- > 0;)
       {
         a++;
@@ -161,13 +161,13 @@ bool IsProbablyPrime(const T& p, int t)
         
         for (int j = 1; j < v; ++j)
           {
-            x = PowMod(x, 2, p);
-            if (x == 1)
+            b = PowMod(b, 2, p);
+            if (b == 1)
               {
                 return false;
               }
             
-            if (x == p_minus_1)
+            if (b == p_minus_1)
               {
                 goto nexta;
               }
