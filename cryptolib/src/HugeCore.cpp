@@ -132,8 +132,8 @@ void HUGE_Multiply(byte* first_result, byte* last_result, const byte* first1, co
 
 void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_last, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
-    byte* rFirst = nullptr;
-    byte* rLast  = nullptr;
+    byte* rFirst       = nullptr;
+    byte* rLast        = nullptr;
     const byte* dFirst = nullptr;
     const byte* dLast  = nullptr;
 
@@ -152,10 +152,10 @@ void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_las
     auto d1    = std::distance(first1, last1);
     auto d2    = std::distance(first2, last2);
     auto shift = d1 - d2 + 1;
-    rFirst    = &rTmp[0];
-    rLast     = rFirst + d2;
-    dFirst    = first2;
-    dLast     = last2;
+    rFirst     = &rTmp[0];
+    rLast      = rFirst + d2;
+    dFirst     = first2;
+    dLast      = last2;
 
     std::advance(div_last, -shift);
 
@@ -182,7 +182,7 @@ void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_las
             ++rLast;
         }
 
-        for (; Down < Up - 1; )
+        for (; Down < Up - 1;)
         {
             // 1. c <-- (down + up) / 2;
             Middle = ((Down + Up) / 2);
@@ -450,12 +450,12 @@ void HUGE_Inverse(byte* first, byte* last)
 
 short HUGE_Compare(const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
-    for (; (first1 != last1) && (*first1 == 0); )
+    for (; (first1 != last1) && (*first1 == 0);)
     {
         ++first1;
     }
 
-    for (; (first2 != last2) && (*first2 == 0); )
+    for (; (first2 != last2) && (*first2 == 0);)
     {
         ++first2;
     }
@@ -505,7 +505,7 @@ bool HUGE_Equal(const byte* first1, const byte* last1, const byte* first2, const
 
 bool HUGE_IsZero(const byte* first, const byte* last)
 {
-    for (; (first != last) && (*first == 0x00); )
+    for (; (first != last) && (*first == 0x00);)
     {
         ++first;
     }

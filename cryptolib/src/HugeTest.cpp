@@ -8,6 +8,7 @@
 #include "algorithm.hpp"
 
 using namespace std;
+using namespace cry;
 
 class HugeTest : public ::testing::Test
 {
@@ -1086,7 +1087,7 @@ TEST(HugeTest, Gcd)
         Huge<byte> nod    = {0x15};             // 21
         Huge<byte> actual = {0x00, 0x00, 0x00}; //
 
-        actual = cry::Gcd(a, b);//a.Gcd(b);
+        actual = cry::Gcd(a, b); // a.Gcd(b);
 
         bool f = (actual == nod);
 
@@ -1099,7 +1100,7 @@ TEST(HugeTest, Gcd)
         Huge<byte> nod    = {6};    //
         Huge<byte> actual = {0x00}; //
 
-        actual = cry::Gcd(a, b);//a.Gcd(b);
+        actual = cry::Gcd(a, b); // a.Gcd(b);
 
         bool f = (actual == nod);
 
@@ -1112,7 +1113,7 @@ TEST(HugeTest, Gcd)
         Huge<byte> nod    = {0x01};       //
         Huge<byte> actual = {0x00, 0x00}; //
 
-        actual = cry::Gcd(a, b);//a.Gcd(b);
+        actual = cry::Gcd(a, b); // a.Gcd(b);
 
         bool f = (actual == nod);
 
@@ -1126,7 +1127,7 @@ TEST(HugeTest, ModInvserse)
     {
         Huge<byte> actual;
 
-        bool exists = cry::ModInverse(actual, arg1, mod); //arg1.ModInverse(actual, mod);
+        bool exists = cry::ModInverse(actual, arg1, mod); // arg1.ModInverse(actual, mod);
 
         EXPECT_TRUE(exists);
         bool f = (actual == inv);
@@ -1145,17 +1146,17 @@ TEST(HugeTest, DivRem)
     {
         Huge<byte> expected_div(1);
         Huge<byte> expected_rem(0);
-        
+
         Huge<byte> a = 2;
         Huge<byte> b = 2;
-        
+
         Huge<byte> q, r;
         a.DivRem(q, r, b);
-        
+
         EXPECT_TRUE(q == expected_div);
-        EXPECT_TRUE(r == expected_rem);       
+        EXPECT_TRUE(r == expected_rem);
     }
-    
+
     {
         std::initializer_list<byte> il1 = {0xff, 0xff};
         std::initializer_list<byte> il2 = {0x06};
@@ -1197,11 +1198,11 @@ TEST(HugeTest, EvenOdd)
     {
         bool even = cry::IsEven(argEven);
         EXPECT_TRUE(even == flagEven);
-        
+
         bool odd = cry::IsOdd(argOdd);
         EXPECT_TRUE(odd == flagOdd);
     };
-    
+
     EvenOddTest(1, false, 1, true);
     EvenOddTest(2, true, 2, false);
     EvenOddTest(3, false, 3, true);
@@ -1222,9 +1223,9 @@ TEST(HugeTest, PowMod)
     ModPowTest(3, 4, 11, 4);
     ModPowTest(3, 14, 497, 338);
     ModPowTest(4, 13, 497, 445);
-    
+
     ModPowTest(666, 777, 2014, 666);
     ModPowTest(666, 777, 777, 666);
     ModPowTest(111111, 3, 9173503, 4051753);
-    ModPowTest(4051753, 6111579, 9173503, 111111);        
+    ModPowTest(4051753, 6111579, 9173503, 111111);
 }
