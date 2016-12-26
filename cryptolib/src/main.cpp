@@ -16,51 +16,11 @@
 
 using namespace std;
 
-#define swap32(x) x
-
-#define F1(x, y, z) ((x) & (y) ^ (~(x) & (z)))
-#define F2(x, y, z) ((x) ^ (y) ^ (z))
-#define F3(x, y, z) (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)))
-
-#define round1(a, b, c, d, e, k, w)                             \
-    {                                                           \
-        uint32_t temp = rotl32(a, 5) + F1(b, c, d) + e + k + w; \
-        e             = d;                                      \
-        d             = c;                                      \
-        c             = (rotl32(b, 30));                        \
-        b             = a;                                      \
-        a             = temp;                                   \
-    }
-
-#define round2(a, b, c, d, e, k, w)                             \
-    do                                                          \
-    {                                                           \
-        uint32_t temp = rotl32(a, 5) + F2(b, c, d) + e + k + w; \
-        e             = d;                                      \
-        d             = c;                                      \
-        c             = (rotl32(b, 30));                        \
-        b             = a;                                      \
-        a = temp;                                               \
-    } while (0);
-
-#define round3(a, b, c, d, e, k, w)                             \
-    do                                                          \
-    {                                                           \
-        uint32_t temp = rotl32(a, 5) + F3(b, c, d) + e + k + w; \
-        e             = d;                                      \
-        d             = c;                                      \
-        c             = (rotl32(b, 30));                        \
-        b             = a;                                      \
-        a = temp;                                               \
-    } while (0);
-
-#define round4(a, b, c, d, e, k, w) round1(a, b, c, d, e, k, w)
-
-class Sha1
+class SHA1
 {
 
   public:
-    Sha1() : m_Idx(0), m_Len(0)
+    SHA1() : m_Idx(0), m_Len(0)
     {
 
         m_Digest[0] = 0x67452301;
@@ -70,24 +30,22 @@ class Sha1
         m_Digest[4] = 0xc3d2e1f0;
     }
 
-    ~Sha1()
+    ~SHA1()
     {
     }
 
-    void Update(const uint8_t in[], int inlen)
+    void Update(const uint8_t in[], uint64_t inlen)
     {
+        printf("%ld", inlen);
+        
         while (inlen--)
         {
-            // printf("%x\n", *in);
             m_Block[m_Idx++] = *in++;
             m_Len += 8;
-            // printf("%x\n", m_Block[m_Idx - 1]);
-
+         
             if (m_Idx == 0x40) // 64
             {
-                sha1Transform();
-
-                m_Idx = 0;
+                transform();
             }
         }
     }
@@ -102,7 +60,7 @@ class Sha1
                 m_Block[m_Idx++] = 0x00;
             }
 
-            sha1Transform();
+            transform();
 
             while (m_Idx < 56)
             {
@@ -129,32 +87,42 @@ class Sha1
         m_Block[m_Idx++] = (m_Len & 0x00000000FFFFFFFF) >> 8;
         m_Block[m_Idx++] = (m_Len & 0x00000000FFFFFFFF);
 
-        sha1Transform();
+        transform();
 
-         //printf("0x%08x\n", m_Digest[0]);
-         //printf("0x%08x\n", m_Digest[1]);
-         //printf("0x%08x\n", m_Digest[2]);
-         //printf("0x%08x\n", m_Digest[3]);
-         //printf("0x%08x\n", m_Digest[4]);
+        //for (int i = 0; i < 20; ++i)
+            //printf("%02x", m_Hash[i]);
+         printf("0x%08x\n", m_Digest[0]);
+         printf("0x%08x\n", m_Digest[1]);
+         printf("0x%08x\n", m_Digest[2]);
+         printf("0x%08x\n", m_Digest[3]);
+         printf("0x%08x\n", m_Digest[4]);
     }
 
   protected:
-    uint32_t rotl32(uint32_t x, int shift)
+    uint32_t inline ROTL(uint32_t x, int shift)
     {
-        while (shift-- > 0)
-        {
-            x = ((x << 1) | (x >> 31));
-        }
+        x = ((x << shift) | (x >> (32 - shift)));
 
         return x;
     }
+    
+    uint32_t inline Ch(uint32_t x, uint32_t y, uint32_t z) { return ((x) & (y) ^ (~(x) & (z))); }
+    
+    uint32_t inline Parity(uint32_t x, uint32_t y, uint32_t z) { return ((x) ^ (y) ^ (z)); }
+    
+    uint32_t inline Maj(uint32_t x, uint32_t y, uint32_t z) { return (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z))); } 
 
-    void sha1Transform()
+    void transform()
     {
-        uint32_t words[80] = {0x00};
+        uint32_t W[80] = {0x00};
 
         uint32_t a, b, c, d, e;
 
+        for (int i = 0; i < 64; ++i)
+        {
+            printf("%02x:", m_Block[i]);
+        }
+        
         // digest init
         a = m_Digest[0];
         b = m_Digest[1];
@@ -164,60 +132,81 @@ class Sha1
 
         for (int t = 0; t < 16; ++t)
         {
-            words[t] = m_Block[t * 4] << 24;      // swap32(m_Words[i]);
-            words[t] |= m_Block[t * 4 + 1] << 16; // swap32(m_Words[i]);
-            words[t] |= m_Block[t * 4 + 2] << 8;  // swap32(m_Words[i]);
-            words[t] |= m_Block[t * 4 + 3];       // swap32(m_Words[i]);
+            W[t] = m_Block[t * 4] << 24;      
+            W[t] |= m_Block[t * 4 + 1] << 16; 
+            W[t] |= m_Block[t * 4 + 2] << 8;  
+            W[t] |= m_Block[t * 4 + 3];
+            
+            printf("0x%08x\n", W[t]);
         }
 
         for (int j = 0; j < 16; ++j)
         {
-            printf("W[%d] = %08x\n", j, words[j]);
+            printf("W[%d] = %08x\n", j, W[j]);
         }
 
         for (int i = 16; i < 80; ++i)
         {
-            words[i] = rotl32(words[i - 3] ^ words[i - 8] ^ words[i - 14] ^ words[i - 16], 1);
+            W[i] = ROTL(W[i - 3] ^ W[i - 8] ^ W[i - 14] ^ W[i - 16], 1);
         }
 
         // main cycle
         printf("-----------------------------------------\n");
-        for (int i = 0; i < 20; ++i)
-        {
-            round1(a, b, c, d, e, 0x5A827999, words[i]);
-            printf("t = %d: <a = %08x, b = %08x, c = %08x, d = %08x, e = %08x>\n", i, a, b, c, d, e);
-        }
-
-	printf("-----------------------------------------\n");
-        for (int i = 20; i < 40; ++i)
-        {
-            round2(a, b, c, d, e, 0x6ED9EBA1, words[i]);
-            printf("t = %d: <a = %08x, b = %08x, c = %08x, d = %08x, e = %08x>\n", i, a, b, c, d, e);
-        }
-
-	printf("-----------------------------------------\n");
-        for (int i = 40; i < 60; ++i)
-        {
-            round3(a, b, c, d, e, 0x8F1BBCDC, words[i]);
-            printf("t = %d: <a = %08x, b = %08x, c = %08x, d = %08x, e = %08x>\n", i, a, b, c, d, e);
-        }
-
-	printf("-----------------------------------------\n");
-        for (int i = 60; i < 80; ++i)
-        {
-            round4(a, b, c, d, e, 0xCA62C1D6, words[i]);
-            printf("t = %d: <a = %08x, b = %08x, c = %08x, d = %08x, e = %08x>\n", i, a, b, c, d, e);
-        }
-
+        //{
+            uint32_t T = 0;
+            
+            
+            for (int t = 0; t < 80; ++t) {
+            
+            if (t < 20)
+            {
+                T = ROTL(a, 5) + Ch(b, c, d) + e + 0x5A827999 + W[t];
+            }
+            else
+            if (t < 40)
+            {
+                T = ROTL(a, 5) + Parity(b, c, d) + e + 0x6ED9EBA1 + W[t];
+            }
+            else
+            if (t < 60)
+            {
+                T = ROTL(a, 5) + Maj(b, c, d) + e + 0x8F1BBCDC + W[t];
+            }
+            else
+            if (t < 80)
+            {
+                T = ROTL(a, 5) + Parity(b, c, d) + e + 0xCA62C1D6 + W[t];
+            }
+            
+            e = d;                                      
+            d = c;                                      
+            c = ROTL(b, 30);
+            b = a;                                      
+            a = T;
+            
+            printf("t = %d: <a = %08x, b = %08x, c = %08x, d = %08x, e = %08x>\n", t, a, b, c, d, e);
+            
+            }        
+        
         m_Digest[0] += a;
         m_Digest[1] += b;
         m_Digest[2] += c;
         m_Digest[3] += d;
         m_Digest[4] += e;
+        
+        m_Idx = 0;
+        //std::for_each(std::begin(m_Hash), std::end(m_Hash), [](uint8_t bt) { std::cout<<bt; });
+        
+        /*cout<<std::hex;
+        for (int j = 0; j < 20; ++j)
+            cout<<m_Hash[j];*/
     }
 
   private:
-    uint32_t m_Digest[5]; // 160
+      union {
+        uint8_t  m_Hash[20]; 
+        uint32_t m_Digest[5]; // 160
+      };
 
     uint8_t m_Block[64]; // 512
     uint8_t m_Idx;
@@ -234,9 +223,12 @@ int main(int argc, char** argv)
 {
     // cout<<rotl32(5, 1)<<"\n";
 
-    const uint8_t d[] = {'a', 'b', 'c'};
+    //const uint8_t d[] = {"abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq"};
+    const uint8_t d[1000000] = {'a'};
 
-    Sha1 hash;
+    //printf("%ld", sizeof(d) / sizeof(uint8_t));
+    
+    SHA1 hash;
     hash.Update(d, sizeof(d) / sizeof(uint8_t));
     hash.Final();
 
