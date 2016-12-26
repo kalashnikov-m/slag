@@ -23,11 +23,19 @@ namespace cry {
             m_Digest[7] = 0x5be0cd19137e2179;
         }
 
-        void Update(const std::vector<uint8_t>& m) {
-            std::vector<uint8_t>::const_iterator it(m.begin()), end(m.end());
+        template <class InputIterator, class OutputIterator>
+        void operator()(InputIterator first, InputIterator last, OutputIterator result) {
 
-            while (it != end) {
-                m_Block[m_Idx++] = *it++;
+            Init();
+            Update(first, last);
+            Final(result);
+        }
+        
+        template <class InputIterator>
+        void Update(InputIterator first, InputIterator last) {
+
+            while (first != last) {
+                m_Block[m_Idx++] = *first++;
                 low += 8;
                 if (low == 0x00) {
                     high++;
@@ -43,7 +51,8 @@ namespace cry {
             }
         }
 
-        void Final(std::vector<uint8_t>& digest) {
+        template <class OutputIterator>
+        void Final(OutputIterator result) {
             if (m_Idx > 111) {
                 m_Block[m_Idx++] = 0x80;
                 while (m_Idx < 128) {
@@ -83,79 +92,77 @@ namespace cry {
 
             transform();
 
-            digest.resize(64);
+            *result++ = (m_Digest[0] >> 56) & 0x00000000000000ff;
+            *result++ = (m_Digest[0] >> 48) & 0x00000000000000ff;
+            *result++ = (m_Digest[0] >> 40) & 0x00000000000000ff;
+            *result++ = (m_Digest[0] >> 32) & 0x00000000000000ff;
+            *result++ = (m_Digest[0] >> 24) & 0x00000000000000ff;
+            *result++ = (m_Digest[0] >> 16) & 0x00000000000000ff;
+            *result++ = (m_Digest[0] >> 8) & 0x00000000000000ff;
+            *result++ = (m_Digest[0] >> 0) & 0x00000000000000ff;
 
-            digest[0] = (m_Digest[0] >> 56) & 0x00000000000000ff;
-            digest[1] = (m_Digest[0] >> 48) & 0x00000000000000ff;
-            digest[2] = (m_Digest[0] >> 40) & 0x00000000000000ff;
-            digest[3] = (m_Digest[0] >> 32) & 0x00000000000000ff;
-            digest[4] = (m_Digest[0] >> 24) & 0x00000000000000ff;
-            digest[5] = (m_Digest[0] >> 16) & 0x00000000000000ff;
-            digest[6] = (m_Digest[0] >> 8) & 0x00000000000000ff;
-            digest[7] = (m_Digest[0] >> 0) & 0x00000000000000ff;
+            *result++ = (m_Digest[1] >> 56) & 0x00000000000000ff;
+            *result++ = (m_Digest[1] >> 48) & 0x00000000000000ff;
+            *result++ = (m_Digest[1] >> 40) & 0x00000000000000ff;
+            *result++ = (m_Digest[1] >> 32) & 0x00000000000000ff;
+            *result++ = (m_Digest[1] >> 24) & 0x00000000000000ff;
+            *result++ = (m_Digest[1] >> 16) & 0x00000000000000ff;
+            *result++ = (m_Digest[1] >> 8) & 0x00000000000000ff;
+            *result++ = (m_Digest[1] >> 0) & 0x00000000000000ff;
 
-            digest[8] = (m_Digest[1] >> 56) & 0x00000000000000ff;
-            digest[9] = (m_Digest[1] >> 48) & 0x00000000000000ff;
-            digest[10] = (m_Digest[1] >> 40) & 0x00000000000000ff;
-            digest[11] = (m_Digest[1] >> 32) & 0x00000000000000ff;
-            digest[12] = (m_Digest[1] >> 24) & 0x00000000000000ff;
-            digest[13] = (m_Digest[1] >> 16) & 0x00000000000000ff;
-            digest[14] = (m_Digest[1] >> 8) & 0x00000000000000ff;
-            digest[15] = (m_Digest[1] >> 0) & 0x00000000000000ff;
+            *result++ = (m_Digest[2] >> 56) & 0x00000000000000ff;
+            *result++ = (m_Digest[2] >> 48) & 0x00000000000000ff;
+            *result++ = (m_Digest[2] >> 40) & 0x00000000000000ff;
+            *result++ = (m_Digest[2] >> 32) & 0x00000000000000ff;
+            *result++ = (m_Digest[2] >> 24) & 0x00000000000000ff;
+            *result++ = (m_Digest[2] >> 16) & 0x00000000000000ff;
+            *result++ = (m_Digest[2] >> 8) & 0x00000000000000ff;
+            *result++ = (m_Digest[2] >> 0) & 0x00000000000000ff;
 
-            digest[16] = (m_Digest[2] >> 56) & 0x00000000000000ff;
-            digest[17] = (m_Digest[2] >> 48) & 0x00000000000000ff;
-            digest[18] = (m_Digest[2] >> 40) & 0x00000000000000ff;
-            digest[19] = (m_Digest[2] >> 32) & 0x00000000000000ff;
-            digest[20] = (m_Digest[2] >> 24) & 0x00000000000000ff;
-            digest[21] = (m_Digest[2] >> 16) & 0x00000000000000ff;
-            digest[22] = (m_Digest[2] >> 8) & 0x00000000000000ff;
-            digest[23] = (m_Digest[2] >> 0) & 0x00000000000000ff;
+            *result++ = (m_Digest[3] >> 56) & 0x00000000000000ff;
+            *result++ = (m_Digest[3] >> 48) & 0x00000000000000ff;
+            *result++ = (m_Digest[3] >> 40) & 0x00000000000000ff;
+            *result++ = (m_Digest[3] >> 32) & 0x00000000000000ff;
+            *result++ = (m_Digest[3] >> 24) & 0x00000000000000ff;
+            *result++ = (m_Digest[3] >> 16) & 0x00000000000000ff;
+            *result++ = (m_Digest[3] >> 8) & 0x00000000000000ff;
+            *result++ = (m_Digest[3] >> 0) & 0x00000000000000ff;
 
-            digest[24] = (m_Digest[3] >> 56) & 0x00000000000000ff;
-            digest[25] = (m_Digest[3] >> 48) & 0x00000000000000ff;
-            digest[26] = (m_Digest[3] >> 40) & 0x00000000000000ff;
-            digest[27] = (m_Digest[3] >> 32) & 0x00000000000000ff;
-            digest[28] = (m_Digest[3] >> 24) & 0x00000000000000ff;
-            digest[29] = (m_Digest[3] >> 16) & 0x00000000000000ff;
-            digest[20] = (m_Digest[3] >> 8) & 0x00000000000000ff;
-            digest[31] = (m_Digest[3] >> 0) & 0x00000000000000ff;
+            *result++ = (m_Digest[4] >> 56) & 0x00000000000000ff;
+            *result++ = (m_Digest[4] >> 48) & 0x00000000000000ff;
+            *result++ = (m_Digest[4] >> 40) & 0x00000000000000ff;
+            *result++ = (m_Digest[4] >> 32) & 0x00000000000000ff;
+            *result++ = (m_Digest[4] >> 24) & 0x00000000000000ff;
+            *result++ = (m_Digest[4] >> 16) & 0x00000000000000ff;
+            *result++ = (m_Digest[4] >> 8) & 0x00000000000000ff;
+            *result++ = (m_Digest[4] >> 0) & 0x00000000000000ff;
 
-            digest[32] = (m_Digest[4] >> 56) & 0x00000000000000ff;
-            digest[33] = (m_Digest[4] >> 48) & 0x00000000000000ff;
-            digest[34] = (m_Digest[4] >> 40) & 0x00000000000000ff;
-            digest[35] = (m_Digest[4] >> 32) & 0x00000000000000ff;
-            digest[36] = (m_Digest[4] >> 24) & 0x00000000000000ff;
-            digest[37] = (m_Digest[4] >> 16) & 0x00000000000000ff;
-            digest[38] = (m_Digest[4] >> 8) & 0x00000000000000ff;
-            digest[39] = (m_Digest[4] >> 0) & 0x00000000000000ff;
+            *result++ = (m_Digest[5] >> 56) & 0x00000000000000ff;
+            *result++ = (m_Digest[5] >> 48) & 0x00000000000000ff;
+            *result++ = (m_Digest[5] >> 40) & 0x00000000000000ff;
+            *result++ = (m_Digest[5] >> 32) & 0x00000000000000ff;
+            *result++ = (m_Digest[5] >> 24) & 0x00000000000000ff;
+            *result++ = (m_Digest[5] >> 16) & 0x00000000000000ff;
+            *result++ = (m_Digest[5] >> 8) & 0x00000000000000ff;
+            *result++ = (m_Digest[5] >> 0) & 0x00000000000000ff;
 
-            digest[40] = (m_Digest[5] >> 56) & 0x00000000000000ff;
-            digest[41] = (m_Digest[5] >> 48) & 0x00000000000000ff;
-            digest[42] = (m_Digest[5] >> 40) & 0x00000000000000ff;
-            digest[43] = (m_Digest[5] >> 32) & 0x00000000000000ff;
-            digest[44] = (m_Digest[5] >> 24) & 0x00000000000000ff;
-            digest[45] = (m_Digest[5] >> 16) & 0x00000000000000ff;
-            digest[46] = (m_Digest[5] >> 8) & 0x00000000000000ff;
-            digest[47] = (m_Digest[5] >> 0) & 0x00000000000000ff;
+            *result++ = (m_Digest[6] >> 56) & 0x00000000000000ff;
+            *result++ = (m_Digest[6] >> 48) & 0x00000000000000ff;
+            *result++ = (m_Digest[6] >> 40) & 0x00000000000000ff;
+            *result++ = (m_Digest[6] >> 32) & 0x00000000000000ff;
+            *result++ = (m_Digest[6] >> 24) & 0x00000000000000ff;
+            *result++ = (m_Digest[6] >> 16) & 0x00000000000000ff;
+            *result++ = (m_Digest[6] >> 8) & 0x00000000000000ff;
+            *result++ = (m_Digest[6] >> 0) & 0x00000000000000ff;
 
-            digest[48] = (m_Digest[6] >> 56) & 0x00000000000000ff;
-            digest[49] = (m_Digest[6] >> 48) & 0x00000000000000ff;
-            digest[50] = (m_Digest[6] >> 40) & 0x00000000000000ff;
-            digest[51] = (m_Digest[6] >> 32) & 0x00000000000000ff;
-            digest[52] = (m_Digest[6] >> 24) & 0x00000000000000ff;
-            digest[53] = (m_Digest[6] >> 16) & 0x00000000000000ff;
-            digest[54] = (m_Digest[6] >> 8) & 0x00000000000000ff;
-            digest[55] = (m_Digest[6] >> 0) & 0x00000000000000ff;
-
-            digest[56] = (m_Digest[7] >> 56) & 0x00000000000000ff;
-            digest[57] = (m_Digest[7] >> 48) & 0x00000000000000ff;
-            digest[58] = (m_Digest[7] >> 40) & 0x00000000000000ff;
-            digest[59] = (m_Digest[7] >> 32) & 0x00000000000000ff;
-            digest[60] = (m_Digest[7] >> 24) & 0x00000000000000ff;
-            digest[61] = (m_Digest[7] >> 16) & 0x00000000000000ff;
-            digest[62] = (m_Digest[7] >> 8) & 0x00000000000000ff;
-            digest[63] = (m_Digest[7] >> 0) & 0x00000000000000ff;
+            *result++ = (m_Digest[7] >> 56) & 0x00000000000000ff;
+            *result++ = (m_Digest[7] >> 48) & 0x00000000000000ff;
+            *result++ = (m_Digest[7] >> 40) & 0x00000000000000ff;
+            *result++ = (m_Digest[7] >> 32) & 0x00000000000000ff;
+            *result++ = (m_Digest[7] >> 24) & 0x00000000000000ff;
+            *result++ = (m_Digest[7] >> 16) & 0x00000000000000ff;
+            *result++ = (m_Digest[7] >> 8) & 0x00000000000000ff;
+            *result++ = (m_Digest[7] >> 0) & 0x00000000000000ff;
         }
 
       protected:
