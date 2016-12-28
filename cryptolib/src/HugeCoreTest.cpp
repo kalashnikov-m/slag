@@ -7,10 +7,8 @@
 
 using namespace std;
 
-static void dump(const byte* f, const byte* l)
-{
-    for (; f != l; ++f)
-    {
+static void dump(const byte* f, const byte* l) {
+    for (; f != l; ++f) {
         printf("%02x ", *f);
     }
 
@@ -18,8 +16,7 @@ static void dump(const byte* f, const byte* l)
 }
 
 template <class InputIterator>
-static bool ASSERT_BYTES_EQ(InputIterator f1, InputIterator l1, InputIterator f2, InputIterator l2)
-{
+static bool ASSERT_BYTES_EQ(InputIterator f1, InputIterator l1, InputIterator f2, InputIterator l2) {
     bool ret = false;
 
     for (; (f1 != l1) && (*f1 == 0x00); ++f1)
@@ -34,14 +31,10 @@ static bool ASSERT_BYTES_EQ(InputIterator f1, InputIterator l1, InputIterator f2
     return (f1 == l1) && (f2 == l2);
 }
 
-class HugeCore_Test : public ::testing::Test
-{
-};
+class HugeCore_Test : public ::testing::Test {};
 
-TEST(HugeCore_Test, Addition)
-{
-    auto AdditionTest = [](const std::initializer_list<byte>& a, const std::initializer_list<byte>& b, const std::initializer_list<byte>& expected) -> void
-    {
+TEST(HugeCore_Test, Addition) {
+    auto AdditionTest = [](const std::initializer_list<byte>& a, const std::initializer_list<byte>& b, const std::initializer_list<byte>& expected) -> void {
         byte actual[8] = {0x00};
 
         HUGE_Add(end(actual), begin(a), end(a), begin(b), end(b));
@@ -56,10 +49,8 @@ TEST(HugeCore_Test, Addition)
     AdditionTest({0x00, 0x00, 0x01, 0xfa, 0x14, 0xba, 0xce, 0x68, 0x02, 0x35}, {0x00, 0x00, 0x0a, 0x14, 0x05, 0xf5, 0xef, 0x38, 0x2a, 0x14}, {0x0c, 0x0e, 0x1a, 0xb0, 0xbd, 0xa0, 0x2c, 0x49});
 }
 
-TEST(HugeCore_Test, Multiply_1)
-{
-    auto Multiply1Test = [](const std::initializer_list<byte>& a, byte b, const std::initializer_list<byte>& expected) -> void
-    {
+TEST(HugeCore_Test, Multiply_1) {
+    auto Multiply1Test = [](const std::initializer_list<byte>& a, byte b, const std::initializer_list<byte>& expected) -> void {
         byte actual[8] = {0x00};
 
         HUGE_Multiply(begin(actual), end(actual), begin(a), end(a), b);
@@ -73,10 +64,8 @@ TEST(HugeCore_Test, Multiply_1)
     Multiply1Test({0x12, 0x02, 0x30}, 0xfa, {0x11, 0x96, 0x22, 0xE0});
 }
 
-TEST(HugeCore_Test, Multiply)
-{
-    auto MultiplyTest = [](const std::initializer_list<byte>& a, const std::initializer_list<byte>& b, const std::initializer_list<byte>& expected) -> void
-    {
+TEST(HugeCore_Test, Multiply) {
+    auto MultiplyTest = [](const std::initializer_list<byte>& a, const std::initializer_list<byte>& b, const std::initializer_list<byte>& expected) -> void {
         byte actual[8] = {0x00};
         HUGE_Multiply(begin(actual), end(actual), begin(a), end(a), begin(b), end(b));
 
@@ -91,10 +80,8 @@ TEST(HugeCore_Test, Multiply)
     MultiplyTest({0x02}, {0x00, 0x80}, {0x00, 0x01, 0x00});
 }
 
-TEST(HugeCore_Test, Subtract)
-{
-    auto SubtractTest = [](const std::initializer_list<byte>& a, const std::initializer_list<byte>& b, const std::initializer_list<byte>& expected) -> void
-    {
+TEST(HugeCore_Test, Subtract) {
+    auto SubtractTest = [](const std::initializer_list<byte>& a, const std::initializer_list<byte>& b, const std::initializer_list<byte>& expected) -> void {
         byte actual[8] = {0x00};
 
         HUGE_Subtract(end(actual), begin(a), end(a), begin(b), end(b));
@@ -108,10 +95,8 @@ TEST(HugeCore_Test, Subtract)
     SubtractTest({0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01}, {0x00, 0x00, 0x00, 0x80}, {0x00, 0x81});
 }
 
-TEST(HugeCore_Test, DivRem)
-{
-    auto DivRemTest = [](const std::vector<byte>& _arg1, const std::vector<byte>& _arg2, const std::vector<byte>& _expected_div, const std::vector<byte>& _expected_rem) -> void
-    {
+TEST(HugeCore_Test, DivRem) {
+    auto DivRemTest = [](const std::vector<byte>& _arg1, const std::vector<byte>& _arg2, const std::vector<byte>& _expected_div, const std::vector<byte>& _expected_rem) -> void {
         std::vector<byte> div(8);
         std::vector<byte> rem(8);
 
@@ -134,10 +119,8 @@ TEST(HugeCore_Test, DivRem)
     DivRemTest({0x00, 0x00, 0x08}, {0x00, 0x00, 0x04}, {0x00, 0x00, 0x02}, {0x00, 0x00, 0x00});
 }
 
-TEST(HugeCore_Test, Increment)
-{
-    auto IncrementTest = [](const std::initializer_list<byte>& _arg, const std::initializer_list<byte>& _expected) -> void
-    {
+TEST(HugeCore_Test, Increment) {
+    auto IncrementTest = [](const std::initializer_list<byte>& _arg, const std::initializer_list<byte>& _expected) -> void {
         std::vector<byte> arg(_arg);
         std::vector<byte> expected(_expected);
 
@@ -153,10 +136,8 @@ TEST(HugeCore_Test, Increment)
     IncrementTest({0x00, 0xff, 0xfe}, {0x00, 0xff, 0xff});
 }
 
-TEST(HugeCore_Test, Decrement)
-{
-    auto DecrementTest = [](const std::initializer_list<byte>& _arg, const std::initializer_list<byte>& _expected) -> void
-    {
+TEST(HugeCore_Test, Decrement) {
+    auto DecrementTest = [](const std::initializer_list<byte>& _arg, const std::initializer_list<byte>& _expected) -> void {
         std::vector<byte> arg(_arg);
         std::vector<byte> expected(_expected);
 
@@ -171,10 +152,8 @@ TEST(HugeCore_Test, Decrement)
     DecrementTest({0x00, 0x01, 0x01}, {0x00, 0x01, 0x00});
 }
 
-TEST(HugeCore_Test, Reverse)
-{
-    auto ReverseTest = [](const std::initializer_list<byte>& _arg, const std::initializer_list<byte>& _expected)
-    {
+TEST(HugeCore_Test, Reverse) {
+    auto ReverseTest = [](const std::initializer_list<byte>& _arg, const std::initializer_list<byte>& _expected) {
         std::vector<byte> arg(_arg);
         std::vector<byte> expected(_expected);
 
@@ -188,10 +167,8 @@ TEST(HugeCore_Test, Reverse)
     ReverseTest({0x01, 0x02, 0x03}, {0x03, 0x02, 0x01});
 }
 
-TEST(HugeCore_Test, And)
-{
-    auto AndTest = [](const std::initializer_list<byte>& arg1, const std::initializer_list<byte>& arg2, const std::initializer_list<byte>& expected) -> void
-    {
+TEST(HugeCore_Test, And) {
+    auto AndTest = [](const std::initializer_list<byte>& arg1, const std::initializer_list<byte>& arg2, const std::initializer_list<byte>& expected) -> void {
         byte actual[8] = {0x00};
         HUGE_And((byte*)end(actual), begin(arg1), end(arg1), begin(arg2), end(arg2));
 
@@ -205,10 +182,8 @@ TEST(HugeCore_Test, And)
     AndTest({0x01, 0xff, 0x44, 0x32}, {0x00, 0x00, 0xff, 0x10, 0x31}, {0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0x00, 0x30});
 }
 
-TEST(HugeCore_Test, Xor)
-{
-    auto XorTest = [](const std::initializer_list<byte>& a, const std::initializer_list<byte>& b, const std::initializer_list<byte>& expected) -> void
-    {
+TEST(HugeCore_Test, Xor) {
+    auto XorTest = [](const std::initializer_list<byte>& a, const std::initializer_list<byte>& b, const std::initializer_list<byte>& expected) -> void {
         byte actual[8] = {0x00};
         HUGE_Xor(end(actual), begin(a), end(a), begin(b), end(b));
 
@@ -223,10 +198,8 @@ TEST(HugeCore_Test, Xor)
     XorTest({0x03, 0x03, 0x03}, {0x00}, {0x03, 0x03, 0x03});
 }
 
-TEST(HugeCore_Test, Or)
-{
-    auto OrTest = [](const std::initializer_list<byte>& a, const std::initializer_list<byte>& b, const std::initializer_list<byte>& expected) -> void
-    {
+TEST(HugeCore_Test, Or) {
+    auto OrTest = [](const std::initializer_list<byte>& a, const std::initializer_list<byte>& b, const std::initializer_list<byte>& expected) -> void {
         byte actual[8] = {0x00};
         HUGE_Or(end(actual), begin(a), end(a), begin(b), end(b));
 
@@ -241,10 +214,8 @@ TEST(HugeCore_Test, Or)
     OrTest({0x03, 0x03, 0x03}, {0x00}, {0x03, 0x03, 0x03});
 }
 
-TEST(HugeCore_Test, Inverse)
-{
-    auto InverseTest = [](const std::initializer_list<byte>& _arg, const std::initializer_list<byte>& _expected) -> void
-    {
+TEST(HugeCore_Test, Inverse) {
+    auto InverseTest = [](const std::initializer_list<byte>& _arg, const std::initializer_list<byte>& _expected) -> void {
         std::vector<byte> arg(_arg);
         std::vector<byte> expected(_expected);
 
@@ -258,10 +229,8 @@ TEST(HugeCore_Test, Inverse)
     InverseTest({0x01, 0x00, 0x00, 0x00, 0x00, 0xff, 0x10, 0x32}, {0xfe, 0xff, 0xff, 0xff, 0xff, 0x00, 0xef, 0xcd});
 }
 
-TEST(HugeCore_Test, isOne)
-{
-    auto IsOneTest = [](const std::initializer_list<byte>& arg, bool isOne) -> void
-    {
+TEST(HugeCore_Test, isOne) {
+    auto IsOneTest = [](const std::initializer_list<byte>& arg, bool isOne) -> void {
         bool f = HUGE_IsOne(begin(arg), end(arg));
 
         EXPECT_TRUE(f == isOne);

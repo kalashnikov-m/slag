@@ -10,12 +10,9 @@
 using namespace std;
 using namespace cry;
 
-class HugeTest : public ::testing::Test
-{
-};
+class HugeTest : public ::testing::Test {};
 
-TEST(HugeTest, LogicalNOT)
-{
+TEST(HugeTest, LogicalNOT) {
     {
         Huge<byte> a = {0x01, 0x02, 0x03};
 
@@ -29,10 +26,8 @@ TEST(HugeTest, LogicalNOT)
     }
 }
 
-TEST(HugeTest, Modulus)
-{
-    auto ModulusTest = [](const Huge<byte>& arg1, const Huge<byte>& arg2, const Huge<byte>& expected) -> void
-    {
+TEST(HugeTest, Modulus) {
+    auto ModulusTest = [](const Huge<byte>& arg1, const Huge<byte>& arg2, const Huge<byte>& expected) -> void {
         auto mod = arg1 % arg2;
 
         EXPECT_TRUE(mod == expected);
@@ -43,10 +38,8 @@ TEST(HugeTest, Modulus)
     ModulusTest({0x6f, 0x17, 0x23}, {0x17, 0x12}, {0x10, 0x83});
 }
 
-TEST(HugeTest, ModulusAssignment)
-{
-    auto ModulusAssignmentTest = [](Huge<byte>&& arg1, const Huge<byte>& arg2, const Huge<byte>& expected)
-    {
+TEST(HugeTest, ModulusAssignment) {
+    auto ModulusAssignmentTest = [](Huge<byte>&& arg1, const Huge<byte>& arg2, const Huge<byte>& expected) {
         arg1 %= arg2;
         EXPECT_TRUE(arg1 == expected);
     };
@@ -54,8 +47,7 @@ TEST(HugeTest, ModulusAssignment)
     ModulusAssignmentTest({0xff, 0xff}, {0xf6, 0xf5}, {0x09, 0x0a});
 }
 
-TEST(HugeTest, BitwiseAND)
-{
+TEST(HugeTest, BitwiseAND) {
     {
         Huge<byte> a = {0x01, 0x02, 0x03};
         Huge<byte> b = {0x01, 0x02, 0x03};
@@ -69,10 +61,8 @@ TEST(HugeTest, BitwiseAND)
     }
 }
 
-TEST(HugeTest, BitwiseANDassignment)
-{
-    auto Test = [](const std::initializer_list<byte>& arg1, const std::initializer_list<byte>& arg2, const std::initializer_list<byte>& arg3) -> void
-    {
+TEST(HugeTest, BitwiseANDassignment) {
+    auto Test = [](const std::initializer_list<byte>& arg1, const std::initializer_list<byte>& arg2, const std::initializer_list<byte>& arg3) -> void {
         Huge<byte> a(arg1);
         Huge<byte> b(arg2);
         Huge<byte> expect(arg3);
@@ -98,10 +88,8 @@ TEST(HugeTest, BitwiseANDassignment)
     }
 }
 
-TEST(HugeTest, LogicalAND)
-{
-    auto Test = [](const std::initializer_list<byte>& arg1, const std::initializer_list<byte>& arg2, bool expect) -> void
-    {
+TEST(HugeTest, LogicalAND) {
+    auto Test = [](const std::initializer_list<byte>& arg1, const std::initializer_list<byte>& arg2, bool expect) -> void {
         Huge<byte> a = arg1;
         Huge<byte> b = arg2;
 
@@ -113,8 +101,7 @@ TEST(HugeTest, LogicalAND)
     Test({0x00, 0x00, 0x00}, {0x00, 0x00, 0x00}, false);
 }
 
-TEST(HugeTest, UnaryPlus)
-{
+TEST(HugeTest, UnaryPlus) {
     {
         Huge<byte> a = {0x01, 0x02, 0x03};
         Huge<byte> b = {0x01, 0x02, 0x03};
@@ -132,8 +119,7 @@ TEST(HugeTest, UnaryPlus)
     }
 }
 
-TEST(HugeTest, UnaryNegation)
-{
+TEST(HugeTest, UnaryNegation) {
     {
         Huge<byte> a = {0x01, 0x02, 0x03};
         Huge<byte> b = {0x01, 0x02, 0x03};
@@ -150,10 +136,9 @@ TEST(HugeTest, UnaryNegation)
     }
 }
 
-TEST(HugeTest, Decrement)
-{
+TEST(HugeTest, Decrement) {
     {
-        Huge<byte> a      = {0x01, 0x02, 0x03};
+        Huge<byte> a = {0x01, 0x02, 0x03};
         Huge<byte> expect = {0x01, 0x02, 0x02};
 
         a--;
@@ -162,7 +147,7 @@ TEST(HugeTest, Decrement)
     }
 
     {
-        Huge<byte> a      = {0x01, 0x02, 0x03};
+        Huge<byte> a = {0x01, 0x02, 0x03};
         Huge<byte> expect = {0x01, 0x02, 0x02};
 
         --a;
@@ -183,8 +168,7 @@ TEST(HugeTest, Decrement)
     }
 }
 
-TEST(HugeTest, LogicalOR)
-{
+TEST(HugeTest, LogicalOR) {
     {
         Huge<byte> a = {0x01, 0x02, 0x03};
         Huge<byte> b = {0x01, 0x02, 0x03};
@@ -207,8 +191,7 @@ TEST(HugeTest, LogicalOR)
     }
 }
 
-TEST(HugeTest, BitwiseORassignment)
-{
+TEST(HugeTest, BitwiseORassignment) {
     {
         Huge<byte> a = {0x11, 0x22, 0x33};
         Huge<byte> b = {0x00, 0x00, 0x00};
@@ -233,11 +216,10 @@ TEST(HugeTest, BitwiseORassignment)
     }
 }
 
-TEST(HugeTest, BitwiseOR)
-{
+TEST(HugeTest, BitwiseOR) {
     {
-        Huge<byte> a        = {0x01, 0x02, 0x03};
-        Huge<byte> b        = {0x11, 0x00, 0x33};
+        Huge<byte> a = {0x01, 0x02, 0x03};
+        Huge<byte> b = {0x11, 0x00, 0x33};
         Huge<byte> expected = {0x11, 0x02, 0x33};
 
         Huge<byte> c = a | b;
@@ -246,11 +228,10 @@ TEST(HugeTest, BitwiseOR)
     }
 }
 
-TEST(HugeTest, ExclusiveOR)
-{
+TEST(HugeTest, ExclusiveOR) {
     {
-        Huge<byte> a        = {0x01, 0x02, 0x03};
-        Huge<byte> b        = {0x11, 0x00, 0x33};
+        Huge<byte> a = {0x01, 0x02, 0x03};
+        Huge<byte> b = {0x11, 0x00, 0x33};
         Huge<byte> expected = {0x10, 0x02, 0x30};
 
         Huge<byte> c = a ^ b;
@@ -259,8 +240,7 @@ TEST(HugeTest, ExclusiveOR)
     }
 }
 
-TEST(HugeTest, ExclusiveORassignment)
-{
+TEST(HugeTest, ExclusiveORassignment) {
     {
         Huge<byte> a = {0x11, 0x22, 0x33};
         Huge<byte> b = {0x00, 0x00, 0x00};
@@ -285,8 +265,7 @@ TEST(HugeTest, ExclusiveORassignment)
     }
 }
 
-TEST(HugeTest, BitwiseInverse)
-{
+TEST(HugeTest, BitwiseInverse) {
     {
         Huge<byte> a = {0x05};
         Huge<byte> b(~a);
@@ -308,8 +287,7 @@ TEST(HugeTest, BitwiseInverse)
     }
 }
 
-TEST(HugeTest, Addition)
-{
+TEST(HugeTest, Addition) {
     {
         Huge<byte> a = {0x01, 0x02, 0x03};
         Huge<byte> b = {0x17, 0x20, 0x11};
@@ -377,11 +355,10 @@ TEST(HugeTest, Addition)
     }
 }
 
-TEST(HugeTest, AdditionAssigment)
-{
+TEST(HugeTest, AdditionAssigment) {
     {
-        Huge<byte> a      = {0x01, 0x02, 0x03};
-        Huge<byte> b      = {0x11, 0x27, 0x0a};
+        Huge<byte> a = {0x01, 0x02, 0x03};
+        Huge<byte> b = {0x11, 0x27, 0x0a};
         Huge<byte> expect = {0x12, 0x29, 0x0d};
 
         a += b;
@@ -390,8 +367,8 @@ TEST(HugeTest, AdditionAssigment)
     }
 
     {
-        Huge<byte> a      = {0x01, 0x02, 0x03};
-        Huge<byte> b      = {0x00};
+        Huge<byte> a = {0x01, 0x02, 0x03};
+        Huge<byte> b = {0x00};
         Huge<byte> expect = {0x01, 0x02, 0x03};
 
         a += b;
@@ -400,10 +377,9 @@ TEST(HugeTest, AdditionAssigment)
     }
 }
 
-TEST(HugeTest, Increment)
-{
+TEST(HugeTest, Increment) {
     {
-        Huge<byte> a      = {0x01, 0x02, 0x03};
+        Huge<byte> a = {0x01, 0x02, 0x03};
         Huge<byte> expect = {0x01, 0x02, 0x04};
 
         a++;
@@ -412,7 +388,7 @@ TEST(HugeTest, Increment)
     }
 
     {
-        Huge<byte> a      = {0x01, 0x02, 0x03};
+        Huge<byte> a = {0x01, 0x02, 0x03};
         Huge<byte> expect = {0x01, 0x02, 0x04};
 
         ++a;
@@ -433,8 +409,7 @@ TEST(HugeTest, Increment)
     }
 }
 
-TEST(HugeTest, Subtraction)
-{
+TEST(HugeTest, Subtraction) {
     { // (a)-(b), |a|>|b|
         std::initializer_list<byte> il1 = {0x38, 0x22, 0x12};
         std::initializer_list<byte> il2 = {0x00};
@@ -570,8 +545,7 @@ TEST(HugeTest, Subtraction)
     }
 }
 
-TEST(HugeTest, SubtractionAssigment)
-{
+TEST(HugeTest, SubtractionAssigment) {
     { // (a)-(b), |a|>|b|
         std::initializer_list<byte> il1 = {0x0a};
         std::initializer_list<byte> il2 = {0x06};
@@ -588,8 +562,7 @@ TEST(HugeTest, SubtractionAssigment)
     }
 }
 
-TEST(HugeTest, Multiplication)
-{
+TEST(HugeTest, Multiplication) {
     {
         std::initializer_list<byte> il1 = {0x0a};
         std::initializer_list<byte> il2 = {0x06};
@@ -617,8 +590,7 @@ TEST(HugeTest, Multiplication)
     }
 }
 
-TEST(HugeTest, MultiplicationAssignment)
-{
+TEST(HugeTest, MultiplicationAssignment) {
     std::initializer_list<byte> il1 = {0xfa, 0x0a};
     std::initializer_list<byte> il2 = {0x06};
     std::initializer_list<byte> il3 = {0x05, 0xdc, 0x3c};
@@ -632,8 +604,7 @@ TEST(HugeTest, MultiplicationAssignment)
     EXPECT_TRUE(a == expected);
 }
 
-TEST(HugeTest, Division)
-{
+TEST(HugeTest, Division) {
     {
         std::initializer_list<byte> il1 = {0xff, 0xff};
         std::initializer_list<byte> il2 = {0x06};
@@ -691,8 +662,7 @@ TEST(HugeTest, Division)
     }
 }
 
-TEST(HugeTest, DivisionAssignment)
-{
+TEST(HugeTest, DivisionAssignment) {
     {
         std::initializer_list<byte> il1 = {0xff, 0xff};
         std::initializer_list<byte> il2 = {0x06};
@@ -708,8 +678,7 @@ TEST(HugeTest, DivisionAssignment)
     }
 }
 
-TEST(HugeTest, LeftShift)
-{
+TEST(HugeTest, LeftShift) {
     {
         Huge<byte> a = {0x22, 0x12};
         Huge<byte> b(a << 1);
@@ -727,8 +696,7 @@ TEST(HugeTest, LeftShift)
     }
 }
 
-TEST(HugeTest, LeftShiftAssigment)
-{
+TEST(HugeTest, LeftShiftAssigment) {
     {
         Huge<byte> a = {0x22, 0x12};
 
@@ -748,8 +716,7 @@ TEST(HugeTest, LeftShiftAssigment)
     }
 }
 
-TEST(HugeTest, RightShift)
-{
+TEST(HugeTest, RightShift) {
     {
         Huge<byte> a = {0x22, 0x12};
         Huge<byte> b(a >> 1);
@@ -767,8 +734,7 @@ TEST(HugeTest, RightShift)
     }
 }
 
-TEST(HugeTest, RightShiftAssignment)
-{
+TEST(HugeTest, RightShiftAssignment) {
     {
         Huge<byte> a = {0x22, 0x12};
 
@@ -790,8 +756,7 @@ TEST(HugeTest, RightShiftAssignment)
     }
 }
 
-TEST(HugeTest, Less)
-{
+TEST(HugeTest, Less) {
     {
         Huge<byte> a = {0x22, 0x12};
         Huge<byte> b = {0x22, 0x12};
@@ -835,8 +800,7 @@ TEST(HugeTest, Less)
     }
 }
 
-TEST(HugeTest, LessEqual)
-{
+TEST(HugeTest, LessEqual) {
     {
         Huge<byte> a = {0x22, 0x12};
         Huge<byte> b = {0x22, 0x12};
@@ -893,8 +857,7 @@ TEST(HugeTest, LessEqual)
     }
 }
 
-TEST(HugeTest, Greather)
-{
+TEST(HugeTest, Greather) {
     {
         Huge<byte> a = {0x22, 0x12};
         Huge<byte> b = {0x22, 0x12};
@@ -938,8 +901,7 @@ TEST(HugeTest, Greather)
     }
 }
 
-TEST(HugeTest, GreatherEqual)
-{
+TEST(HugeTest, GreatherEqual) {
     {
         Huge<byte> a = {0x22, 0x12};
         Huge<byte> b = {0x22, 0x12};
@@ -983,8 +945,7 @@ TEST(HugeTest, GreatherEqual)
     }
 }
 
-TEST(HugeTest, Equal)
-{
+TEST(HugeTest, Equal) {
     {
         Huge<byte> a = {0x22, 0x12};
         Huge<byte> b = {0x22, 0x12};
@@ -1044,10 +1005,8 @@ TEST(HugeTest, Equal)
     }
 }
 
-TEST(HugeTest, Inequality)
-{
-    auto InequalityTest = [](const Huge<byte>& arg1, const Huge<byte>& arg2, bool expected)
-    {
+TEST(HugeTest, Inequality) {
+    auto InequalityTest = [](const Huge<byte>& arg1, const Huge<byte>& arg2, bool expected) {
         bool eq = arg1 != arg2;
         EXPECT_TRUE(eq == expected);
     };
@@ -1060,8 +1019,7 @@ TEST(HugeTest, Inequality)
     InequalityTest({0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c}, {0x01, 0x02, 0x03, 0x05, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c}, true);
 }
 
-TEST(HugeTest, BOOL)
-{
+TEST(HugeTest, BOOL) {
     {
         Huge<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
 
@@ -1079,12 +1037,11 @@ TEST(HugeTest, BOOL)
     }
 }
 
-TEST(HugeTest, Gcd)
-{
+TEST(HugeTest, Gcd) {
     {
-        Huge<byte> a      = {0x04, 0x2f};       // 1071
-        Huge<byte> b      = {0x01, 0xce};       // 462
-        Huge<byte> nod    = {0x15};             // 21
+        Huge<byte> a = {0x04, 0x2f};            // 1071
+        Huge<byte> b = {0x01, 0xce};            // 462
+        Huge<byte> nod = {0x15};                // 21
         Huge<byte> actual = {0x00, 0x00, 0x00}; //
 
         actual = cry::Gcd(a, b); // a.Gcd(b);
@@ -1095,9 +1052,9 @@ TEST(HugeTest, Gcd)
     }
 
     {
-        Huge<byte> a      = {18};   //
-        Huge<byte> b      = {30};   //
-        Huge<byte> nod    = {6};    //
+        Huge<byte> a = {18};        //
+        Huge<byte> b = {30};        //
+        Huge<byte> nod = {6};       //
         Huge<byte> actual = {0x00}; //
 
         actual = cry::Gcd(a, b); // a.Gcd(b);
@@ -1108,9 +1065,9 @@ TEST(HugeTest, Gcd)
     }
 
     {
-        Huge<byte> a      = {0x6b, 0x7d}; //
-        Huge<byte> b      = {0x31, 0x4a}; //
-        Huge<byte> nod    = {0x01};       //
+        Huge<byte> a = {0x6b, 0x7d};      //
+        Huge<byte> b = {0x31, 0x4a};      //
+        Huge<byte> nod = {0x01};          //
         Huge<byte> actual = {0x00, 0x00}; //
 
         actual = cry::Gcd(a, b); // a.Gcd(b);
@@ -1121,10 +1078,8 @@ TEST(HugeTest, Gcd)
     }
 }
 
-TEST(HugeTest, ModInvserse)
-{
-    auto ModInverseTest = [](const Huge<byte>& arg1, const Huge<byte>& mod, const Huge<byte>& inv)
-    {
+TEST(HugeTest, ModInvserse) {
+    auto ModInverseTest = [](const Huge<byte>& arg1, const Huge<byte>& mod, const Huge<byte>& inv) {
         Huge<byte> actual;
 
         bool exists = cry::ModInverse(actual, arg1, mod); // arg1.ModInverse(actual, mod);
@@ -1141,8 +1096,7 @@ TEST(HugeTest, ModInvserse)
     ModInverseTest({0x03}, {0x8C, 0x09, 0x9F}, {0x2e, 0xad, 0xe0});       // a = 3, mod = 9177503, inv = 3059168
 }
 
-TEST(HugeTest, DivRem)
-{
+TEST(HugeTest, DivRem) {
     {
         Huge<byte> expected_div(1);
         Huge<byte> expected_rem(0);
@@ -1192,10 +1146,8 @@ TEST(HugeTest, DivRem)
     }
 }
 
-TEST(HugeTest, EvenOdd)
-{
-    auto EvenOddTest = [](const Huge<byte>& argEven, bool flagEven, const Huge<byte>& argOdd, bool flagOdd)
-    {
+TEST(HugeTest, EvenOdd) {
+    auto EvenOddTest = [](const Huge<byte>& argEven, bool flagEven, const Huge<byte>& argOdd, bool flagOdd) {
         bool even = cry::IsEven(argEven);
         EXPECT_TRUE(even == flagEven);
 
@@ -1209,10 +1161,8 @@ TEST(HugeTest, EvenOdd)
     EvenOddTest(4, true, 4, false);
 }
 
-TEST(HugeTest, PowMod)
-{
-    auto ModPowTest = [](const Huge<byte>& a, const Huge<byte>& exponent, const Huge<byte>& modulus, const Huge<byte>& expected)
-    {
+TEST(HugeTest, PowMod) {
+    auto ModPowTest = [](const Huge<byte>& a, const Huge<byte>& exponent, const Huge<byte>& modulus, const Huge<byte>& expected) {
         Huge<byte> actual = cry::PowMod(a, exponent, modulus);
 
         bool f = (expected == actual);
