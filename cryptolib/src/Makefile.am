@@ -11,7 +11,7 @@ hugeTests_LDADD = libtests.la \
 
 lib_LTLIBRARIES = libhuge.la libtests.la
 
-libhuge_la_SOURCES = HugeCore.cpp Huge.hpp algorithm.hpp sha1.hpp sha224 sha256.hpp
+libhuge_la_SOURCES = HugeCore.cpp Huge.hpp algorithm.hpp sha1.hpp sha224 sha256.hpp sha512.hpp
 libhuge_la_LDFLAGS = -static
 
 
