@@ -113,11 +113,7 @@ namespace cry {
         }
 
       protected:
-        uint32_t inline ROTR(uint32_t x, int shift) {
-            x = ((x >> shift) | (x << (32 - shift)));
-
-            return x;
-        }
+        uint32_t inline ROTR(uint32_t x, int shift) { return ((x >> shift) | (x << (32 - shift))); }
 
         uint32_t inline SUM0(uint32_t x) { return (ROTR(x, 2) ^ ROTR(x, 13) ^ ROTR(x, 22)); }
 

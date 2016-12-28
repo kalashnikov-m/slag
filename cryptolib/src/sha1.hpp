@@ -95,11 +95,7 @@ namespace cry {
         }
 
       protected:
-        uint32_t inline ROTL(uint32_t x, int shift) {
-            x = ((x << shift) | (x >> (32 - shift)));
-
-            return x;
-        }
+        uint32_t inline ROTL(uint32_t x, int shift) { return ((x << shift) | (x >> (32 - shift))); }
 
         uint32_t inline Ch(uint32_t x, uint32_t y, uint32_t z) { return ((x & y) ^ (~(x) & (z))); }
 
