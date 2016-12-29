@@ -11,7 +11,7 @@ namespace cry {
 
         void Init() {
             m_Idx = 0;
-            // m_Len = 0;
+            high = low = 0;
 
             m_Digest[0] = 0x6a09e667f3bcc908;
             m_Digest[1] = 0xbb67ae8584caa73b;
@@ -29,7 +29,12 @@ namespace cry {
             while (it != end) {
                 m_Block[m_Idx++] = *it++;
                 low += 8;
-                // m_Len += 8;
+                if (low == 0x00) {
+                    high++;
+                    if (high == 0x00) {
+                        throw 1;
+                    }
+                }
 
                 if (m_Idx == 0x80) // 128
                 {
@@ -156,13 +161,13 @@ namespace cry {
       protected:
         uint64_t inline ROTR(uint64_t x, int shift) { return ((x >> shift) | (x << (64 - shift))); }
 
-        uint64_t inline SUM0(uint64_t x) { return (ROTR(x, 2) ^ ROTR(x, 13) ^ ROTR(x, 22)); }
+        uint64_t inline SUM0(uint64_t x) { return (ROTR(x, 28) ^ ROTR(x, 34) ^ ROTR(x, 39)); }
 
-        uint64_t inline SUM1(uint64_t x) { return (ROTR(x, 6) ^ ROTR(x, 11) ^ ROTR(x, 25)); }
+        uint64_t inline SUM1(uint64_t x) { return (ROTR(x, 14) ^ ROTR(x, 18) ^ ROTR(x, 41)); }
 
-        uint64_t inline sigma_0(uint64_t x) { return (ROTR(x, 7) ^ ROTR(x, 18) ^ (x >> 3)); }
+        uint64_t inline sigma_0(uint64_t x) { return (ROTR(x, 1) ^ ROTR(x, 8) ^ (x >> 7)); }
 
-        uint64_t inline sigma_1(uint64_t x) { return (ROTR(x, 17) ^ ROTR(x, 19) ^ (x >> 10)); }
+        uint64_t inline sigma_1(uint64_t x) { return (ROTR(x, 19) ^ ROTR(x, 61) ^ (x >> 6)); }
 
         uint64_t inline Ch(uint64_t x, uint64_t y, uint64_t z) { return ((x & y) ^ (~(x) & (z))); }
 
@@ -173,16 +178,7 @@ namespace cry {
 
             uint64_t a, b, c, d, e, f, g, h;
 
-            // digest init
-            a = m_Digest[0];
-            b = m_Digest[1];
-            c = m_Digest[2];
-            d = m_Digest[3];
-            e = m_Digest[4];
-            f = m_Digest[5];
-            g = m_Digest[6];
-            h = m_Digest[7];
-
+            // 1. Prepare the message schedule
             for (int t = 0; t < 16; ++t) {
 
                 W[t] |= uint64_t(m_Block[t * 8 + 0]) << 56;
@@ -195,21 +191,24 @@ namespace cry {
                 W[t] |= uint64_t(m_Block[t * 8 + 7]) << 0;
             }
 
-            for (int i = 0; i < 16; ++i) {
-                printf("%16llx\n", W[i]);
-            }
-
-            printf("\n");
-
-            for (int t = 16; t < 64; ++t) {
+            for (int t = 16; t < 80; ++t) {
                 W[t] = sigma_1(W[t - 2]) + W[t - 7] + sigma_0(W[t - 15]) + W[t - 16];
             }
+
+            // 2. Initialize  the  eight  working  variables,
+            a = m_Digest[0];
+            b = m_Digest[1];
+            c = m_Digest[2];
+            d = m_Digest[3];
+            e = m_Digest[4];
+            f = m_Digest[5];
+            g = m_Digest[6];
+            h = m_Digest[7];
 
             // main cycle
             uint64_t T1 = 0;
             uint64_t T2 = 0;
 
-            printf("------------------------------------------------------\n");
             for (int t = 0; t < 80; ++t) {
 
                 T1 = h + SUM1(e) + Ch(e, f, g) + K[t] + W[t];
@@ -223,8 +222,6 @@ namespace cry {
                 c = b;
                 b = a;
                 a = T1 + T2;
-
-                printf("t[%d]: <a: %llx, b: %llx, c: %llx, d: %llx, e: %llx, f: %llx, g: %llx, h: %llx>\n", t, a, b, c, d, e, f, g, h);
             }
 
             m_Digest[0] += a;
@@ -243,10 +240,8 @@ namespace cry {
         uint64_t m_Digest[8]; // 512
         uint8_t m_Block[128]; // 1024
         uint8_t m_Idx;
-        // uint64_t m_Len;
 
         struct {
-            // uint64_t m_Len;
             uint64_t high;
             uint64_t low;
         };
