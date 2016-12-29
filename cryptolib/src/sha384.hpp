@@ -138,24 +138,6 @@ namespace cry {
             digest[45] = (m_Digest[5] >> 16) & 0x00000000000000ff;
             digest[46] = (m_Digest[5] >> 8) & 0x00000000000000ff;
             digest[47] = (m_Digest[5] >> 0) & 0x00000000000000ff;
-
-            /*digest[48] = (m_Digest[6] >> 56) & 0x00000000000000ff;
-            digest[49] = (m_Digest[6] >> 48) & 0x00000000000000ff;
-            digest[50] = (m_Digest[6] >> 40) & 0x00000000000000ff;
-            digest[51] = (m_Digest[6] >> 32) & 0x00000000000000ff;
-            digest[52] = (m_Digest[6] >> 24) & 0x00000000000000ff;
-            digest[53] = (m_Digest[6] >> 16) & 0x00000000000000ff;
-            digest[54] = (m_Digest[6] >> 8) & 0x00000000000000ff;
-            digest[55] = (m_Digest[6] >> 0) & 0x00000000000000ff;
-
-            digest[56] = (m_Digest[7] >> 56) & 0x00000000000000ff;
-            digest[57] = (m_Digest[7] >> 48) & 0x00000000000000ff;
-            digest[58] = (m_Digest[7] >> 40) & 0x00000000000000ff;
-            digest[59] = (m_Digest[7] >> 32) & 0x00000000000000ff;
-            digest[60] = (m_Digest[7] >> 24) & 0x00000000000000ff;
-            digest[61] = (m_Digest[7] >> 16) & 0x00000000000000ff;
-            digest[62] = (m_Digest[7] >> 8) & 0x00000000000000ff;
-            digest[63] = (m_Digest[7] >> 0) & 0x00000000000000ff;*/
         }
 
       protected:
