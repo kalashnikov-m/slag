@@ -22,6 +22,14 @@ namespace cry {
             m_Digest[4] = 0xc3d2e1f0;
         }
 
+        template <class InputIterator, class OutputIterator>
+        void operator()(InputIterator first, InputIterator last, OutputIterator result) {
+
+            Init();
+            Update(first, last);
+            Final(result);
+        }
+
         template <class InputIterator>
         void Update(InputIterator first, InputIterator last) {
 
