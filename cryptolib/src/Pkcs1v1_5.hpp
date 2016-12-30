@@ -45,15 +45,15 @@ namespace cry {
     class EMSA_PKCS1_v1_5 {
 
       public:
-        template <class DigestType>
-        std::vector<uint8_t> Encode(const std::vector<uint8_t>& message, size_t emLen) {
+        template <class DigestType, class InputIterator>
+        std::vector<uint8_t> Encode(InputIterator first, InputIterator last, size_t emLen) {
 
-            std::vector<uint8_t> hash;
+            std::vector<uint8_t> hash(DigestType::size);
 
             DigestType digest;
             digest.Init();
-            digest.Update(message);
-            digest.Final(hash);
+            digest.Update(first, last);
+            digest.Final(hash.begin());
 
             auto oid = OID<DigestType>::value();
             size_t oidLen = oid.size();

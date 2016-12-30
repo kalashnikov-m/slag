@@ -28,18 +28,26 @@ int main(int argc, char** argv) {
 
     EME_PKCS1_v1_5 eme;
     EMSA_PKCS1_v1_5 emsa;
-    
-    std::vector<uint8_t> message{'*','*','*','*','*'};
+
+    std::vector<uint8_t> message{'*', '*', '*', '*', '*'};
 
     std::vector<uint8_t> enc1 = eme.Encode(message, 50);
-    
-    std::vector<uint8_t> enc2 = emsa.Encode<SHA224>(message, 50);
-    
-    std::copy(enc1.begin(), enc1.end(), std::ostream_iterator<uint16_t>(std::cout, " "));
-    std::cout<<"\n";
-    
+
+    std::vector<uint8_t> enc2 = emsa.Encode<SHA1>(message.begin(), message.end(), 50);
+
+    /*cout << "In hex: 0x" // now load up a bunch of formatting modifiers
+        << hex
+        << uppercase
+        << setw(8)
+        << setfill('0');*/
+    //<< 42            // the actual value we wanted to print out
+    //<< endl;
+
+    std::copy(enc1.begin(), enc1.end(), std::ostream_iterator<uint16_t>(cout, " "));
+    std::cout << "\n";
+
     std::copy(enc2.begin(), enc2.end(), std::ostream_iterator<uint16_t>(std::cout, " "));
-    std::cout<<"\n";
+    std::cout << "\n";
 
     return 0;
     //::testing::InitGoogleTest(&argc, argv);

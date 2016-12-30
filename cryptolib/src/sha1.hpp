@@ -9,6 +9,8 @@ namespace cry {
         SHA1() {}
         ~SHA1() {}
 
+        static const size_t size = 20;
+
         void Init() {
             m_Idx = 0;
             m_Len = 0;
@@ -20,11 +22,11 @@ namespace cry {
             m_Digest[4] = 0xc3d2e1f0;
         }
 
-        void Update(const std::vector<uint8_t>& m) {
-            std::vector<uint8_t>::const_iterator it(m.begin()), end(m.end());
+        template <class InputIterator>
+        void Update(InputIterator first, InputIterator last) {
 
-            while (it != end) {
-                m_Block[m_Idx++] = *it++;
+            while (first != last) {
+                m_Block[m_Idx++] = *first++;
                 m_Len += 8;
 
                 if (m_Idx == 0x40) // 64
@@ -34,7 +36,8 @@ namespace cry {
             }
         }
 
-        void Final(std::vector<uint8_t>& digest) {
+        template <class OutputIterator>
+        void Final(OutputIterator result) {
             if (m_Idx > 55) {
                 m_Block[m_Idx++] = 0x80;
                 while (m_Idx < 64) {
@@ -66,32 +69,30 @@ namespace cry {
 
             transform();
 
-            digest.resize(20);
+            *result++ = (m_Digest[0] >> 24) & 0x000000ff;
+            *result++ = (m_Digest[0] >> 16) & 0x000000ff;
+            *result++ = (m_Digest[0] >> 8) & 0x000000ff;
+            *result++ = (m_Digest[0] >> 0) & 0x000000ff;
 
-            digest[0] = (m_Digest[0] >> 24) & 0x000000ff;
-            digest[1] = (m_Digest[0] >> 16) & 0x000000ff;
-            digest[2] = (m_Digest[0] >> 8) & 0x000000ff;
-            digest[3] = (m_Digest[0] >> 0) & 0x000000ff;
+            *result++ = (m_Digest[1] >> 24) & 0x000000ff;
+            *result++ = (m_Digest[1] >> 16) & 0x000000ff;
+            *result++ = (m_Digest[1] >> 8) & 0x000000ff;
+            *result++ = (m_Digest[1] >> 0) & 0x000000ff;
 
-            digest[4] = (m_Digest[1] >> 24) & 0x000000ff;
-            digest[5] = (m_Digest[1] >> 16) & 0x000000ff;
-            digest[6] = (m_Digest[1] >> 8) & 0x000000ff;
-            digest[7] = (m_Digest[1] >> 0) & 0x000000ff;
+            *result++ = (m_Digest[2] >> 24) & 0x000000ff;
+            *result++ = (m_Digest[2] >> 16) & 0x000000ff;
+            *result++ = (m_Digest[2] >> 8) & 0x000000ff;
+            *result++ = (m_Digest[2] >> 0) & 0x000000ff;
 
-            digest[8] = (m_Digest[2] >> 24) & 0x000000ff;
-            digest[9] = (m_Digest[2] >> 16) & 0x000000ff;
-            digest[10] = (m_Digest[2] >> 8) & 0x000000ff;
-            digest[11] = (m_Digest[2] >> 0) & 0x000000ff;
+            *result++ = (m_Digest[3] >> 24) & 0x000000ff;
+            *result++ = (m_Digest[3] >> 16) & 0x000000ff;
+            *result++ = (m_Digest[3] >> 8) & 0x000000ff;
+            *result++ = (m_Digest[3] >> 0) & 0x000000ff;
 
-            digest[12] = (m_Digest[3] >> 24) & 0x000000ff;
-            digest[13] = (m_Digest[3] >> 16) & 0x000000ff;
-            digest[14] = (m_Digest[3] >> 8) & 0x000000ff;
-            digest[15] = (m_Digest[3] >> 0) & 0x000000ff;
-
-            digest[16] = (m_Digest[4] >> 24) & 0x000000ff;
-            digest[17] = (m_Digest[4] >> 16) & 0x000000ff;
-            digest[18] = (m_Digest[4] >> 8) & 0x000000ff;
-            digest[19] = (m_Digest[4] >> 0) & 0x000000ff;
+            *result++ = (m_Digest[4] >> 24) & 0x000000ff;
+            *result++ = (m_Digest[4] >> 16) & 0x000000ff;
+            *result++ = (m_Digest[4] >> 8) & 0x000000ff;
+            *result++ = (m_Digest[4] >> 0) & 0x000000ff;
         }
 
       protected:
