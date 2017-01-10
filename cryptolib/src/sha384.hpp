@@ -30,7 +30,7 @@ namespace cry {
             Update(first, last);
             Final(result);
         }
-        
+
         template <class InputIterator>
         void Update(InputIterator first, InputIterator last) {
 

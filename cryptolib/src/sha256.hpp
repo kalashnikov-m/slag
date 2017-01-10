@@ -22,7 +22,7 @@ namespace cry {
             m_Digest[6] = 0x1f83d9ab;
             m_Digest[7] = 0x5be0cd19;
         }
-        
+
         template <class InputIterator, class OutputIterator>
         void operator()(InputIterator first, InputIterator last, OutputIterator result) {
 
@@ -45,7 +45,7 @@ namespace cry {
             }
         }
 
-        template<class OutputIterator>
+        template <class OutputIterator>
         void Final(OutputIterator result) {
             if (m_Idx > 55) {
                 m_Block[m_Idx++] = 0x80;

@@ -30,7 +30,7 @@ namespace cry {
             Update(first, last);
             Final(result);
         }
-        
+
         template <class InputIterator>
         void Update(InputIterator first, InputIterator last) {
 
@@ -78,7 +78,7 @@ namespace cry {
 
             transform();
 
-            //result.resize(28);
+            // result.resize(28);
 
             result[0] = (m_Digest[0] >> 24) & 0x000000ff;
             result[1] = (m_Digest[0] >> 16) & 0x000000ff;
