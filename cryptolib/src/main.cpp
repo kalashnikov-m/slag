@@ -34,15 +34,31 @@ int main(int argc, char** argv) {
 
     cry::PSS<SHA1> pss;
 
-    std::vector<uint8_t> encode(1024);
+    size_t modBits = 1024;
+    size_t emBits = (modBits - 1) % 8 == 0 ? (modBits - 1) : modBits;
+    size_t emLen = emBits / 8;
 
-    pss.Encode(M, M + sizeof(M), encode.begin(), 1024);
+    std::vector<uint8_t> encode(emLen);
 
-    for (int i = 0; i < 128; ++i) {
+    pss.Encode(M, M + sizeof(M), encode.begin(), emBits);
+
+    for (int i = 0; i < emLen; ++i) {
         printf("%02x ", encode[i]);
         if ((i + 1) % 16 == 0)
             printf("\n");
     }
+    printf("\n");
+
+    // std::vector<uint8_t> decode(emLen);
+    std::cout << pss.Verify(std::begin(M), std::end(M), encode.begin(), encode.end(), emBits);
+
+    /*printf("\n");
+    for (int i = 0; i < emLen; ++i) {
+        printf("%02x ", decode[i]);
+        if ((i + 1) % 16 == 0)
+            printf("\n");
+    }*/
+
     // std::copy(encode.begin(), encode.end(), std::ostream_iterator<uint16_t>(cout, " "));
 
     return 0;
