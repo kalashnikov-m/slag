@@ -8,36 +8,43 @@ namespace cry {
     class EME_PKCS1_v1_5 {
 
       public:
-        std::vector<uint8_t> Encode(const std::vector<uint8_t>& message, size_t k) {
-            size_t mLen = message.size();
+        template <class InputIterator, class OutputIterator>
+        void Encode(InputIterator first, InputIterator last, OutputIterator result, size_t k) {
+
+            size_t mLen = std::distance(first, last);
             size_t psLen = k - mLen - 3;
 
-            std::vector<uint8_t> ps(psLen);
+            *result++ = 0x00;
+            *result++ = 0x02;
 
             std::random_device rd;
             std::mt19937 gen(rd());
             std::uniform_int_distribution<> uid(1, 255);
 
-            std::generate(std::begin(ps), std::end(ps), [&uid, &gen]() { return uid(gen); });
+            std::generate_n(result, psLen, [&uid, &gen]() { return uid(gen); });
+            result += psLen;
 
-            std::vector<uint8_t> em(k);
-            std::vector<uint8_t>::iterator it = em.begin(), end(em.end());
+            *result++ = 0x00;
 
-            *it++ = 0x00;
-            *it++ = 0x02;
-
-            std::copy(ps.begin(), ps.end(), it);
-
-            it += psLen;
-
-            *it++ = 0x00;
-
-            std::copy(message.begin(), message.end(), it);
-
-            return em;
+            std::copy(first, last, result);
         }
 
-        std::vector<uint8_t> Decode(const std::vector<uint8_t>& message, size_t k) { return std::vector<uint8_t>(); }
+        template <class InputIterator, class OutputIterator>
+        void Decode(InputIterator first, InputIterator last, OutputIterator result, size_t k) {
+            if (first != last && *first++ != 0x00)
+                throw 1; // decryption error
+
+            if (first != last && *first++ != 0x02)
+                throw 1; // decryption error
+
+            for (; first != last && *first != 0x00; ++first)
+                ;
+
+            if (*first != 0x00)
+                throw 1; // decryption error
+
+            std::copy(first, last, result);
+        }
 
       private:
     };
