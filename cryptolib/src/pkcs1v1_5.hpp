@@ -52,8 +52,8 @@ namespace cry {
     class EMSA_PKCS1_v1_5 {
 
       public:
-        template <class DigestType, class InputIterator>
-        std::vector<uint8_t> Encode(InputIterator first, InputIterator last, size_t emLen) {
+        template <class DigestType, class InputIterator, class OutputIterator>
+        void Encode(InputIterator first, InputIterator last, OutputIterator result, size_t emLen) {
 
             std::vector<uint8_t> hash(DigestType::size);
 
@@ -71,27 +71,46 @@ namespace cry {
 
             std::vector<uint8_t> PS(psLen, 0xFF);
 
-            std::vector<uint8_t> EM(emLen);
+            *result++ = 0x00;
+            *result++ = 0x01;
 
-            std::vector<uint8_t>::iterator it(EM.begin()), end(EM.end());
+            std::copy(PS.begin(), PS.end(), result);
+            result += psLen;
 
-            *it++ = 0x00;
-            *it++ = 0x01;
+            *result++ = 0x00;
 
-            std::copy(PS.begin(), PS.end(), it);
-            it += psLen;
+            std::copy(oid.begin(), oid.end(), result);
+            result += oidLen;
 
-            *it++ = 0x00;
-
-            std::copy(oid.begin(), oid.end(), it);
-            it += oidLen;
-
-            std::copy(hash.begin(), hash.end(), it);
-
-            return EM;
+            std::copy(hash.begin(), hash.end(), result);
         }
 
-        std::vector<uint8_t> Decode(const std::vector<uint8_t>& message, size_t k) { return std::vector<uint8_t>(); }
+        template <class DigestType, class InputIterator, class OutputIterator>
+        void Decode(InputIterator first, InputIterator last, OutputIterator result, size_t k) {
+            if (first != last && *first++ != 0x00)
+                throw 1; // signature invalid
+
+            if (first != last && *first++ != 0x01)
+                throw 1; // decryption error
+
+            for (; first != last && *first != 0x00; ++first)
+                ;
+
+            if (*first++ != 0x00)
+                throw 1; // signature invalid
+
+            auto oid = OID<DigestType>::value();
+
+            size_t oidLen = std::distance(std::begin(oid), std::end(oid));
+            bool eq = std::equal(std::begin(oid), std::end(oid), first);
+            if (!eq) {
+                throw 1; // signature invalid
+            }
+
+            first += oidLen;
+
+            std::copy(first, last, result);
+        }
 
       private:
     };
