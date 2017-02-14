@@ -113,33 +113,33 @@ namespace cry {
     }
 
     template <class T>
-    bool IsProbablyPrime(const T& p, int t) {
+    bool IsProbablyPrime(const T& p, uint16_t t) {
         if (p % 2 == 0) {
             return false;
         }
 
-        auto p_minus_1 = p - 1;
+        T p_minus_1 = p - 1;
         int v = 0;
-        auto w = p_minus_1;
+        T w = p_minus_1;
 
         while (w % 2 == 0) {
             v++;
             w /= 2;
         }
 
-        int a = 1;
+        T a = 1;
 
     nexta:
         for (; t-- > 0;) {
             a++;
 
-            auto b = PowMod(a, w, p);
+            T b = PowMod(a, w, p);
             if (b == 1 || b == p_minus_1) {
                 goto nexta;
             }
 
             for (int j = 1; j < v; ++j) {
-                b = PowMod(b, 2, p);
+                b = PowMod(b, T(2), p);
                 if (b == 1) {
                     return false;
                 }
