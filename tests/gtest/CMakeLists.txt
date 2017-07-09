@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.5)
 
 project(gtest)
 
-include_directories(./include)
+include_directories(./include/)
+include_directories(./include/gtest/)
+include_directories(./include/gtest/internal/)
 include_directories(./)
 
 set (SRC

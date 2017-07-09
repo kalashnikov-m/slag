@@ -16,6 +16,8 @@ set (SRC
 
 include_directories(../include)
 include_directories(../include/internal)
+include_directories(./gtest/include/gtest/)
+include_directories(./gtest/include/gtest/internal)
 
 add_executable(crytests ${SRC})
 
