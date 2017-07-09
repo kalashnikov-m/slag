@@ -31,36 +31,27 @@
 
 #include <algorithm>
 #include <functional>
+#include <rsa/rsa.hpp>
+
+#include <gtest.h>
 
 using namespace std;
-
-std::function<void(const std::vector<uint8_t>&)> trace = [](const std::vector<uint8_t>& container) {
-    for (size_t i = 0; i < container.size(); ++i) {
-        printf("%02x ", container[i]);
-        if ((i + 1) % 16 == 0)
-            printf("\n");
-    }
-
-    printf("\n\n");
-};
-
-template <class T, class E>
-void GenerateKeyPair(T l, E e) {
-    //(l-1)/2 - 1;
-}
+using namespace cry;
 
 int main(int argc, char** argv) {
 
-    cry::bigint8_t p, q;
+/*        cry::bigint8_t p, q;
 
-    p = cry::generate_probably_prime<cry::bigint8_t>(512, 17);
-    q = cry::generate_probably_prime<cry::bigint8_t>(512, 17);
+        p = cry::generate_probably_prime<cry::bigint8_t>(512, 17);
+        q = cry::generate_probably_prime<cry::bigint8_t>(512, 17);
 
-    std::cout<<"p: "<<p<<std::endl;
-    std::cout<<"q: "<<q<<std::endl;
+        std::cout<<"p: "<<p<<std::endl;
+        std::cout<<"q: "<<q<<std::endl;
+    }*/
 
-    return 0;
-    //::testing::InitGoogleTest(&argc, argv);
+    //return 0;
 
-    //return RUN_ALL_TESTS();
+    ::testing::InitGoogleTest(&argc, argv);
+
+    return RUN_ALL_TESTS();
 }
