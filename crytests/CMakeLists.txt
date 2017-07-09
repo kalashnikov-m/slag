@@ -21,4 +21,7 @@ include_directories(./googletest/include)
 
 add_executable(crytests ${SRC})
 
-target_link_libraries(crytests gtest -lpthread)
+if(UNIX)
+    # for Linux, BSD, Solaris, Minix
+    target_link_libraries(crytests gtest -lpthread)
+endif()
