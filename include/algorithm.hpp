@@ -158,8 +158,8 @@ namespace cry {
     }
 
 
-    template<class T>
-    T generate_probably_prime(uint32_t nbits, uint32_t e) {
+    template<class T, class E = uint32_t>
+    T generate_probably_prime(uint32_t nbits, const E& e = 65537) {
         const std::vector<uint32_t> primes2000 = {
                 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71,
                 73,      79,      83,      89,      97,     101,     103,     107,     109,     113,
