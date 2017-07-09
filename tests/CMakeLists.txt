@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(crytests)
 
-add_subdirectory(gtest)
+add_subdirectory(googletest)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -17,9 +17,8 @@ set (SRC
 include_directories(../include)
 include_directories(../include/internal)
 
-include_directories(./gtest/include/gtest/)
-include_directories(./gtest/include/gtest/internal)
+include_directories(./googletest/include)
 
 add_executable(crytests ${SRC})
 
-target_link_libraries(crytests gtest)
+target_link_libraries(crytests gtest -lpthread)

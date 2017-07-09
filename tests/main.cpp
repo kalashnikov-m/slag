@@ -19,8 +19,9 @@
 #include <oaep.hpp>
 #include <mgf.hpp>
 
-//#include <HugeTest.cpp>
-//#include <HugeCoreTest.cpp>
+#include "HugeCoreTest.cpp"
+#include "HugeTest.cpp"
+
 #include <Huge.hpp>
 
 #include <vector>
@@ -33,7 +34,7 @@
 #include <functional>
 #include <rsa/rsa.hpp>
 
-#include <gtest.h>
+#include "googletest/include/gtest/gtest.h"
 
 using namespace std;
 using namespace cry;
