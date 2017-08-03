@@ -30,6 +30,61 @@ namespace cry {
 
         Huge(uint32_t x) : Huge({(T)((x & 0xff000000) >> 24), (T)((x & 0x00ff0000) >> 16), (T)((x & 0x0000ff00) >> 8), (T)(x & 0x000000ff)}) {}
 
+        Huge(const std::string& hex):m_Negative(false)
+        {
+            // ------- skiping zeros -------
+            auto it(hex.begin());
+            while (*it == '0')
+                ++it;
+
+            std::string::const_reverse_iterator rit(hex.rbegin()), rend(it);
+
+            size_t nchars = std::distance(rit, rend);
+            size_t nbytes = nchars / 2;
+            nbytes += nchars % 2;
+
+            size_t nwords = nbytes / sizeof(T);
+            if (nbytes >= sizeof(T))
+                nwords += nbytes % sizeof(T);
+            else
+                nwords += 1;
+
+            T word = 0;
+            size_t cnt     = 0;
+
+            m_Buffer.resize(nwords);
+            auto ret(m_Buffer.rbegin());
+
+            for (; rit != rend; ++rit)
+            {
+                uint8_t bt = *it;
+
+                // transform hex character to the 4bit equivalent number, using the ascii table indexes
+                if (bt >= '0' && bt <= '9')
+                    bt = bt - '0';
+                else if (bt >= 'a' && bt <= 'f')
+                    bt = bt - 'a' + 10;
+                else if (bt >= 'A' && bt <= 'F')
+                    bt = bt - 'A' + 10;
+
+                // shift 4 to make space for new digit, and add the 4 bits of the new digit
+                // word = (word << 4) | (bt & 0xF);
+                word = (bt << cnt * 4) | (word);
+
+                ++cnt;
+
+                if (cnt == sizeof(T) * 2)
+                {
+                    *ret++ = word;
+                    word   = 0;
+                    cnt    = 0;
+                }
+            }
+
+            if (ret != m_Buffer.rend())
+                *ret++ = word;
+        }
+
         template <class InputIterator>
         Huge(InputIterator first, InputIterator last, bool negative = false)
             : m_Buffer(1), m_Negative(false) {
