@@ -133,7 +133,7 @@ TEST(HugeCore_Test, Increment) {
         std::vector<byte> arg(_arg);
         std::vector<byte> expected(_expected);
 
-        HUGE_Increment(&(*begin(arg)), &(*end(arg)));
+        HUGE_Increment(&arg[0], &arg[0]+arg.size());
 
         auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(arg), end(arg));
         EXPECT_TRUE(eq);
@@ -150,7 +150,7 @@ TEST(HugeCore_Test, Decrement) {
         std::vector<byte> arg(_arg);
         std::vector<byte> expected(_expected);
 
-        HUGE_Decrement(&(*begin(arg)), &(*end(arg)));
+        HUGE_Decrement(&arg[0], &arg[0] + arg.size());
 
         auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(arg), end(arg));
         EXPECT_TRUE(eq);
@@ -166,7 +166,7 @@ TEST(HugeCore_Test, Reverse) {
         std::vector<byte> arg(_arg);
         std::vector<byte> expected(_expected);
 
-        HUGE_Reverse(&(*std::begin(arg)), &(*std::end(arg)));
+        HUGE_Reverse(&arg[0], &arg[0] + arg.size());
 
         auto eq = ASSERT_BYTES_EQ(std::begin(expected), std::end(expected), std::begin(arg), std::end(arg));
 
@@ -228,7 +228,7 @@ TEST(HugeCore_Test, Inverse) {
         std::vector<byte> arg(_arg);
         std::vector<byte> expected(_expected);
 
-        HUGE_Inverse(&(*begin(arg)), &(*end(arg)));
+        HUGE_Inverse(&arg[0], &arg[0] + arg.size());
 
         auto eq = ASSERT_BYTES_EQ(begin(expected), end(expected), begin(arg), end(arg));
 
