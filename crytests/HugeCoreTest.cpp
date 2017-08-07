@@ -35,7 +35,7 @@ class HugeCore_Test : public ::testing::Test {};
 
 TEST(HugeCore_Test, Addition) {
     auto AdditionTest = [](const std::initializer_list<byte>& a, const std::initializer_list<byte>& b, const std::initializer_list<byte>& expected) -> void {
-        byte actual[8] = {0x00};
+        byte actual[10] = {0x00};
 
         HUGE_Add(end(actual), begin(a), end(a), begin(b), end(b));
 
@@ -66,7 +66,7 @@ TEST(HugeCore_Test, Multiply_1) {
 
 TEST(HugeCore_Test, Multiply) {
     auto MultiplyTest = [](const std::initializer_list<byte>& a, const std::initializer_list<byte>& b, const std::initializer_list<byte>& expected) -> void {
-        byte actual[8] = {0x00};
+        byte actual[14] = {0x00};
         HUGE_Multiply(begin(actual), end(actual), begin(a), end(a), begin(b), end(b));
 
         bool eq = ASSERT_BYTES_EQ<const byte*>(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
@@ -82,7 +82,7 @@ TEST(HugeCore_Test, Multiply) {
 
 TEST(HugeCore_Test, Subtract) {
     auto SubtractTest = [](const std::initializer_list<byte>& a, const std::initializer_list<byte>& b, const std::initializer_list<byte>& expected) -> void {
-        byte actual[8] = {0x00};
+        byte actual[10] = {0x00};
 
         HUGE_Subtract(end(actual), begin(a), end(a), begin(b), end(b));
 
