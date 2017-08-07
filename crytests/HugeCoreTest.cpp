@@ -100,12 +100,21 @@ TEST(HugeCore_Test, DivRem) {
         std::vector<byte> div(8);
         std::vector<byte> rem(8);
 
-        HUGE_DivRem(&(*begin(div)), &(*end(div)), &(*begin(rem)), &(*end(rem)), &(*begin(_arg1)), &(*end(_arg1)), &(*begin(_arg2)), &(*end(_arg2)));
+        byte* divb = &div[0], *dive = (divb + 8);
+        byte* remb = &rem[0], *reme = (remb + 8);
 
-        bool eq = ASSERT_BYTES_EQ<const byte*>(&(*_expected_div.begin()), &(*_expected_div.end()), (byte*)&(*begin(div)), (byte*)&(*end(div)));
+        const byte* a_ = &_arg1[0]; 
+        const byte* _a = a_ + _arg1.size();
+        
+        const byte* b_ = &_arg2[0];
+        const byte* _b = b_ + _arg2.size();
+
+        HUGE_DivRem(divb, dive, remb, reme, a_, _a, b_, _b);
+
+        bool eq = ASSERT_BYTES_EQ(_expected_div.begin(), _expected_div.end(), cbegin(div), cend(div));
         EXPECT_TRUE(eq);
 
-        eq = ASSERT_BYTES_EQ<const byte*>(&(*_expected_rem.begin()), &(*_expected_rem.end()), (byte*)&(*begin(rem)), (byte*)&(*end(rem)));
+        eq = ASSERT_BYTES_EQ(_expected_rem.begin(), _expected_rem.end(), cbegin(rem), cend(rem));
         EXPECT_TRUE(eq);
     };
 
