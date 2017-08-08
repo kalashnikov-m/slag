@@ -32,11 +32,16 @@ namespace cry {
 
         Huge(uint32_t x) : Huge({(T)((x & 0xff000000) >> 24), (T)((x & 0x00ff0000) >> 16), (T)((x & 0x0000ff00) >> 8), (T)(x & 0x000000ff)}) {}
 
-        Huge(const std::string& hex):m_Negative(false)
+        Huge(const std::string& hex):m_Buffer(1), m_Negative(false)
         {
+            if (hex.empty())
+            {
+                return;
+            }
+
             // ------- skiping zeros -------
             auto it(hex.begin());
-            while (*it == '0')
+            for (; it != hex.end() && *it == '0';)
                 ++it;
 
             std::string::const_reverse_iterator rit(hex.rbegin()), rend(it);
@@ -59,7 +64,7 @@ namespace cry {
 
             for (; rit != rend; ++rit)
             {
-                uint8_t bt = *it;
+                uint8_t bt = *rit;
 
                 // transform hex character to the 4bit equivalent number, using the ascii table indexes
                 if (bt >= '0' && bt <= '9')
