@@ -1179,3 +1179,20 @@ TEST(HugeTest, PowMod) {
     ModPowTest(111111, 3, 9173503, 4051753);
     ModPowTest(4051753, 6111579, 9173503, 111111);
 }
+
+TEST(HugeTest, StringInit)
+{
+    auto StringInitTestFunc = [](const std::string hex, const Huge<byte> expected) {
+        
+        Huge<byte> x(hex);
+
+        bool eq = (x == expected);
+
+        EXPECT_TRUE(eq);
+    };
+
+    StringInitTestFunc("2763b4a317f", { 0x02, 0x76, 0x3b, 0x4a, 0x31, 0x7f });
+    StringInitTestFunc("00000000000000000000000000000000002763b4a317f", { 0x02, 0x76, 0x3b, 0x4a, 0x31, 0x7f });
+    StringInitTestFunc("", { 0x00 });
+    StringInitTestFunc("", {  });
+}
