@@ -4,6 +4,8 @@
 
 #include <algorithm>
 
+#include <cstdint>
+
 namespace cry {
     template <class T>
     T Gcd(const T& lhs, const T& rhs) {
