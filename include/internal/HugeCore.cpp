@@ -1,19 +1,11 @@
 
 #include "HugeCore.h"
 
-#include <cstdio>
 #include <iterator>
 #include <vector>
 #include <cstdint>
 
 using namespace std;
-
-static void dump(const byte* f, const byte* l) {
-    for (; f != l; ++f) {
-        printf("%02x ", *f);
-    }
-    printf("\n");
-}
 
 void HUGE_Add(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2) {
     byte carry = 0;
