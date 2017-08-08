@@ -7,6 +7,8 @@
 
 #include <algorithm.hpp>
 
+#include "basic_int.hpp"
+
 namespace cry {
 
     template <class T = bigint8_t>
