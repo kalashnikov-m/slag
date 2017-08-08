@@ -1,19 +1,9 @@
 
 #include "gtest/gtest.h"
 
-#include <iterator>
-
 #include "HugeCore.h"
 
 using namespace std;
-
-static void dump(const byte* f, const byte* l) {
-    for (; f != l; ++f) {
-        printf("%02x ", *f);
-    }
-
-    printf("\n");
-}
 
 template <class InputIterator>
 static bool ASSERT_BYTES_EQ(InputIterator f1, InputIterator l1, InputIterator f2, InputIterator l2) {
