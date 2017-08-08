@@ -1,12 +1,10 @@
 
 #include "HugeCore.h"
 
-#include <algorithm>
 #include <cstdio>
-#include <iostream>
 #include <iterator>
-#include <string>
 #include <vector>
+#include <cstdint>
 
 using namespace std;
 
@@ -176,7 +174,7 @@ void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_las
                 Up = Middle;
             } else if (mulCmp == 0) { // if(mul == a) Up <-- C; Down <-- Up;
                 Up = Middle;
-                Down = Up;
+                Down = (uint8_t)Up;
             }
         }
 

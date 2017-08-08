@@ -1119,7 +1119,7 @@ TEST(HugeTest, DivRem) {
         Huge<byte> a(il1);
         Huge<byte> b(il2);
         Huge<byte> expected_div(il3);
-        Huge<byte> expected_rem({0x03});
+        Huge<byte> expected_rem({(byte)0x03});
 
         Huge<byte> q;
         Huge<byte> r;

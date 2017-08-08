@@ -8,6 +8,8 @@
 #include <sstream>
 #include <vector>
 
+#include <cstdint>
+
 #include <HugeCore.h>
 
 using namespace std;
@@ -183,7 +185,7 @@ namespace cry {
 
             std::vector<T> out(max);
 
-            HUGE_And(&(*std::end(out)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
+            HUGE_And(&out[0] + out.size(), &lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size());
 
             return Huge(out);
         }
@@ -193,7 +195,7 @@ namespace cry {
 
             std::vector<T> out(max);
 
-            HUGE_Or(&(*std::end(out)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
+            HUGE_Or(&out[0] + out.size(), &lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size());
 
             return Huge(out);
         }
@@ -203,7 +205,7 @@ namespace cry {
 
             std::vector<T> out(max);
 
-            HUGE_Xor(&(*std::end(out)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
+            HUGE_Xor(&out[0] + out.size(), &lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size());
 
             return Huge(out);
         }
@@ -220,20 +222,20 @@ namespace cry {
 
             // если знаки аргументов различны: (a)+(-b), (-a)+(b) ==> ?(a-b)
             if (lhs.m_Negative ^ rhs.m_Negative) {
-                short cmp = HUGE_Compare(&(*std::begin(lhsBuf)), &(*std::end(lhsBuf)), &(*std::begin(rhsBuf)), &(*std::end(rhsBuf)));
+                short cmp = HUGE_Compare(&lhsBuf[0], &lhsBuf[0] + lsize, &rhsBuf[0], &rhsBuf[0] + rsize);
 
                 if (cmp == -1) { // (|a| < |b|) ==> (|b| - |a|)
-                    HUGE_Subtract(&(*std::end(out)), &(*std::begin(rhsBuf)), &(*std::end(rhsBuf)), &(*std::begin(lhsBuf)), &(*std::end(lhsBuf)));
+                    HUGE_Subtract(&out[0] + out.size(), &rhsBuf[0], &rhsBuf[0] + rsize, &lhsBuf[0], &lhsBuf[0] + lsize);
 
                     return Huge(out, rhs.m_Negative);
                 } else if (cmp == +1) {
                     // (|a| > |b|) ==> (|a| - |b|)
-                    HUGE_Subtract(&(*std::end(out)), &(*std::begin(lhsBuf)), &(*std::end(lhsBuf)), &(*std::begin(rhsBuf)), &(*std::end(rhsBuf)));
+                    HUGE_Subtract(&out[0] + out.size(), &lhsBuf[0], &lhsBuf[0] + lsize, &rhsBuf[0], &rhsBuf[0] + rsize);
 
                     return Huge(out, lhs.m_Negative);
                 }
             } else { // если знаки аргументов одинаковы
-                HUGE_Add(&(*std::end(out)), &(*std::begin(lhsBuf)), &(*std::end(lhsBuf)), &(*std::begin(rhsBuf)), &(*std::end(rhsBuf)));
+                HUGE_Add(&out[0] + out.size(), &lhsBuf[0], &lhsBuf[0] + lsize, &rhsBuf[0], &rhsBuf[0] + rsize);
 
                 return Huge<T>(out, lhs.m_Negative & rhs.m_Negative);
             }
@@ -242,13 +244,13 @@ namespace cry {
         }
 
         friend const Huge operator-(const Huge& lhs, const Huge& rhs) {
-            short cmp = HUGE_Compare(&(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
+            short cmp = HUGE_Compare(&lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size());
 
             // если знаки аргументов различны: (a)-(-b), (-a)-(b) ==> ?(a+b)
             if (lhs.m_Negative ^ rhs.m_Negative) {
                 Huge temp((cmp == -1) ? rhs : lhs);
 
-                HUGE_Add(&(*std::end(temp.m_Buffer)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
+                HUGE_Add(&temp.m_Buffer[0], &lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size());
 
                 temp.m_Negative = lhs.m_Negative;
 
@@ -259,7 +261,7 @@ namespace cry {
             if (cmp == -1) { // (|a| < |b|) ==> (|b| - |a|)
                 Huge temp(rhs);
 
-                HUGE_Subtract(&(*std::end(temp.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)));
+                HUGE_Subtract(&temp.m_Buffer[0]+temp.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size(), &lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size());
 
                 temp.m_Negative = (!lhs.m_Negative & !rhs.m_Negative);
 
@@ -268,7 +270,7 @@ namespace cry {
                 // (|a| > |b|) ==> (|a| - |b|)
                 Huge temp(lhs);
 
-                HUGE_Subtract(&(*std::end(temp.m_Buffer)), &(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
+                HUGE_Subtract(&temp.m_Buffer[0], &lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size());
 
                 temp.m_Negative = (lhs.m_Negative & rhs.m_Negative);
 
@@ -352,21 +354,21 @@ namespace cry {
 
     template <class X>
     Huge<X>::operator bool() const {
-        bool flag = HUGE_IsZero(&(*std::begin(m_Buffer)), &(*std::end(m_Buffer)));
+        bool flag = HUGE_IsZero(&m_Buffer[0], (&m_Buffer[0] + m_Buffer.size()));
 
         return !flag;
     }
 
     template <class X>
     Huge<X>& Huge<X>::operator++() {
-        HUGE_Increment(&(*std::begin(m_Buffer)), &(*std::end(m_Buffer)));
+        HUGE_Increment(&m_Buffer[0], &m_Buffer[0] + m_Buffer.size());
 
         return *this;
     }
 
     template <class X>
     Huge<X>& Huge<X>::operator--() {
-        HUGE_Decrement(&(*std::begin(m_Buffer)), &(*std::end(m_Buffer)));
+        HUGE_Decrement(&m_Buffer[0], &m_Buffer[0] + m_Buffer.size());
 
         return *this;
     }
@@ -417,7 +419,7 @@ namespace cry {
     const Huge<X> Huge<X>::operator~() const {
         Huge temp(*this);
 
-        HUGE_Inverse(&(*std::begin(temp.m_Buffer)), &(*std::end(temp.m_Buffer)));
+        HUGE_Inverse(&temp.m_Buffer[0], &temp.m_Buffer[0] + temp.m_Buffer.size());
 
         return temp;
     }
@@ -485,7 +487,7 @@ namespace cry {
 
     template <class T>
     short compare(const Huge<T>& lhs, const Huge<T>& rhs) {
-        short cmp = HUGE_Compare(&(*std::begin(lhs.m_Buffer)), &(*std::end(lhs.m_Buffer)), &(*std::begin(rhs.m_Buffer)), &(*std::end(rhs.m_Buffer)));
+        short cmp = HUGE_Compare(&lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size());
 
         if (lhs.m_Negative && rhs.m_Negative) {
             if (cmp == -1) {
@@ -542,13 +544,13 @@ namespace cry {
     }
 
     template <class T>
-    void Huge<T>::DivRem(Huge<T>& q, Huge<T>& r, const Huge<T>& other) const throw(std::invalid_argument) {
-        bool isZero = HUGE_IsZero(&(*std::begin(other.m_Buffer)), &(*std::end(other.m_Buffer)));
+    void Huge<T>::DivRem(Huge<T>& q, Huge<T>& r, const Huge<T>& other) const throw(std::invalid_argument){
+        bool isZero = HUGE_IsZero(&other.m_Buffer[0], &other.m_Buffer[0] + other.m_Buffer.size());
         if (isZero) {
             throw std::invalid_argument("division by zero");
         }
 
-        short cmp = HUGE_Compare(&(*std::begin(this->m_Buffer)), &(*std::end(this->m_Buffer)), &(*std::begin(other.m_Buffer)), &(*std::end(other.m_Buffer)));
+        short cmp = HUGE_Compare(&m_Buffer[0], &m_Buffer[0] + m_Buffer.size(), &other.m_Buffer[0], &other.m_Buffer[0] + other.m_Buffer.size());
         if (cmp == -1) {
             q = Huge<T>();
             r = *this;
@@ -560,7 +562,7 @@ namespace cry {
         std::vector<T> v_div(l_size);
         std::vector<T> v_rem(l_size);
 
-        HUGE_DivRem(&(*std::begin(v_div)), &(*std::end(v_div)), &(*std::begin(v_rem)), &(*std::end(v_rem)), &(*std::begin(this->m_Buffer)), &(*std::end(this->m_Buffer)), &(*std::begin(other.m_Buffer)), &(*std::end(other.m_Buffer)));
+        HUGE_DivRem(&v_div[0], &v_div[0] + v_div.size(), &v_rem[0], &v_rem[0] + v_rem.size(), &m_Buffer[0], &m_Buffer[0] + m_Buffer.size(), &other.m_Buffer[0], &other.m_Buffer[0] + other.m_Buffer.size());
 
         Huge<T> div(v_div, this->m_Negative ^ other.m_Negative);
         Huge<T> rem(v_rem, this->m_Negative ^ other.m_Negative);
