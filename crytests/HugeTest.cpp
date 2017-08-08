@@ -1182,7 +1182,7 @@ TEST(HugeTest, PowMod) {
 
 TEST(HugeTest, StringInit)
 {
-    auto StringInitTestFunc = [](const std::string hex, const basic_int<byte> expected) {
+    auto StringInitTestFunc = [](const std::string& hex, const basic_int<byte>& expected) {
         
         basic_int<byte> x(hex);
 
