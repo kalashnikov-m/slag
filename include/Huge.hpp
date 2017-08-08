@@ -250,7 +250,7 @@ namespace cry {
             if (lhs.m_Negative ^ rhs.m_Negative) {
                 Huge temp((cmp == -1) ? rhs : lhs);
 
-                HUGE_Add(&temp.m_Buffer[0], &lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size());
+                HUGE_Add(&temp.m_Buffer[0] + temp.m_Buffer.size(), &lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size());
 
                 temp.m_Negative = lhs.m_Negative;
 
@@ -261,7 +261,7 @@ namespace cry {
             if (cmp == -1) { // (|a| < |b|) ==> (|b| - |a|)
                 Huge temp(rhs);
 
-                HUGE_Subtract(&temp.m_Buffer[0]+temp.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size(), &lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size());
+                HUGE_Subtract(&temp.m_Buffer[0] + temp.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size(), &lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size());
 
                 temp.m_Negative = (!lhs.m_Negative & !rhs.m_Negative);
 
@@ -270,7 +270,7 @@ namespace cry {
                 // (|a| > |b|) ==> (|a| - |b|)
                 Huge temp(lhs);
 
-                HUGE_Subtract(&temp.m_Buffer[0], &lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size());
+                HUGE_Subtract(&temp.m_Buffer[0] + temp.m_Buffer.size(), &lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size());
 
                 temp.m_Negative = (lhs.m_Negative & rhs.m_Negative);
 
@@ -289,7 +289,7 @@ namespace cry {
 
             std::vector<T> out(l_size + r_size);
 
-            HUGE_Multiply(&(*std::begin(out)), &(*std::end(out)), &(*std::begin(lhsBuf)), &(*std::end(lhsBuf)), &(*std::begin(rhsBuf)), &(*std::end(rhsBuf)));
+            HUGE_Multiply(&out[0], &out[0] + out.size(), &lhsBuf[0], &lhsBuf[0] + l_size, &rhsBuf[0], &rhsBuf[0] + r_size);
 
             return Huge(out, lhs.m_Negative ^ rhs.m_Negative);
         }
@@ -506,9 +506,9 @@ namespace cry {
 
     template <class T>
     const Huge<T> Huge<T>::operator<<(int nbits) const {
-        std::vector<T> out(this->m_Buffer);
+        std::vector<T> out(m_Buffer);
 
-        HUGE_ShiftLeft(&(*std::begin(out)), &(*std::end(out)), nbits);
+        HUGE_ShiftLeft(&out[0], &out[0] + out.size(), nbits);
 
         return Huge<T>(out);
     }
@@ -524,7 +524,7 @@ namespace cry {
     const Huge<T> Huge<T>::operator>>(int nbits) const {
         std::vector<T> out(this->m_Buffer);
 
-        HUGE_ShiftRight(&(*std::begin(out)), &(*std::end(out)), nbits);
+        HUGE_ShiftRight(&out[0], &out[0] + out.size(), nbits);
 
         return Huge<T>(out);
     }
