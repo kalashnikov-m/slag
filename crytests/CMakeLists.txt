@@ -14,6 +14,8 @@ set (SRC
     HugeCoreTest.cpp
     HugeTest.cpp	
     ../include/internal/HugeCore.cpp
+    ../include/basic_int.hpp
+    ../include/rsa/rsa.hpp
 )
 
 include_directories(../include)

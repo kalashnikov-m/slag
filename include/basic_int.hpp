@@ -16,23 +16,23 @@ using namespace std;
 
 namespace cry {
     template <class T = uint8_t>
-    class Huge {
+    class basic_int {
       public:
-        Huge() : m_Buffer(1), m_Negative(false) {}
+        basic_int() : m_Buffer(1), m_Negative(false) {}
 
-        ~Huge() {}
+        ~basic_int() {}
 
-        Huge(const Huge& other) : m_Buffer(other.m_Buffer), m_Negative(other.m_Negative) {}
+        basic_int(const basic_int& other) : m_Buffer(other.m_Buffer), m_Negative(other.m_Negative) {}
 
-        Huge(Huge&& other) { *this = std::move(other); }
+        basic_int(basic_int&& other) { *this = std::move(other); }
 
-        Huge(const std::initializer_list<T>& il, bool negative = false) : Huge(std::begin(il), std::end(il), negative) {}
+        basic_int(const std::initializer_list<T>& il, bool negative = false) : basic_int(std::begin(il), std::end(il), negative) {}
 
-        Huge(const std::vector<T>& iv, bool negative = false) : Huge(std::begin(iv), std::end(iv), negative) {}
+        basic_int(const std::vector<T>& iv, bool negative = false) : basic_int(std::begin(iv), std::end(iv), negative) {}
 
-        Huge(uint32_t x) : Huge({(T)((x & 0xff000000) >> 24), (T)((x & 0x00ff0000) >> 16), (T)((x & 0x0000ff00) >> 8), (T)(x & 0x000000ff)}) {}
+        basic_int(uint32_t x) : basic_int({(T)((x & 0xff000000) >> 24), (T)((x & 0x00ff0000) >> 16), (T)((x & 0x0000ff00) >> 8), (T)(x & 0x000000ff)}) {}
 
-        Huge(const std::string& hex):m_Buffer(1), m_Negative(false)
+        basic_int(const std::string& hex):m_Buffer(1), m_Negative(false)
         {
             if (hex.empty())
             {
@@ -93,7 +93,7 @@ namespace cry {
         }
 
         template <class InputIterator>
-        Huge(InputIterator first, InputIterator last, bool negative = false)
+        basic_int(InputIterator first, InputIterator last, bool negative = false)
             : m_Buffer(1), m_Negative(false) {
             for (; first != last && *first == 0x00; ++first)
                 ;
@@ -104,119 +104,119 @@ namespace cry {
             }
         }
 
-        Huge& operator=(const Huge& other);
+        basic_int& operator=(const basic_int& other);
 
-        Huge& operator=(Huge&& other);
+        basic_int& operator=(basic_int&& other);
 
         explicit operator bool() const;
 
-        const Huge operator<<(int) const;
+        const basic_int operator<<(int) const;
 
-        const Huge operator>>(int) const;
+        const basic_int operator>>(int) const;
 
-        Huge& operator<<=(int nbits);
+        basic_int& operator<<=(int nbits);
 
-        Huge& operator>>=(int nbits);
+        basic_int& operator>>=(int nbits);
 
-        Huge& operator++();
+        basic_int& operator++();
 
-        Huge& operator--();
+        basic_int& operator--();
 
-        Huge& operator+();
+        basic_int& operator+();
 
-        const Huge operator++(int);
+        const basic_int operator++(int);
 
-        const Huge operator--(int);
+        const basic_int operator--(int);
 
-        const Huge operator-() const;
+        const basic_int operator-() const;
 
-        const Huge operator~() const;
+        const basic_int operator~() const;
 
-        Huge& operator+=(const Huge& rhs);
+        basic_int& operator+=(const basic_int& rhs);
 
-        Huge& operator-=(const Huge& rhs);
+        basic_int& operator-=(const basic_int& rhs);
 
-        Huge& operator%=(const Huge& rhs);
+        basic_int& operator%=(const basic_int& rhs);
 
-        Huge& operator&=(const Huge& rhs);
+        basic_int& operator&=(const basic_int& rhs);
 
-        Huge& operator|=(const Huge& rhs);
+        basic_int& operator|=(const basic_int& rhs);
 
-        Huge& operator^=(const Huge& rhs);
+        basic_int& operator^=(const basic_int& rhs);
 
-        Huge& operator*=(const Huge& rhs);
+        basic_int& operator*=(const basic_int& rhs);
 
-        Huge& operator/=(const Huge& rhs);
+        basic_int& operator/=(const basic_int& rhs);
 
         template <class X>
-        friend ostream& operator<<(ostream& stream, const Huge<X>& huge);
+        friend ostream& operator<<(ostream& stream, const basic_int<X>& huge);
 
-        friend bool operator&&(const Huge& lhs, const Huge& rhs) {
+        friend bool operator&&(const basic_int& lhs, const basic_int& rhs) {
             bool f1 = (bool)lhs;
             bool f2 = (bool)rhs;
 
             return (f1 && f2);
         }
 
-        friend bool operator||(const Huge& lhs, const Huge& rhs) {
+        friend bool operator||(const basic_int& lhs, const basic_int& rhs) {
             bool f1 = (bool)lhs;
             bool f2 = (bool)rhs;
 
             return (f1 || f2);
         }
 
-        friend bool operator<(const Huge& lhs, const Huge& rhs) {
+        friend bool operator<(const basic_int& lhs, const basic_int& rhs) {
             short cmp = compare(lhs, rhs);
 
             return (cmp == -1);
         }
 
-        friend bool operator>(const Huge& lhs, const Huge& rhs) { return rhs < lhs; }
+        friend bool operator>(const basic_int& lhs, const basic_int& rhs) { return rhs < lhs; }
 
-        friend bool operator<=(const Huge& lhs, const Huge& rhs) { return !(lhs > rhs); }
+        friend bool operator<=(const basic_int& lhs, const basic_int& rhs) { return !(lhs > rhs); }
 
-        friend bool operator>=(const Huge& lhs, const Huge& rhs) { return !(lhs < rhs); }
+        friend bool operator>=(const basic_int& lhs, const basic_int& rhs) { return !(lhs < rhs); }
 
-        friend bool operator==(const Huge& lhs, const Huge& rhs) {
+        friend bool operator==(const basic_int& lhs, const basic_int& rhs) {
             short cmp = compare(lhs, rhs);
 
             return (cmp == 0);
         }
 
-        friend bool operator!=(const Huge& lhs, const Huge& rhs) { return !(lhs == rhs); }
+        friend bool operator!=(const basic_int& lhs, const basic_int& rhs) { return !(lhs == rhs); }
 
-        friend const Huge operator&(const Huge& lhs, const Huge& rhs) {
+        friend const basic_int operator&(const basic_int& lhs, const basic_int& rhs) {
             auto max = std::max(lhs.m_Buffer.size(), rhs.m_Buffer.size());
 
             std::vector<T> out(max);
 
             HUGE_And(&out[0] + out.size(), &lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size());
 
-            return Huge(out);
+            return basic_int(out);
         }
 
-        friend const Huge operator|(const Huge& lhs, const Huge& rhs) {
+        friend const basic_int operator|(const basic_int& lhs, const basic_int& rhs) {
             auto max = std::max(lhs.m_Buffer.size(), rhs.m_Buffer.size());
 
             std::vector<T> out(max);
 
             HUGE_Or(&out[0] + out.size(), &lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size());
 
-            return Huge(out);
+            return basic_int(out);
         }
 
-        friend const Huge operator^(const Huge& lhs, const Huge& rhs) {
+        friend const basic_int operator^(const basic_int& lhs, const basic_int& rhs) {
             auto max = std::max(lhs.m_Buffer.size(), rhs.m_Buffer.size());
 
             std::vector<T> out(max);
 
             HUGE_Xor(&out[0] + out.size(), &lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size());
 
-            return Huge(out);
+            return basic_int(out);
         }
 
-        friend const Huge
-        operator+(const Huge& lhs, const Huge& rhs) {
+        friend const basic_int
+        operator+(const basic_int& lhs, const basic_int& rhs) {
             const auto& lhsBuf = lhs.m_Buffer;
             const auto& rhsBuf = rhs.m_Buffer;
 
@@ -232,28 +232,28 @@ namespace cry {
                 if (cmp == -1) { // (|a| < |b|) ==> (|b| - |a|)
                     HUGE_Subtract(&out[0] + out.size(), &rhsBuf[0], &rhsBuf[0] + rsize, &lhsBuf[0], &lhsBuf[0] + lsize);
 
-                    return Huge(out, rhs.m_Negative);
+                    return basic_int(out, rhs.m_Negative);
                 } else if (cmp == +1) {
                     // (|a| > |b|) ==> (|a| - |b|)
                     HUGE_Subtract(&out[0] + out.size(), &lhsBuf[0], &lhsBuf[0] + lsize, &rhsBuf[0], &rhsBuf[0] + rsize);
 
-                    return Huge(out, lhs.m_Negative);
+                    return basic_int(out, lhs.m_Negative);
                 }
             } else { // если знаки аргументов одинаковы
                 HUGE_Add(&out[0] + out.size(), &lhsBuf[0], &lhsBuf[0] + lsize, &rhsBuf[0], &rhsBuf[0] + rsize);
 
-                return Huge<T>(out, lhs.m_Negative & rhs.m_Negative);
+                return basic_int<T>(out, lhs.m_Negative & rhs.m_Negative);
             }
 
-            return Huge();
+            return basic_int();
         }
 
-        friend const Huge operator-(const Huge& lhs, const Huge& rhs) {
+        friend const basic_int operator-(const basic_int& lhs, const basic_int& rhs) {
             short cmp = HUGE_Compare(&lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size());
 
             // если знаки аргументов различны: (a)-(-b), (-a)-(b) ==> ?(a+b)
             if (lhs.m_Negative ^ rhs.m_Negative) {
-                Huge temp((cmp == -1) ? rhs : lhs);
+                basic_int temp((cmp == -1) ? rhs : lhs);
 
                 HUGE_Add(&temp.m_Buffer[0] + temp.m_Buffer.size(), &lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size());
 
@@ -264,7 +264,7 @@ namespace cry {
 
             // если знаки аргументов одинаковы:
             if (cmp == -1) { // (|a| < |b|) ==> (|b| - |a|)
-                Huge temp(rhs);
+                basic_int temp(rhs);
 
                 HUGE_Subtract(&temp.m_Buffer[0] + temp.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size(), &lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size());
 
@@ -273,7 +273,7 @@ namespace cry {
                 return temp;
             } else if (cmp == +1) {
                 // (|a| > |b|) ==> (|a| - |b|)
-                Huge temp(lhs);
+                basic_int temp(lhs);
 
                 HUGE_Subtract(&temp.m_Buffer[0] + temp.m_Buffer.size(), &lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size());
 
@@ -282,10 +282,10 @@ namespace cry {
                 return temp;
             }
 
-            return Huge();
+            return basic_int();
         }
 
-        friend const Huge operator*(const Huge& lhs, const Huge& rhs) {
+        friend const basic_int operator*(const basic_int& lhs, const basic_int& rhs) {
             const std::vector<byte>& lhsBuf = lhs.m_Buffer;
             const std::vector<byte>& rhsBuf = rhs.m_Buffer;
 
@@ -296,38 +296,38 @@ namespace cry {
 
             HUGE_Multiply(&out[0], &out[0] + out.size(), &lhsBuf[0], &lhsBuf[0] + l_size, &rhsBuf[0], &rhsBuf[0] + r_size);
 
-            return Huge(out, lhs.m_Negative ^ rhs.m_Negative);
+            return basic_int(out, lhs.m_Negative ^ rhs.m_Negative);
         }
 
-        friend const Huge operator/(const Huge& lhs, const Huge& rhs) {
-            Huge div;
-            Huge rem;
+        friend const basic_int operator/(const basic_int& lhs, const basic_int& rhs) {
+            basic_int div;
+            basic_int rem;
 
             lhs.DivRem(div, rem, rhs);
 
             return div;
         }
 
-        friend const Huge operator%(const Huge& lhs, const Huge& rhs) {
-            Huge div;
-            Huge rem;
+        friend const basic_int operator%(const basic_int& lhs, const basic_int& rhs) {
+            basic_int div;
+            basic_int rem;
 
             lhs.DivRem(div, rem, rhs);
 
             return rem;
         }
 
-        void DivRem(Huge& q, Huge& r, const Huge& other) const throw(std::invalid_argument);
+        void DivRem(basic_int& q, basic_int& r, const basic_int& other) const throw(std::invalid_argument);
 
       protected:
-        void __swap(Huge& other) throw() {
+        void __swap(basic_int& other) throw() {
             m_Buffer.swap(other.m_Buffer);
 
             std::swap(m_Negative, other.m_Negative);
         }
 
         template <class X>
-        friend short compare(const Huge<X>& lhs, const Huge<X>& rhs);
+        friend short compare(const basic_int<X>& lhs, const basic_int<X>& rhs);
 
       private:
         std::vector<T> m_Buffer;
@@ -337,9 +337,9 @@ namespace cry {
     // =================================================================================
 
     template <class X>
-    Huge<X>& Huge<X>::operator=(const Huge<X>& other) {
+    basic_int<X>& basic_int<X>::operator=(const basic_int<X>& other) {
         if (this != &other) {
-            Huge temp(other);
+            basic_int temp(other);
 
             this->__swap(temp);
         }
@@ -348,7 +348,7 @@ namespace cry {
     }
 
     template <class X>
-    Huge<X>& Huge<X>::operator=(Huge<X>&& other) {
+    basic_int<X>& basic_int<X>::operator=(basic_int<X>&& other) {
         if (this != &other) {
             m_Buffer = std::move(other.m_Buffer);
             m_Negative = std::move(other.m_Negative);
@@ -358,29 +358,29 @@ namespace cry {
     }
 
     template <class X>
-    Huge<X>::operator bool() const {
+    basic_int<X>::operator bool() const {
         bool flag = HUGE_IsZero(&m_Buffer[0], (&m_Buffer[0] + m_Buffer.size()));
 
         return !flag;
     }
 
     template <class X>
-    Huge<X>& Huge<X>::operator++() {
+    basic_int<X>& basic_int<X>::operator++() {
         HUGE_Increment(&m_Buffer[0], &m_Buffer[0] + m_Buffer.size());
 
         return *this;
     }
 
     template <class X>
-    Huge<X>& Huge<X>::operator--() {
+    basic_int<X>& basic_int<X>::operator--() {
         HUGE_Decrement(&m_Buffer[0], &m_Buffer[0] + m_Buffer.size());
 
         return *this;
     }
 
     template <class X>
-    const Huge<X> Huge<X>::operator++(int) {
-        Huge temp(*this);
+    const basic_int<X> basic_int<X>::operator++(int) {
+        basic_int temp(*this);
 
         ++(*this);
 
@@ -388,8 +388,8 @@ namespace cry {
     }
 
     template <class X>
-    const Huge<X> Huge<X>::operator--(int) {
-        Huge temp(*this);
+    const basic_int<X> basic_int<X>::operator--(int) {
+        basic_int temp(*this);
 
         --(*this);
 
@@ -397,32 +397,32 @@ namespace cry {
     }
 
     template <class X>
-    Huge<X>& Huge<X>::operator+=(const Huge<X>& rhs) {
+    basic_int<X>& basic_int<X>::operator+=(const basic_int<X>& rhs) {
         *this = *this + rhs;
 
         return *this;
     }
 
     template <class X>
-    Huge<X>& Huge<X>::operator-=(const Huge<X>& rhs) {
+    basic_int<X>& basic_int<X>::operator-=(const basic_int<X>& rhs) {
         *this = *this - rhs;
 
         return *this;
     }
 
     template <class X>
-    Huge<X>& Huge<X>::operator+() {
+    basic_int<X>& basic_int<X>::operator+() {
         return (*this);
     }
 
     template <class X>
-    const Huge<X> Huge<X>::operator-() const {
-        return Huge(m_Buffer, !m_Negative);
+    const basic_int<X> basic_int<X>::operator-() const {
+        return basic_int(m_Buffer, !m_Negative);
     }
 
     template <class X>
-    const Huge<X> Huge<X>::operator~() const {
-        Huge temp(*this);
+    const basic_int<X> basic_int<X>::operator~() const {
+        basic_int temp(*this);
 
         HUGE_Inverse(&temp.m_Buffer[0], &temp.m_Buffer[0] + temp.m_Buffer.size());
 
@@ -430,49 +430,49 @@ namespace cry {
     }
 
     template <class X>
-    Huge<X>& Huge<X>::operator%=(const Huge<X>& rhs) {
+    basic_int<X>& basic_int<X>::operator%=(const basic_int<X>& rhs) {
         *this = *this % rhs;
 
         return *this;
     }
 
     template <class X>
-    Huge<X>& Huge<X>::operator&=(const Huge<X>& rhs) {
+    basic_int<X>& basic_int<X>::operator&=(const basic_int<X>& rhs) {
         *this = *this & rhs;
 
         return *this;
     }
 
     template <class X>
-    Huge<X>& Huge<X>::operator|=(const Huge<X>& rhs) {
+    basic_int<X>& basic_int<X>::operator|=(const basic_int<X>& rhs) {
         *this = *this | rhs;
 
         return *this;
     }
 
     template <class X>
-    Huge<X>& Huge<X>::operator^=(const Huge<X>& rhs) {
+    basic_int<X>& basic_int<X>::operator^=(const basic_int<X>& rhs) {
         *this = *this ^ rhs;
 
         return *this;
     }
 
     template <class X>
-    Huge<X>& Huge<X>::operator*=(const Huge<X>& rhs) {
+    basic_int<X>& basic_int<X>::operator*=(const basic_int<X>& rhs) {
         *this = *this * rhs;
 
         return *this;
     }
 
     template <class X>
-    Huge<X>& Huge<X>::operator/=(const Huge<X>& rhs) {
+    basic_int<X>& basic_int<X>::operator/=(const basic_int<X>& rhs) {
         *this = *this / rhs;
 
         return *this;
     }
 
     template <class X>
-    ostream& operator<<(ostream& stream, const Huge<X>& huge) {
+    ostream& operator<<(ostream& stream, const basic_int<X>& huge) {
         stringstream ss;
 
         ss.flags(std::ios::hex | std::ios::uppercase);
@@ -491,7 +491,7 @@ namespace cry {
     }
 
     template <class T>
-    short compare(const Huge<T>& lhs, const Huge<T>& rhs) {
+    short compare(const basic_int<T>& lhs, const basic_int<T>& rhs) {
         short cmp = HUGE_Compare(&lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size());
 
         if (lhs.m_Negative && rhs.m_Negative) {
@@ -510,46 +510,46 @@ namespace cry {
     }
 
     template <class T>
-    const Huge<T> Huge<T>::operator<<(int nbits) const {
+    const basic_int<T> basic_int<T>::operator<<(int nbits) const {
         std::vector<T> out(m_Buffer);
 
         HUGE_ShiftLeft(&out[0], &out[0] + out.size(), nbits);
 
-        return Huge<T>(out);
+        return basic_int<T>(out);
     }
 
     template <class T>
-    Huge<T>& Huge<T>::operator<<=(int nbits) {
+    basic_int<T>& basic_int<T>::operator<<=(int nbits) {
         *this = *this << nbits;
 
         return *this;
     }
 
     template <class T>
-    const Huge<T> Huge<T>::operator>>(int nbits) const {
+    const basic_int<T> basic_int<T>::operator>>(int nbits) const {
         std::vector<T> out(this->m_Buffer);
 
         HUGE_ShiftRight(&out[0], &out[0] + out.size(), nbits);
 
-        return Huge<T>(out);
+        return basic_int<T>(out);
     }
 
     template <class T>
-    Huge<T>& Huge<T>::operator>>=(int nbits) {
+    basic_int<T>& basic_int<T>::operator>>=(int nbits) {
         *this = *this >> nbits;
 
         return *this;
     }
 
     template <class X>
-    bool operator!(const Huge<X>& h) {
+    bool operator!(const basic_int<X>& h) {
         bool f = (bool)h;
 
         return !f;
     }
 
     template <class T>
-    void Huge<T>::DivRem(Huge<T>& q, Huge<T>& r, const Huge<T>& other) const throw(std::invalid_argument){
+    void basic_int<T>::DivRem(basic_int<T>& q, basic_int<T>& r, const basic_int<T>& other) const throw(std::invalid_argument){
         bool isZero = HUGE_IsZero(&other.m_Buffer[0], &other.m_Buffer[0] + other.m_Buffer.size());
         if (isZero) {
             throw std::invalid_argument("division by zero");
@@ -557,7 +557,7 @@ namespace cry {
 
         short cmp = HUGE_Compare(&m_Buffer[0], &m_Buffer[0] + m_Buffer.size(), &other.m_Buffer[0], &other.m_Buffer[0] + other.m_Buffer.size());
         if (cmp == -1) {
-            q = Huge<T>();
+            q = basic_int<T>();
             r = *this;
             return;
         }
@@ -569,14 +569,14 @@ namespace cry {
 
         HUGE_DivRem(&v_div[0], &v_div[0] + v_div.size(), &v_rem[0], &v_rem[0] + v_rem.size(), &m_Buffer[0], &m_Buffer[0] + m_Buffer.size(), &other.m_Buffer[0], &other.m_Buffer[0] + other.m_Buffer.size());
 
-        Huge<T> div(v_div, this->m_Negative ^ other.m_Negative);
-        Huge<T> rem(v_rem, this->m_Negative ^ other.m_Negative);
+        basic_int<T> div(v_div, this->m_Negative ^ other.m_Negative);
+        basic_int<T> rem(v_rem, this->m_Negative ^ other.m_Negative);
 
         q = div;
         r = rem;
     }
 
-    using bigint8_t = Huge<uint8_t >;
+    using bigint8_t = basic_int<uint8_t >;
 }
 
 #endif
