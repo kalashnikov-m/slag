@@ -346,7 +346,7 @@ namespace cry {
     Huge<X>& Huge<X>::operator=(Huge<X>&& other) {
         if (this != &other) {
             m_Buffer = std::move(other.m_Buffer);
-            m_Negative = other.m_Negative;
+            m_Negative = std::move(other.m_Negative);
         }
 
         return *this;
