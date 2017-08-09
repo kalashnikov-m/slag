@@ -14,7 +14,7 @@ set (HEADERS
 	../include/oid.hpp
 	../include/pkcs1v1_5.hpp
 	../include/pss.hpp
-    	../include/sha1.hpp
+	../include/sha1.hpp
 	../include/sha224.hpp
 	../include/sha256.hpp
 	../include/sha384.hpp
@@ -24,7 +24,8 @@ set (HEADERS
 set (SOURCES
     main.cpp
     HugeCoreTest.cpp
-    HugeTest.cpp	
+    HugeTest.cpp
+    RsaTest.cpp
     ../include/internal/HugeCore.cpp
 )
 
