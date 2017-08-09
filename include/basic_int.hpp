@@ -30,7 +30,7 @@ namespace cry {
 
         basic_int(const std::vector<T>& iv, bool negative = false) : basic_int(std::begin(iv), std::end(iv), negative) {}
 
-        basic_int(uint32_t x) : basic_int({(T)((x & 0xff000000) >> 24), (T)((x & 0x00ff0000) >> 16), (T)((x & 0x0000ff00) >> 8), (T)(x & 0x000000ff)}) {}
+        basic_int(uint32_t x) : basic_int({static_cast<T>((x & 0xff000000) >> 24), static_cast<T>((x & 0x00ff0000) >> 16), static_cast<T>((x & 0x0000ff00) >> 8), static_cast<T>(x & 0x000000ff)}) {}
 
         basic_int(const std::string& hex):m_Buffer(1), m_Negative(false)
         {
