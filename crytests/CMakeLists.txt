@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.5)
-
 project(crytests)
 
 add_subdirectory(googletest)
@@ -7,8 +6,19 @@ add_subdirectory(googletest)
 set(EXECUTABLE_OUTPUT_PATH "bin")
 
 set (HEADERS
+	../include/rsa/rsa.hpp
+	../include/algorithm.hpp
 	../include/basic_int.hpp
-    ../include/rsa/rsa.hpp
+	../include/mgf.hpp
+	../include/oaep.hpp
+	../include/oid.hpp
+	../include/pkcs1v1_5.hpp
+	../include/pss.hpp
+    	../include/sha1.hpp
+	../include/sha224.hpp
+	../include/sha256.hpp
+	../include/sha384.hpp
+	../include/sha512.hpp
 )
 
 set (SOURCES

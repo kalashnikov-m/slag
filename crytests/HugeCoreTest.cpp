@@ -3,8 +3,6 @@
 
 #include "HugeCore.h"
 
-#include <iterator>
-
 using namespace std;
 
 template <class InputIterator>

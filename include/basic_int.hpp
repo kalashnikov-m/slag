@@ -152,15 +152,15 @@ namespace cry {
         friend ostream& operator<<(ostream& stream, const basic_int<X>& huge);
 
         friend bool operator&&(const basic_int& lhs, const basic_int& rhs) {
-            bool f1 = (bool)lhs;
-            bool f2 = (bool)rhs;
+            bool f1 = static_cast<bool>(lhs);
+            bool f2 = static_cast<bool>(rhs);
 
             return (f1 && f2);
         }
 
         friend bool operator||(const basic_int& lhs, const basic_int& rhs) {
-            bool f1 = (bool)lhs;
-            bool f2 = (bool)rhs;
+            bool f1 = static_cast<bool>(lhs);
+            bool f2 = static_cast<bool>(rhs);
 
             return (f1 || f2);
         }
@@ -543,7 +543,7 @@ namespace cry {
 
     template <class X>
     bool operator!(const basic_int<X>& h) {
-        bool f = (bool)h;
+        bool f = static_cast<bool>(h);
 
         return !f;
     }

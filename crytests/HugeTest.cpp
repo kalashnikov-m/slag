@@ -1,11 +1,9 @@
 
 #include "gtest/gtest.h"
 
-#include <iterator>
+#include "algorithm.hpp"
 
 #include "basic_int.hpp"
-
-#include "algorithm.hpp"
 
 using namespace std;
 using namespace cry;
