@@ -2,6 +2,8 @@
 #define PKCS1_V1_5_HPP
 
 #include <random>
+#include <algorithm>
+#include "oid.hpp"
 
 namespace cry {
 
