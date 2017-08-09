@@ -1,6 +1,8 @@
 #ifndef SHA384_HPP
 #define SHA384_HPP
 
+#include <cstdint>
+
 namespace cry {
 
     class SHA384 {

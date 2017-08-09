@@ -1,12 +1,15 @@
 #ifndef OID_HPP
 #define OID_HPP
 
+#include <cstdint>
+
 #include <sha1.hpp>
-#include <sha256.hpp>
 #include <sha224.hpp>
 #include <sha256.hpp>
 #include <sha384.hpp>
 #include <sha512.hpp>
+
+#include <initializer_list>
 
 namespace cry {
 

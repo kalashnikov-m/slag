@@ -1,6 +1,8 @@
 #ifndef SHA1_HPP
 #define SHA1_HPP
 
+#include <cstdint>
+
 namespace cry {
 
     class SHA1 {

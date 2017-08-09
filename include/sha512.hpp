@@ -1,6 +1,8 @@
 #ifndef SHA512_HPP
 #define SHA512_HPP
 
+#include <cstdint>
+
 namespace cry {
 
     class SHA512 {

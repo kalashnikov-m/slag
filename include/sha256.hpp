@@ -1,6 +1,8 @@
 #ifndef SHA256_HPP
 #define SHA256_HPP
 
+#include <cstdint>
+
 namespace cry {
 
     class SHA256 {

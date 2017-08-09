@@ -1,18 +1,10 @@
 #ifndef PSS_H
 #define PSS_H
 
-#include <mgf.hpp>
 #include <iterator>
 
-/*std::function<void(const std::vector<uint8_t>&)> trace = [](const std::vector<uint8_t>& container) {
-    for (size_t i = 0; i < container.size(); ++i) {
-        printf("%02x ", container[i]);
-        if ((i + 1) % 16 == 0)
-            printf("\n");
-    }
-
-    printf("\n\n");
-};*/
+#include <mgf.hpp>
+#include <sha1.hpp>
 
 namespace cry {
 

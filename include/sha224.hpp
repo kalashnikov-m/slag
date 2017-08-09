@@ -1,6 +1,8 @@
 #ifndef SHA224_HPP
 #define SHA224_HPP
 
+#include <cstdint>
+
 namespace cry {
 
     class SHA224 {
