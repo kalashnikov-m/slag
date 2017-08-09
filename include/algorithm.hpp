@@ -3,7 +3,8 @@
 #define ALGORITHM_HPP
 
 #include <algorithm>
-
+#include <vector>
+#include <random>
 #include <cstdint>
 
 namespace cry {

@@ -3,6 +3,8 @@
 
 #include "HugeCore.h"
 
+#include <iterator>
+
 using namespace std;
 
 template <class InputIterator>
@@ -101,10 +103,10 @@ TEST(HugeCore_Test, DivRem) {
 
         HUGE_DivRem(divb, dive, remb, reme, a_, _a, b_, _b);
 
-        bool eq = ASSERT_BYTES_EQ(_expected_div.begin(), _expected_div.end(), cbegin(div), cend(div));
+        bool eq = ASSERT_BYTES_EQ(_expected_div.begin(), _expected_div.end(), div.cbegin(), div.cend());
         EXPECT_TRUE(eq);
 
-        eq = ASSERT_BYTES_EQ(_expected_rem.begin(), _expected_rem.end(), cbegin(rem), cend(rem));
+        eq = ASSERT_BYTES_EQ(_expected_rem.begin(), _expected_rem.end(), rem.cbegin(), rem.cend());
         EXPECT_TRUE(eq);
     };
 
