@@ -11,6 +11,8 @@ namespace cry {
         SHA512() {}
         ~SHA512() {}
 
+        static const size_t size = 64;
+
         void Init() {
             m_Idx = 0;
             high = low = 0;

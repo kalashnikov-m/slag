@@ -11,6 +11,8 @@ namespace cry {
         SHA224() {}
         ~SHA224() {}
 
+        static const size_t size = 28;
+
         void Init() {
             m_Idx = 0;
             m_Len = 0;

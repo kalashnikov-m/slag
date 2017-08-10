@@ -11,6 +11,8 @@ namespace cry {
         SHA256() {}
         ~SHA256() {}
 
+        static const size_t size = 32;
+
         void Init() {
             m_Idx = 0;
             m_Len = 0;

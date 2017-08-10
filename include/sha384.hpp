@@ -11,6 +11,8 @@ namespace cry {
         SHA384() {}
         ~SHA384() {}
 
+        static const size_t size = 48;
+
         void Init() {
             m_Idx = 0;
             high = low = 0;
