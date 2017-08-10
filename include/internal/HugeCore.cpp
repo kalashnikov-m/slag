@@ -4,6 +4,7 @@
 #include <iterator>
 #include <vector>
 #include <cstdint>
+#include <algorithm>
 
 void HUGE_Add(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2) {
     byte carry = 0;
