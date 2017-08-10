@@ -5,8 +5,6 @@
  * Created on 7 Май 2015 г., 8:38
  */
 
-//#include "gtest/gtest.h"
-
 #include <algorithm.hpp>
 
 #include <cctype>
