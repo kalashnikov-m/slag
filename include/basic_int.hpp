@@ -80,7 +80,7 @@ namespace cry {
                 else if (bt == ' ')
                     continue;
                 else
-                    throw std::exception("Invalid hex string. Only hex numbers are allowed.");
+                    throw std::logic_error("Invalid hex string. Only hex numbers are allowed.");
 
                 // shift 4 to make space for new digit, and add the 4 bits of the new digit
                 // word = (word << 4) | (bt & 0xF);
