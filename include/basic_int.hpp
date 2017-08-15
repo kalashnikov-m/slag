@@ -11,6 +11,7 @@
 #include <cstdint>
 
 #include <HugeCore.h>
+#include <cctype>
 
 using namespace std;
 
@@ -39,14 +40,17 @@ namespace cry {
                 return;
             }
 
-            // ------- skiping zeros -------
+            ////////////// skiping zeros and whitespaces //////////////
+            //
             auto it(hex.begin());
             for (; it != hex.end() && ((*it == '0') || (*it == ' '));)
                 ++it;
 
             std::string::const_reverse_iterator rit(hex.rbegin()), rend(it);
 
-            size_t nchars = std::distance(rit, rend);
+            ////////////// counting hexadecimal characters //////////////
+            //
+            size_t nchars = std::count_if(hex.begin(), hex.end(), [](unsigned char c){ return std::isalnum(c); });
             size_t nbytes = nchars / 2;
             nbytes += nchars % 2;
 
@@ -75,6 +79,8 @@ namespace cry {
                     bt = bt - 'A' + 10;
                 else if (bt == ' ')
                     continue;
+                else
+                    throw std::exception("Invalid hex string. Only hex numbers are allowed.");
 
                 // shift 4 to make space for new digit, and add the 4 bits of the new digit
                 // word = (word << 4) | (bt & 0xF);
