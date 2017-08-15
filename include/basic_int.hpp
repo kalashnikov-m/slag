@@ -41,7 +41,7 @@ namespace cry {
 
             // ------- skiping zeros -------
             auto it(hex.begin());
-            for (; it != hex.end() && *it == '0';)
+            for (; it != hex.end() && ((*it == '0') || (*it == ' '));)
                 ++it;
 
             std::string::const_reverse_iterator rit(hex.rbegin()), rend(it);
@@ -73,6 +73,8 @@ namespace cry {
                     bt = bt - 'a' + 10;
                 else if (bt >= 'A' && bt <= 'F')
                     bt = bt - 'A' + 10;
+                else if (bt == ' ')
+                    continue;
 
                 // shift 4 to make space for new digit, and add the 4 bits of the new digit
                 // word = (word << 4) | (bt & 0xF);
