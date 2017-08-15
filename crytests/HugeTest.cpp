@@ -1180,7 +1180,7 @@ TEST(HugeTest, PowMod) {
 
 TEST(HugeTest, StringInit)
 {
-    auto StringInitTestFunc = [](const std::string& hex, const basic_int<byte>& expected) {
+    auto StringInit_EXPECT_TRUE = [](const std::string& hex, const basic_int<byte>& expected) {
         
         basic_int<byte> x(hex);
 
@@ -1189,8 +1189,18 @@ TEST(HugeTest, StringInit)
         EXPECT_TRUE(eq);
     };
 
-    StringInitTestFunc("2763b4a317f", { 0x02, 0x76, 0x3b, 0x4a, 0x31, 0x7f });
-    StringInitTestFunc("00000000000000000000000000000000002763b4a317f", { 0x02, 0x76, 0x3b, 0x4a, 0x31, 0x7f });
-    StringInitTestFunc("", { 0x00 });
-    StringInitTestFunc("", {  });
+    auto StringInit_EXPECT_ANY_THROW = [](const std::string& hex) {
+
+        EXPECT_ANY_THROW(basic_int<byte> x(hex));
+
+    };
+
+    StringInit_EXPECT_TRUE("2763b4a317f", { 0x02, 0x76, 0x3b, 0x4a, 0x31, 0x7f });
+    StringInit_EXPECT_TRUE("  2763b4 a317f", { 0x02, 0x76, 0x3b, 0x4a, 0x31, 0x7f });
+    StringInit_EXPECT_TRUE("00000000000000000000000000000000002763b4a317f", { 0x02, 0x76, 0x3b, 0x4a, 0x31, 0x7f });
+    StringInit_EXPECT_TRUE("", { 0x00 });
+    StringInit_EXPECT_TRUE("", {  });
+    
+    StringInit_EXPECT_ANY_THROW("123aw");
+    StringInit_EXPECT_ANY_THROW("*23aw");
 }
