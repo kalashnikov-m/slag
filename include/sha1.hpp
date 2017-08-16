@@ -67,15 +67,15 @@ namespace cry {
                 }
             }
 
-            m_Block[m_Idx++] = (m_Len & 0xFFFFFFFF00000000) >> 24;
-            m_Block[m_Idx++] = (m_Len & 0xFFFFFFFF00000000) >> 16;
-            m_Block[m_Idx++] = (m_Len & 0xFFFFFFFF00000000) >> 8;
-            m_Block[m_Idx++] = (m_Len & 0xFFFFFFFF00000000);
+            m_Block[m_Idx++] = static_cast<uint8_t>((m_Len & 0xFFFFFFFF00000000) >> 24);
+            m_Block[m_Idx++] = static_cast<uint8_t>((m_Len & 0xFFFFFFFF00000000) >> 16);
+            m_Block[m_Idx++] = static_cast<uint8_t>((m_Len & 0xFFFFFFFF00000000) >> 8);
+            m_Block[m_Idx++] = static_cast<uint8_t>(m_Len & 0xFFFFFFFF00000000);
 
-            m_Block[m_Idx++] = (m_Len & 0x00000000FFFFFFFF) >> 24;
-            m_Block[m_Idx++] = (m_Len & 0x00000000FFFFFFFF) >> 16;
-            m_Block[m_Idx++] = (m_Len & 0x00000000FFFFFFFF) >> 8;
-            m_Block[m_Idx++] = (m_Len & 0x00000000FFFFFFFF);
+            m_Block[m_Idx++] = static_cast<uint8_t>((m_Len & 0x00000000FFFFFFFF) >> 24);
+            m_Block[m_Idx++] = static_cast<uint8_t>((m_Len & 0x00000000FFFFFFFF) >> 16);
+            m_Block[m_Idx++] = static_cast<uint8_t>((m_Len & 0x00000000FFFFFFFF) >> 8);
+            m_Block[m_Idx++] = static_cast<uint8_t>(m_Len & 0x00000000FFFFFFFF);
 
             transform();
 
