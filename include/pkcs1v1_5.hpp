@@ -88,7 +88,7 @@ namespace cry {
             std::copy(hash.begin(), hash.end(), result);
         }
 
-        template <class DigestType, class InputIterator, class OutputIterator>
+        template <class InputIterator, class OutputIterator>
         void Decode(InputIterator first, InputIterator last, OutputIterator result, size_t k) {
             if (first != last && *first++ != 0x00)
                 throw 1; // signature invalid
