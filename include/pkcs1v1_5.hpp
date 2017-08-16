@@ -51,10 +51,11 @@ namespace cry {
       private:
     };
 
+	template<class DigestType=SHA1>
     class EMSA_PKCS1_v1_5 {
 
       public:
-        template <class DigestType, class InputIterator, class OutputIterator>
+        template <class InputIterator, class OutputIterator>
         void Encode(InputIterator first, InputIterator last, OutputIterator result, size_t emLen) {
 
             std::vector<uint8_t> hash(DigestType::size);
