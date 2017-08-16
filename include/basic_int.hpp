@@ -118,6 +118,8 @@ namespace cry {
 
         explicit operator bool() const;
 
+        operator const std::vector<T>() const;
+
         const basic_int operator<<(int) const;
 
         const basic_int operator>>(int) const;
@@ -370,6 +372,12 @@ namespace cry {
         bool flag = HUGE_IsZero(&m_Buffer[0], (&m_Buffer[0] + m_Buffer.size()));
 
         return !flag;
+    }
+
+    template<class X>
+    basic_int<X>::operator const std::vector<X>() const
+    {
+        return std::move(m_Buffer);
     }
 
     template <class X>
