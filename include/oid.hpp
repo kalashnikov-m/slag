@@ -9,11 +9,11 @@
 #include <sha384.hpp>
 #include <sha512.hpp>
 
-#include <initializer_list>
+#include <vector>
 
 namespace cry {
 
-    template <class Obj, class SequenceType = std::initializer_list<uint8_t>>
+    template <class Obj, class SequenceType = std::vector<uint8_t>>
     struct OID;
 
     template <class SequenceType>
