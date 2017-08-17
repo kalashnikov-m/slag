@@ -9,9 +9,9 @@
 #include <vector>
 
 #include <cstdint>
+#include <cctype>
 
 #include <HugeCore.h>
-#include <cctype>
 
 using namespace std;
 
@@ -23,7 +23,7 @@ namespace cry {
 
         ~basic_int() {}
 
-        basic_int(const basic_int& other) : m_Buffer(other.m_Buffer), m_Negative(other.m_Negative) {}
+        constexpr basic_int(const basic_int& other) : m_Buffer(other.m_Buffer), m_Negative(other.m_Negative) {}
 
         basic_int(basic_int&& other) { *this = std::move(other); }
 
