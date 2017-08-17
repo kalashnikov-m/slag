@@ -118,7 +118,7 @@ namespace cry {
 
         explicit operator bool() const;
 
-        operator const std::vector<T>() const;
+        operator const std::vector<ElemT>() const;
 
         const basic_int operator<<(int) const;
 
