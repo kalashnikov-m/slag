@@ -16,7 +16,7 @@
 using namespace std;
 
 namespace cry {
-    template <class T = uint8_t>
+    template <class ElemT = uint8_t>
     class basic_int {
       public:
         basic_int() : m_Buffer(1), m_Negative(false) {}
@@ -27,11 +27,11 @@ namespace cry {
 
         basic_int(basic_int&& other) { *this = std::move(other); }
 
-        basic_int(const std::initializer_list<T>& il, bool negative = false) : basic_int(std::begin(il), std::end(il), negative) {}
+        basic_int(const std::initializer_list<ElemT>& il, bool negative = false) : basic_int(std::begin(il), std::end(il), negative) {}
 
-        basic_int(const std::vector<T>& iv, bool negative = false) : basic_int(std::begin(iv), std::end(iv), negative) {}
+        basic_int(const std::vector<ElemT>& iv, bool negative = false) : basic_int(std::begin(iv), std::end(iv), negative) {}
 
-        basic_int(uint32_t x) : basic_int({static_cast<T>((x & 0xff000000) >> 24), static_cast<T>((x & 0x00ff0000) >> 16), static_cast<T>((x & 0x0000ff00) >> 8), static_cast<T>(x & 0x000000ff)}) {}
+        basic_int(uint32_t x) : basic_int({static_cast<ElemT>((x & 0xff000000) >> 24), static_cast<ElemT>((x & 0x00ff0000) >> 16), static_cast<ElemT>((x & 0x0000ff00) >> 8), static_cast<ElemT>(x & 0x000000ff)}) {}
 
         basic_int(const std::string& hex):m_Buffer(1), m_Negative(false)
         {
@@ -54,13 +54,13 @@ namespace cry {
             size_t nbytes = nchars / 2;
             nbytes += nchars % 2;
 
-            size_t nwords = nbytes / sizeof(T);
-            if (nbytes >= sizeof(T))
-                nwords += nbytes % sizeof(T);
+            size_t nwords = nbytes / sizeof(ElemT);
+            if (nbytes >= sizeof(ElemT))
+                nwords += nbytes % sizeof(ElemT);
             else
                 nwords += 1;
 
-            T word = 0;
+            ElemT word = 0;
             size_t cnt     = 0;
 
             m_Buffer.resize(nwords);
@@ -88,7 +88,7 @@ namespace cry {
 
                 ++cnt;
 
-                if (cnt == sizeof(T) * 2)
+                if (cnt == sizeof(ElemT) * 2)
                 {
                     *ret++ = word;
                     word   = 0;
@@ -107,7 +107,7 @@ namespace cry {
                 ;
 
             if (first != last) {
-                m_Buffer = std::vector<T>(first, last);
+                m_Buffer = std::vector<ElemT>(first, last);
                 m_Negative = negative;
             }
         }
@@ -198,7 +198,7 @@ namespace cry {
         friend const basic_int operator&(const basic_int& lhs, const basic_int& rhs) {
             auto max = std::max(lhs.m_Buffer.size(), rhs.m_Buffer.size());
 
-            std::vector<T> out(max);
+            std::vector<ElemT> out(max);
 
             HUGE_And(&out[0] + out.size(), &lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size());
 
@@ -208,7 +208,7 @@ namespace cry {
         friend const basic_int operator|(const basic_int& lhs, const basic_int& rhs) {
             auto max = std::max(lhs.m_Buffer.size(), rhs.m_Buffer.size());
 
-            std::vector<T> out(max);
+            std::vector<ElemT> out(max);
 
             HUGE_Or(&out[0] + out.size(), &lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size());
 
@@ -218,7 +218,7 @@ namespace cry {
         friend const basic_int operator^(const basic_int& lhs, const basic_int& rhs) {
             auto max = std::max(lhs.m_Buffer.size(), rhs.m_Buffer.size());
 
-            std::vector<T> out(max);
+            std::vector<ElemT> out(max);
 
             HUGE_Xor(&out[0] + out.size(), &lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size());
 
@@ -233,7 +233,7 @@ namespace cry {
             size_t lsize = lhsBuf.size();
             size_t rsize = rhsBuf.size();
 
-            std::vector<T> out(std::max(lsize, rsize));
+            std::vector<ElemT> out(std::max(lsize, rsize));
 
             // если знаки аргументов различны: (a)+(-b), (-a)+(b) ==> ?(a-b)
             if (lhs.m_Negative ^ rhs.m_Negative) {
@@ -252,7 +252,7 @@ namespace cry {
             } else { // если знаки аргументов одинаковы
                 HUGE_Add(&out[0] + out.size(), &lhsBuf[0], &lhsBuf[0] + lsize, &rhsBuf[0], &rhsBuf[0] + rsize);
 
-                return basic_int<T>(out, lhs.m_Negative & rhs.m_Negative);
+                return basic_int<ElemT>(out, lhs.m_Negative & rhs.m_Negative);
             }
 
             return basic_int();
@@ -302,7 +302,7 @@ namespace cry {
             size_t l_size = lhsBuf.size();
             size_t r_size = rhsBuf.size();
 
-            std::vector<T> out(l_size + r_size);
+            std::vector<ElemT> out(l_size + r_size);
 
             HUGE_Multiply(&out[0], &out[0] + out.size(), &lhsBuf[0], &lhsBuf[0] + l_size, &rhsBuf[0], &rhsBuf[0] + r_size);
 
@@ -340,7 +340,7 @@ namespace cry {
         friend short compare(const basic_int<X>& lhs, const basic_int<X>& rhs);
 
       private:
-        std::vector<T> m_Buffer;
+        std::vector<ElemT> m_Buffer;
         bool m_Negative;
     };
 
