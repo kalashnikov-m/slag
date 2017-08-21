@@ -19,6 +19,7 @@ set (HEADERS
 	../include/sha256.hpp
 	../include/sha384.hpp
 	../include/sha512.hpp
+	../utility/to.hpp
 )
 
 set (SOURCES
@@ -29,6 +30,7 @@ set (SOURCES
     ../include/internal/HugeCore.cpp
 )
 
+include_directories(../utility)
 include_directories(../include)
 include_directories(../include/internal)
 include_directories(./googletest/include)
