@@ -330,7 +330,7 @@ namespace cry {
         void DivRem(basic_int& q, basic_int& r, const basic_int& other) const throw(std::invalid_argument);
 
       protected:
-        void __swap(basic_int& other) throw() {
+        void __swap(basic_int& other) noexcept {
             m_Buffer.swap(other.m_Buffer);
 
             std::swap(m_Negative, other.m_Negative);
