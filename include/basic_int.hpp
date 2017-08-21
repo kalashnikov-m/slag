@@ -118,7 +118,7 @@ namespace cry {
 
         explicit operator bool() const;
 
-        operator const std::vector<ElemT>() const;
+        explicit operator const std::vector<uint8_t>() const;
 
         const basic_int operator<<(int) const;
 
@@ -336,6 +336,23 @@ namespace cry {
             std::swap(m_Negative, other.m_Negative);
         }
 
+		template <class IntType, size_t sz> struct SwapBytes {
+			constexpr inline IntType operator()(IntType val) const { return val; }
+		};
+
+		template <class IntType> struct SwapBytes<IntType, 2> {
+			constexpr inline IntType operator()(IntType val) const {
+				return ((((val) >> 8) & 0x00FF) | (((val) << 8) & 0xFF00));
+			}
+		};
+
+		template <class IntType> struct SwapBytes<IntType, 4> {
+			constexpr inline IntType operator()(IntType val) const {
+				return ((((val) >> 24) & 0x000000FF) | (((val) >> 8) & 0x0000FF00) |
+					(((val) << 8) & 0x00FF0000) | (((val) << 24) & 0xFF000000));
+			}
+		};
+
         template <class X>
         friend short compare(const basic_int<X>& lhs, const basic_int<X>& rhs);
 
@@ -374,10 +391,23 @@ namespace cry {
         return !flag;
     }
 
-    template<class X>
-    basic_int<X>::operator const std::vector<X>() const
-    {
-        return std::move(m_Buffer);
+    template <class X>
+    basic_int<X>::operator const std::vector<uint8_t>() const {
+      auto first = m_Buffer.begin(), last = m_Buffer.end();
+      auto n = std::distance(first, last);
+      std::vector<uint8_t> out(sizeof(X) * n);
+      auto it(out.begin());
+
+      std::for_each(first, last, [&it](auto x) {
+        auto val = SwapBytes<X, sizeof(X)>()(x);
+
+        for (size_t i = 0; i < sizeof(X); ++i) {
+          *it++ = static_cast<uint8_t>(val & 0xff);
+          val >>= 8;
+        }
+      });
+
+      return out;
     }
 
     template <class X>
