@@ -391,17 +391,17 @@ namespace cry {
         return !flag;
     }
 
-    template <class X>
-    basic_int<X>::operator const std::vector<uint8_t>() const {
+    template <class ElemT>
+    inline basic_int<ElemT>::operator const std::vector<uint8_t>() const {
       auto first = m_Buffer.begin(), last = m_Buffer.end();
       auto n = std::distance(first, last);
-      std::vector<uint8_t> out(sizeof(X) * n);
+      std::vector<uint8_t> out(sizeof(ElemT) * n);
       auto it(out.begin());
 
       std::for_each(first, last, [&it](auto x) {
-        auto val = SwapBytes<X, sizeof(X)>()(x);
+        auto val = SwapBytes<ElemT, sizeof(ElemT)>()(x);
 
-        for (size_t i = 0; i < sizeof(X); ++i) {
+        for (size_t i = 0; i < sizeof(ElemT); ++i) {
           *it++ = static_cast<uint8_t>(val & 0xff);
           val >>= 8;
         }
