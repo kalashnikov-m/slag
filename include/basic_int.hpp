@@ -327,7 +327,7 @@ namespace cry {
             return rem;
         }
 
-        void DivRem(basic_int& q, basic_int& r, const basic_int& other) const throw(std::invalid_argument);
+		void DivRem(basic_int& q, basic_int& r, const basic_int& other) const;
 
       protected:
         void __swap(basic_int& other) noexcept {
@@ -595,7 +595,7 @@ namespace cry {
     }
 
     template <class T>
-    void basic_int<T>::DivRem(basic_int<T>& q, basic_int<T>& r, const basic_int<T>& other) const throw(std::invalid_argument){
+	void basic_int<T>::DivRem(basic_int<T>& q, basic_int<T>& r, const basic_int<T>& other) const {
         bool isZero = HUGE_IsZero(&other.m_Buffer[0], &other.m_Buffer[0] + other.m_Buffer.size());
         if (isZero) {
             throw std::invalid_argument("division by zero");
