@@ -154,11 +154,11 @@ TEST(RsaTest, SigGen_SHA1_RSA_PKCS_224)
                     "94eb675e66f02018c185acced5e9e2465fb4897d7c5dca45bfffe43281"
                     "5d22b778230b8d8c6fd854e58f2b7d490dfd67a5e8d8c8e925474f1986"
                     "8c88a19a90ffeaf620a82ac1");
-    bigint8_t S = "481157d65c91a09b871bc9f704ac2c31b1e6b097e0d49e291e037c11e707"
+    bigint8_t S("481157d65c91a09b871bc9f704ac2c31b1e6b097e0d49e291e037c11e707"
                   "f48ac166558e9e8c114ee444c4d649e7e2cf7374269b036fea99bb3566d1"
                   "34d7ae5dd4141f7326884746d396be3207da2d9f56862585993db42ce282"
                   "aa2f048d12bccff12f14b9d1ac4e33d371fd4c0de1563c978826468e6a37"
-                  "99f64d3985d4689e";
+                  "99f64d3985d4689e");
 
     test(n, e, d, Msg, S);
   }
