@@ -20,7 +20,7 @@ set (HEADERS
 	../include/sha256.hpp
 	../include/sha384.hpp
 	../include/sha512.hpp
-	../utility/to.hpp
+	../utility/encoders.hpp
 )
 
 set (SOURCES

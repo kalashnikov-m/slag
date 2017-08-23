@@ -9,9 +9,9 @@
 
 namespace cry {
 
-template <class Encoder, size_t modulusBits, class T = bigint8_t>
+template <class Encoder, class T = bigint8_t>
 struct RSASignVerify {
-  template <class InputIterator>
+  template <size_t modulusBits, class InputIterator>
   static void sign(InputIterator first, InputIterator last, const T &privateExponent, const T &modulus, std::vector<uint8_t> &signature) {
 
     auto encoded = Encoder::Encode(first, last, modulusBits / 8);
@@ -22,7 +22,7 @@ struct RSASignVerify {
     signature = (std::vector<uint8_t>)result;
   }
 
-  template <class InputIterator>
+  template <size_t modulusBits, class InputIterator>
   static bool verify(InputIterator s_first, InputIterator s_last, InputIterator m_first, InputIterator m_last, const T &publicExponent, const T &modulus) {
 
     T signature(s_first, s_last);

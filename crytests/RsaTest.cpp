@@ -23,7 +23,7 @@ TEST(RsaTest, SigGen_SHA1_RSA_PKCS_224)
 		std::vector<uint8_t> plain(Msg);
 		std::vector<uint8_t> signature;
 
-		RSASignVerify<EMSA_PKCS1_v1_5<SHA224>, 1024>::sign(plain.begin(), plain.end(), d, n, signature);
+		RSASignVerify<EMSA_PKCS1_v1_5<SHA224>>::sign<1024>(plain.begin(), plain.end(), d, n, signature);
 		EXPECT_EQ(signature, S);
 	};
 
@@ -118,7 +118,7 @@ TEST(RsaTest, SigGen_SHA1_RSA_PKCS_1024)
 		std::vector<uint8_t> plain(Msg);
 		std::vector<uint8_t> signature;
 
-		RSASignVerify<EMSA_PKCS1_v1_5<SHA1>, 1024>::sign(plain.begin(), plain.end(), d, n, signature);
+		RSASignVerify<EMSA_PKCS1_v1_5<SHA1>>::sign<1024>(plain.begin(), plain.end(), d, n, signature);
 		EXPECT_EQ(signature, S);
     };
 
