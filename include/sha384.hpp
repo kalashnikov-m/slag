@@ -76,23 +76,23 @@ namespace cry {
                 }
             }
 
-            m_Block[m_Idx++] = high >> 56;
-            m_Block[m_Idx++] = high >> 48;
-            m_Block[m_Idx++] = high >> 40;
-            m_Block[m_Idx++] = high >> 32;
-            m_Block[m_Idx++] = high >> 24;
-            m_Block[m_Idx++] = high >> 16;
-            m_Block[m_Idx++] = high >> 8;
-            m_Block[m_Idx++] = high >> 0;
+            m_Block[m_Idx++] = static_cast<uint8_t>(high >> 56);
+            m_Block[m_Idx++] = static_cast<uint8_t>(high >> 48);
+            m_Block[m_Idx++] = static_cast<uint8_t>(high >> 40);
+            m_Block[m_Idx++] = static_cast<uint8_t>(high >> 32);
+            m_Block[m_Idx++] = static_cast<uint8_t>(high >> 24);
+            m_Block[m_Idx++] = static_cast<uint8_t>(high >> 16);
+            m_Block[m_Idx++] = static_cast<uint8_t>(high >> 8);
+            m_Block[m_Idx++] = static_cast<uint8_t>(high >> 0);
 
-            m_Block[m_Idx++] = low >> 56;
-            m_Block[m_Idx++] = low >> 48;
-            m_Block[m_Idx++] = low >> 40;
-            m_Block[m_Idx++] = low >> 32;
-            m_Block[m_Idx++] = low >> 24;
-            m_Block[m_Idx++] = low >> 16;
-            m_Block[m_Idx++] = low >> 8;
-            m_Block[m_Idx++] = low >> 0;
+            m_Block[m_Idx++] = static_cast<uint8_t>(low >> 56);
+            m_Block[m_Idx++] = static_cast<uint8_t>(low >> 48);
+            m_Block[m_Idx++] = static_cast<uint8_t>(low >> 40);
+            m_Block[m_Idx++] = static_cast<uint8_t>(low >> 32);
+            m_Block[m_Idx++] = static_cast<uint8_t>(low >> 24);
+            m_Block[m_Idx++] = static_cast<uint8_t>(low >> 16);
+            m_Block[m_Idx++] = static_cast<uint8_t>(low >> 8);
+            m_Block[m_Idx++] = static_cast<uint8_t>(low >> 0);
 
             transform();
 
