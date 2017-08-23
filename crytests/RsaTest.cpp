@@ -44,116 +44,116 @@ TEST(RsaTest, SigGen_SHA1_RSA_PKCS_224)
               "5");
 
   {
-    bigint8_t Msg = "e567a39ae4e5ef9b6801ea0561b72a5d4b5f385f0532fc9fe10a7570f8"
+    bigint8_t Msg("e567a39ae4e5ef9b6801ea0561b72a5d4b5f385f0532fc9fe10a7570f8"
                     "69ae05c0bdedd6e0e22d4542e9ce826a188cac0731ae39c8f87f9771ef"
                     "02132e64e2fb27ada8ff54b330dd93ad5e3ef82e0dda646248e35994bd"
                     "a10cf46e5abc98aa7443c03cddeb5ee2ab82d60100b102963189797027"
-                    "5f119d05daa2220a4a0defba";
-    bigint8_t S = "5aa5033381bdd0acce332dd314daf008acaa9e835f832979891d1bda2b55"
+                    "5f119d05daa2220a4a0defba");
+    bigint8_t S("5aa5033381bdd0acce332dd314daf008acaa9e835f832979891d1bda2b55"
                   "d5eae35c479c06cac5bf33f432c8c0a5549d1d1b29c5e2589024d27800a0"
                   "c235a61532c203cbc406ac6ecf63f52ae771b97c08e4b108ec916900e5a1"
                   "1b1d48cca86ca5a5a799ed32e99c815cef04cf8eb55223bfd4d9c3449264"
-                  "b60061bc3684bc82";
+                  "b60061bc3684bc82");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "db9eae66bcacb01ba8029fbac5fef13156aa1a768c3dff259ee5ae6b1c"
+    bigint8_t Msg("db9eae66bcacb01ba8029fbac5fef13156aa1a768c3dff259ee5ae6b1c"
                     "c34c2280374e3d065fed67bddad3e7ded21bc75d397835bf52b4292b74"
                     "5d48c30bbb0935df04168c99d3f54d83d7e7bf8fc8108a9ba0d983f307"
                     "93c7170f5d07bf2147221d38b7f9624c0c7f8312820f3de2550357f82a"
-                    "8227e0aa99572c708de96825";
-    bigint8_t S = "1ee03bd2a0440ef89c0f19fa03c855074e16f6ed426ca35bb76313887896"
+                    "8227e0aa99572c708de96825");
+    bigint8_t S("1ee03bd2a0440ef89c0f19fa03c855074e16f6ed426ca35bb76313887896"
                   "9a814be2f16f3dbbf73d2fad78d42a8ff8aaa342f5fcb08d2dde74525ba5"
                   "b2c65ef4e33d61774545886f7f217eb681a54b42ef7df66ce943227021c1"
                   "b5709b7a554a64141c1fa3609ad25fa8317068369b8990b8439468810440"
-                  "66746c1203b57acb";
+                  "66746c1203b57acb");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "2e22656e48856240b0f655d2022d69ac731a1c63151ba36e57728a35cb"
+    bigint8_t Msg("2e22656e48856240b0f655d2022d69ac731a1c63151ba36e57728a35cb"
                     "f69c6b2d08029ea0c9af0c3a8bfbb9c3858dbebaca7fe4997cbd715b3c"
                     "ae423ae6171abd7b3c3af25f4832f8c5eef6c1675134167a21e5dce107"
                     "2395a1443a2a959501e763596bc7aef559f28d78b2843c7bb690124c8f"
-                    "65b34b290f879344216bddc8";
-    bigint8_t S = "c3a66796c87319c01a8355102562029797d695de50b46bfa39c6d9a4c064"
+                    "65b34b290f879344216bddc8");
+    bigint8_t S("c3a66796c87319c01a8355102562029797d695de50b46bfa39c6d9a4c064"
                   "2b6de80272481b8785b0ff3ba4571bb45cd6aad9c5fc1383c79f6b7a13c4"
                   "e67f594f81a81157de6247b896345de1aec94adcccf126599132846ea139"
                   "8585499be4e759a1f7757d318ccf41378b374275ad4cbcd1077476cbb06e"
-                  "a42b36289b0f80bc";
+                  "a42b36289b0f80bc");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "cf785002292f1ef9645f2f2cdc0455b29d0ba1efc91fde0a3ac05fa169"
+    bigint8_t Msg("cf785002292f1ef9645f2f2cdc0455b29d0ba1efc91fde0a3ac05fa169"
                     "95fbbc8e03550009fe6126011f23ab4bf7bac88da49ea4a3a126c941e3"
                     "4dd4da21b571c173ec878f1eefb0c4aeececb1464c969535f19706c9bc"
                     "d9926853ffa7dc2153b0ef9eff8138d081f5341259d5991404fce6232e"
-                    "b93faa247578f98896704648";
-    bigint8_t S = "59ed09ae9cb743146781a1aa58c608fe107e2f6a1767d774a84eeb00f845"
+                    "b93faa247578f98896704648");
+    bigint8_t S("59ed09ae9cb743146781a1aa58c608fe107e2f6a1767d774a84eeb00f845"
                   "86e4bd0efe7f201be1cfc4c67b73441fde816b91530270c62a34d86e5c8c"
                   "dad4f0d0b90b53aed9bd31c7b43e1d7517f413c8b10232ab7d7a270f250f"
                   "09817721611f6cc96137e8067e8cf77a7ac25bfa8f8f157c4eddf051da69"
-                  "be6284e877aa435d";
+                  "be6284e877aa435d");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "302219bc6c07e628f352a45091719bb0e655875fb97691388f187e377c"
+    bigint8_t Msg("302219bc6c07e628f352a45091719bb0e655875fb97691388f187e377c"
                     "cd27253a3c29787820dd7574948b97cc8dda3492a88b5e9e2667082834"
                     "7669967072a692aa7bab60e70c596eac2ee72d79ec82209306373306ea"
                     "134debdf8928e7841361f4791ccb645c1e0923f7085c3cb7e2b99e60b3"
-                    "1f2100a327c4225ddd3843b7";
-    bigint8_t S = "4415ec9cc208f5c981528821637bcb0ebbbfa08418ff935667efcfc088c3"
+                    "1f2100a327c4225ddd3843b7");
+    bigint8_t S("4415ec9cc208f5c981528821637bcb0ebbbfa08418ff935667efcfc088c3"
                   "941b978280bb1c246762883559461334b0ef26eca0e5d4ab72059fb5dd59"
                   "aff3ce5d0b4913e19797561116ce3934bf5f362b88fae1bc9ebda447ec32"
                   "ff31d26eec3951eb87f08412bd3c3b7a23b44d73c6c2eb816859f67becf8"
-                  "df118c382c917d42";
+                  "df118c382c917d42");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "1fd68998e4c34ded43d2e51b1680a6b3fdfdd576033b6a0d7f4413fb39"
+    bigint8_t Msg("1fd68998e4c34ded43d2e51b1680a6b3fdfdd576033b6a0d7f4413fb39"
                     "d27ccfce19ce9e56e876b043f0277a8c6322cc0cc2b54c25f00123a88a"
                     "01f6f97bc8186eca0afef9b7def30707c20ca79ce05fef4890709be31d"
                     "ecf89bcc9a018c1a8ec79146a016590f1c55bdbfbbae5068d26f386eca"
-                    "b03d45d037207ccd982efb99";
-    bigint8_t S = "63b946b4f8e61f3d5d09ccf379cc8b6e4b65070a96144e13f1f68c17f916"
+                    "b03d45d037207ccd982efb99");
+    bigint8_t S("63b946b4f8e61f3d5d09ccf379cc8b6e4b65070a96144e13f1f68c17f916"
                   "45ddd70b32a976a5288f7484573c46687a82eba49bc4216c9328d6ce8afe"
                   "ddff5b123ec0f495d95be89a695d0378241b005302fb85a32429121d2009"
                   "97d759c47f9fdd4e29c86dea2a7f2dda2aec22ad48f67f6f3fdd3791ba84"
-                  "1fc971403d86ced7";
+                  "1fc971403d86ced7");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "90d0d6a410f8aa868b64128c039cc698a3b2e36700744969a0e741d0b9"
+    bigint8_t Msg("90d0d6a410f8aa868b64128c039cc698a3b2e36700744969a0e741d0b9"
                     "f164e73a56b8a60fe61b83a1f4e58a9d09c9b0f7dafc652e789968d1c7"
                     "45df42310fa7ba9b99e98d987deeb0ddea3478f68ec1a437b9b79ef4bf"
                     "29fef59e2d5024e0321789c3941278986ebd0969b01bc9de71b3af6186"
-                    "d85281532e5894e16a32a131";
-    bigint8_t S = "bca2b39e5621f6f20073775067b0b7fcdf3bac402416f2c335b7296ebff5"
+                    "d85281532e5894e16a32a131");
+    bigint8_t S("bca2b39e5621f6f20073775067b0b7fcdf3bac402416f2c335b7296ebff5"
                   "14ff21e896e8aeaa4701ce131db5d932a16dc0ceae235d819b379a42c91d"
                   "9f9e9db2e8650701f2e6961035a89b3394a65fc2826a30e7cafd0d8726b1"
                   "89102e9a9c8e1aae152808aa2d1a6b8740b6ffd862366cd07174513929d8"
-                  "b65702046447977f";
+                  "b65702046447977f");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "644a3de6100dd8a36c841446b9376b345d478a329450a66f629313c5cc"
+    bigint8_t Msg("644a3de6100dd8a36c841446b9376b345d478a329450a66f629313c5cc"
                     "55133c4782ecd071963d74ffbd9156f63935651f054711b4b8105160ab"
                     "94eb675e66f02018c185acced5e9e2465fb4897d7c5dca45bfffe43281"
                     "5d22b778230b8d8c6fd854e58f2b7d490dfd67a5e8d8c8e925474f1986"
-                    "8c88a19a90ffeaf620a82ac1";
+                    "8c88a19a90ffeaf620a82ac1");
     bigint8_t S = "481157d65c91a09b871bc9f704ac2c31b1e6b097e0d49e291e037c11e707"
                   "f48ac166558e9e8c114ee444c4d649e7e2cf7374269b036fea99bb3566d1"
                   "34d7ae5dd4141f7326884746d396be3207da2d9f56862585993db42ce282"
@@ -164,31 +164,31 @@ TEST(RsaTest, SigGen_SHA1_RSA_PKCS_224)
   }
 
   {
-    bigint8_t Msg = "29e9cb3482e9eda5e6d714a2dc730d91bdfb2d42b14fe82ed953a0fcce"
+    bigint8_t Msg("29e9cb3482e9eda5e6d714a2dc730d91bdfb2d42b14fe82ed953a0fcce"
                     "95bb4a4b30f8a926f003e985b647984e1e03c5df60a009007442c9157a"
                     "9db599580a94c7a5d9449ac6e9fcf85677d52acc348990579a7a930d7f"
                     "f6da45ebb9c14127b30711160cc6b3c866a97f4d6259c3c76538aac39c"
-                    "5262ca3d917d321030983a2f";
-    bigint8_t S = "3c23c9e5ab29b8102e03932934616481013789e19dbe6604ee9bf0a64ccb"
+                    "5262ca3d917d321030983a2f");
+    bigint8_t S("3c23c9e5ab29b8102e03932934616481013789e19dbe6604ee9bf0a64ccb"
                   "5e3b73fe747ce8b8f1efce2a9907e04199eb211ceb90be284ba71374a942"
                   "23a07ea9a739ca72faa7ca4da29bc1c044af61e4c563b6663af2050e2a00"
                   "04fe9e883951300a25a45ffc3bab8884d9f0f2279a26cce7142dd6776862"
-                  "ab63ad636c9acc95";
+                  "ab63ad636c9acc95");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "467e8ea634f7995dc46c11b8ab0b7508894681e81c3502c3b335e897e6"
+    bigint8_t Msg("467e8ea634f7995dc46c11b8ab0b7508894681e81c3502c3b335e897e6"
                     "d69df885f49557ce232784e3519b727ba6843bd7af5063f8bc1d610f86"
                     "ce5b35155e325ce175be8538395b34df67a421fca27e31330b59a41011"
                     "b290a58bdc8e740401b38f5564c2fd7ae89f609ed607d578db7f1cda50"
-                    "8af987be1fd946a25ab9346d";
-    bigint8_t S = "7fb485a62f837a4765308ed005a61fb821a9ddfa6bab4e76548342e8c2a8"
+                    "8af987be1fd946a25ab9346d");
+    bigint8_t S("7fb485a62f837a4765308ed005a61fb821a9ddfa6bab4e76548342e8c2a8"
                   "53ba1ab720cc37e3e3661408a36bead4ae0207c505b8cd9fa67f0e73ce29"
                   "bf66d1873c98f9b4849e4ed98727b206eabb9fa4cbcac1eb52e20c3d9b12"
                   "443dd1e746a755babeb340870e660112f2ce186539e943ee7fb335adbee0"
-                  "45d66a3016e8c439";
+                  "45d66a3016e8c439");
 
     test(n, e, d, Msg, S);
   }
@@ -224,56 +224,56 @@ TEST(RsaTest, SigGen_SHA384_RSA_PKCS_1024)
               "5");
 
   {
-    bigint8_t Msg = "e567a39ae4e5ef9b6801ea0561b72a5d4b5f385f0532fc9fe10a7570f8"
+    bigint8_t Msg("e567a39ae4e5ef9b6801ea0561b72a5d4b5f385f0532fc9fe10a7570f8"
                     "69ae05c0bdedd6e0e22d4542e9ce826a188cac0731ae39c8f87f9771ef"
                     "02132e64e2fb27ada8ff54b330dd93ad5e3ef82e0dda646248e35994bd"
                     "a10cf46e5abc98aa7443c03cddeb5ee2ab82d60100b102963189797027"
-                    "5f119d05daa2220a4a0defba";
-    bigint8_t S = "1689a8523919ac77cc997ebc59cb908872d88b2855a309ead2779b888b22"
+                    "5f119d05daa2220a4a0defba");
+    bigint8_t S("1689a8523919ac77cc997ebc59cb908872d88b2855a309ead2779b888b22"
                   "b4232da9b93bb19b32c1db77ad738c6e43361e9eb6b1a37c49a8f3c7c7ae"
                   "7e784d19a62138741293e49b1831c0c3617eb43c56706d83314953470636"
                   "441086419ab9e6fd1ec4f9d5cc6544815d1e02ed96a3ae64c6998b2cf238"
-                  "e79a12164352d12a";
+                  "e79a12164352d12a");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "db9eae66bcacb01ba8029fbac5fef13156aa1a768c3dff259ee5ae6b1c"
+    bigint8_t Msg("db9eae66bcacb01ba8029fbac5fef13156aa1a768c3dff259ee5ae6b1c"
                     "c34c2280374e3d065fed67bddad3e7ded21bc75d397835bf52b4292b74"
                     "5d48c30bbb0935df04168c99d3f54d83d7e7bf8fc8108a9ba0d983f307"
                     "93c7170f5d07bf2147221d38b7f9624c0c7f8312820f3de2550357f82a"
-                    "8227e0aa99572c708de96825";
-    bigint8_t S = "7b286c61b67110e232533fd9d1ac890b52ced71c9029d355c3f34c90c5fc"
+                    "8227e0aa99572c708de96825");
+    bigint8_t S("7b286c61b67110e232533fd9d1ac890b52ced71c9029d355c3f34c90c5fc"
                   "e068807e424fe948554ec3946f8d4453596acd29e2d44b45e3460239c4cd"
                   "92426bbce7d1b0f8f93141fd9f2f80a506947bf5018650fa0babdbb2dc19"
                   "39622ea8790a1d165b01c92ad91541e2aceb8a775b5ca4bf225b8b03d99a"
-                  "2405bdb7b2fdbdbe";
+                  "2405bdb7b2fdbdbe");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "2e22656e48856240b0f655d2022d69ac731a1c63151ba36e57728a35cb"
+    bigint8_t Msg("2e22656e48856240b0f655d2022d69ac731a1c63151ba36e57728a35cb"
                     "f69c6b2d08029ea0c9af0c3a8bfbb9c3858dbebaca7fe4997cbd715b3c"
                     "ae423ae6171abd7b3c3af25f4832f8c5eef6c1675134167a21e5dce107"
                     "2395a1443a2a959501e763596bc7aef559f28d78b2843c7bb690124c8f"
-                    "65b34b290f879344216bddc8";
-    bigint8_t S = "98a7f89db0932e94cb1d38bb72a85ce4143757c449f85cf891826c743072"
+                    "65b34b290f879344216bddc8");
+    bigint8_t S("98a7f89db0932e94cb1d38bb72a85ce4143757c449f85cf891826c743072"
                   "48aa6a0a32c45a10ce4d21bd889b6716d8b323d191952571707eb73313d0"
                   "af7324a5aa497b3d045d44877d4d8ace8bf1cdf0345dba34d0c1a79935ef"
                   "94dcc60dfa980a4b1e40b6d30113d557789118fc1eea5f5c3f9f49acc161"
-                  "9643685e6dde5827";
+                  "9643685e6dde5827");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "cf785002292f1ef9645f2f2cdc0455b29d0ba1efc91fde0a3ac05fa169"
+    bigint8_t Msg("cf785002292f1ef9645f2f2cdc0455b29d0ba1efc91fde0a3ac05fa169"
                     "95fbbc8e03550009fe6126011f23ab4bf7bac88da49ea4a3a126c941e3"
                     "4dd4da21b571c173ec878f1eefb0c4aeececb1464c969535f19706c9bc"
                     "d9926853ffa7dc2153b0ef9eff8138d081f5341259d5991404fce6232e"
-                    "b93faa247578f98896704648";
+                    "b93faa247578f98896704648");
     bigint8_t S = "584abd1f5e146b2b01b12f1c6ebbbd5873980282c63c90385c2f7040b344"
                   "64353bce9ddd9b573d334f7666098e7a7220a4539f4b4eea2fe0320f97cd"
                   "cbd6b3dbdf76c396a88e8bc73c37a832a86bc1453ad9f9fb7de135442d27"
@@ -284,90 +284,90 @@ TEST(RsaTest, SigGen_SHA384_RSA_PKCS_1024)
   }
 
   {
-    bigint8_t Msg = "302219bc6c07e628f352a45091719bb0e655875fb97691388f187e377c"
+    bigint8_t Msg("302219bc6c07e628f352a45091719bb0e655875fb97691388f187e377c"
                     "cd27253a3c29787820dd7574948b97cc8dda3492a88b5e9e2667082834"
                     "7669967072a692aa7bab60e70c596eac2ee72d79ec82209306373306ea"
                     "134debdf8928e7841361f4791ccb645c1e0923f7085c3cb7e2b99e60b3"
-                    "1f2100a327c4225ddd3843b7";
-    bigint8_t S = "766e1aa607e79968eec237369b4c9140aa6bfb8714b3d97d058a5464482d"
+                    "1f2100a327c4225ddd3843b7");
+    bigint8_t S("766e1aa607e79968eec237369b4c9140aa6bfb8714b3d97d058a5464482d"
                   "ed41f5036f852112242a3ef9e97e5c31b02622c72f7f37dd47b7eca8b947"
                   "ef55d3375bec1618b09fcd982e488486a885165f189aa02715100bf4e09f"
                   "eadfc6c2767145131ca87ea0a20f475d6d44b6298443e9dc49fc70b318f0"
-                  "4188daf5ec487ecc";
+                  "4188daf5ec487ecc");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "1fd68998e4c34ded43d2e51b1680a6b3fdfdd576033b6a0d7f4413fb39"
+    bigint8_t Msg("1fd68998e4c34ded43d2e51b1680a6b3fdfdd576033b6a0d7f4413fb39"
                     "d27ccfce19ce9e56e876b043f0277a8c6322cc0cc2b54c25f00123a88a"
                     "01f6f97bc8186eca0afef9b7def30707c20ca79ce05fef4890709be31d"
                     "ecf89bcc9a018c1a8ec79146a016590f1c55bdbfbbae5068d26f386eca"
-                    "b03d45d037207ccd982efb99";
-    bigint8_t S = "84f034124c8280ccc4f97e9a326d57e03ab28fbd84562a5f4bc0ae66a888"
+                    "b03d45d037207ccd982efb99");
+    bigint8_t S("84f034124c8280ccc4f97e9a326d57e03ab28fbd84562a5f4bc0ae66a888"
                   "b64c4c9aa272ef567240dfd633560a79c83974f628444df337de9d4e26d1"
                   "0964c78322de3053f00543c0b135cf952bdb23c3bf02c8c6b8d3acc9033f"
                   "b5ccf266394f4c8cdc4a44824d7dd38697600dcb62247f6a1b69ac14de06"
-                  "2d7c66f18fe62d7b";
+                  "2d7c66f18fe62d7b");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "90d0d6a410f8aa868b64128c039cc698a3b2e36700744969a0e741d0b9"
+    bigint8_t Msg("90d0d6a410f8aa868b64128c039cc698a3b2e36700744969a0e741d0b9"
                     "f164e73a56b8a60fe61b83a1f4e58a9d09c9b0f7dafc652e789968d1c7"
                     "45df42310fa7ba9b99e98d987deeb0ddea3478f68ec1a437b9b79ef4bf"
                     "29fef59e2d5024e0321789c3941278986ebd0969b01bc9de71b3af6186"
-                    "d85281532e5894e16a32a131";
-    bigint8_t S = "787b005e95f9642ba27e5f4d365275bbbbac72bd1cfe292ea78016700aae"
+                    "d85281532e5894e16a32a131");
+    bigint8_t S("787b005e95f9642ba27e5f4d365275bbbbac72bd1cfe292ea78016700aae"
                   "7af3c9e0e20bcfa54dc008c65a3b91c6e17c67d6229086c5a6f677e6ded9"
                   "6b88f6e8541c63f664a38f4cba641aa177176f9a3e45a67ffc7608d24f4b"
                   "44065e09c2744b7be4d349afb0e8f2e7c5106816a46c745e61a572bbd5e9"
-                  "8cb6b8d34c6c682f";
+                  "8cb6b8d34c6c682f");
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "644a3de6100dd8a36c841446b9376b345d478a329450a66f629313c5cc"
+    bigint8_t Msg("644a3de6100dd8a36c841446b9376b345d478a329450a66f629313c5cc"
                     "55133c4782ecd071963d74ffbd9156f63935651f054711b4b8105160ab"
                     "94eb675e66f02018c185acced5e9e2465fb4897d7c5dca45bfffe43281"
                     "5d22b778230b8d8c6fd854e58f2b7d490dfd67a5e8d8c8e925474f1986"
-                    "8c88a19a90ffeaf620a82ac1";
-    bigint8_t S = "599b511fc8bfcae44054a16c299b5f3c64b74c760fd182292b31f52204c6"
+                    "8c88a19a90ffeaf620a82ac1");
+    bigint8_t S("599b511fc8bfcae44054a16c299b5f3c64b74c760fd182292b31f52204c6"
                   "27c853f6fa2a753216026d312574f6adde4ae829680d28dc1c3253ffa96f"
                   "56d81e1c4b5dafce91e809d9f58da72a94e29dcad52e6759a16a06304e75"
                   "e641cce626154edeef364c62aea5284ba40270e9050e81cf5a7dfda67a70"
-                  "22fb4dd5514e3143";
+                  "22fb4dd5514e3143");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "29e9cb3482e9eda5e6d714a2dc730d91bdfb2d42b14fe82ed953a0fcce"
+    bigint8_t Msg("29e9cb3482e9eda5e6d714a2dc730d91bdfb2d42b14fe82ed953a0fcce"
                     "95bb4a4b30f8a926f003e985b647984e1e03c5df60a009007442c9157a"
                     "9db599580a94c7a5d9449ac6e9fcf85677d52acc348990579a7a930d7f"
                     "f6da45ebb9c14127b30711160cc6b3c866a97f4d6259c3c76538aac39c"
-                    "5262ca3d917d321030983a2f";
-    bigint8_t S = "798638df8cc53062b8a312e906527ce8e3a6b2b6456992c599e82cafcf1d"
+                    "5262ca3d917d321030983a2f");
+    bigint8_t S("798638df8cc53062b8a312e906527ce8e3a6b2b6456992c599e82cafcf1d"
                   "dfe6671674202aa61fcb9e83dc1f6bf93d2edb7651dcf869fed987477c26"
                   "d0a2a7a2c94dce4fe29849c26d477f782a40f2ce1f4050b5bf3fe3e70d00"
                   "efd284dcb9f52990149ec8c5b7d229db841e32741a74fd36e105e67c1814"
-                  "c08ea9aa44f2ab26";
+                  "c08ea9aa44f2ab26");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "467e8ea634f7995dc46c11b8ab0b7508894681e81c3502c3b335e897e6"
+    bigint8_t Msg("467e8ea634f7995dc46c11b8ab0b7508894681e81c3502c3b335e897e6"
                     "d69df885f49557ce232784e3519b727ba6843bd7af5063f8bc1d610f86"
                     "ce5b35155e325ce175be8538395b34df67a421fca27e31330b59a41011"
                     "b290a58bdc8e740401b38f5564c2fd7ae89f609ed607d578db7f1cda50"
-                    "8af987be1fd946a25ab9346d";
-    bigint8_t S = "c700283557dafd1f8834ec0b7a7ec733719cb0be6edb19f1064ee94c75b8"
+                    "8af987be1fd946a25ab9346d");
+    bigint8_t S("c700283557dafd1f8834ec0b7a7ec733719cb0be6edb19f1064ee94c75b8"
                   "d9d49458fa184f7d6dfa5a6da2d2ebeef0650d8af35447823c83a7737824"
                   "509a7425339caf99101cd1fe3db883fb98d172127e30e38d1d6f9e365493"
                   "7cd68cbb4ea228c816064fa8ca0950c7e7b6ad25045574a6a4063b63f074"
-                  "66b2cb5d7311b7cf";
+                  "66b2cb5d7311b7cf");
 
     test(n, e, d, Msg, S);
   }
@@ -402,151 +402,151 @@ TEST(RsaTest, SigGen_SHA512_RSA_PKCS_1024)
               "5");
 
   {
-    bigint8_t Msg = "e567a39ae4e5ef9b6801ea0561b72a5d4b5f385f0532fc9fe10a7570f8"
+    bigint8_t Msg("e567a39ae4e5ef9b6801ea0561b72a5d4b5f385f0532fc9fe10a7570f8"
                     "69ae05c0bdedd6e0e22d4542e9ce826a188cac0731ae39c8f87f9771ef"
                     "02132e64e2fb27ada8ff54b330dd93ad5e3ef82e0dda646248e35994bd"
                     "a10cf46e5abc98aa7443c03cddeb5ee2ab82d60100b102963189797027"
-                    "5f119d05daa2220a4a0defba";
-    bigint8_t S = " bf3ff2c69675f1b8ed421021801fb4ce29a757f7f8869ce436d0d75ab74"
+                    "5f119d05daa2220a4a0defba");
+    bigint8_t S(" bf3ff2c69675f1b8ed421021801fb4ce29a757f7f8869ce436d0d75ab74"
                   "9efc8b903d9f9cb214686147f12f3335fa936689c192f310ae3c5d75493f"
                   "44b24bc1cd3501584aaa5004b65a8716d1eda7240ad8a529d5a0cf169f40"
                   "54b450e076ee0d41a0011c557aa69a84a8104c909201d60fe39c79e68434"
-                  "7ef4d144ea18f7a4e";
+                  "7ef4d144ea18f7a4e");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "db9eae66bcacb01ba8029fbac5fef13156aa1a768c3dff259ee5ae6b1c"
+    bigint8_t Msg("db9eae66bcacb01ba8029fbac5fef13156aa1a768c3dff259ee5ae6b1c"
                     "c34c2280374e3d065fed67bddad3e7ded21bc75d397835bf52b4292b74"
                     "5d48c30bbb0935df04168c99d3f54d83d7e7bf8fc8108a9ba0d983f307"
                     "93c7170f5d07bf2147221d38b7f9624c0c7f8312820f3de2550357f82a"
-                    "8227e0aa99572c708de96825";
-    bigint8_t S = "398cbaa07bc4b3432f0ad0ef54b2402c2d25c0c46f7229fbfcba4c141cd0"
+                    "8227e0aa99572c708de96825");
+    bigint8_t S("398cbaa07bc4b3432f0ad0ef54b2402c2d25c0c46f7229fbfcba4c141cd0"
                   "db76aea42c2436757b16f7397c570e891cd4e6f0a052d0a910c8537d4eff"
                   "b2d07f06890581dde8bad7f77f8781bdc052c0caa50d94d95897508d6848"
                   "f5e26e5975f1a63c03f45bd5479bac0a40a3e4a1adfef847c3e9e9f7612d"
-                  "5034cc688f019b86";
+                  "5034cc688f019b86");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "2e22656e48856240b0f655d2022d69ac731a1c63151ba36e57728a35cb"
+    bigint8_t Msg("2e22656e48856240b0f655d2022d69ac731a1c63151ba36e57728a35cb"
                     "f69c6b2d08029ea0c9af0c3a8bfbb9c3858dbebaca7fe4997cbd715b3c"
                     "ae423ae6171abd7b3c3af25f4832f8c5eef6c1675134167a21e5dce107"
                     "2395a1443a2a959501e763596bc7aef559f28d78b2843c7bb690124c8f"
-                    "65b34b290f879344216bddc8";
-    bigint8_t S = "4af9876c2a520a79282226d953505b166a67f361545a65a980abfe43e8d0"
+                    "65b34b290f879344216bddc8");
+    bigint8_t S("4af9876c2a520a79282226d953505b166a67f361545a65a980abfe43e8d0"
                   "9bce6d89892e556313351cc3312e214517ea6d62c80c734eb276074e6467"
                   "5e53289ca41840b4d7c9b225183b8162a6f0761bf1a71341b9482cc15ad5"
                   "16bda050da93382567998f844529131b1b560294060b36171a4e7118a556"
-                  "9beff9bea078385a";
+                  "9beff9bea078385a");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "cf785002292f1ef9645f2f2cdc0455b29d0ba1efc91fde0a3ac05fa169"
+    bigint8_t Msg("cf785002292f1ef9645f2f2cdc0455b29d0ba1efc91fde0a3ac05fa169"
                     "95fbbc8e03550009fe6126011f23ab4bf7bac88da49ea4a3a126c941e3"
                     "4dd4da21b571c173ec878f1eefb0c4aeececb1464c969535f19706c9bc"
                     "d9926853ffa7dc2153b0ef9eff8138d081f5341259d5991404fce6232e"
-                    "b93faa247578f98896704648";
-    bigint8_t S = "5a9b01a6d3e08d45d4c359502ec613489b733cd5a9c385e2d3e775949963"
+                    "b93faa247578f98896704648");
+    bigint8_t S("5a9b01a6d3e08d45d4c359502ec613489b733cd5a9c385e2d3e775949963"
                   "41bfe3475e1594e6161c12378ff2e2928373e247ab4c0aafecff220339b0"
                   "f063473195edf91725ae5e114714dd75de8d2f6eb7865912394c849d04fc"
                   "dbf97921ac1ca79c7859849e1ba09f396c2b291f9b1f11a5864baa11f09f"
-                  "5c24164ee2422768";
+                  "5c24164ee2422768");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "302219bc6c07e628f352a45091719bb0e655875fb97691388f187e377c"
+    bigint8_t Msg("302219bc6c07e628f352a45091719bb0e655875fb97691388f187e377c"
                     "cd27253a3c29787820dd7574948b97cc8dda3492a88b5e9e2667082834"
                     "7669967072a692aa7bab60e70c596eac2ee72d79ec82209306373306ea"
                     "134debdf8928e7841361f4791ccb645c1e0923f7085c3cb7e2b99e60b3"
-                    "1f2100a327c4225ddd3843b7";
-    bigint8_t S = "5b5a22bf6be45cf311c78cbce08d9c499b239985e3ce980da04974c97d16"
+                    "1f2100a327c4225ddd3843b7");
+    bigint8_t S("5b5a22bf6be45cf311c78cbce08d9c499b239985e3ce980da04974c97d16"
                   "a21c0c38666460546a9ef141cbbe06e48d1ae8931f9247fa42114220be91"
                   "acf8d86e21ee3f36bed644b1c9c4e967099bfd190676e0b12978e9b0c996"
                   "afa07065b07701bdca9e6c0ca278b88894542457f0fc02b938525ad6b530"
-                  "0fb52c9cfc5b8dfb";
+                  "0fb52c9cfc5b8dfb");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "1fd68998e4c34ded43d2e51b1680a6b3fdfdd576033b6a0d7f4413fb39"
+    bigint8_t Msg("1fd68998e4c34ded43d2e51b1680a6b3fdfdd576033b6a0d7f4413fb39"
                     "d27ccfce19ce9e56e876b043f0277a8c6322cc0cc2b54c25f00123a88a"
                     "01f6f97bc8186eca0afef9b7def30707c20ca79ce05fef4890709be31d"
                     "ecf89bcc9a018c1a8ec79146a016590f1c55bdbfbbae5068d26f386eca"
-                    "b03d45d037207ccd982efb99";
-    bigint8_t S = "85ae6a4f4f6d0b8deabcb65fe319a51403512b745abef4fd306a2fbe0085"
+                    "b03d45d037207ccd982efb99");
+    bigint8_t S("85ae6a4f4f6d0b8deabcb65fe319a51403512b745abef4fd306a2fbe0085"
                   "80da8a1e976713713bcce3b2a56ca2910743adee058fd6e3dd0cc0174c15"
                   "ed1d8e1355161e920493621daef96c3f74105e2b65b9621ce7a1924a649c"
                   "13083ebdff4cd20ca1f72596c763d03bb539cfe45a48bd161574882ef608"
-                  "54a60ce4cf38d1fd";
+                  "54a60ce4cf38d1fd");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "90d0d6a410f8aa868b64128c039cc698a3b2e36700744969a0e741d0b9"
+    bigint8_t Msg("90d0d6a410f8aa868b64128c039cc698a3b2e36700744969a0e741d0b9"
                     "f164e73a56b8a60fe61b83a1f4e58a9d09c9b0f7dafc652e789968d1c7"
                     "45df42310fa7ba9b99e98d987deeb0ddea3478f68ec1a437b9b79ef4bf"
                     "29fef59e2d5024e0321789c3941278986ebd0969b01bc9de71b3af6186"
-                    "d85281532e5894e16a32a131";
-    bigint8_t S = "4895d5bddaf911a9ff22731726e4d68a4d544721baeb82bea8444797aabd"
+                    "d85281532e5894e16a32a131");
+    bigint8_t S("4895d5bddaf911a9ff22731726e4d68a4d544721baeb82bea8444797aabd"
                   "45f99f9a72471737a5f6db09c93ed07728f45fde8110e1f93d4b63d08d4a"
                   "87398f469ca5aea8267afe9fc571b7eacac0425166b9a0464cfc64d7fee8"
                   "7aed80f7c2bb825a03799106070533a97344c8cd63d5bb8f6707198fe996"
-                  "55a589272a0e5af8";
+                  "55a589272a0e5af8");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "644a3de6100dd8a36c841446b9376b345d478a329450a66f629313c5cc"
+    bigint8_t Msg("644a3de6100dd8a36c841446b9376b345d478a329450a66f629313c5cc"
                     "55133c4782ecd071963d74ffbd9156f63935651f054711b4b8105160ab"
                     "94eb675e66f02018c185acced5e9e2465fb4897d7c5dca45bfffe43281"
                     "5d22b778230b8d8c6fd854e58f2b7d490dfd67a5e8d8c8e925474f1986"
-                    "8c88a19a90ffeaf620a82ac1";
-    bigint8_t S = "9000dea9922c03ffd3a1ca689dd4b98c368a128f5153b2895ce995f1771a"
+                    "8c88a19a90ffeaf620a82ac1");
+    bigint8_t S("9000dea9922c03ffd3a1ca689dd4b98c368a128f5153b2895ce995f1771a"
                   "0816a09fd8b493c460f29e49e1ab6a3867eec293f5d1fbb77fbb77c4a28b"
                   "b5b9e5d5fa06550edf365b94ed4daa3ab981a33d7c0015bbed2572f3c5b0"
                   "9f4f1922e5626732c8e6b5d31e5fef75d5a9026ca5784dba571ab72e3cf7"
-                  "0df4ebfa6ad7b69c";
+                  "0df4ebfa6ad7b69c");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "29e9cb3482e9eda5e6d714a2dc730d91bdfb2d42b14fe82ed953a0fcce"
+    bigint8_t Msg("29e9cb3482e9eda5e6d714a2dc730d91bdfb2d42b14fe82ed953a0fcce"
                     "95bb4a4b30f8a926f003e985b647984e1e03c5df60a009007442c9157a"
                     "9db599580a94c7a5d9449ac6e9fcf85677d52acc348990579a7a930d7f"
                     "f6da45ebb9c14127b30711160cc6b3c866a97f4d6259c3c76538aac39c"
-                    "5262ca3d917d321030983a2f";
-    bigint8_t S = "6244f168e5f8efceb00f33e5f4eaa8212b1b416ba7f1f95948e476755d53"
+                    "5262ca3d917d321030983a2f");
+    bigint8_t S("6244f168e5f8efceb00f33e5f4eaa8212b1b416ba7f1f95948e476755d53"
                   "2ddeed5bb84902df7750f775dc53a151737b39923dbfed374616f944b5f7"
                   "3d63e02d9007ca1e9d3333e77f200d8b021912af9122f861740d0bdd1300"
                   "75d9f112c99fd613f9a2036762dd6237b5c91b33fecc366324536195acf5"
-                  "552147add0ec1c8a";
+                  "552147add0ec1c8a");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "467e8ea634f7995dc46c11b8ab0b7508894681e81c3502c3b335e897e6"
+    bigint8_t Msg("467e8ea634f7995dc46c11b8ab0b7508894681e81c3502c3b335e897e6"
                     "d69df885f49557ce232784e3519b727ba6843bd7af5063f8bc1d610f86"
                     "ce5b35155e325ce175be8538395b34df67a421fca27e31330b59a41011"
                     "b290a58bdc8e740401b38f5564c2fd7ae89f609ed607d578db7f1cda50"
-                    "8af987be1fd946a25ab9346d";
-    bigint8_t S = "5d5cf180bdac8ae14a50c4e8b57b88ba68b1c3527d34a63fd390f33b8b02"
+                    "8af987be1fd946a25ab9346d");
+    bigint8_t S("5d5cf180bdac8ae14a50c4e8b57b88ba68b1c3527d34a63fd390f33b8b02"
                   "5a75f7ce824f1e20de814991364a97c2ab9e6c88cd196abf6c4a0ac66013"
                   "a73db9e94a988a4665a31cd4e0731808c88ec1457c481047f3e32b08bff6"
                   "560cbe85cec212239dc8b25467debe536a8ab1a951afcdcb2cfc411afd5c"
-                  "189f4b0eabeec3f7";
+                  "189f4b0eabeec3f7");
 
     test(n, e, d, Msg, S);
   }
@@ -582,56 +582,56 @@ TEST(RsaTest, SigGen_SHA256_RSA_PKCS_1024)
               "5");
 
   {
-    bigint8_t Msg = "e567a39ae4e5ef9b6801ea0561b72a5d4b5f385f0532fc9fe10a7570f8"
+    bigint8_t Msg("e567a39ae4e5ef9b6801ea0561b72a5d4b5f385f0532fc9fe10a7570f8"
                     "69ae05c0bdedd6e0e22d4542e9ce826a188cac0731ae39c8f87f9771ef"
                     "02132e64e2fb27ada8ff54b330dd93ad5e3ef82e0dda646248e35994bd"
                     "a10cf46e5abc98aa7443c03cddeb5ee2ab82d60100b102963189797027"
-                    "5f119d05daa2220a4a0defba";
-    bigint8_t S = "0e7cdd121e40323ca6115d1ec6d1f9561738455f0e9e1cd858e8b566ae2d"
+                    "5f119d05daa2220a4a0defba");
+    bigint8_t S("0e7cdd121e40323ca6115d1ec6d1f9561738455f0e9e1cd858e8b566ae2d"
                   "a5e8ee63d8f15c3cdd88027e13406db609369c88ca99b34fa156c7ee62bc"
                   "5a3923bb5a1edabd45c1a422aafcbb47e0947f35cfef87970b4b713162b2"
                   "1916cafb8c864a3e5b9ffc989401d4eae992312a32c5bc88abbb45f99ac8"
-                  "85b54d6b8e61b6ec";
+                  "85b54d6b8e61b6ec");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "db9eae66bcacb01ba8029fbac5fef13156aa1a768c3dff259ee5ae6b1c"
+    bigint8_t Msg("db9eae66bcacb01ba8029fbac5fef13156aa1a768c3dff259ee5ae6b1c"
                     "c34c2280374e3d065fed67bddad3e7ded21bc75d397835bf52b4292b74"
                     "5d48c30bbb0935df04168c99d3f54d83d7e7bf8fc8108a9ba0d983f307"
                     "93c7170f5d07bf2147221d38b7f9624c0c7f8312820f3de2550357f82a"
-                    "8227e0aa99572c708de96825";
-    bigint8_t S = "5a616faeb00680f5c4ef633205040b497b5e5e226e4a8f493b1ec2a26fe7"
+                    "8227e0aa99572c708de96825");
+    bigint8_t S("5a616faeb00680f5c4ef633205040b497b5e5e226e4a8f493b1ec2a26fe7"
                   "a0971fed4e1b8f188eba8161266fe558eab539f903c0cd8ed18d21af77e3"
                   "0cb264c6214a175588ed542b5fbdaae99e924094e8c8a22366441d866126"
                   "433aa45cd37773b9dc3dc179ec8cf51efb8bbdedcd229cd2dc2334f5bf2b"
-                  "0b00374350e6147d";
+                  "0b00374350e6147d");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "2e22656e48856240b0f655d2022d69ac731a1c63151ba36e57728a35cb"
+    bigint8_t Msg("2e22656e48856240b0f655d2022d69ac731a1c63151ba36e57728a35cb"
                     "f69c6b2d08029ea0c9af0c3a8bfbb9c3858dbebaca7fe4997cbd715b3c"
                     "ae423ae6171abd7b3c3af25f4832f8c5eef6c1675134167a21e5dce107"
                     "2395a1443a2a959501e763596bc7aef559f28d78b2843c7bb690124c8f"
-                    "65b34b290f879344216bddc8";
-    bigint8_t S = "c24dd39dc4306bb0b06d548091714820f14a3938437ee76d5302f7006213"
+                    "65b34b290f879344216bddc8");
+    bigint8_t S("c24dd39dc4306bb0b06d548091714820f14a3938437ee76d5302f7006213"
                   "d388041b79db6125c337ce41d2086f2536026f0fffd20aa9dacffe4e601d"
                   "fe51310729ad050c4f396b0223492a63d9a011f70cebf8850f61f0ca2ea9"
                   "4800f51e35bbb077e99beaf12fc2caf1744700eb1e027bbb450308e16743"
-                  "7272433ee7a765fb";
+                  "7272433ee7a765fb");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "cf785002292f1ef9645f2f2cdc0455b29d0ba1efc91fde0a3ac05fa169"
+    bigint8_t Msg("cf785002292f1ef9645f2f2cdc0455b29d0ba1efc91fde0a3ac05fa169"
                     "95fbbc8e03550009fe6126011f23ab4bf7bac88da49ea4a3a126c941e3"
                     "4dd4da21b571c173ec878f1eefb0c4aeececb1464c969535f19706c9bc"
                     "d9926853ffa7dc2153b0ef9eff8138d081f5341259d5991404fce6232e"
-                    "b93faa247578f98896704648";
+                    "b93faa247578f98896704648");
     bigint8_t S = "b34c8e11cbfd2927bcbf442a6afbbd6ea5c20f5e47cf56c57dca93e10bda"
                   "bb20b958997b216b92d09fb92cfc3445346cc9e63721b73db06dc9e36727"
                   "b8daa5f16fa4959c977f6eefcd2fc9790c5e01f31f8190360d380f433252"
@@ -642,91 +642,91 @@ TEST(RsaTest, SigGen_SHA256_RSA_PKCS_1024)
   }
 
   {
-    bigint8_t Msg = "302219bc6c07e628f352a45091719bb0e655875fb97691388f187e377c"
+    bigint8_t Msg("302219bc6c07e628f352a45091719bb0e655875fb97691388f187e377c"
                     "cd27253a3c29787820dd7574948b97cc8dda3492a88b5e9e2667082834"
                     "7669967072a692aa7bab60e70c596eac2ee72d79ec82209306373306ea"
                     "134debdf8928e7841361f4791ccb645c1e0923f7085c3cb7e2b99e60b3"
-                    "1f2100a327c4225ddd3843b7";
-    bigint8_t S = "68edf786f166f9aa932816d70b7786e1d88128da0ce1212bba5b56fc8f8d"
+                    "1f2100a327c4225ddd3843b7");
+    bigint8_t S("68edf786f166f9aa932816d70b7786e1d88128da0ce1212bba5b56fc8f8d"
                   "c21d54b5bd44401af2119c4a4f03cdbf75615cf08f3764fba03aed856ecd"
                   "01caa15ffd6a3604a612c81218f3c395b931fd5fe78031b674369e49b185"
                   "de6c00b6effdd8d10aab7bfc6671900c58c6882850de5a37b87c15caab18"
-                  "b8cd6bf8e5132020";
+                  "b8cd6bf8e5132020");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "1fd68998e4c34ded43d2e51b1680a6b3fdfdd576033b6a0d7f4413fb39"
+    bigint8_t Msg("1fd68998e4c34ded43d2e51b1680a6b3fdfdd576033b6a0d7f4413fb39"
                     "d27ccfce19ce9e56e876b043f0277a8c6322cc0cc2b54c25f00123a88a"
                     "01f6f97bc8186eca0afef9b7def30707c20ca79ce05fef4890709be31d"
                     "ecf89bcc9a018c1a8ec79146a016590f1c55bdbfbbae5068d26f386eca"
-                    "b03d45d037207ccd982efb99";
-    bigint8_t S = "0687bca5c51bbddddb68d21a912b7d3f89a54517b7f3c6ea5da386b5fb6b"
+                    "b03d45d037207ccd982efb99");
+    bigint8_t S("0687bca5c51bbddddb68d21a912b7d3f89a54517b7f3c6ea5da386b5fb6b"
                   "e8c7a172d6528b2dfe9cdbcb3f4cca1099a1003a69176eb3292a1571b845"
                   "1693e1554c6ec5e9d336771378718a9e822f02f783b9cee3c0f8ff265453"
                   "9c495478ba68cca6a6683303a104230e4dde1c35e194eba1ea50e7fe690c"
-                  "b19d2b1118a87be8";
+                  "b19d2b1118a87be8");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "90d0d6a410f8aa868b64128c039cc698a3b2e36700744969a0e741d0b9"
+    bigint8_t Msg("90d0d6a410f8aa868b64128c039cc698a3b2e36700744969a0e741d0b9"
                     "f164e73a56b8a60fe61b83a1f4e58a9d09c9b0f7dafc652e789968d1c7"
                     "45df42310fa7ba9b99e98d987deeb0ddea3478f68ec1a437b9b79ef4bf"
                     "29fef59e2d5024e0321789c3941278986ebd0969b01bc9de71b3af6186"
-                    "d85281532e5894e16a32a131";
-    bigint8_t S = "13049092c675809b386459eccbe1c540a1a8e9cb674da9d11349f2c50e55"
+                    "d85281532e5894e16a32a131");
+    bigint8_t S("13049092c675809b386459eccbe1c540a1a8e9cb674da9d11349f2c50e55"
                   "9387f019154216370752c8ae0a7c4b6e031f414f7a32a8ebf6f4f87d4692"
                   "caa44e535565e0c0deb9471411126f6dfed6dd860edd1e97468b7e144f8e"
                   "a6e0b5063d3ebea598b47ef9d6292ab0c05f5621d20bcb389d550bee84d1"
-                  "90d79c7d8820a97d";
+                  "90d79c7d8820a97d");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "644a3de6100dd8a36c841446b9376b345d478a329450a66f629313c5cc"
+    bigint8_t Msg("644a3de6100dd8a36c841446b9376b345d478a329450a66f629313c5cc"
                     "55133c4782ecd071963d74ffbd9156f63935651f054711b4b8105160ab"
                     "94eb675e66f02018c185acced5e9e2465fb4897d7c5dca45bfffe43281"
                     "5d22b778230b8d8c6fd854e58f2b7d490dfd67a5e8d8c8e925474f1986"
-                    "8c88a19a90ffeaf620a82ac1";
-    bigint8_t S = "43e64b245e65eada15e66dbcf12332ae80637917e65a68f9f9de45be6ce1"
+                    "8c88a19a90ffeaf620a82ac1");
+    bigint8_t S("43e64b245e65eada15e66dbcf12332ae80637917e65a68f9f9de45be6ce1"
                   "854a582634c139892d5aa29187801c7ca47af5ded85e5b0a32e825d706f6"
                   "eb0b2dffa2f80f69fecaf87aad0919765cc2cb2042e124eda7cd157bedd3"
                   "21cc12100f8ceb3b90b68da13e5aa65c2c3ec184c6abbbf86dcbffdf1ce3"
-                  "6f1b5563e8b56044";
+                  "6f1b5563e8b56044");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "29e9cb3482e9eda5e6d714a2dc730d91bdfb2d42b14fe82ed953a0fcce"
+    bigint8_t Msg("29e9cb3482e9eda5e6d714a2dc730d91bdfb2d42b14fe82ed953a0fcce"
                     "95bb4a4b30f8a926f003e985b647984e1e03c5df60a009007442c9157a"
                     "9db599580a94c7a5d9449ac6e9fcf85677d52acc348990579a7a930d7f"
                     "f6da45ebb9c14127b30711160cc6b3c866a97f4d6259c3c76538aac39c"
-                    "5262ca3d917d321030983a2f";
-    bigint8_t S = "57b17157b4eaaf0a9bdcb9abe4b299a728e6df5f8e03d688037d5e1ed5c9"
+                    "5262ca3d917d321030983a2f");
+    bigint8_t S("57b17157b4eaaf0a9bdcb9abe4b299a728e6df5f8e03d688037d5e1ed5c9"
                   "a66c20ac739e1c3516a4cf78155f52ed7d054b5c5fed534b80dd3fc92fc0"
                   "920eae695f2fb9626cada584d572927a00d612aa690b7f6051dd581cce47"
                   "48eab9b4d886addaa32c4ed7d7221862354556eb68197b05bebda90c3e01"
-                  "e00e27c5ef547c83";
+                  "e00e27c5ef547c83");
 
     test(n, e, d, Msg, S);
   }
 
   {
-    bigint8_t Msg = "467e8ea634f7995dc46c11b8ab0b7508894681e81c3502c3b335e897e6"
+    bigint8_t Msg("467e8ea634f7995dc46c11b8ab0b7508894681e81c3502c3b335e897e6"
                     "d69df885f49557ce232784e3519b727ba6843bd7af5063f8bc1d610f86"
                     "ce5b35155e325ce175be8538395b34df67a421fca27e31330b59a41011"
                     "b290a58bdc8e740401b38f5564c2fd7ae89f609ed607d578db7f1cda50"
-                    "8af987be1fd946a25ab9346d";
-    bigint8_t S = "2b1ffb370d518a82646d86828db1fc7e8bfe73ee878da120fa92737c9174"
+                    "8af987be1fd946a25ab9346d");
+    bigint8_t S("2b1ffb370d518a82646d86828db1fc7e8bfe73ee878da120fa92737c9174"
                   "688995f2255b29e83b28c244cc563c9b33efd3f9f9e1638e2c16e24f2eae"
                   "19435696b2f4d1cf73064fc1cfccb2278c01f0979e7de7463bf8417bd698"
                   "6fbf1d34d382a978ce799582442afcc92b4fe743216b6f151f6a561d979c"
-                  "f683cab6af2ff4c5";
+                  "f683cab6af2ff4c5");
 
     test(n, e, d, Msg, S);
   }
@@ -780,144 +780,144 @@ TEST(RsaTest, SigGen_SHA1_RSA_PKCS_1024)
 
     {
       // SHAAlg = SHA1
-      bigint8_t Msg = "4c95073dac19d0256eaadff3505910e431dd50018136afeaf690b7d1"
+      bigint8_t Msg("4c95073dac19d0256eaadff3505910e431dd50018136afeaf690b7d1"
                       "8069fcc980f6f54135c30acb769bee23a7a72f6ce6d90cbc858c86db"
                       "bd64ba48a07c6d7d50c0e9746f97086ad6c68ee38a91bbeeeb2221aa"
                       "2f2fb4090fd820d4c0ce5ff025ba8adf43ddef89f5f3653de15edcf3"
-                      "aa8038d4686960fc55b2917ec8a8f9a8";
-      bigint8_t S = "53ab600a41c71393a271b0f32f521963087e56ebd7ad040e4ee8aa7c45"
+                      "aa8038d4686960fc55b2917ec8a8f9a8");
+      bigint8_t S("53ab600a41c71393a271b0f32f521963087e56ebd7ad040e4ee8aa7c45"
                     "0ad18ac3c6a05d4ae8913e763cfe9623bd9cb1eb4bed1a38200500fa7d"
                     "f3d95dea485f032a0ab0c6589678f9e8391b5c2b1392997ac9f82f1d16"
                     "8878916aace9ac7455808056af8155231a29f42904b7ab87a5d71ed639"
-                    "5ee0a9d024b0ca3d01fd7150";
+                    "5ee0a9d024b0ca3d01fd7150");
 
       test(n, e, d, Msg, S);
     }
 
     {
       // SHAAlg = SHA1
-      bigint8_t Msg = "e075ad4b0f9b5b20376e467a1a35e308793ba38ed983d03887b8b82e"
+      bigint8_t Msg("e075ad4b0f9b5b20376e467a1a35e308793ba38ed983d03887b8b82e"
                       "da630e68b8618dc45b93de5555d7bcfed23756401e61f5516757de6e"
                       "c3687a71755fb4a66cfaa3db0c9e69b631485b4c71c762eea229a046"
                       "9c7357a440950792ba9cd7ae022a36b9a923c2ebd2aa69897f4cceba"
-                      "0e7aee97033d03810725a9b731833f27";
-      bigint8_t S = "642609ce084f479271df596480252e2f892b3e7982dff95994c3eeda78"
+                      "0e7aee97033d03810725a9b731833f27");
+      bigint8_t S("642609ce084f479271df596480252e2f892b3e7982dff95994c3eeda78"
                     "7f80f3f6198bbce33ec5515378d4b571d7186078b75b43aed11d342547"
                     "386c5696eb3799a0b28475e54cd4ca7d036dcd8a11f5e10806f7d3b8cc"
                     "4fcb3e93e857be958344a34e126809c15b3d33661cf57bf5c338f07acc"
-                    "ed60f14019335c152d86b3b2";
+                    "ed60f14019335c152d86b3b2");
 
       test(n, e, d, Msg, S);
     }
 
     {
       // SHAAlg = SHA1
-      bigint8_t Msg = "18500155d2e0587d152698c07ba44d4f04aa9a900b77ce6678a137b2"
+      bigint8_t Msg("18500155d2e0587d152698c07ba44d4f04aa9a900b77ce6678a137b2"
                       "38b73b1aea24a409db563cf635209aea735d3b3c18d7d59fa167e760"
                       "b85d95e8aa21b3881b1b2076f9d15512ae4f3d6e9acc480ec08abbec"
                       "bffe4abf0531e87d3f66de1f13fd1aa41297ca58e87b2a56d6399a4c"
-                      "638df47e4e851c0ec6e6d97addcde366";
-      bigint8_t S = "42f3c3c75f65ad42057bfac13103837bf9f8427c6ebc22a3adf7b8e47a"
+                      "638df47e4e851c0ec6e6d97addcde366");
+      bigint8_t S("42f3c3c75f65ad42057bfac13103837bf9f8427c6ebc22a3adf7b8e47a"
                     "6857f1cb17d2a533c0a913dd9a8bdc1786222360cbd7e64b45fcf54f5d"
                     "a2f34230ab4806a087f8be47f35c4e8fee2e6aa2919a56679ce2a528a4"
                     "4bf818620d5b00b9ab0e1c8d2d722b53d3a8cca35a990ed25536ea6533"
-                    "5e8253a54a68a64a373e0ed7";
+                    "5e8253a54a68a64a373e0ed7");
 
       test(n, e, d, Msg, S);
     }
 
     {
       // SHAAlg = SHA1
-      bigint8_t Msg = "f7f79f9df2760fc83c73c7ccea7eae482dcfa5e02acf05e105db4828"
+      bigint8_t Msg("f7f79f9df2760fc83c73c7ccea7eae482dcfa5e02acf05e105db4828"
                       "3f440640439a24ca3b2a482228c58f3f32c383db3c4847d4bcc615d3"
                       "cac3eb2b77dd80045f0b7db88225ea7d4fa7e64502b29ce23053726e"
                       "a00883ea5d80502509a3b2df74d2142f6e70de22d9a134a50251e1a5"
-                      "31798e747e9d386fe79ae1dea09e851b";
-      bigint8_t S = "ac2ae66bca1ec12a66a2909fe2148a1d492d1edd00063b8b33af74760d"
+                      "31798e747e9d386fe79ae1dea09e851b");
+      bigint8_t S("ac2ae66bca1ec12a66a2909fe2148a1d492d1edd00063b8b33af74760d"
                     "c4056718fd5041d4dfee12bec7081ab1bab2d0eb2712f334509f6889b1"
                     "9d75d1fd0fc61bf12976109c3614c46051e2a401b20880d6e64ad6a47f"
                     "23939803d138aa0a44bc41ba63030746622248771431dff97e8a856f0b"
-                    "61d114f813911ee229655155";
+                    "61d114f813911ee229655155");
 
       test(n, e, d, Msg, S);
     }
 
     {
       // SHAAlg = SHA1
-      bigint8_t Msg = "099bf17f16bcfd4c19b34fecb4b3233c9f9f98718f67b3065d95a5f8"
+      bigint8_t Msg("099bf17f16bcfd4c19b34fecb4b3233c9f9f98718f67b3065d95a5f8"
                       "642351362b9009534433987f73ce86b513669736b65295350c934fd4"
                       "0663e24f3a1037778a0bcd63003cb962fd99eb3393f7b2792f208369"
                       "7b25f6c682f6110f162fc9f76e35c615148267ddff3d06cffb0e7dee"
-                      "5230e874a5c8adc41b75baa0be280e9c";
-      bigint8_t S = "3a2b7571619272b81d3562a11c644502894421583e02879f5a7759fb64"
+                      "5230e874a5c8adc41b75baa0be280e9c");
+      bigint8_t S("3a2b7571619272b81d3562a11c644502894421583e02879f5a7759fb64"
                     "ec2ab8105f7d11947c8e4bfca87219e52987aad3b81cbd483166ed7815"
                     "2af24460c908879f34c870573127e3448c8fbf43028350c975bbc3a999"
                     "196a3e9961228a2bb15b4985e95bba970ac4ad2ac5b42ac51dbc6509ef"
-                    "fc13396693980fc89ba44c7b";
+                    "fc13396693980fc89ba44c7b");
 
       test(n, e, d, Msg, S);
     }
 
     {
       // SHAAlg = SHA1
-      bigint8_t Msg = "fb40a73dc82f167f9c2bf98a991ea82fdb0141dbad44871afd70f05a"
+      bigint8_t Msg("fb40a73dc82f167f9c2bf98a991ea82fdb0141dbad44871afd70f05a"
                       "0e0bf9f26dbcbd6226afc6dc373b230445c2baf58ed9e0841fa927c8"
                       "479577da4b1e61d95b03af31c5ac401d69c8136b6d36a1803221709b"
                       "8670e55e1b5d5a8a3763700aae5ea6330eee2b4a191cf146784003d8"
-                      "ad2218a94a5f68e3600ebef23ba4cf8c";
-      bigint8_t S = "b10322602c284f4079e509faf3f40a3d2af3abef9f09171fdd16469d67"
+                      "ad2218a94a5f68e3600ebef23ba4cf8c");
+      bigint8_t S("b10322602c284f4079e509faf3f40a3d2af3abef9f09171fdd16469d67"
                     "9bb9adc7e2acb1addb0bd5b38b5c4d986b43c79b9724f61e99b5b30363"
                     "0b62d0d8d5f76577fe7ea387710b43789ee1b35b614b691f0a27b73baf"
                     "6bc3f28ec210b9d3e4c5a2729cc1203b74ef70e315cfe5d06e040aee6b"
-                    "3d22d91d6e229f690a966dd9";
+                    "3d22d91d6e229f690a966dd9");
 
       test(n, e, d, Msg, S);
     }
 
     {
       // SHAAlg = SHA1
-      bigint8_t Msg = "97e74960dbd981d46aadc021a6cf181ddde6e4cfcb4b638260c0a519"
+      bigint8_t Msg("97e74960dbd981d46aadc021a6cf181ddde6e4cfcb4b638260c0a519"
                       "c45faba299d0ca2e80bf50dfde8d6a42e04645dfbcd4740f3a72920e"
                       "74632851d9e3d01a785e9b497ce0b175f2cd373bd3d276d63e1b39f0"
                       "05c676b86b9831352cef9edabef8865ad722ebbe2fd3efb48759f22a"
-                      "ea23fb1b333159a9cfc98a6dc46c5b0b";
-      bigint8_t S = "60ebc9e4e2e2b4fa6d31c57d0b86835e8d201d21c274cf5452cdd7ef28"
+                      "ea23fb1b333159a9cfc98a6dc46c5b0b");
+      bigint8_t S("60ebc9e4e2e2b4fa6d31c57d0b86835e8d201d21c274cf5452cdd7ef28"
                     "57dc780dde3526f3658c4f2c8710eaae4870d275997e5cbb268e3bd251"
                     "f543b8828feb85c211c858e47a74cb122dc17f26fe92b4afeecbf1e20b"
                     "ea75c794c0482aa6532e87955dba249f0fa6562bdf8f4ccd8a63da69d1"
-                    "f337523f65206fb8eb163173";
+                    "f337523f65206fb8eb163173");
 
       test(n, e, d, Msg, S);
     }
 
     {
       // SHAAlg = SHA1
-      bigint8_t Msg = "95d04624b998938dd0a5ba6d7042aa88a2674dad438a0d31abb7979d"
+      bigint8_t Msg("95d04624b998938dd0a5ba6d7042aa88a2674dad438a0d31abb7979d"
                       "8de3dea41e7e63587a47b59d436433dd8bb219fdf45abb9015a50b4b"
                       "201161b9c2a47c304b80c4040fb8d1fa0c623100cded661b8eb52fa0"
                       "a0d509a70f3cf4bd83047ad964ffee924192f28e73c63b3efd9c99c8"
-                      "b7a13145acc30d2dc063d80f96abe286";
-      bigint8_t S = "859cc4fcd1b88ccda695b12311cf8bdca3b4c135faa11f9053dc10f4bf"
+                      "b7a13145acc30d2dc063d80f96abe286");
+      bigint8_t S("859cc4fcd1b88ccda695b12311cf8bdca3b4c135faa11f9053dc10f4bf"
                     "12e5f2179be6ab5ad90f8d115f5df795a77340e20662809fa732b92560"
                     "adcffdb0ddb72d33811e94f854330680f2b238300995a9113a469afd9e"
                     "756f649208d2942febffb22e832279063ec5b57ab542d9bbc56e82cdc6"
-                    "a03b00d10d45801575e949e1";
+                    "a03b00d10d45801575e949e1");
 
       test(n, e, d, Msg, S);
     }
 
     {
       // SHAAlg = SHA1
-      bigint8_t Msg = "207102f598ec280045be67592f5bba25ba2e2b56e0d2397cbe857cde"
+      bigint8_t Msg("207102f598ec280045be67592f5bba25ba2e2b56e0d2397cbe857cde"
                       "52da8cca83ae1e29615c7056af35e8319f2af86fdccc4434cd7707e3"
                       "19c9b2356659d78867a6467a154e76b73c81260f3ab443cc039a0d42"
                       "695076a79bd8ca25ebc8952ed443c2103b2900c9f58b6a1c8a6266e4"
-                      "3880cda93bc64d714c980cd8688e8e63";
-      bigint8_t S = "77f0f2a04848fe90a8eb35ab5d94cae843db61024d0167289eea92e5d1"
+                      "3880cda93bc64d714c980cd8688e8e63");
+      bigint8_t S("77f0f2a04848fe90a8eb35ab5d94cae843db61024d0167289eea92e5d1"
                     "e10a526e420f2d334f1bf2aa7ea4e14a93a68dba60fd2ede58b794dcbd"
                     "37dcb1967877d6b67da3fdf2c0c7433e47134dde00c9c4d4072e43361a"
                     "767a527675d8bda7d5921bd483c9551950739e9b2be027df3015b61f75"
-                    "1ac1d9f37bea3214d3c8dc96";
+                    "1ac1d9f37bea3214d3c8dc96");
 
       test(n, e, d, Msg, S);
     }
