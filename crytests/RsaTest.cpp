@@ -5,6 +5,9 @@
 #include "algorithm.hpp"
 
 #include "basic_int.hpp"
+#include "rsa/RSASignVerify.hpp"
+#include "sha1.hpp"
+#include "pkcs1v1_5.hpp"
 
 using namespace std;
 using namespace cry;
@@ -13,24 +16,16 @@ class RsaTest : public ::testing::Test
 {
 };
 
-TEST(RsaTest, SigGen_PKCS_1_Ver_1_5)
+TEST(RsaTest, SigGen_SHA1_RSA_PKCS_1024)
 {
     // [mod = 1024]
-
     auto test=[](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S)
-    {        
-		/*cry::rsa<bigint8_t, 1024, EMSA_PKCS1_v1_5<SHA1>> rsa;
-		cry::rsa<bigint8_t, 1024, EMSA_PKCS1_v1_5<SHA1>>::rsa_key prv;
-
-		prv.modulus = n;
-		prv.exponent = d;
-
+    {     
 		std::vector<uint8_t> plain(Msg);
 		std::vector<uint8_t> signature;
 
-		signature = rsa.sign(plain.begin(), plain.end(), prv);
-		
-		EXPECT_EQ(signature, S);*/
+		RSASignVerify<EMSA_PKCS1_v1_5<SHA1>, 1024>::sign(plain.begin(), plain.end(), d, n, signature);
+		EXPECT_EQ(signature, S);
     };
 
     {

@@ -9,16 +9,20 @@
 
 #include <cctype>
 
+#include "basic_int.hpp"
 #include "googletest/include/gtest/gtest.h"
+#include "pkcs1v1_5.hpp"
+#include "rsa/RSASignVerify.hpp"
 
 using namespace std;
 using namespace cry;
 
-int main(int argc, char** argv)
+int main(int argc, char **argv) 
 {
-    ::testing::InitGoogleTest(&argc, argv);
 
-    int rval = RUN_ALL_TESTS();
+  ::testing::InitGoogleTest(&argc, argv);
 
-    return rval;
+  int rval = RUN_ALL_TESTS();
+
+  return rval;
 }
