@@ -7,6 +7,7 @@ set(EXECUTABLE_OUTPUT_PATH "bin")
 
 set (HEADERS
 	../include/rsa/rsa.hpp
+	../include/rsa/RSASignVerify.hpp
 	../include/algorithm.hpp
 	../include/basic_int.hpp
 	../include/mgf.hpp
