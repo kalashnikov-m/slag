@@ -399,7 +399,7 @@ namespace cry {
       auto it(out.begin());
 
       std::for_each(first, last, [&it](auto x) {
-        auto val = SwapBytes<ElemT, sizeof(ElemT)>()(x);
+        ElemT val = SwapBytes<ElemT, sizeof(ElemT)>()(x);
 
         for (size_t i = 0; i < sizeof(ElemT); ++i) {
           *it++ = static_cast<uint8_t>(val & 0xff);
