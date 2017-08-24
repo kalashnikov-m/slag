@@ -25,14 +25,45 @@ struct RSASignVerify {
   template <size_t modulusBits, class InputIterator>
   static bool verify(InputIterator s_first, InputIterator s_last, InputIterator m_first, InputIterator m_last, const T &publicExponent, const T &modulus) {
 
-    T signature(s_first, s_last);
-    T t = cry::PowMod(signature, publicExponent, modulus);
+    ///////////////////////
+    // 1. Length checking:
+    size_t k = modulusBits / 8;
+    auto sz = std::distance(s_first, s_last);
+    if (k != sz) {
+      return false;
+    }
 
-    std::vector<uint8_t> encoded(t);
+    ////////////////////////
+    // 2. RSA verification:
 
-    auto decoded = Encoder::Decode(encoded.begin(), encoded.end(), modulusBits / 8);
+    //////////////////////////////////////////////////////////////////////
+    // 2a. Convert the signature S to an integer signature representative
+    T s(s_first, s_last);
 
-    return std::equal(m_first, m_last, decoded.begin(), decoded.end());
+    ///////////////////////////////////////////////
+    // 2b. Apply the RSAVP1 verification primitive
+    T m = cry::PowMod(s, publicExponent, modulus);
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+    // 2c. Convert the message representative m to an encoded message EM of length k octets
+    std::vector<uint8_t> EM(m);
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // 3. Apply the EMSA-PKCS1-v1_5 encoding operation to the message M to produce a second encoded message EM’ of length k octets:
+    auto EM_ = Encoder::Encode(m_first, m_last, k);
+
+    ////////////////////////////////////////////////////////////////////////
+    // 4. Compare the encoded message EM and the second encoded message EM’
+    bool f(false);
+    auto it(EM_.begin());
+
+    if (EM_.size() != EM.size()) {
+      ++it;
+    }
+
+    f = std::equal(it, std::end(EM_), std::begin(EM), std::end(EM));
+
+    return f;
   }
 };
 
