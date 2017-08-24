@@ -115,7 +115,7 @@ namespace cry {
         }
 
         template <class InputIterator, class MInputIterator>
-        bool Verify(MInputIterator mFirst, MInputIterator mLast, InputIterator first, InputIterator last, size_t emBits) const {
+        bool Verify(MInputIterator m_first, MInputIterator m_last, InputIterator em_first, InputIterator em_last, size_t emBits) const {
 
             size_t emLen = emBits / 8;
             size_t hLen = HashType::size;
@@ -126,7 +126,7 @@ namespace cry {
             HashType hash;
 
             std::vector<uint8_t> mHash(hLen);
-            hash(mFirst, mLast, mHash.begin());
+            hash(m_first, m_last, mHash.begin());
 
 			//////////////////////////////////////////////////////////////////
             // 3.  If emLen < hLen + sLen + 2, output "inconsistent" and stop.
@@ -137,7 +137,7 @@ namespace cry {
 			/////////////////////////////////////////////////////////////////////////
             // 4.  If the rightmost octet of EM does not have hexadecimal value 0xbc, 
         	// output "inconsistent" and stop.
-            if (*(last - 1) != 0xbc) {
+            if (*(em_last - 1) != 0xbc) {
 				throw std::exception("inconsistent");
             }
 
@@ -145,9 +145,9 @@ namespace cry {
             // 5.  Let maskedDB be the leftmost emLen - hLen - 1 octets of EM, 
         	// and let H be the next hLen octets.
             size_t dbLen = emLen - hLen - 1;
-            std::vector<uint8_t> maskedDB(first, first + dbLen);
+            std::vector<uint8_t> maskedDB(em_first, em_first + dbLen);
 
-            std::vector<uint8_t> H(first + dbLen, first + dbLen + hLen);
+            std::vector<uint8_t> H(em_first + dbLen, em_first + dbLen + hLen);
 
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
             // 6. If the leftmost 8emLen - emBits bits of the leftmost octet in maskedDB are not all equal to zero, 
@@ -188,12 +188,14 @@ namespace cry {
 				throw std::exception("inconsistent");
             }
 
-            // 11. Let salt be the last sLen octets of DB.
+			//////////////////////////////////////////////////
+            // 11. Let salt be the em_last sLen octets of DB.
             auto sIt = DB.end();
             std::advance(sIt, -sLen);
 
             std::vector<uint8_t> salt(sIt, DB.end());
 
+			////////////////////////////////////////////////////////////////
             // 12. Let  M' = (0x)00 00 00 00 00 00 00 00 || mHash || salt ;
             // M' is an octet string of length 8 + hLen + sLen with eight initial zero octets.
             auto M_ = std::vector<uint8_t>(8 + hLen + sLen);
