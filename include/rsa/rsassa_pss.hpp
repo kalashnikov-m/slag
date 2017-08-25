@@ -19,7 +19,7 @@ namespace cry {
 			// 1. EMSA-PSS encoding:
 			Encoder encoder;
 			std::vector<uint8_t> EM(modBits / 8);
-			encoder.encode(m_first, m_first, EM.begin(), modBits, salt);
+			encoder.encode(m_first, m_last, EM.begin(), modBits, salt);
 
 			//////////////////////////
 			// 2. RSA signature:
