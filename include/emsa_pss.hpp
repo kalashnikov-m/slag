@@ -118,7 +118,7 @@ namespace cry {
         }
 
         template <class InputIterator, class MInputIterator>
-        bool Verify(MInputIterator m_first, MInputIterator m_last, InputIterator em_first, InputIterator em_last, size_t emBits) const {
+        bool verify(MInputIterator m_first, MInputIterator m_last, InputIterator em_first, InputIterator em_last, size_t emBits) const {
 
             size_t emLen = emBits / 8;
             size_t hLen = HashType::size;

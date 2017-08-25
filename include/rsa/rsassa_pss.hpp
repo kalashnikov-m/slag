@@ -10,7 +10,7 @@
 namespace cry {
 
 	template<class Encoder=emsa_pss<SHA1>, class T = bigint8_t>
-	struct rsass_pss
+	struct rsassa_pss
 	{
 		template<class InputIterator>
 		std::vector<uint8_t> sign(InputIterator m_first, InputIterator m_last, const T& n, const T& d, size_t modBits, const std::vector<uint8_t>& salt = std::vector<uint8_t>()) const
@@ -39,10 +39,37 @@ namespace cry {
 			return S;
 		}
 
-		template<class InputIterator, class OutputIterator>
-		bool verify(InputIterator m_first, InputIterator m_last, const T& n, const T& e) const
+		template<class MInputIterator, class InputIterator>
+		bool verify(MInputIterator m_first, MInputIterator m_last, InputIterator s_first, InputIterator s_last, const T& n, const T& e, size_t modBits) const
 		{
+			//////////////////////////////////////////
+			// 1. Length checking:
+			auto k = std::distance(s_first, s_last);
+			if (k != modBits/8)
+				return false;
 
+			///////////////////////////////////////
+			// 2. RSA verification:
+
+			///////////////////////////////////////////////////////////////////////
+			// 2a. Convert the signature S to an integer signature representative s
+			const T s(s_first, s_last);
+
+			///////////////////////////////////////////////////////////////////////
+			// 2b. Apply the RSAVP1 verification primitive to to produce an integer message representative m:
+			const T m = cry::PowMod(s, e, n);
+
+			///////////////////////////////////////////////////////////////////////
+			// 2c. Convert the message representative m to an encoded message EM
+			const std::vector<uint8_t> EM(m);
+
+			////////////////////////////
+			// 3. EMSA - PSS verification :
+
+			Encoder encoder;
+			bool result = encoder.verify(m_first, m_last, EM.begin(), EM.end(), modBits);
+
+			return result;
 		}
 	};
 
