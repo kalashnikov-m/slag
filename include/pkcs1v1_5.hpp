@@ -52,7 +52,7 @@ namespace cry {
     };
 
 	template<class DigestType=SHA1>
-    class emsa_pkcs1_v1_5 {
+    class emsa_pkcs1 {
 
       public:
         template <class InputIterator>

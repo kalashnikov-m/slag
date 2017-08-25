@@ -10,7 +10,7 @@
 namespace cry {
 
 template <class Encoder, class T = bigint8_t>
-struct rsass_pkcs1_v1_5 {
+struct rsassa_pkcs1 {
   template <size_t modulusBits, class InputIterator>
   static void sign(InputIterator first, InputIterator last, const T &privateExponent, const T &modulus, std::vector<uint8_t> &signature) {
 
