@@ -11,7 +11,7 @@ namespace cry {
 
       public:
         template <class InputIterator, class OutputIterator>
-        void Encode(InputIterator first, InputIterator last, OutputIterator result, size_t k) {
+        void encode(InputIterator first, InputIterator last, OutputIterator result, size_t k) {
 
             size_t mLen = std::distance(first, last);
             size_t psLen = k - mLen - 3;
@@ -32,7 +32,7 @@ namespace cry {
         }
 
         template <class InputIterator, class OutputIterator>
-        void Decode(InputIterator first, InputIterator last, OutputIterator result, size_t k) {
+        void decode(InputIterator first, InputIterator last, OutputIterator result, size_t k) {
             if (first != last && *first++ != 0x00)
                 throw 1; // decryption error
 
@@ -52,11 +52,11 @@ namespace cry {
     };
 
 	template<class DigestType=SHA1>
-    class EMSA_PKCS1_v1_5 {
+    class emsa_pkcs1_v1_5 {
 
       public:
         template <class InputIterator>
-        static std::vector<uint8_t> Encode(InputIterator first, InputIterator last, size_t emLen) {
+        static std::vector<uint8_t> encode(InputIterator first, InputIterator last, size_t emLen) {
 
 			std::vector<uint8_t> out(emLen);
 			auto result = out.begin();
@@ -94,7 +94,7 @@ namespace cry {
         }
 
         template <class InputIterator>
-        static std::vector<uint8_t> Decode(InputIterator first, InputIterator last, size_t emLen) {
+        static std::vector<uint8_t> decode(InputIterator first, InputIterator last, size_t emLen) {
 
 			/*
 			* The format is
@@ -107,24 +107,24 @@ namespace cry {
 			if (len == emLen)
 			{
 				if (first != last && *first++ != 0x00)
-					throw 1; // signature invalid
+					throw std::exception("signature invalid");
 			}
             
             if (first != last && *first++ != 0x01)
-                throw 1; // signature invalid
+				throw std::exception("signature invalid");
 
             for (; first != last && *first != 0x00 && *first == 0xff; ++first)
                 ;
 
             if (*first++ != 0x00)
-                throw 1; // signature invalid
+				throw std::exception("signature invalid");
 
             auto oid = OID<DigestType>::value();
 
 			size_t oidLen = oid.size();
             bool eq = std::equal(std::begin(oid), std::end(oid), first);
             if (!eq) {
-                throw 1; // signature invalid
+				throw std::exception("signature invalid");
             }
 
             first += oidLen;

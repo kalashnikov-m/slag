@@ -9,11 +9,11 @@
 namespace cry {
 
     template <class HashType, class MGFType = MGF1<SHA1>, size_t sLen = HashType::size>
-    class EMSA_PSS{
+    class emsa_pss{
 
       public:
         template <class InputIterator, class OutputIterator>
-        void Encode(InputIterator first, InputIterator last, OutputIterator result, size_t emBits) const {
+        void encode(InputIterator first, InputIterator last, OutputIterator result, size_t emBits, const std::vector<uint8_t>& saltVal=std::vector<uint8_t>()) const {
 
             size_t emLen = emBits / 8;
             size_t hLen = HashType::size;
@@ -35,13 +35,16 @@ namespace cry {
 			///////////////////////////////////////////////////////////
             // 4.  Generate a random octet string salt of length sLen; 
         	// if sLen = 0, then salt is the empty string.
-            // std::vector<uint8_t> salt = {0xe3, 0xb5, 0xd5, 0xd0, 0x02, 0xc1, 0xbc, 0xe5, 0x0c, 0x2b, 0x65, 0xef, 0x88, 0xa1, 0x88, 0xd8, 0x3b, 0xce, 0x7e, 0x61};
-            std::vector<uint8_t> salt(sLen);
-            std::random_device rd;
-            std::mt19937 gen(rd());
-            std::uniform_int_distribution<> uid(1, 255);
+			std::vector<uint8_t> salt = saltVal;
+			if (salt.empty()) {
 
-            std::generate(std::begin(salt), std::end(salt), [&uid, &gen]() { return uid(gen); });
+				salt.resize(sLen);
+				std::random_device rd;
+				std::mt19937 gen(rd());
+				std::uniform_int_distribution<> uid(1, 255);
+
+				std::generate(std::begin(salt), std::end(salt), [&uid, &gen]() { return uid(gen); });
+			}
 
 			//////////////////////////////////////////////////////////////
             // 5.  Let M' = (0x)00 00 00 00 00 00 00 00 || mHash || salt; 

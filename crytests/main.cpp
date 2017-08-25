@@ -12,7 +12,7 @@
 #include "basic_int.hpp"
 #include "googletest/include/gtest/gtest.h"
 #include "pkcs1v1_5.hpp"
-#include "rsa/RSASignVerify.hpp"
+#include "rsa/rsass_pkcs1_v1_5.hpp"
 
 using namespace std;
 using namespace cry;

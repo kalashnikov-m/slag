@@ -10,11 +10,11 @@
 namespace cry {
 
 template <class Encoder, class T = bigint8_t>
-struct RSASignVerify {
+struct rsass_pkcs1_v1_5 {
   template <size_t modulusBits, class InputIterator>
   static void sign(InputIterator first, InputIterator last, const T &privateExponent, const T &modulus, std::vector<uint8_t> &signature) {
 
-    auto encoded = Encoder::Encode(first, last, modulusBits / 8);
+    auto encoded = Encoder::encode(first, last, modulusBits / 8);
 
     T arg(encoded.begin(), encoded.end());
     T result = cry::PowMod(arg, privateExponent, modulus);
@@ -50,7 +50,7 @@ struct RSASignVerify {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // 3. Apply the EMSA-PKCS1-v1_5 encoding operation to the message M to produce a second encoded message EM’ of length k octets:
-    auto EM_ = Encoder::Encode(m_first, m_last, k);
+    auto EM_ = Encoder::encode(m_first, m_last, k);
 
     ////////////////////////////////////////////////////////////////////////
     // 4. Compare the encoded message EM and the second encoded message EM’
