@@ -50,7 +50,7 @@ namespace cry {
 
             ////////////// counting hexadecimal characters //////////////
             //
-            size_t nchars = std::count_if(hex.begin(), hex.end(), [](unsigned char c){ return std::isalnum(c); });
+            size_t nchars = std::count_if(rit, rend, [](unsigned char c){ return std::isalnum(c); });
             size_t nbytes = nchars / 2;
             nbytes += nchars % 2;
 

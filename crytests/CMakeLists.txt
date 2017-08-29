@@ -8,14 +8,15 @@ set(EXECUTABLE_OUTPUT_PATH "bin")
 set (HEADERS
 	../include/rsa/rsa.hpp
 	../include/rsa/rsassa_pss.hpp
-	../include/rsa/RSASignVerify.hpp
+	../include/rsa/rsassa_pkcs1.hpp
 	../include/algorithm.hpp
 	../include/basic_int.hpp
 	../include/mgf.hpp
 	../include/oaep.hpp
 	../include/oid.hpp
-	../include/pkcs1v1_5.hpp
-	../include/pss.hpp
+	../include/emsa_pkcs1.hpp
+	../include/eme_pkcs1.hpp
+	../include/emsa_pss.hpp
 	../include/sha1.hpp
 	../include/sha224.hpp
 	../include/sha256.hpp
