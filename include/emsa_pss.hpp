@@ -1,8 +1,6 @@
 #ifndef PSS_H
 #define PSS_H
 
-#include <iterator>
-
 #include <mgf.hpp>
 #include <sha1.hpp>
 
