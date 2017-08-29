@@ -11,7 +11,7 @@
 
 #include "basic_int.hpp"
 #include "googletest/include/gtest/gtest.h"
-#include "pkcs1v1_5.hpp"
+#include "emsa_pkcs1.hpp"
 #include "rsa/rsassa_pkcs1.hpp"
 
 using namespace std;
