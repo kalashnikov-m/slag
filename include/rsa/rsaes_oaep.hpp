@@ -57,9 +57,7 @@ template <class Encoder, class IntType = bigint8_t> struct rsaes_oaep {
   }
 
   template <class InputIterator, class OutputIterator>
-  static OutputIterator decrypt(InputIterator c_first, InputIterator c_last,
-                                const IntType &d, const IntType &n,
-                                size_t modBits) {
+  static OutputIterator decrypt(InputIterator c_first, InputIterator c_last, OutputIterator result, const IntType &d, const IntType &n, size_t modBits) {
 
     ///////////////////////
     // 1. Length checking:
@@ -68,8 +66,7 @@ template <class Encoder, class IntType = bigint8_t> struct rsaes_oaep {
     size_t cLen = std::distance(c_first, c_last);
 
     ////////////////////////////////////////////////////////////////////////////////////////////
-    // b. If the length of the ciphertext C is not k octets, output “decryption
-    // error” and stop.
+    // b. If the length of the ciphertext C is not k octets, output “decryption error” and stop.
     if (cLen != k) {
       throw std::exception("decryption error");
     }
