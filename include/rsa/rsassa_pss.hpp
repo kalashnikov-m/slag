@@ -58,7 +58,7 @@ namespace cry {
 
 			///////////////////////////////////////////////////////////////////////
 			// 2b. Apply the RSAVP1 verification primitive to to produce an integer message representative m:
-			const T m = cry::PowMod(s, e, n);
+			const T m = cry::pow_mod(s, e, n);
 
 			///////////////////////////////////////////////////////////////////////
 			// 2c. Convert the message representative m to an encoded message EM

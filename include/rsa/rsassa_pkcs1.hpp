@@ -49,11 +49,11 @@ struct rsassa_pkcs1 {
     std::vector<uint8_t> EM(m);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // 3. Apply the EMSA-PKCS1-v1_5 encoding operation to the message M to produce a second encoded message EMï¿½ of length k octets:
+    // 3. Apply the EMSA-PKCS1-v1_5 encoding operation to the message M to produce a second encoded message EM’ of length k octets:
     auto EM_ = Encoder::encode(m_first, m_last, k);
 
     ////////////////////////////////////////////////////////////////////////
-    // 4. Compare the encoded message EM and the second encoded message EMï¿½
+    // 4. Compare the encoded message EM and the second encoded message EM’
     bool f(false);
     auto it(EM_.begin());
 
