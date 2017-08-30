@@ -9,21 +9,21 @@
 
 namespace cry {
 
-template <class Encoder, class T = bigint8_t>
+template <class Encoder, class IntType = bigint8_t>
 struct rsassa_pkcs1 {
   template <size_t modulusBits, class InputIterator>
-  static void sign(InputIterator first, InputIterator last, const T &privateExponent, const T &modulus, std::vector<uint8_t> &signature) {
+  static void sign(InputIterator first, InputIterator last, const IntType &privateExponent, const IntType &modulus, std::vector<uint8_t> &signature) {
 
     auto encoded = Encoder::encode(first, last, modulusBits / 8);
 
-    T arg(encoded.begin(), encoded.end());
-    T result = cry::pow_mod(arg, privateExponent, modulus);
+    IntType arg(encoded.begin(), encoded.end());
+    IntType result = cry::pow_mod(arg, privateExponent, modulus);
 
     signature = (std::vector<uint8_t>)result;
   }
 
   template <size_t modulusBits, class InputIterator>
-  static bool verify(InputIterator s_first, InputIterator s_last, InputIterator m_first, InputIterator m_last, const T &publicExponent, const T &modulus) {
+  static bool verify(InputIterator s_first, InputIterator s_last, InputIterator m_first, InputIterator m_last, const IntType &publicExponent, const IntType &modulus) {
 
     ///////////////////////
     // 1. Length checking:
@@ -38,11 +38,11 @@ struct rsassa_pkcs1 {
 
     //////////////////////////////////////////////////////////////////////
     // 2a. Convert the signature S to an integer signature representative
-    T s(s_first, s_last);
+    IntType s(s_first, s_last);
 
     ///////////////////////////////////////////////
     // 2b. Apply the RSAVP1 verification primitive
-    T m = cry::pow_mod(s, publicExponent, modulus);
+    IntType m = cry::pow_mod(s, publicExponent, modulus);
 
     ////////////////////////////////////////////////////////////////////////////////////////
     // 2c. Convert the message representative m to an encoded message EM of length k octets

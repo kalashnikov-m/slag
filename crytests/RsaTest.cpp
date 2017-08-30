@@ -10,6 +10,7 @@
 #include "emsa_pkcs1.hpp"
 #include "rsa/rsassa_pss.hpp"
 #include "eme_oaep.hpp"
+#include "rsa/rsaes_oaep.hpp"
 
 using namespace std;
 using namespace cry;
@@ -52,14 +53,10 @@ TEST(RsaTest, RSA_OAEP_)
 	  bigint8_t phi = (p - 1)*(q - 1);
 	  cry:: ModInverse(d, e, phi);
   }
-  //cry::ModInverse(d, e, n);
-
+  
   //# Message M to be encrypted :
   bigint8_t M("d4 36 e9 95 69 fd 32 a7 c8 a0 5b bc 90 d3 2c 49");
-
-  
-  //cry::eme_oaep<SHA1> oaep;
-
+   
   //# seed:
   bigint8_t Seed("aa fd 12 f6 59 ca e6 34 89 b4 79 e5 07 6d de c2 f0 6c b5 8f");
 	  
@@ -67,7 +64,11 @@ TEST(RsaTest, RSA_OAEP_)
   std::vector<uint8_t> seed(Seed);
   std::vector<uint8_t> EM(128);
 
-  eme_oaep<SHA1>::encode(m.begin(), m.end(), EM.begin(), 128, seed);
+  {
+	  std::vector<uint8_t> c(128);
+	  rsaes_oaep<eme_oaep<SHA1>>::encrypt(m.begin(), m.end(), c.begin(), e, n, 1024);
+  }
+  /*eme_oaep<SHA1>::encode(m.begin(), m.end(), EM.begin(), 128, seed);
 	
   bigint8_t em(EM);
   bigint8_t cipher = cry::pow_mod(em, e, n);
@@ -80,7 +81,7 @@ TEST(RsaTest, RSA_OAEP_)
   auto end = eme_oaep<SHA1>::decode(em_.begin(), em_.end(), DM_.begin(), 128);
 
   //std::vector<uint8_t> x(DM_.begin(), end);
-  bigint8_t x(DM_.begin(), end);
+  bigint8_t x(DM_.begin(), end);*/
 }
 
 TEST(RsaTest, SigGen_SHA1_RSA_PSS_SHA1)
