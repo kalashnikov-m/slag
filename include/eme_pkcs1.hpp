@@ -10,7 +10,7 @@ namespace cry {
 
       public:
         template <class InputIterator, class OutputIterator>
-        void encode(InputIterator first, InputIterator last, OutputIterator result, size_t k) {
+        static OutputIterator encode(InputIterator first, InputIterator last, OutputIterator result, size_t k) {
 
             size_t mLen = std::distance(first, last);
             size_t psLen = k - mLen - 3;
@@ -27,11 +27,13 @@ namespace cry {
 
             *result++ = 0x00;
 
-            std::copy(first, last, result);
+            result = std::copy(first, last, result);
+
+			return result;
         }
 
         template <class InputIterator, class OutputIterator>
-        void decode(InputIterator first, InputIterator last, OutputIterator result, size_t k) {
+        static OutputIterator decode(InputIterator first, InputIterator last, OutputIterator result, size_t k) {
             if (first != last && *first++ != 0x00)
                 throw std::exception("decryption error");
 
@@ -44,10 +46,10 @@ namespace cry {
             if (*first != 0x00)
 				throw std::exception("decryption error");
 
-            std::copy(first, last, result);
-        }
+            result = std::copy(first, last, result);
 
-      private:
+			return result;
+        }
     };	
 }
 
