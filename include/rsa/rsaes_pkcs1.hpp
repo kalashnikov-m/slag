@@ -12,7 +12,7 @@ namespace cry {
 template <class Encoder, class T = bigint8_t>
 struct rsaes_pkcs1 {
 	template <class InputIterator, class OutputIterator>
-	static OutputIterator encrypt(InputIterator first, InputIterator last, const T &privateExponent, const T &modulus, size_t modBits) {
+	static OutputIterator encrypt(InputIterator first, InputIterator last, OutputIterator result, const T &e, const T &n, size_t modBits) {
 
     /*auto encoded = Encoder::encode(first, last, modulusBits / 8);
 
@@ -20,50 +20,15 @@ struct rsaes_pkcs1 {
     T result = cry::pow_mod(arg, privateExponent, modulus);
 
     signature = (std::vector<uint8_t>)result;*/
+
+		return result;
   }
 
 	template <class InputIterator, class OutputIterator>
-	static bool decrypt(InputIterator first, InputIterator last, const T &publicExponent, const T &modulus, size_t modBits) {
-	  /*
-    ///////////////////////
-    // 1. Length checking:
-    size_t k = modulusBits / 8;
-    auto sz = std::distance(s_first, s_last);
-    if (k != sz) {
-      return false;
-    }
+	static bool decrypt(InputIterator first, InputIterator last, OutputIterator result, const T &d, const T &n, size_t modBits) {
+	  
 
-    ////////////////////////
-    // 2. RSA verification:
-
-    //////////////////////////////////////////////////////////////////////
-    // 2a. Convert the signature S to an integer signature representative
-    T s(s_first, s_last);
-
-    ///////////////////////////////////////////////
-    // 2b. Apply the RSAVP1 verification primitive
-    T m = cry::pow_mod(s, publicExponent, modulus);
-
-    ////////////////////////////////////////////////////////////////////////////////////////
-    // 2c. Convert the message representative m to an encoded message EM of length k octets
-    std::vector<uint8_t> EM(m);
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // 3. Apply the EMSA-PKCS1-v1_5 encoding operation to the message M to produce a second encoded message EM’ of length k octets:
-    auto EM_ = Encoder::encode(m_first, m_last, k);
-
-    ////////////////////////////////////////////////////////////////////////
-    // 4. Compare the encoded message EM and the second encoded message EM’
-    bool f(false);
-    auto it(EM_.begin());
-
-    if (EM_.size() != EM.size()) {
-      ++it;
-    }
-
-    f = std::equal(it, std::end(EM_), std::begin(EM), std::end(EM));
-
-    return f;*/
+		return result;
   }
 };
 

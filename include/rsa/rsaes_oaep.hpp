@@ -30,7 +30,7 @@ template <class Encoder, class IntType = bigint8_t> struct rsaes_oaep {
     /////////////////////////
     // 2. EME-OAEP encoding
     std::vector<uint8_t> EM(k);
-    Encoder::encode(first, last, EM.begin());
+    Encoder::encode(first, last, EM.begin(), k);
 
     ///////////////////////
     // 3. RSA encryption:
