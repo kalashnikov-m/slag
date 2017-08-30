@@ -79,7 +79,8 @@ TEST(RsaTest, RSA_OAEP_)
   std::vector<uint8_t> DM_(64);
   auto end = eme_oaep<SHA1>::decode(em_.begin(), em_.end(), DM_.begin(), 128);
 
-  std::vector<uint8_t> x(DM_.begin(), end);
+  //std::vector<uint8_t> x(DM_.begin(), end);
+  bigint8_t x(DM_.begin(), end);
 }
 
 TEST(RsaTest, SigGen_SHA1_RSA_PSS_SHA1)

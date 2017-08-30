@@ -12,6 +12,9 @@ namespace cry {
     template <class HashType, class MGFType = MGF1<SHA1>, size_t hLen = HashType::size>
     class eme_oaep {
 
+    public:
+		using hash_type = HashType;
+
       public:
         template <class InputIterator, class OutputIterator>
         static OutputIterator encode(InputIterator first, InputIterator last, OutputIterator result, size_t k, const std::vector<uint8_t>& seedVal = std::vector<uint8_t>(), const std::vector<uint8_t>& L = std::vector<uint8_t>()) {
