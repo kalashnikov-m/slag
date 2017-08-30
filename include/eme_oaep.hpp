@@ -18,17 +18,23 @@ namespace cry {
 
             auto mLen = std::distance(first, last);
 
-            // a.
+			////////////////////////////////////////////////////////
+            // a. Let lHash = Hash (L), an octet string of length hLen
             auto lHash = std::vector<uint8_t>(hLen);
 
             HashType hash;
             hash(L.begin(), L.end(), lHash.begin());
 
-            // b.
+			///////////////////////////////////////////////////////////////////////////////
+            // b. Generate an octet string PS consisting of k – mLen – 2hLen – 2 zero octets.
+            // The length of PS may be zero.
             size_t psLen = k - mLen - 2 * hLen - 2;
             auto PS = std::vector<uint8_t>(psLen);
 
-            // c.
+			/////////////////////////////////////////////////////////////////////////////
+            // c. Concatenate lHash, PS, a single octet with hexadecimal value 0x01, and
+            // the message M to form a data block DB of length k – hLen – 1 octets as
+            // DB = lHash || PS || 0x01 || M .
             size_t dbLen = k - hLen - 1;
             auto DB = std::vector<uint8_t>(dbLen);
             auto it = DB.begin();
@@ -44,11 +50,12 @@ namespace cry {
             std::copy(first, last, it);
             it += mLen;
 
-            // d.
-            // std::vector<uint8_t> seed = {0xaa, 0xfd, 0x12, 0xf6, 0x59, 0xca, 0xe6, 0x34, 0x89, 0xb4, 0x79, 0xe5, 0x07, 0x6d, 0xde, 0xc2, 0xf0, 0x6c, 0xb5, 0x8f};
-
+			/////////////////////////////////////////////////////////
+			// d. Generate a random octet string seed of length hLen.
             auto seed = seedVal;
             if (seed.empty()) {
+			  seed.reserve(hLen);
+
               std::random_device rd;
               std::mt19937 gen(rd());
               std::uniform_int_distribution<> uid(1, 255);
@@ -56,29 +63,37 @@ namespace cry {
               std::generate(std::begin(seed), std::end(seed), [&uid, &gen]() { return uid(gen); });
             }
 
-            // e.
+			////////////////////////////////////////////
+            // e. Let dbMask = MGF (seed, k – hLen – 1)
             auto dbMask = std::vector<uint8_t>(dbLen);
 
             MGFType mgf;
             mgf(seed.begin(), seed.end(), dbMask.begin(), dbLen);
 
+			/////////////////////////////////////
             // f. Let maskedDB = DB \xor dbMask.
             std::vector<uint8_t> maskedDB(dbLen);
             for (size_t i = 0; i < dbLen; ++i) {
                 maskedDB[i] = DB[i] ^ dbMask[i];
             }
 
+			/////////////////////////////////////////
             // g. Let seedMask = MGF(maskedDB, hLen).
             std::vector<uint8_t> seedMask(hLen);
             mgf(maskedDB.begin(), maskedDB.end(), seedMask.begin(), hLen);
 
+			//////////////////////////////////////////
             // h. Let maskedSeed = seed \xor seedMask.
             std::vector<uint8_t> maskedSeed(hLen);
             for (size_t i = 0; i < hLen; ++i) {
                 maskedSeed[i] = seed[i] ^ seedMask[i];
             }
 
-            // i. Concatenate a single octet with hexadecimal value 0x00,  maskedSeed, and maskedDB to form an encoded message EM of length k octets as EM = 0x00 || maskedSeed || maskedDB.
+			/////////////////////////////////////////////////////////////////////////////
+			// i. Concatenate a single octet with hexadecimal value 0x00, maskedSeed, and
+            // maskedDB to form an encoded message EM of length k octets as
+            // EM = 0x00 || maskedSeed || maskedDB.
+
             *result++ = 0x00;
 
             std::copy(maskedSeed.begin(), maskedSeed.end(), result);
@@ -102,9 +117,17 @@ namespace cry {
           // b. Separate the encoded message EM into a single octet Y, an octet
           // string maskedSeed of length hLen, and an octet string maskedDB of
           // length k - hLen - 1 as EM = Y || maskedSeed || maskedDB.
-          auto Y = *first++;
-          if (Y != 0x00) {
-            throw 1; // decryption error
+          size_t sz = std::distance(first, last);
+
+		  if (sz > k)
+		  {
+			  throw std::exception("decryption error");
+		  }
+
+          if (sz == k) {
+            if (*first++ != 0x00) {
+              throw std::exception("decryption error");
+            }
           }
 
           std::vector<uint8_t> maskedSeed(first, first + hLen);
@@ -156,8 +179,8 @@ namespace cry {
             throw std::exception("decryption_error");
           }
 
-          std::copy(it, DB.end(), result);
-
+          result = std::copy(it, DB.end(), result);
+		  
           return result;
         }
     };
