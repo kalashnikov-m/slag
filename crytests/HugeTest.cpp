@@ -1161,7 +1161,7 @@ TEST(HugeTest, EvenOdd) {
 
 TEST(HugeTest, PowMod) {
     auto ModPowTest = [](const basic_int<byte>& a, const basic_int<byte>& exponent, const basic_int<byte>& modulus, const basic_int<byte>& expected) {
-        basic_int<byte> actual = cry::PowMod(a, exponent, modulus);
+        basic_int<byte> actual = cry::pow_mod(a, exponent, modulus);
 
         bool f = (expected == actual);
 

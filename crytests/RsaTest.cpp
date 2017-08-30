@@ -9,6 +9,7 @@
 #include "sha1.hpp"
 #include "emsa_pkcs1.hpp"
 #include "rsa/rsassa_pss.hpp"
+#include "eme_oaep.hpp"
 
 using namespace std;
 using namespace cry;
@@ -16,6 +17,70 @@ using namespace cry;
 class RsaTest : public ::testing::Test
 {
 };
+
+TEST(RsaTest, RSA_OAEP_)
+{
+  //# RSA modulus n :
+  bigint8_t n("bb f8 2f 09 06 82 ce 9c 23 38 ac 2b 9d a8 71 f7"
+              "36 8d 07 ee d4 10 43 a4 40 d6 b6 f0 74 54 f5 1f"
+              "b8 df ba af 03 5c 02 ab 61 ea 48 ce eb 6f cd 48"
+              "76 ed 52 0d 60 e1 ec 46 19 71 9d 8a 5b 8b 80 7f"
+              "af b8 e0 a3 df c7 37 72 3e e6 b4 b7 d9 3a 25 84"
+              "ee 6a 64 9d 06 09 53 74 88 34 b2 45 45 98 39 4e"
+              "e0 aa b1 2d 7b 61 a5 1f 52 7a 9a 41 f6 c1 68 7f"
+              "e2 53 72 98 ca 2a 8f 59 46 f8 e5 fd 09 1d bd cb");
+
+  //# RSA public exponent e :
+  bigint8_t e("11");
+
+  
+
+  //# Prime p :
+  bigint8_t p("ee cf ae 81 b1 b9 b3 c9 08 81 0b 10 a1 b5 60 01"
+              "99 eb 9f 44 ae f4 fd a4 93 b8 1a 9e 3d 84 f6 32"
+              "12 4e f0 23 6e 5d 1e 3b 7e 28 fa e7 aa 04 0a 2d"
+              "5b 25 21 76 45 9d 1f 39 75 41 ba 2a 58 fb 65 99");
+
+  //# Prime q :
+  bigint8_t q("c9 7f b1 f0 27 f4 53 f6 34 12 33 ea aa d1 d9 35"
+              "3f 6c 42 d0 88 66 b1 d0 5a 0f 20 35 02 8b 9d 86"
+              "98 40 b4 16 66 b4 2e 92 ea 0d a3 b4 32 04 b5 cf"
+              "ce 33 52 52 4d 04 16 a5 a4 41 e7 00 af 46 15 03");
+
+  bigint8_t d;
+  {
+	  bigint8_t phi = (p - 1)*(q - 1);
+	  cry:: ModInverse(d, e, phi);
+  }
+  //cry::ModInverse(d, e, n);
+
+  //# Message M to be encrypted :
+  bigint8_t M("d4 36 e9 95 69 fd 32 a7 c8 a0 5b bc 90 d3 2c 49");
+
+  
+  //cry::eme_oaep<SHA1> oaep;
+
+  //# seed:
+  bigint8_t Seed("aa fd 12 f6 59 ca e6 34 89 b4 79 e5 07 6d de c2 f0 6c b5 8f");
+	  
+  std::vector<uint8_t> m(M);
+  std::vector<uint8_t> seed(Seed);
+  std::vector<uint8_t> EM(128);
+
+  eme_oaep<SHA1>::encode(m.begin(), m.end(), EM.begin(), 128, seed);
+	
+  bigint8_t em(EM);
+  bigint8_t cipher = cry::pow_mod(em, e, n);
+
+  bigint8_t EM_ = cry::pow_mod(cipher, d, n);
+
+  std::vector<uint8_t> em_(EM_);
+
+  std::vector<uint8_t> DM_(64);
+  auto end = eme_oaep<SHA1>::decode(em_.begin(), em_.end(), DM_.begin(), 128);
+
+  std::vector<uint8_t> x(DM_.begin(), end);
+}
 
 TEST(RsaTest, SigGen_SHA1_RSA_PSS_SHA1)
 {
@@ -115,7 +180,7 @@ TEST(RsaTest, SigGen_SHA1_RSA_PSS_SHA1)
 		}*/
 }
 
-TEST(RsaTest, SigGen_SHA1_RSA_PKCS_224)
+TEST(RsaTest, SigGen_SHA224_RSA_PKCS_1024)
 {
   auto test = [](const bigint8_t &n, const bigint8_t &e, const bigint8_t &d,  const bigint8_t &Msg, const bigint8_t &S) {
     std::vector<uint8_t> plain(Msg);
@@ -2458,8 +2523,8 @@ TEST(RsaTest, SigGen_SHA1_RSA_PKCS_1024)
 TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Component_Test_Vectors)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& c, const bigint8_t& k) {
-        bigint8_t K = cry::PowMod(c, d, n);
-        bigint8_t C = cry::PowMod(k, e, n);
+        bigint8_t K = cry::pow_mod(c, d, n);
+        bigint8_t C = cry::pow_mod(k, e, n);
 
         EXPECT_EQ(k, K);
         EXPECT_EQ(c, C);
@@ -3373,7 +3438,7 @@ TEST(RsaTest, FIPS_186_4_RSA_PKCS1_v1_5_RSASP1_Signature_Primitive_Component)
 
             EXPECT_TRUE(EM <= n);
 
-            const bigint8_t s = cry::PowMod(EM, d, n);
+            const bigint8_t s = cry::pow_mod(EM, d, n);
             EXPECT_EQ(s, S);
         };
 

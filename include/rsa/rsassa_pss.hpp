@@ -31,7 +31,7 @@ namespace cry {
 
 			////////////////////////////////////////////
 			// 2b. Apply the RSASP1 signature primitive
-			const T s = cry::PowMod(m, d, n);
+			const T s = cry::pow_mod(m, d, n);
 
 			//////////////////////////////////////////////////////////////////////////////////
 			// 2c. Convert the signature representative s to a signature S of length k octets

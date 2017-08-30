@@ -97,7 +97,7 @@ namespace cry {
     }
 
     template <class T>
-    const T PowMod(const T& arg, const T& exp, const T& mod) {
+    const T pow_mod(const T& arg, const T& exp, const T& mod) {
         T y = 1;
         T a = arg;
         T e = exp;
@@ -138,13 +138,13 @@ namespace cry {
         for (; t-- > 0;) {
             a++;
 
-            T b = PowMod(a, w, p);
+            T b = pow_mod(a, w, p);
             if (b == 1 || b == p_minus_1) {
                 goto nexta;
             }
 
             for (int j = 1; j < v; ++j) {
-                b = PowMod(b, T(2), p);
+                b = pow_mod(b, T(2), p);
                 if (b == 1) {
                     return false;
                 }

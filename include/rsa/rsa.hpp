@@ -53,29 +53,7 @@ namespace cry {
 
             prv.exponent = d;
             prv.modulus = N;
-        }
-
-        void encrypt(T& encrypted, const T& plain, const rsa_key& public_key)
-        {
-            encrypted = cry::PowMod(plain, public_key.exponent, public_key.modulus);
-        }
-
-        void decrypt(T& plain, const T& encrypted, const rsa_key& private_key)
-        {
-            plain = cry::PowMod(encrypted, private_key.exponent, private_key.modulus);
-        }
-
-        void sign(T& signature, const T& plain, const rsa_key& private_key)
-        {
-            signature = cry::PowMod(plain, private_key.exponent, private_key.modulus);
-        }
-
-        /*void verify(std::vector<uint8_t>& plain, const std::vector<uint8_t> signature, const rsa_key& public_key)
-        {
-
-        }*/
-
-
+        }      
     };
 }
 

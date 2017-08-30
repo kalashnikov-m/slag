@@ -17,7 +17,7 @@ struct rsassa_pkcs1 {
     auto encoded = Encoder::encode(first, last, modulusBits / 8);
 
     T arg(encoded.begin(), encoded.end());
-    T result = cry::PowMod(arg, privateExponent, modulus);
+    T result = cry::pow_mod(arg, privateExponent, modulus);
 
     signature = (std::vector<uint8_t>)result;
   }
@@ -42,18 +42,18 @@ struct rsassa_pkcs1 {
 
     ///////////////////////////////////////////////
     // 2b. Apply the RSAVP1 verification primitive
-    T m = cry::PowMod(s, publicExponent, modulus);
+    T m = cry::pow_mod(s, publicExponent, modulus);
 
     ////////////////////////////////////////////////////////////////////////////////////////
     // 2c. Convert the message representative m to an encoded message EM of length k octets
     std::vector<uint8_t> EM(m);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // 3. Apply the EMSA-PKCS1-v1_5 encoding operation to the message M to produce a second encoded message EM’ of length k octets:
+    // 3. Apply the EMSA-PKCS1-v1_5 encoding operation to the message M to produce a second encoded message EMï¿½ of length k octets:
     auto EM_ = Encoder::encode(m_first, m_last, k);
 
     ////////////////////////////////////////////////////////////////////////
-    // 4. Compare the encoded message EM and the second encoded message EM’
+    // 4. Compare the encoded message EM and the second encoded message EMï¿½
     bool f(false);
     auto it(EM_.begin());
 
