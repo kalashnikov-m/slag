@@ -1,5 +1,5 @@
-#ifndef PKCS1_V1_5_HPP
-#define PKCS1_V1_5_HPP
+#ifndef EMSA_PKCS1_HPP
+#define EMSA_PKCS1_HPP
 
 #include <algorithm>
 #include "oid.hpp"

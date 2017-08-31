@@ -1,5 +1,5 @@
-#ifndef EME_OAEP_H
-#define EME_OAEP_H
+#ifndef EME_OAEP_HPP
+#define EME_OAEP_HPP
 
 #include <iterator>
 

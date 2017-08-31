@@ -1,5 +1,5 @@
-#ifndef PSS_H
-#define PSS_H
+#ifndef EMSA_PSS_H
+#define EMSA_PSS_H
 
 #include <mgf.hpp>
 #include <sha1.hpp>
@@ -52,11 +52,11 @@ namespace cry {
 
             it += 8;
 
-            std::copy(mHash.begin(), mHash.end(), it);
-            it += hLen;
+            it = std::copy(mHash.begin(), mHash.end(), it);
+            //it += hLen;
 
-            std::copy(salt.begin(), salt.end(), it);
-            it += sLen;
+			it = std::copy(salt.begin(), salt.end(), it);
+            //it += sLen;
 
 			///////////////////////////////////////////////////////
             // 6. Let H = Hash(M'), an octet string of length hLen.
@@ -77,13 +77,13 @@ namespace cry {
             std::vector<uint8_t> DB(dbLen);
             std::vector<uint8_t>::iterator itDb(DB.begin());
 
-            std::copy(PS.begin(), PS.end(), itDb);
-            itDb += psLen;
+            itDb = std::copy(PS.begin(), PS.end(), itDb);
+            //itDb += psLen;
 
             *itDb++ = 0x01;
 
-            std::copy(salt.begin(), salt.end(), itDb);
-            itDb += sLen;
+            itDb = std::copy(salt.begin(), salt.end(), itDb);
+            //itDb += sLen;
 
 			//////////////////////////////////////////
             // 9. Let dbMask = MGF (emLen - hLen - 1)
@@ -205,11 +205,11 @@ namespace cry {
             auto it = M_.begin();
             it += 8;
 
-            std::copy(mHash.begin(), mHash.end(), it);
-            it += hLen;
+            it = std::copy(mHash.begin(), mHash.end(), it);
+            //it += hLen;
 
-            std::copy(salt.begin(), salt.end(), it);
-            it += sLen;
+            it = std::copy(salt.begin(), salt.end(), it);
+            //it += sLen;
 
             auto H_ = std::vector<uint8_t>(hLen);
             hash(M_.begin(), M_.end(), H_.begin());

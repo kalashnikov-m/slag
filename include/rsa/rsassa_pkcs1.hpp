@@ -2,8 +2,8 @@
 // Created by max on 07.07.17.
 //
 
-#ifndef RSA_SIGNVERIFY_H
-#define RSA_SIGNVERIFY_H
+#ifndef RSASSA_PKCS1_HPP
+#define RSASSA_PKCS1_HPP
 
 #include "basic_int.hpp"
 

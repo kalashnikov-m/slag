@@ -1,5 +1,5 @@
-#ifndef PKCS1_V1_5_HPP
-#define PKCS1_V1_5_HPP
+#ifndef EME_PKCS1_HPP
+#define EME_PKCS1_HPP
 
 #include <random>
 #include <algorithm>
