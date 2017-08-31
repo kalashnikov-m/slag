@@ -57,24 +57,24 @@ namespace cry {
 			if (len == emLen)
 			{
 				if (first != last && *first++ != 0x00)
-					throw std::exception("signature invalid");
+					throw std::runtime_error("signature invalid");
 			}
             
             if (first != last && *first++ != 0x01)
-				throw std::exception("signature invalid");
+				throw std::runtime_error("signature invalid");
 
             for (; first != last && *first != 0x00 && *first == 0xff; ++first)
                 ;
 
             if (*first++ != 0x00)
-				throw std::exception("signature invalid");
+				throw std::runtime_error("signature invalid");
 
             auto oid = OID<DigestType>::value();
 
 			size_t oidLen = oid.size();
             bool eq = std::equal(std::begin(oid), std::end(oid), first);
             if (!eq) {
-				throw std::exception("signature invalid");
+				throw std::runtime_error("signature invalid");
             }
 
             first += oidLen;

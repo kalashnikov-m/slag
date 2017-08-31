@@ -119,12 +119,12 @@ namespace cry {
 
 		  if (sz > k)
 		  {
-			  throw std::exception("decryption error");
+			  throw std::runtime_error("decryption error");
 		  }
 
           if (sz == k) {
             if (*first++ != 0x00) {
-              throw std::exception("decryption error");
+              throw std::runtime_error("decryption error");
             }
           }
 
@@ -167,14 +167,14 @@ namespace cry {
           std::vector<uint8_t> lHash_(DB.begin(), it + hLen);
           it += hLen;
           if (lHash != lHash_) {
-            throw std::exception("decryption_error");
+            throw std::runtime_error("decryption_error");
           }
 
           for (; it != DB.end() && *it == 0x00; ++it)
             ;
 
           if (*it++ != 0x01) {
-            throw std::exception("decryption_error");
+            throw std::runtime_error("decryption_error");
           }
 
           result = std::copy(it, DB.end(), result);

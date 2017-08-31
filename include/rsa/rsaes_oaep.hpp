@@ -24,7 +24,7 @@ template <class Encoder, class IntType = bigint8_t> struct rsaes_oaep {
     size_t mLen = std::distance(first, last);
 
     if (mLen > k - 2 * Encoder::hash_type::size - 2) {
-      throw std::exception("message too long");
+      throw std::runtime_error("message too long");
     }
 
     /////////////////////////
@@ -68,14 +68,14 @@ template <class Encoder, class IntType = bigint8_t> struct rsaes_oaep {
     ////////////////////////////////////////////////////////////////////////////////////////////
     // b. If the length of the ciphertext C is not k octets, output “decryption error” and stop.
     if (cLen != k) {
-      throw std::exception("decryption error");
+      throw std::runtime_error("decryption error");
     }
 
     ///////////////////////////////////////////////////////////
     // c. If k < 2hLen + 2, output “decryption error” and stop.
 
     if (k < 2 * Encoder::hash_type::size + 2) {
-      throw std::exception("decryption error");
+      throw std::runtime_error("decryption error");
     }
 
     //////////////////////

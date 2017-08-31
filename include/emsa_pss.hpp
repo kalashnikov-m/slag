@@ -27,7 +27,7 @@ namespace cry {
 			////////////////////////////////////////////////////////////////////
             // 3.  If emLen < hLen + sLen + 2, output "encoding error" and stop.
             if (emLen < hLen + sLen + 2) {
-                throw std::exception("encoding error");
+                throw std::runtime_error("encoding error");
             }
 		
 			///////////////////////////////////////////////////////////
@@ -134,14 +134,14 @@ namespace cry {
 			//////////////////////////////////////////////////////////////////
             // 3.  If emLen < hLen + sLen + 2, output "inconsistent" and stop.
             if (emLen < hLen + sLen + 2) {
-                throw std::exception("inconsistent");
+                throw std::runtime_error("inconsistent");
             }
 
 			/////////////////////////////////////////////////////////////////////////
             // 4.  If the rightmost octet of EM does not have hexadecimal value 0xbc, 
         	// output "inconsistent" and stop.
             if (*(em_last - 1) != 0xbc) {
-				throw std::exception("inconsistent");
+				throw std::runtime_error("inconsistent");
             }
 
 			///////////////////////////////////////////////////////////////////
@@ -156,7 +156,7 @@ namespace cry {
             // 6. If the leftmost 8emLen - emBits bits of the leftmost octet in maskedDB are not all equal to zero, 
         	// output "inconsistent" and stop.
             if (zBits > 0 && *maskedDB.begin() & (0xFF << zBits)) {
-				throw std::exception("inconsistent");
+				throw std::runtime_error("inconsistent");
             }
 
 			/////////////////////////////////////////////
@@ -188,7 +188,7 @@ namespace cry {
                 ;
 
             if (DB[i] != 0x01) {
-				throw std::exception("inconsistent");
+				throw std::runtime_error("inconsistent");
             }
 
 			//////////////////////////////////////////////////

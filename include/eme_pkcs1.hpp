@@ -35,16 +35,16 @@ namespace cry {
         template <class InputIterator, class OutputIterator>
         static OutputIterator decode(InputIterator first, InputIterator last, OutputIterator result, size_t k) {
             if (first != last && *first++ != 0x00)
-                throw std::exception("decryption error");
+                throw std::runtime_error("decryption error");
 
             if (first != last && *first++ != 0x02)
-				throw std::exception("decryption error");
+				throw std::runtime_error("decryption error");
 
             for (; first != last && *first != 0x00; ++first)
                 ;
 
             if (*first != 0x00)
-				throw std::exception("decryption error");
+				throw std::runtime_error("decryption error");
 
             result = std::copy(first, last, result);
 
