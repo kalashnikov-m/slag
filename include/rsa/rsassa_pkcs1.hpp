@@ -9,21 +9,29 @@
 
 namespace cry {
 
-template <class Encoder, class IntType = bigint8_t>
-struct rsassa_pkcs1 {
-  template <size_t modulusBits, class InputIterator>
-  static void sign(InputIterator first, InputIterator last, const IntType &privateExponent, const IntType &modulus, std::vector<uint8_t> &signature) {
+template <class Encoder, class IntType = bigint8_t> struct rsassa_pkcs1 {
+  template <class InputIterator, class OutputIterator>
+  static OutputIterator sign(InputIterator first, InputIterator last, OutputIterator result, const IntType &d, const IntType &n, size_t modBits) {
 
-    auto encoded = Encoder::encode(first, last, modulusBits / 8);
+    size_t emLen = modBits / 8;
+    std::vector<uint8_t> encoded(emLen);
+    auto end = Encoder::encode(first, last, encoded.begin(), emLen);
 
     IntType arg(encoded.begin(), encoded.end());
-    IntType result = cry::pow_mod(arg, privateExponent, modulus);
+    IntType s = cry::pow_mod(arg, d, n);
 
-    signature = (std::vector<uint8_t>)result;
+    std::vector<uint8_t> S(s);
+
+    result = std::copy(S.begin(), S.end(), result);
+
+    return result;
   }
 
-  template <size_t modulusBits, class InputIterator>
-  static bool verify(InputIterator s_first, InputIterator s_last, InputIterator m_first, InputIterator m_last, const IntType &publicExponent, const IntType &modulus) {
+  template <class InputIterator>
+  static bool verify(InputIterator s_first, InputIterator s_last,
+                     InputIterator m_first, InputIterator m_last,
+                     const IntType &publicExponent, const IntType &modulus,
+                     size_t modulusBits) {
 
     ///////////////////////
     // 1. Length checking:
@@ -45,12 +53,14 @@ struct rsassa_pkcs1 {
     IntType m = cry::pow_mod(s, publicExponent, modulus);
 
     ////////////////////////////////////////////////////////////////////////////////////////
-    // 2c. Convert the message representative m to an encoded message EM of length k octets
+    // 2c. Convert the message representative m to an encoded message EM of
+    // length k octets
     std::vector<uint8_t> EM(m);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // 3. Apply the EMSA-PKCS1-v1_5 encoding operation to the message M to produce a second encoded message EM’ of length k octets:
-    auto EM_ = Encoder::encode(m_first, m_last, k);
+    std::vector<uint8_t> EM_(k);
+    Encoder::encode(m_first, m_last, EM_.begin(), k);
 
     ////////////////////////////////////////////////////////////////////////
     // 4. Compare the encoded message EM and the second encoded message EM’

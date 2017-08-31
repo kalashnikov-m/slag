@@ -10,11 +10,8 @@ namespace cry {
     class emsa_pkcs1 {
 
       public:
-        template <class InputIterator>
-        static std::vector<uint8_t> encode(InputIterator first, InputIterator last, size_t emLen) {
-
-			std::vector<uint8_t> out(emLen);
-			auto result = out.begin();
+        template <class InputIterator, class OutputIterator>
+        static OutputIterator encode(InputIterator first, InputIterator last, OutputIterator result, size_t emLen) {
 
             std::vector<uint8_t> hash(DigestType::size);
 
@@ -35,21 +32,19 @@ namespace cry {
             *result++ = 0x00;
             *result++ = 0x01;
 
-            std::copy(PS.begin(), PS.end(), result);
-            result += psLen;
+            result = std::copy(PS.begin(), PS.end(), result);
 
             *result++ = 0x00;
 
-            std::copy(oid.begin(), oid.end(), result);
-            result += oidLen;
+			result = std::copy(oid.begin(), oid.end(), result);
 
-            std::copy(hash.begin(), hash.end(), result);
+            result = std::copy(hash.begin(), hash.end(), result);
 
-			return out;
+			return result;
         }
 
-        template <class InputIterator>
-        static std::vector<uint8_t> decode(InputIterator first, InputIterator last, size_t emLen) {
+        template <class InputIterator, class OutputIterator>
+        static OutputIterator decode(InputIterator first, InputIterator last, OutputIterator result, size_t emLen) {
 
 			/*
 			* The format is
@@ -84,10 +79,10 @@ namespace cry {
 
             first += oidLen;
 
-			return std::vector<uint8_t>(first, last);
-        }
+			result = std::copy(first, last, result);
 
-      private:
+			return result;
+        }
     };
 }
 

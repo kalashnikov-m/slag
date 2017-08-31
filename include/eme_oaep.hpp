@@ -21,7 +21,7 @@ namespace cry {
 
             auto mLen = std::distance(first, last);
 
-			////////////////////////////////////////////////////////
+			///////////////////////////////////////////////////////////
             // a. Let lHash = Hash (L), an octet string of length hLen
             auto lHash = std::vector<uint8_t>(hLen);
 
@@ -42,22 +42,19 @@ namespace cry {
             auto DB = std::vector<uint8_t>(dbLen);
             auto it = DB.begin();
 
-            std::copy(lHash.begin(), lHash.end(), it);
-            it += hLen;
+            it = std::copy(lHash.begin(), lHash.end(), it);
 
-            std::copy(PS.begin(), PS.end(), it);
-            it += psLen;
+			it = std::copy(PS.begin(), PS.end(), it);
 
             *it++ = 0x01;
 
-            std::copy(first, last, it);
-            it += mLen;
+			it = std::copy(first, last, it);
 
 			/////////////////////////////////////////////////////////
 			// d. Generate a random octet string seed of length hLen.
             auto seed = seedVal;
             if (seed.empty()) {
-			  seed.reserve(hLen);
+			  seed.resize(hLen);
 
               std::random_device rd;
               std::mt19937 gen(rd());
@@ -99,11 +96,9 @@ namespace cry {
 
             *result++ = 0x00;
 
-            std::copy(maskedSeed.begin(), maskedSeed.end(), result);
-            result += hLen;
+            result = std::copy(maskedSeed.begin(), maskedSeed.end(), result);
 
-            std::copy(maskedDB.begin(), maskedDB.end(), result);
-            result += dbLen;
+            result = std::copy(maskedDB.begin(), maskedDB.end(), result);
 
 			return result;
         }

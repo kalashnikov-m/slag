@@ -25,7 +25,7 @@ struct rsaes_pkcs1 {
   }
 
 	template <class InputIterator, class OutputIterator>
-	static bool decrypt(InputIterator first, InputIterator last, OutputIterator result, const T &d, const T &n, size_t modBits) {
+	static OutputIterator decrypt(InputIterator first, InputIterator last, OutputIterator result, const T &d, const T &n, size_t modBits) {
 	  
 
 		return result;

@@ -12,7 +12,7 @@ namespace cry {
 
 template <class Encoder, class IntType = bigint8_t> struct rsaes_oaep {
   template <class InputIterator, class OutputIterator>
-  static OutputIterator encrypt(InputIterator first, InputIterator last, OutputIterator result, const IntType &e, const IntType &n, size_t modBits) {
+  static OutputIterator encrypt(InputIterator first, InputIterator last, OutputIterator result, const IntType &e, const IntType &n, size_t modBits, const std::vector<uint8_t>& seed = std::vector<uint8_t>(), const std::vector<uint8_t>& label = std::vector<uint8_t>()) {
 
     ///////////////////////
     // 1. Length checking:
@@ -30,7 +30,7 @@ template <class Encoder, class IntType = bigint8_t> struct rsaes_oaep {
     /////////////////////////
     // 2. EME-OAEP encoding
     std::vector<uint8_t> EM(k);
-    Encoder::encode(first, last, EM.begin(), k);
+    Encoder::encode(first, last, EM.begin(), k, seed, label);
 
     ///////////////////////
     // 3. RSA encryption:
@@ -98,7 +98,7 @@ template <class Encoder, class IntType = bigint8_t> struct rsaes_oaep {
     // 3. EME - OAEP decoding:
 
     std::vector<uint8_t> M(k);
-    auto m_end = Encoder::decode(EM.begin(), EM.end(), M.begin());
+    auto m_end = Encoder::decode(EM.begin(), EM.end(), M.begin(), k);
 
     result = std::copy(M.begin(), m_end, result);
 

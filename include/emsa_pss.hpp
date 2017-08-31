@@ -11,7 +11,7 @@ namespace cry {
 
       public:
         template <class InputIterator, class OutputIterator>
-        void encode(InputIterator first, InputIterator last, OutputIterator result, size_t emBits, const std::vector<uint8_t>& saltVal=std::vector<uint8_t>()) const {
+        static OutputIterator encode(InputIterator first, InputIterator last, OutputIterator result, size_t emBits, const std::vector<uint8_t>& saltVal=std::vector<uint8_t>()) {
 
             size_t emLen = emBits / 8;
             size_t hLen = HashType::size;
@@ -113,6 +113,8 @@ namespace cry {
             result += hLen;
 
             *result++ = 0xbc;
+
+			return result;
         }
 
         template <class InputIterator, class MInputIterator>
