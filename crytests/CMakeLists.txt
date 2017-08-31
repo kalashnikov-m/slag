@@ -9,14 +9,16 @@ set (HEADERS
 	../include/rsa/rsa.hpp
 	../include/rsa/rsassa_pss.hpp
 	../include/rsa/rsassa_pkcs1.hpp
+	../include/rsa/rsaes_oaep.hpp
+	../include/rsa/rsaes_pkcs1.hpp
 	../include/algorithm.hpp
 	../include/basic_int.hpp
-	../include/mgf.hpp
-	../include/oaep.hpp
+	../include/mgf.hpp	
 	../include/oid.hpp
 	../include/emsa_pkcs1.hpp
-	../include/eme_pkcs1.hpp
 	../include/emsa_pss.hpp
+	../include/eme_pkcs1.hpp
+	../include/eme_oaep.hpp
 	../include/sha1.hpp
 	../include/sha224.hpp
 	../include/sha256.hpp
