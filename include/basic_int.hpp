@@ -365,7 +365,7 @@ namespace cry {
     template <class X>
     basic_int<X>& basic_int<X>::operator=(const basic_int<X>& other) {
         if (this != &other) {
-            basic_int temp(other);
+            auto temp(other);
 
             this->__swap(temp);
         }
