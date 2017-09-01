@@ -13,8 +13,8 @@ namespace cry {
 	template<class Encoder=emsa_pss<SHA1>, class IntType = bigint8_t>
 	struct rsassa_pss
 	{
-		template<class InputIterator>
-		std::vector<uint8_t> sign(InputIterator m_first, InputIterator m_last, const IntType& n, const IntType& d, size_t modBits, const std::vector<uint8_t>& salt = std::vector<uint8_t>()) const
+		template<class InputIterator, class OutputIterator>
+		OutputIterator sign(InputIterator m_first, InputIterator m_last, OutputIterator result, const IntType& n, const IntType& d, size_t modBits, const std::vector<uint8_t>& salt = std::vector<uint8_t>()) const
 		{
 			//////////////////////////
 			// 1. EMSA-PSS encoding:
@@ -36,7 +36,9 @@ namespace cry {
 			// 2c. Convert the signature representative s to a signature S of length k octets
 			std::vector<uint8_t> S(s);
 
-			return S;
+			result = std::copy(S.begin(), S.end(), result);
+
+			return result;
 		}
 
 		template<class MInputIterator, class InputIterator>

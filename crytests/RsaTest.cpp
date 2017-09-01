@@ -87,7 +87,7 @@ TEST(RsaTest, SigGen_SHA1_RSA_PSS_SHA1)
 {
 	auto test = [](const bigint8_t &n, const bigint8_t &e, const bigint8_t &d, const bigint8_t &Msg, const bigint8_t &S, const std::vector<uint8_t>& saltVal) {
 		std::vector<uint8_t> plain(Msg);
-		std::vector<uint8_t> signature;
+		std::vector<uint8_t> signature(1024/8);
 
 		rsassa_pss<emsa_pss<SHA1>> signer;
 		signature = signer.sign(plain.begin(), plain.end(), n, d, 1024, saltVal);
@@ -109,20 +109,20 @@ TEST(RsaTest, SigGen_SHA1_RSA_PSS_SHA1)
 		test(n, e, d, Msg, S, static_cast<std::vector<uint8_t>>(SaltVal));
 	}
 		
-	/*{ 
+	{ 
 		bigint8_t Msg("9968809a557bb4f892039ff2b6a0efcd06523624bc3b9ad359a7cf143c4942e874c797b9d37a563d436fe19d5db1aad738caa2617f87f50fc7fcf4361fc85212e89a9465e7f4c361982f64c8c5c0aa5258b9e94f6e934e8dac2ace7cd6095c909de85fe7b973632c384d0ebb165556050d28f236aee70e16b13a432d8a94c62b");
 		bigint8_t S("8f5ea7037367e0db75670504085790acd6d97d96f51e76df916a0c2e4cd66e1ab51c4cd8e2c3e4ef781f638ad65dc49c8d6d7f6930f80b6ae199ea283a8924925a50edab79bb3f34861ffa8b2f96fdf9f8cad3d3f8f025478c81f316da61b0d6a7f71b9068efdfb33c21983a922f4669280d8e84f963ff885ef56dd3f50381db");
 
 		test(n, e, d, Msg, S, static_cast<std::vector<uint8_t>>(SaltVal));
-	}*/
+	}
 
 		
-		/*{
+		{
 			bigint8_t Msg("f9be76e9b029c4933260249dd76c5067ccd483d4b9b338fda00d34270963c6f35c854ed58ea8fcc7ffb8da3fa3f00d5e61a7586ab86de17ea8563880d0969554d44e614f01a6f8ef341caec9f71c10c2eed06c82723993267b7fdd35c3856ed628c1b840524b41719733a6231b18e1fc3cf6c7052d40d45de02f2b2f2a59d9e1");
 			bigint8_t S("4f7ff112a7937707d529b5602e1d017b79739b13234a725dc36487e05ee4f5e072270b6712b5f71e47747dd4b9b289df31f91fc97db39ba14694ff894b42932555d01dfd4146a1672338cc60521e4b5988fd22896b512faaf5888dedcd5f9662319e9f752c99c341be08ac2bd0346845ccb74d0a7d4d8165aa7613b66847702f"); 
 
 			test(n, e, d, Msg, S, static_cast<std::vector<uint8_t>>(SaltVal));
-		}*/
+		}
 
 		
 		{ // +
@@ -133,20 +133,20 @@ TEST(RsaTest, SigGen_SHA1_RSA_PSS_SHA1)
 		}
 
 		
-		/*{
+		{
 			bigint8_t Msg("bd75511e451602958995e50efaef130d9f5eef3b097eb8af88ae5a6d9fb98a2cb6b6115d0f2c6868fb7a86394e76f6fb10552c2375cb19b10f72fdb243707d0afa55f57098420fba3250955bfc2f832a000e616516bbcff5100c62f3357dae6cf11aa461caa01f1296dfb97deb62e321d8523507d2980203f14230385d2846da");
 			bigint8_t S("0dbb7954b411ac1c425d778875dedda9add836f7283040797b5899b993e28f8e843909c28baf4169a0344f5eed769b22c567bab97a1816a634d0fe0e7860674cc6273ec2232d01ce93ea2cd03f42ceb4c4bda7a40dc1a5c89a84ae7afddb729956a83fc626a99f4be5d5daf2ef47f4eccaa103acf92fb5ee5e1b4f8cd8d4648a"); 
 
 			test(n, e, d, Msg, S, static_cast<std::vector<uint8_t>>(SaltVal));
-		}*/
+		}
 
 		
-		/*{
+		{
 			bigint8_t Msg("ca77e662077ed5cb63dd9b10177bd66062276828d1cfd8e3bdf2f6321557be2f5e007ffef75a3da6a2b6531f40fc5caddc9e546cebccfb2bd2e77a7da937490e3fe050345e124dc650817531a1155ec827e21c5c405aab0d5bc18d5fbae2b3917601a12ac310ced47526496dc32ca25c4bda082157e2af305f6a7500cfc0c45f");
 			bigint8_t S("462d92b7fbac49dab2fef13caeaf9bd11bb5053a8aef554a05e1ab6ce095678212b8e1fbea0396b18aae3d1275da8520abc123f88c3b5c056271d4415642ca4abc2030de600a48280115151c84a7d9c7f17769e0926450efe3fce62fb63db53082a3ed21f7299433aed078cfb7be3b48bcd6c13f11e3ea0f4946a139a941303d"); 
 
 			test(n, e, d, Msg, S, static_cast<std::vector<uint8_t>>(SaltVal));
-		}*/
+		}
 
 		
 		{   // +
@@ -165,20 +165,20 @@ TEST(RsaTest, SigGen_SHA1_RSA_PSS_SHA1)
 		}
 
 		
-		/*{
+		{
 			bigint8_t Msg("7523cb2f9d75b6068f785c4482dcbcbf80d05ab75e22da14f1a8cdf07fdecb5574d0c248563b8d06fbefc98dfa77e45e5ffc7682a367d5cbdbc6e45c2ff12b6b8e6d2d46a090f594fce6f3de9cd4064e8d7bdab6ebdf74d30d490bd4fdea1a162bc0b33262be1639fa27823e503b4b1573152d5b20d4e0b6f1f9ec5ed110bfdd");
 			bigint8_t S("31527f8b5b289a67acc9c525eea485b40beeedbb777d68201caa54ebc4a08c15b4bc5fe85de9f695f21c95b3617fc4c3e3f8aa872f5ebfbf2a4f617fa39bb3959076f3e61d41005ee8306c8d8df6f4cba0d27430d981e841e2dd9a5db01cd6f481e5cedc3255d94eab10394efcfdb16ee90d25d02c37ad41b0708e916f5ae0b5"); 
 
 			test(n, e, d, Msg, S, static_cast<std::vector<uint8_t>>(SaltVal));
-		}*/
+		}
 
 		
-		/*{
+		{
 			bigint8_t Msg("0320f03a9c681fd97dcc1ab0dc3b6642075d599aa5c97f283f793dcbff7ab42fb7e8e859241a2280751a931f07583948739f073bca4740371fad249046e0ce02dc9d5d45877e52e17f6e39444e608c12d441d4bc8d2a115417db5ca0ee65cb6d7b2695254dfa76a4a6b0554839bb2547322a094677dbbb272deb2e227f707217");
 			bigint8_t S("823156702ac0caa27fc3461b7a2c0d71411e5c45708184b26975faee5551c3854a9ad68f9c1327c43ccf46d229a44345b0a08d11ffdb6f6180a240ac68c895daae1086d60e95e1f3db3931ee36a4f751de5699fa5374d1959b78de0f479ab070c220256803864aa12302dea96aa0732ac4c40d799bd306087bd43ef6b36868f0"); 
 
 			test(n, e, d, Msg, S, static_cast<std::vector<uint8_t>>(SaltVal));
-		}*/
+		}
 }
 
 TEST(RsaTest, SigGen_SHA__1_RSA_PKCS_1024)

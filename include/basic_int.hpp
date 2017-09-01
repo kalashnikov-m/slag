@@ -1,6 +1,6 @@
 
-#ifndef HUGE_HPP
-#define HUGE_HPP
+#ifndef BASIC_INT_HPP
+#define BASIC_INT_HPP
 
 #include <algorithm>
 #include <initializer_list>
