@@ -45,7 +45,7 @@ namespace cry {
             std::cout<<"Phi: "<<Phi<<std::endl;
 
             T d;
-            cry::ModInverse(d, T(e), Phi);
+            cry::mod_inverse(d, T(e), Phi);
             std::cout<<"d: "<<d<<std::endl;
 
             pub.exponent = e;

@@ -1042,7 +1042,7 @@ TEST(HugeTest, Gcd) {
         basic_int<byte> nod = {0x15};                // 21
         basic_int<byte> actual = {0x00, 0x00, 0x00}; //
 
-        actual = cry::Gcd(a, b); // a.Gcd(b);
+        actual = cry::gcd(a, b); // a.gcd(b);
 
         bool f = (actual == nod);
 
@@ -1055,7 +1055,7 @@ TEST(HugeTest, Gcd) {
         basic_int<byte> nod = {6};       //
         basic_int<byte> actual = {0x00}; //
 
-        actual = cry::Gcd(a, b); // a.Gcd(b);
+        actual = cry::gcd(a, b); // a.gcd(b);
 
         bool f = (actual == nod);
 
@@ -1068,7 +1068,7 @@ TEST(HugeTest, Gcd) {
         basic_int<byte> nod = {0x01};          //
         basic_int<byte> actual = {0x00, 0x00}; //
 
-        actual = cry::Gcd(a, b); // a.Gcd(b);
+        actual = cry::gcd(a, b); // a.gcd(b);
 
         bool f = (actual == nod);
 
@@ -1080,7 +1080,7 @@ TEST(HugeTest, ModInvserse) {
     auto ModInverseTest = [](const basic_int<byte>& arg1, const basic_int<byte>& mod, const basic_int<byte>& inv) {
         basic_int<byte> actual;
 
-        bool exists = cry::ModInverse(actual, arg1, mod); // arg1.ModInverse(actual, mod);
+        bool exists = cry::mod_inverse(actual, arg1, mod); // arg1.mod_inverse(actual, mod);
 
         EXPECT_TRUE(exists);
         bool f = (actual == inv);
@@ -1146,10 +1146,10 @@ TEST(HugeTest, DivRem) {
 
 TEST(HugeTest, EvenOdd) {
     auto EvenOddTest = [](const basic_int<byte>& argEven, bool flagEven, const basic_int<byte>& argOdd, bool flagOdd) {
-        bool even = cry::IsEven(argEven);
+        bool even = cry::is_even(argEven);
         EXPECT_TRUE(even == flagEven);
 
-        bool odd = cry::IsOdd(argOdd);
+        bool odd = cry::is_odd(argOdd);
         EXPECT_TRUE(odd == flagOdd);
     };
 

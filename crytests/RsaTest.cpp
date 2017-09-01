@@ -62,7 +62,7 @@ TEST(RsaTest, RSA_OAEP_SHA1_1024)
   bigint8_t d;
   {
 	  bigint8_t phi = (p - 1)*(q - 1);
-	  cry:: ModInverse(d, e, phi);
+	  cry:: mod_inverse(d, e, phi);
   }
   
   //# Message M to be encrypted :

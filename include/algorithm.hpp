@@ -9,7 +9,7 @@
 
 namespace cry {
     template <class T>
-    T Gcd(const T& lhs, const T& rhs) {
+    T gcd(const T& lhs, const T& rhs) {
         auto pair = std::minmax(lhs, rhs);
 
         auto r1(pair.second);
@@ -25,7 +25,7 @@ namespace cry {
     }
 
     template <class T>
-    bool ModInverse(T& inverse, const T& a, const T& modulus) {
+    bool mod_inverse(T& inverse, const T& a, const T& modulus) {
         if (a >= modulus) {
             return false;
         }
@@ -65,27 +65,27 @@ namespace cry {
     }
 
     template <class T>
-    bool IsEven(const T& arg) {
+    bool is_even(const T& arg) {
         bool f = (arg % 2) == 0;
 
         return f;
     }
 
     template <class T>
-    bool IsOdd(const T& arg) {
+    bool is_odd(const T& arg) {
         bool f = (arg % 2) == 1;
 
         return f;
     }
 
     template <class T>
-    const T Pow(const T& arg, const T& exp) {
+    const T pow(const T& arg, const T& exp) {
         T y = 1;
         T a = arg;
         T e = exp;
 
         while (e > 0) {
-            if (cry::IsOdd(e)) {
+            if (cry::is_odd(e)) {
                 y *= a;
             }
 
@@ -471,7 +471,7 @@ namespace cry {
             goto step2;
         }
 
-        T gcd = cry::Gcd<T>(primeCandidate, e);
+        T gcd = cry::gcd<T>(primeCandidate, e);
         if (gcd != 1)
         {
             goto step2;
