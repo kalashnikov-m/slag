@@ -96,8 +96,8 @@ namespace cry {
 
 			///////////////////////////////////////////////////////////////////////////////////////
             // 11. Set the leftmost 8emLen - emBits bits of the leftmost octet in maskedDB to zero.
-            if (zBits > 0)
-                *maskedDB.begin() &= (0xFF >> (8 - zBits));
+            //if (zBits > 0)
+                *maskedDB.begin() &= 0x7F;//(0xFF >> (8 - zBits));
 
 			///////////////////////////////////////
             // 12. Let EM = maskedDB || H || 0xbc.
