@@ -89,11 +89,10 @@ TEST(RsaTest, SigGen_SHA1_RSA_PSS_SHA1)
 		std::vector<uint8_t> plain(Msg);
 		std::vector<uint8_t> signature(1024/8);
 
-		rsassa_pss<emsa_pss<SHA1>> signer;
-		signature = signer.sign(plain.begin(), plain.end(), n, d, 1024, saltVal);
+		rsassa_pss<emsa_pss<SHA1>>::sign(plain.begin(), plain.end(), signature.begin(), n, d, 1024, saltVal);
 		EXPECT_EQ(signature, S);
 		
-		bool f = signer.verify(plain.begin(), plain.end(), signature.begin(), signature.end(), n, e, 1024);
+		bool f = rsassa_pss<emsa_pss<SHA1>>::verify(plain.begin(), plain.end(), signature.begin(), signature.end(), n, e, 1024);
 		EXPECT_EQ(f, true);
 	};
 

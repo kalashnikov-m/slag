@@ -8,13 +8,13 @@
 #include "basic_int.hpp"
 #include "emsa_pss.hpp"
 
-namespace cry {
-
-	template<class Encoder=emsa_pss<SHA1>, class IntType = bigint8_t>
+namespace cry
+{
+	template <class Encoder=emsa_pss<SHA1>, class IntType = bigint8_t>
 	struct rsassa_pss
 	{
-		template<class InputIterator, class OutputIterator>
-		OutputIterator sign(InputIterator m_first, InputIterator m_last, OutputIterator result, const IntType& n, const IntType& d, size_t modBits, const std::vector<uint8_t>& salt = std::vector<uint8_t>()) const
+		template <class InputIterator, class OutputIterator>
+		static OutputIterator sign(InputIterator m_first, InputIterator m_last, OutputIterator result, const IntType& n, const IntType& d, size_t modBits, const vector<uint8_t>& salt = vector<uint8_t>()) 
 		{
 			//////////////////////////
 			// 1. EMSA-PSS encoding:
@@ -41,8 +41,8 @@ namespace cry {
 			return result;
 		}
 
-		template<class MInputIterator, class InputIterator>
-		bool verify(MInputIterator m_first, MInputIterator m_last, InputIterator s_first, InputIterator s_last, const IntType& n, const IntType& e, size_t modBits) const
+		template <class MInputIterator, class InputIterator>
+		static bool verify(MInputIterator m_first, MInputIterator m_last, InputIterator s_first, InputIterator s_last, const IntType& n, const IntType& e, size_t modBits)
 		{
 			//////////////////////////////////////////
 			// 1. Length checking:
@@ -73,7 +73,6 @@ namespace cry {
 			return result;
 		}
 	};
-
 } // namespace cry
 
 #endif // RSAPSS_PSS_H
