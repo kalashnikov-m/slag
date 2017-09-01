@@ -335,18 +335,18 @@ namespace cry {
             std::swap(m_Negative, other.m_Negative);
         }
 
-		template <class IntType, size_t sz> struct SwapBytes {
-			constexpr inline IntType operator()(IntType val) const { return val; }
+		template <class X, size_t sz> struct SwapBytes {
+			constexpr inline X operator()(X val) const { return val; }
 		};
 
-		template <class IntType> struct SwapBytes<IntType, 2> {
-			constexpr inline IntType operator()(IntType val) const {
+		template <class X> struct SwapBytes<X, 2> {
+			constexpr inline X operator()(X val) const {
 				return ((((val) >> 8) & 0x00FF) | (((val) << 8) & 0xFF00));
 			}
 		};
 
-		template <class IntType> struct SwapBytes<IntType, 4> {
-			constexpr inline IntType operator()(IntType val) const {
+		template <class X> struct SwapBytes<X, 4> {
+			constexpr inline X operator()(X val) const {
 				return ((((val) >> 24) & 0x000000FF) | (((val) >> 8) & 0x0000FF00) |
 					(((val) << 8) & 0x00FF0000) | (((val) << 24) & 0xFF000000));
 			}
