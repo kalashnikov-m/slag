@@ -4,7 +4,6 @@
 
 #include <algorithm>
 #include <initializer_list>
-#include <iostream>
 #include <sstream>
 #include <vector>
 
@@ -25,7 +24,7 @@ namespace cry {
 
         constexpr basic_int(const basic_int& other) : m_Buffer(other.m_Buffer), m_Negative(other.m_Negative) {}
 
-        basic_int(basic_int&& other) { *this = std::move(other); }
+        basic_int(basic_int&& other) noexcept { *this = std::move(other); }
 
         basic_int(const std::initializer_list<ElemT>& il, bool negative = false) : basic_int(std::begin(il), std::end(il), negative) {}
 
@@ -114,7 +113,7 @@ namespace cry {
 
         basic_int& operator=(const basic_int& other);
 
-        basic_int& operator=(basic_int&& other);
+        basic_int& operator=(basic_int&& other) noexcept;
 
         explicit operator bool() const;
 
@@ -375,7 +374,8 @@ namespace cry {
     }
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator=(basic_int<X>&& other) {
+    basic_int<X>& basic_int<X>::operator=(basic_int<X>&& other) noexcept
+    {
         if (this != &other) {
             m_Buffer = std::move(other.m_Buffer);
             m_Negative = std::move(other.m_Negative);
@@ -527,7 +527,7 @@ namespace cry {
         const std::vector<X>& buf = huge.m_Buffer;
         for (const auto& x : buf) {
             ss.width(2);
-            ss << (uint16_t)x;
+            ss << static_cast<uint16_t>(x);
         }
 
         if (huge.m_Negative)

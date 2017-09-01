@@ -62,14 +62,13 @@ template <class Encoder, class IntType = bigint8_t> struct rsassa_pkcs1 {
 
     ////////////////////////////////////////////////////////////////////////
     // 4. Compare the encoded message EM and the second encoded message EM’
-    bool f(false);
     auto it(EM_.begin());
 
     if (EM_.size() != EM.size()) {
       ++it;
     }
 
-    f = std::equal(it, std::end(EM_), std::begin(EM), std::end(EM));
+    auto f = std::equal(it, std::end(EM_), std::begin(EM), std::end(EM));
 
     return f;
   }

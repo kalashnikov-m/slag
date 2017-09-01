@@ -9,7 +9,7 @@ namespace cry {
         void operator()(InputIterator first, InputIterator last, OutputIterator result, size_t maskLen) const {
 
             if (maskLen > 0xffffffff) {
-                throw 1; // mask too long
+                throw std::runtime_error("mask too long");
             }
 
             size_t hLen = HashType::size;
@@ -45,8 +45,6 @@ namespace cry {
                 std::copy_n(digest.begin(), rest, result);
             }
         }
-
-      protected:
     };
 }
 

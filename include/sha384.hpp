@@ -8,8 +8,11 @@ namespace cry {
     class SHA384 {
 
       public:
-        SHA384() {}
-        ~SHA384() {}
+        SHA384(): m_Idx(0), high(0), low(0)
+	    {
+	    }
+
+	    ~SHA384() {}
 
         static const size_t size = 48;
 
@@ -152,26 +155,24 @@ namespace cry {
         }
 
       protected:
-        uint64_t inline ROTR(uint64_t x, int shift) { return ((x >> shift) | (x << (64 - shift))); }
+	    static uint64_t inline ROTR(uint64_t x, int shift) { return ((x >> shift) | (x << (64 - shift))); }
 
-        uint64_t inline SUM0(uint64_t x) { return (ROTR(x, 28) ^ ROTR(x, 34) ^ ROTR(x, 39)); }
+	    static uint64_t inline SUM0(uint64_t x) { return (ROTR(x, 28) ^ ROTR(x, 34) ^ ROTR(x, 39)); }
 
-        uint64_t inline SUM1(uint64_t x) { return (ROTR(x, 14) ^ ROTR(x, 18) ^ ROTR(x, 41)); }
+	    static uint64_t inline SUM1(uint64_t x) { return (ROTR(x, 14) ^ ROTR(x, 18) ^ ROTR(x, 41)); }
 
-        uint64_t inline sigma_0(uint64_t x) { return (ROTR(x, 1) ^ ROTR(x, 8) ^ (x >> 7)); }
+	    static uint64_t inline sigma_0(uint64_t x) { return (ROTR(x, 1) ^ ROTR(x, 8) ^ (x >> 7)); }
 
-        uint64_t inline sigma_1(uint64_t x) { return (ROTR(x, 19) ^ ROTR(x, 61) ^ (x >> 6)); }
+	    static uint64_t inline sigma_1(uint64_t x) { return (ROTR(x, 19) ^ ROTR(x, 61) ^ (x >> 6)); }
 
-        uint64_t inline Ch(uint64_t x, uint64_t y, uint64_t z) { return ((x & y) ^ (~(x) & (z))); }
+	    static uint64_t inline Ch(uint64_t x, uint64_t y, uint64_t z) { return ((x & y) ^ (~(x) & (z))); }
 
-        uint64_t inline Maj(uint64_t x, uint64_t y, uint64_t z) { return ((x & y) ^ (x & z) ^ (y & z)); }
+	    static uint64_t inline Maj(uint64_t x, uint64_t y, uint64_t z) { return ((x & y) ^ (x & z) ^ (y & z)); }
 
         void transform() {
             uint64_t W[80] = {0x00};
 
-            uint64_t a, b, c, d, e, f, g, h;
-
-            // 1. Prepare the message schedule
+	        // 1. Prepare the message schedule
             for (int t = 0; t < 16; ++t) {
 
                 W[t] |= uint64_t(m_Block[t * 8 + 0]) << 56;
@@ -189,14 +190,14 @@ namespace cry {
             }
 
             // 2. Initialize  the  eight  working  variables,
-            a = m_Digest[0];
-            b = m_Digest[1];
-            c = m_Digest[2];
-            d = m_Digest[3];
-            e = m_Digest[4];
-            f = m_Digest[5];
-            g = m_Digest[6];
-            h = m_Digest[7];
+            uint64_t a = m_Digest[0];
+            uint64_t b = m_Digest[1];
+            uint64_t c = m_Digest[2];
+            uint64_t d = m_Digest[3];
+            uint64_t e = m_Digest[4];
+            uint64_t f = m_Digest[5];
+            uint64_t g = m_Digest[6];
+            uint64_t h = m_Digest[7];
 
             // main cycle
             uint64_t T1 = 0;

@@ -7,7 +7,6 @@ using namespace std;
 
 template <class InputIterator>
 static bool ASSERT_BYTES_EQ(InputIterator f1, InputIterator l1, InputIterator f2, InputIterator l2) {
-    bool ret = false;
 
     for (; (f1 != l1) && (*f1 == 0x00); ++f1)
         ;
@@ -169,7 +168,7 @@ TEST(HugeCore_Test, Reverse) {
 TEST(HugeCore_Test, And) {
     auto AndTest = [](const std::initializer_list<byte>& arg1, const std::initializer_list<byte>& arg2, const std::initializer_list<byte>& expected) -> void {
         byte actual[8] = {0x00};
-        HUGE_And((byte*)end(actual), begin(arg1), end(arg1), begin(arg2), end(arg2));
+        HUGE_And(static_cast<byte*>(end(actual)), begin(arg1), end(arg1), begin(arg2), end(arg2));
 
         auto eq = ASSERT_BYTES_EQ<const byte*>(begin(expected), end(expected), begin(actual), end(actual));
 

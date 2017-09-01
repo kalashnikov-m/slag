@@ -8,8 +8,11 @@ namespace cry {
     class SHA256 {
 
       public:
-        SHA256() {}
-        ~SHA256() {}
+        SHA256(): m_Idx(0), m_Len(0)
+	    {
+	    }
+
+	    ~SHA256() {}
 
         static const size_t size = 32;
 
@@ -124,34 +127,32 @@ namespace cry {
         }
 
       protected:
-        uint32_t inline ROTR(uint32_t x, int shift) { return ((x >> shift) | (x << (32 - shift))); }
+	    static uint32_t inline ROTR(uint32_t x, int shift) { return ((x >> shift) | (x << (32 - shift))); }
 
-        uint32_t inline SUM0(uint32_t x) { return (ROTR(x, 2) ^ ROTR(x, 13) ^ ROTR(x, 22)); }
+	    static uint32_t inline SUM0(uint32_t x) { return (ROTR(x, 2) ^ ROTR(x, 13) ^ ROTR(x, 22)); }
 
-        uint32_t inline SUM1(uint32_t x) { return (ROTR(x, 6) ^ ROTR(x, 11) ^ ROTR(x, 25)); }
+	    static uint32_t inline SUM1(uint32_t x) { return (ROTR(x, 6) ^ ROTR(x, 11) ^ ROTR(x, 25)); }
 
-        uint32_t inline sigma_0(uint32_t x) { return (ROTR(x, 7) ^ ROTR(x, 18) ^ (x >> 3)); }
+	    static uint32_t inline sigma_0(uint32_t x) { return (ROTR(x, 7) ^ ROTR(x, 18) ^ (x >> 3)); }
 
-        uint32_t inline sigma_1(uint32_t x) { return (ROTR(x, 17) ^ ROTR(x, 19) ^ (x >> 10)); }
+	    static uint32_t inline sigma_1(uint32_t x) { return (ROTR(x, 17) ^ ROTR(x, 19) ^ (x >> 10)); }
 
-        uint32_t inline Ch(uint32_t x, uint32_t y, uint32_t z) { return ((x & y) ^ (~(x) & (z))); }
+	    static uint32_t inline Ch(uint32_t x, uint32_t y, uint32_t z) { return ((x & y) ^ (~(x) & (z))); }
 
-        uint32_t inline Maj(uint32_t x, uint32_t y, uint32_t z) { return ((x & y) ^ (x & z) ^ (y & z)); }
+	    static uint32_t inline Maj(uint32_t x, uint32_t y, uint32_t z) { return ((x & y) ^ (x & z) ^ (y & z)); }
 
         void transform() {
             uint32_t W[64] = {0x00};
 
-            uint32_t a, b, c, d, e, f, g, h;
-
-            // digest init
-            a = m_Digest[0];
-            b = m_Digest[1];
-            c = m_Digest[2];
-            d = m_Digest[3];
-            e = m_Digest[4];
-            f = m_Digest[5];
-            g = m_Digest[6];
-            h = m_Digest[7];
+	        // digest init
+            uint32_t a = m_Digest[0];
+            uint32_t b = m_Digest[1];
+            uint32_t c = m_Digest[2];
+            uint32_t d = m_Digest[3];
+            uint32_t e = m_Digest[4];
+            uint32_t f = m_Digest[5];
+            uint32_t g = m_Digest[6];
+            uint32_t h = m_Digest[7];
 
             for (int t = 0; t < 16; ++t) {
                 W[t] = m_Block[t * 4] << 24;

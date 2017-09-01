@@ -8,8 +8,11 @@ namespace cry {
     class SHA1 {
 
       public:
-        SHA1() {}
-        ~SHA1() {}
+        SHA1(): m_Idx(0), m_Len(0)
+	    {
+	    }
+
+	    ~SHA1() {}
 
         static const size_t size = 20;
 
@@ -106,25 +109,23 @@ namespace cry {
         }
 
       protected:
-        uint32_t inline ROTL(uint32_t x, int shift) { return ((x << shift) | (x >> (32 - shift))); }
+	    static uint32_t inline ROTL(uint32_t x, int shift) { return ((x << shift) | (x >> (32 - shift))); }
 
-        uint32_t inline Ch(uint32_t x, uint32_t y, uint32_t z) { return ((x & y) ^ (~(x) & (z))); }
+	    static uint32_t inline Ch(uint32_t x, uint32_t y, uint32_t z) { return ((x & y) ^ (~(x) & (z))); }
 
-        uint32_t inline Parity(uint32_t x, uint32_t y, uint32_t z) { return ((x) ^ (y) ^ (z)); }
+	    static uint32_t inline Parity(uint32_t x, uint32_t y, uint32_t z) { return ((x) ^ (y) ^ (z)); }
 
-        uint32_t inline Maj(uint32_t x, uint32_t y, uint32_t z) { return ((x & y) ^ (x & z) ^ (y & z)); }
+	    static uint32_t inline Maj(uint32_t x, uint32_t y, uint32_t z) { return ((x & y) ^ (x & z) ^ (y & z)); }
 
         void transform() {
             uint32_t W[80] = {0x00};
 
-            uint32_t a, b, c, d, e;
-
-            // digest init
-            a = m_Digest[0];
-            b = m_Digest[1];
-            c = m_Digest[2];
-            d = m_Digest[3];
-            e = m_Digest[4];
+	        // digest init
+            uint32_t a = m_Digest[0];
+            uint32_t b = m_Digest[1];
+            uint32_t c = m_Digest[2];
+            uint32_t d = m_Digest[3];
+            uint32_t e = m_Digest[4];
 
             for (int t = 0; t < 16; ++t) {
                 W[t] = m_Block[t * 4] << 24;

@@ -4,30 +4,29 @@
 #include <iterator>
 #include <vector>
 #include <cstdint>
-#include <algorithm>
 
 void HUGE_Add(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2) {
     byte carry = 0;
-    unsigned short tmp = 0;
+    unsigned short tmp;
 
     --last1;
     --last2;
 
     for (; (first1 <= last1) && (first2 <= last2); --last1, --last2) {
         tmp = (*(last1)) + (*(last2)) + (carry);
-        *(--result) = (byte)tmp;
+        *(--result) = static_cast<byte>(tmp);
         carry = tmp >> 8;
     }
 
     for (; first1 <= last1; --last1) {
         tmp = (*last1) + (carry);
-        *(--result) = (byte)tmp;
+        *(--result) = static_cast<byte>(tmp);
         carry = tmp >> 8;
     }
 
     for (; first2 <= last2; --last2) {
         tmp = (*last2) + (carry);
-        *(--result) = (byte)tmp;
+        *(--result) = static_cast<byte>(tmp);
         carry = tmp >> 8;
     }
 }
@@ -59,17 +58,14 @@ void HUGE_Multiply(byte* first_result, byte* last_result, const byte* first1, co
     --last2;
 
     byte carry = 0x00;
-    byte* resultIter = nullptr;
 
-    for (; first2 <= last2; --last2) {
+	for (; first2 <= last2; --last2) {
         --last_result;
 
-        resultIter = last_result;
+        byte* resultIter = last_result;
 
         for (const byte* last_1 = last1; first1 <= last_1; --last_1) {
-            uint16_t temp = 0x0000;
-
-            temp = (*resultIter) + (*last_1) * (*last2) + carry;
+	        uint16_t temp = (*resultIter) + (*last_1) * (*last2) + carry;
 
             carry = temp / 256;
 
@@ -87,11 +83,10 @@ void HUGE_Multiply(byte* first_result, byte* last_result, const byte* first1, co
     --last1;
     --last_result;
 
-    uint16_t temp = 0;
-    uint8_t carry = 0x00;
+	uint8_t carry = 0x00;
 
     for (; first1 <= last1; --last1) {
-        temp = (*last1) * x + carry;
+        uint16_t temp = (*last1) * x + carry;
 
         carry = temp / 256;
         *(last_result) = temp % 256;
@@ -103,12 +98,7 @@ void HUGE_Multiply(byte* first_result, byte* last_result, const byte* first1, co
 }
 
 void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_last, const byte* first1, const byte* last1, const byte* first2, const byte* last2) {
-    byte* rFirst = nullptr;
-    byte* rLast = nullptr;
-    const byte* dFirst = nullptr;
-    const byte* dLast = nullptr;
-
-    while ((first1 != last1) && (*first1 == 0x00)) {
+	while ((first1 != last1) && (*first1 == 0x00)) {
         ++first1;
     }
 
@@ -121,10 +111,10 @@ void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_las
     auto d1 = std::distance(first1, last1);
     auto d2 = std::distance(first2, last2);
     auto shift = d1 - d2 + 1;
-    rFirst = &rTmp[0];
-    rLast = rFirst + d2;
-    dFirst = first2;
-    dLast = last2;
+    byte * rFirst = &rTmp[0];
+    byte * rLast = rFirst + d2;
+    const byte * dFirst = first2;
+    const byte * dLast = last2;
 
     std::advance(div_last, -shift);
 
@@ -141,16 +131,15 @@ void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_las
     while (shift > 0) {
         uint8_t Down = 0x00;
         uint16_t Up = 0x00100;
-        uint8_t Middle = 0x00;
 
-        auto cmp = HUGE_Compare(rFirst, rLast, dFirst, dLast);
+	    auto cmp = HUGE_Compare(rFirst, rLast, dFirst, dLast);
         if (cmp == -1) {
             ++rLast;
         }
 
         for (; Down < Up - 1;) {
             // 1. c <-- (down + up) / 2;
-            Middle = ((Down + Up) / 2);
+            uint8_t Middle = ((Down + Up) / 2);
 
             // 2. mul <-- d * c;
             std::fill(&mul[0], &mul[0] + nbytes, 0x00);
@@ -165,7 +154,7 @@ void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_las
                 Up = Middle;
             } else if (mulCmp == 0) { // if(mul == a) Up <-- C; Down <-- Up;
                 Up = Middle;
-                Down = (uint8_t)Up;
+                Down = static_cast<uint8_t>(Up);
             }
         }
 
@@ -184,16 +173,15 @@ void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_las
 }
 
 void HUGE_Increment(byte* first, byte* last) {
-    unsigned short tmp = 0x00;
-    byte carry = 0x00;
+	byte carry = 0x00;
 
-    tmp = (*--last) + 0x01 + carry;
-    *(last) = (byte)tmp;
+    unsigned short tmp = (*--last) + 0x01 + carry;
+    *(last) = static_cast<byte>(tmp);
     carry = tmp >> 8;
 
     for (; (first <= last) && carry;) {
         tmp = (*--last) + carry;
-        *(last) = (byte)tmp;
+        *(last) = static_cast<byte>(tmp);
         carry = tmp >> 8;
     }
 }
@@ -233,7 +221,7 @@ void HUGE_RotateLeft(byte* first, byte* last) {
         int z = (*last >> 7) & 0x01;
 
         *last <<= 1;
-        *last |= (byte)carry;
+        *last |= static_cast<byte>(carry);
         carry = z;
     }
 }
@@ -245,7 +233,7 @@ void HUGE_RotateRight(byte* first, byte* last) {
         int z = *first & 0x01;
 
         *first >>= 1;
-        *first |= (byte)(carry << 7);
+        *first |= static_cast<byte>(carry << 7);
         carry = z;
     }
 }
@@ -257,7 +245,7 @@ void HUGE_ShiftRight(byte* first, byte* last) {
         int z = (*first) & 0x01;
 
         *first >>= 1;
-        *first |= (byte)(carry << 7);
+        *first |= static_cast<byte>(carry << 7);
         carry = z;
     }
 }
@@ -271,7 +259,7 @@ void HUGE_ShiftLeft(byte* first, byte* last) {
         int z = (*(last) >> 7) & 0x01;
 
         *last <<= 1;
-        *last |= (byte)carry;
+        *last |= static_cast<byte>(carry);
         carry = z;
     }
 }
@@ -376,7 +364,7 @@ short HUGE_Compare(const byte* first1, const byte* last1, const byte* first2, co
 
     if (dA == dB) {
         if ((first1 < last1) && (first2 < last2)) {
-            return (short)((*first1 < *first2) ? -1 : 1);
+            return static_cast<short>((*first1 < *first2) ? -1 : 1);
         }
     }
 
@@ -392,7 +380,6 @@ short HUGE_Compare(const byte* first1, const byte* last1, const byte* first2, co
 }
 
 bool HUGE_Equal(const byte* first1, const byte* last1, const byte* first2, const byte* last2) {
-    bool ret = false;
 
     for (; (first1 != last1) && (*first1 == 0x00); ++first1)
         ;

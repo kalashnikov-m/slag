@@ -136,7 +136,7 @@ namespace cry {
 
     nexta:
         for (; t-- > 0;) {
-            a++;
+            ++a;
 
             T b = pow_mod(a, w, p);
             if (b == 1 || b == p_minus_1) {
