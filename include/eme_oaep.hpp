@@ -73,9 +73,7 @@ namespace cry {
 			/////////////////////////////////////
             // f. Let maskedDB = DB \xor dbMask.
             std::vector<uint8_t> maskedDB(dbLen);
-            for (size_t i = 0; i < dbLen; ++i) {
-                maskedDB[i] = DB[i] ^ dbMask[i];
-            }
+			std::transform(DB.begin(), DB.end(), dbMask.begin(), maskedDB.begin(), std::bit_xor<>());
 
 			/////////////////////////////////////////
             // g. Let seedMask = MGF(maskedDB, hLen).
@@ -85,9 +83,7 @@ namespace cry {
 			//////////////////////////////////////////
             // h. Let maskedSeed = seed \xor seedMask.
             std::vector<uint8_t> maskedSeed(hLen);
-            for (size_t i = 0; i < hLen; ++i) {
-                maskedSeed[i] = seed[i] ^ seedMask[i];
-            }
+			std::transform(seed.begin(), seed.end(), seedMask.begin(), maskedSeed.begin(), std::bit_xor<>());
 
 			/////////////////////////////////////////////////////////////////////////////
 			// i. Concatenate a single octet with hexadecimal value 0x00, maskedSeed, and
@@ -142,9 +138,7 @@ namespace cry {
 
           // d. Let seed = maskedSeed \xor seedMask.
           std::vector<uint8_t> seed(hLen);
-          for (size_t i = 0; i < hLen; ++i) {
-            seed[i] = maskedSeed[i] ^ seedMask[i];
-          }
+		  std::transform(maskedSeed.begin(), maskedSeed.end(), seedMask.begin(), seed.begin(), std::bit_xor<>());
 
           // e. Let dbMask = MGF(seed, k - hLen - 1).
           std::vector<uint8_t> dbMask(dbLen);
@@ -152,9 +146,7 @@ namespace cry {
 
           // f. Let DB = maskedDB \xor dbMask.
           std::vector<uint8_t> DB(dbLen);
-          for (size_t i = 0; i < dbLen; ++i) {
-            DB[i] = maskedDB[i] ^ dbMask[i];
-          }
+		  std::transform(maskedDB.begin(), maskedDB.end(), dbMask.begin(), DB.begin(), std::bit_xor<>());
 
           // g. Separate DB into an octet string lHash' of length hLen, a
           // (possibly empty) padding string PS consisting of octets with

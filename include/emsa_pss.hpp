@@ -54,10 +54,8 @@ namespace cry {
             it += 8;
 
             it = std::copy(mHash.begin(), mHash.end(), it);
-            //it += hLen;
 
 			it = std::copy(salt.begin(), salt.end(), it);
-            //it += sLen;
 
 			///////////////////////////////////////////////////////
             // 6. Let H = Hash(M'), an octet string of length hLen.
@@ -94,9 +92,7 @@ namespace cry {
 			/////////////////////////////////////
             // 10. Let maskedDB = DB \xor dbMask.
             std::vector<uint8_t> maskedDB(dbLen);
-            for (size_t i = 0; i < dbLen; ++i) {
-                maskedDB[i] = DB[i] ^ dbMask[i];
-            }
+			std::transform(DB.begin(), DB.end(), dbMask.begin(), maskedDB.begin(), std::bit_xor<>());
 
 			///////////////////////////////////////////////////////////////////////////////////////
             // 11. Set the leftmost 8emLen - emBits bits of the leftmost octet in maskedDB to zero.
@@ -168,9 +164,7 @@ namespace cry {
 			/////////////////////////////////////
             // 8. Let DB = maskedDB \xor dbMask.
             std::vector<uint8_t> DB(dbLen);
-            for (size_t i = 0; i < dbLen; ++i) {
-                DB[i] = maskedDB[i] ^ dbMask[i];
-            }
+			std::transform(maskedDB.begin(), maskedDB.end(), dbMask.begin(), DB.begin(), std::bit_xor<>());
 
 			////////////////////////////////////////////////////////////////////////////////
             // 9. Set the leftmost 8emLen - emBits bits of the leftmost octet in DB to zero.

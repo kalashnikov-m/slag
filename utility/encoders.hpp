@@ -2,7 +2,6 @@
 #define TO_HPP
 
 #include "basic_int.hpp"
-#include <vector>
 
 namespace cry {
 

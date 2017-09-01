@@ -10,11 +10,11 @@
 
 namespace cry {
 
-	template<class Encoder=emsa_pss<SHA1>, class T = bigint8_t>
+	template<class Encoder=emsa_pss<SHA1>, class IntType = bigint8_t>
 	struct rsassa_pss
 	{
 		template<class InputIterator>
-		std::vector<uint8_t> sign(InputIterator m_first, InputIterator m_last, const T& n, const T& d, size_t modBits, const std::vector<uint8_t>& salt = std::vector<uint8_t>()) const
+		std::vector<uint8_t> sign(InputIterator m_first, InputIterator m_last, const IntType& n, const IntType& d, size_t modBits, const std::vector<uint8_t>& salt = std::vector<uint8_t>()) const
 		{
 			//////////////////////////
 			// 1. EMSA-PSS encoding:
@@ -26,11 +26,11 @@ namespace cry {
 
 			/////////////////////////////////////////////////////////////////////////////
 			// 2a. Convert the encoded message EM to an integer message representative m
-			const T m(EM.begin(), EM.end());
+			const IntType m(EM.begin(), EM.end());
 
 			////////////////////////////////////////////
 			// 2b. Apply the RSASP1 signature primitive
-			const T s = cry::pow_mod(m, d, n);
+			const IntType s = cry::pow_mod(m, d, n);
 
 			//////////////////////////////////////////////////////////////////////////////////
 			// 2c. Convert the signature representative s to a signature S of length k octets
@@ -40,7 +40,7 @@ namespace cry {
 		}
 
 		template<class MInputIterator, class InputIterator>
-		bool verify(MInputIterator m_first, MInputIterator m_last, InputIterator s_first, InputIterator s_last, const T& n, const T& e, size_t modBits) const
+		bool verify(MInputIterator m_first, MInputIterator m_last, InputIterator s_first, InputIterator s_last, const IntType& n, const IntType& e, size_t modBits) const
 		{
 			//////////////////////////////////////////
 			// 1. Length checking:
@@ -53,11 +53,11 @@ namespace cry {
 
 			///////////////////////////////////////////////////////////////////////
 			// 2a. Convert the signature S to an integer signature representative s
-			const T s(s_first, s_last);
+			const IntType s(s_first, s_last);
 
 			///////////////////////////////////////////////////////////////////////
 			// 2b. Apply the RSAVP1 verification primitive to to produce an integer message representative m:
-			const T m = cry::pow_mod(s, e, n);
+			const IntType m = cry::pow_mod(s, e, n);
 
 			///////////////////////////////////////////////////////////////////////
 			// 2c. Convert the message representative m to an encoded message EM
