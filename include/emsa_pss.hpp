@@ -101,11 +101,9 @@ namespace cry {
 
 			///////////////////////////////////////
             // 12. Let EM = maskedDB || H || 0xbc.
-            std::copy(maskedDB.begin(), maskedDB.end(), result);
-            result += dbLen;
+            result = std::copy(maskedDB.begin(), maskedDB.end(), result);
 
-            std::copy(H.begin(), H.end(), result);
-            result += hLen;
+            result = std::copy(H.begin(), H.end(), result);
 
             *result++ = 0xbc;
 
