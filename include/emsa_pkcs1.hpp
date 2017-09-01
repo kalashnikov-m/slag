@@ -1,7 +1,6 @@
 #ifndef EMSA_PKCS1_HPP
 #define EMSA_PKCS1_HPP
 
-#include <algorithm>
 #include "oid.hpp"
 
 namespace cry {

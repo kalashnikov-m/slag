@@ -30,8 +30,7 @@ template <class Encoder, class IntType = bigint8_t> struct rsassa_pkcs1 {
   template <class InputIterator>
   static bool verify(InputIterator s_first, InputIterator s_last,
                      InputIterator m_first, InputIterator m_last,
-                     const IntType &publicExponent, const IntType &modulus,
-                     size_t modulusBits) {
+                     const IntType &e, const IntType &n, size_t modulusBits) {
 
     ///////////////////////
     // 1. Length checking:
@@ -50,11 +49,10 @@ template <class Encoder, class IntType = bigint8_t> struct rsassa_pkcs1 {
 
     ///////////////////////////////////////////////
     // 2b. Apply the RSAVP1 verification primitive
-    IntType m = cry::pow_mod(s, publicExponent, modulus);
+    IntType m = cry::pow_mod(s, e, n);
 
     ////////////////////////////////////////////////////////////////////////////////////////
-    // 2c. Convert the message representative m to an encoded message EM of
-    // length k octets
+    // 2c. Convert the message representative m to an encoded message EM of length k octets
     std::vector<uint8_t> EM(m);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

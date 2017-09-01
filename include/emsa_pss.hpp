@@ -3,6 +3,7 @@
 
 #include <mgf.hpp>
 #include <sha1.hpp>
+#include <functional>
 
 namespace cry {
 
@@ -78,12 +79,10 @@ namespace cry {
             std::vector<uint8_t>::iterator itDb(DB.begin());
 
             itDb = std::copy(PS.begin(), PS.end(), itDb);
-            //itDb += psLen;
 
             *itDb++ = 0x01;
 
             itDb = std::copy(salt.begin(), salt.end(), itDb);
-            //itDb += sLen;
 
 			//////////////////////////////////////////
             // 9. Let dbMask = MGF (emLen - hLen - 1)
@@ -118,7 +117,7 @@ namespace cry {
         }
 
         template <class InputIterator, class MInputIterator>
-        bool verify(MInputIterator m_first, MInputIterator m_last, InputIterator em_first, InputIterator em_last, size_t emBits) const {
+        bool static verify(MInputIterator m_first, MInputIterator m_last, InputIterator em_first, InputIterator em_last, size_t emBits) {
 
             size_t emLen = emBits / 8;
             size_t hLen = HashType::size;
@@ -206,10 +205,8 @@ namespace cry {
             it += 8;
 
             it = std::copy(mHash.begin(), mHash.end(), it);
-            //it += hLen;
 
             it = std::copy(salt.begin(), salt.end(), it);
-            //it += sLen;
 
             auto H_ = std::vector<uint8_t>(hLen);
             hash(M_.begin(), M_.end(), H_.begin());
