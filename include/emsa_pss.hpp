@@ -14,7 +14,9 @@ namespace cry {
         template <class InputIterator, class OutputIterator>
         static OutputIterator encode(InputIterator first, InputIterator last, OutputIterator result, size_t emBits, const std::vector<uint8_t>& saltVal=std::vector<uint8_t>()) {
 
-            size_t emLen = emBits / 8;
+			size_t  k = emBits / 8;
+			//size_t emLen = (emBits % 8) == 0 ? k - 1 : k;
+			size_t emLen = (emBits % 8) == 0 ? k : k + 1;
             size_t hLen = HashType::size;
             size_t zBits = 8 * emLen - emBits;
 
@@ -96,8 +98,8 @@ namespace cry {
 
 			///////////////////////////////////////////////////////////////////////////////////////
             // 11. Set the leftmost 8emLen - emBits bits of the leftmost octet in maskedDB to zero.
-            //if (zBits > 0)
-                *maskedDB.begin() &= 0x7F;//(0xFF >> (8 - zBits));
+            if (zBits > 0)
+                *maskedDB.begin() &= (0xFF >> (/*8 - */zBits));
 
 			///////////////////////////////////////
             // 12. Let EM = maskedDB || H || 0xbc.
@@ -113,9 +115,11 @@ namespace cry {
         template <class InputIterator, class MInputIterator>
         bool static verify(MInputIterator m_first, MInputIterator m_last, InputIterator em_first, InputIterator em_last, size_t emBits) {
 
-            size_t emLen = emBits / 8;
-            size_t hLen = HashType::size;
-            size_t zBits = 8 * emLen - emBits;
+			size_t  k = emBits / 8;
+			//size_t emLen = (emBits % 8) == 0 ? k - 1 : k;
+			size_t emLen = (emBits % 8) == 0 ? k : k + 1;
+			size_t hLen = HashType::size;
+			size_t zBits = 8 * emLen - emBits;
 
 			//////////////////////////////////////////////////////////
             // 2. Let mHash = Hash(M), an octet string of length hLen.
@@ -148,8 +152,9 @@ namespace cry {
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
             // 6. If the leftmost 8emLen - emBits bits of the leftmost octet in maskedDB are not all equal to zero, 
         	// output "inconsistent" and stop.
-            if (zBits > 0 && *maskedDB.begin() & (0xFF << zBits)) {
-				throw std::runtime_error("inconsistent");
+            if (zBits > 0) 
+				if (*maskedDB.begin() >> zBits == (0xFF /*<<*/>> zBits)) {
+					throw std::runtime_error("inconsistent");
             }
 
 			/////////////////////////////////////////////
@@ -167,7 +172,7 @@ namespace cry {
 			////////////////////////////////////////////////////////////////////////////////
             // 9. Set the leftmost 8emLen - emBits bits of the leftmost octet in DB to zero.
             if (zBits > 0)
-                *DB.begin() &= (0xFF >> (8 - zBits));
+                *DB.begin() &= (0xFF >> (/*8 - */zBits));
 
 			/////////////////////////////////////////////////////////////////////////
             // 10. If the emLen - hLen - sLen - 2 leftmost octets of DB are not zero

@@ -19,7 +19,7 @@ namespace cry
 			//////////////////////////
 			// 1. EMSA-PSS encoding:
 			std::vector<uint8_t> EM(modBits / 8);
-			Encoder::encode(m_first, m_last, EM.begin(), modBits, salt);
+			Encoder::encode(m_first, m_last, EM.begin(), modBits - 1, salt);
 
 			//////////////////////////
 			// 2. RSA signature:
@@ -68,7 +68,7 @@ namespace cry
 			////////////////////////////
 			// 3. EMSA - PSS verification :
 
-			bool result = Encoder::verify(m_first, m_last, EM.begin(), EM.end(), modBits);
+			bool result = Encoder::verify(m_first, m_last, EM.begin(), EM.end(), modBits - 1);
 
 			return result;
 		}
