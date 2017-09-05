@@ -7,30 +7,33 @@
 
 #include "basic_int.hpp"
 
-namespace cry {
+namespace cry
+{
 
-template <class Encoder, class IntType = bigint8_t>
-struct rsaes_pkcs1 {
-	template <class InputIterator, class OutputIterator>
-	static OutputIterator encrypt(InputIterator first, InputIterator last, OutputIterator result, const IntType &e, const IntType &n, size_t modBits) {
+    template <class Encoder, class IntType = bigint8_t>
+    struct rsaes_pkcs1
+    {
+        template <class InputIterator, class OutputIterator>
+        static OutputIterator encrypt(InputIterator first, InputIterator last, OutputIterator result, const IntType& e, const IntType& n, size_t modBits)
+        {
 
-    /*auto encoded = Encoder::encode(first, last, modulusBits / 8);
+            /*auto encoded = Encoder::encode(first, last, modulusBits / 8);
 
-    IntType arg(encoded.begin(), encoded.end());
-    IntType result = cry::pow_mod(arg, privateExponent, modulus);
+            IntType arg(encoded.begin(), encoded.end());
+            IntType result = cry::pow_mod(arg, privateExponent, modulus);
 
-    signature = (std::vector<uint8_t>)result;*/
+            signature = (std::vector<uint8_t>)result;*/
 
-		return result;
-  }
+            return result;
+        }
 
-	template <class InputIterator, class OutputIterator>
-	static OutputIterator decrypt(InputIterator first, InputIterator last, OutputIterator result, const IntType &d, const IntType &n, size_t modBits) {
-	  
+        template <class InputIterator, class OutputIterator>
+        static OutputIterator decrypt(InputIterator first, InputIterator last, OutputIterator result, const IntType& d, const IntType& n, size_t modBits)
+        {
 
-		return result;
-  }
-};
+            return result;
+        }
+    };
 
 } // namespace cry
 

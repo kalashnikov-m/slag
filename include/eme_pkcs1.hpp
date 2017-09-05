@@ -1,18 +1,21 @@
 #ifndef EME_PKCS1_HPP
 #define EME_PKCS1_HPP
 
-#include <random>
 #include <algorithm>
+#include <random>
 
-namespace cry {
+namespace cry
+{
 
-    class eme_pkcs1 {
+    class eme_pkcs1
+    {
 
       public:
         template <class InputIterator, class OutputIterator>
-        static OutputIterator encode(InputIterator first, InputIterator last, OutputIterator result, size_t k) {
+        static OutputIterator encode(InputIterator first, InputIterator last, OutputIterator result, size_t k)
+        {
 
-            size_t mLen = std::distance(first, last);
+            size_t mLen  = std::distance(first, last);
             size_t psLen = k - mLen - 3;
 
             *result++ = 0x00;
@@ -29,28 +32,29 @@ namespace cry {
 
             result = std::copy(first, last, result);
 
-			return result;
+            return result;
         }
 
         template <class InputIterator, class OutputIterator>
-        static OutputIterator decode(InputIterator first, InputIterator last, OutputIterator result, size_t k) {
+        static OutputIterator decode(InputIterator first, InputIterator last, OutputIterator result, size_t k)
+        {
             if (first != last && *first++ != 0x00)
                 throw std::runtime_error("decryption error");
 
             if (first != last && *first++ != 0x02)
-				throw std::runtime_error("decryption error");
+                throw std::runtime_error("decryption error");
 
             for (; first != last && *first != 0x00; ++first)
                 ;
 
             if (*first != 0x00)
-				throw std::runtime_error("decryption error");
+                throw std::runtime_error("decryption error");
 
             result = std::copy(first, last, result);
 
-			return result;
+            return result;
         }
-    };	
+    };
 }
 
 #endif

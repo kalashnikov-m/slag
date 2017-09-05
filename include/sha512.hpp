@@ -3,20 +3,25 @@
 
 #include <cstdint>
 
-namespace cry {
+namespace cry
+{
 
-    class SHA512 {
+    class sha512
+    {
 
       public:
-        SHA512(): m_Idx(0), high(0), low(0)
-	    {
-	    }
+        sha512() : m_Idx(0), high(0), low(0)
+        {
+        }
 
-	    ~SHA512() {}
+        ~sha512()
+        {
+        }
 
         static const size_t size = 64;
 
-        void Init() {
+        void Init()
+        {
             m_Idx = 0;
             high = low = 0;
 
@@ -31,7 +36,8 @@ namespace cry {
         }
 
         template <class InputIterator, class OutputIterator>
-        void operator()(InputIterator first, InputIterator last, OutputIterator result) {
+        void operator()(InputIterator first, InputIterator last, OutputIterator result)
+        {
 
             Init();
             Update(first, last);
@@ -39,14 +45,18 @@ namespace cry {
         }
 
         template <class InputIterator>
-        void Update(InputIterator first, InputIterator last) {
+        void Update(InputIterator first, InputIterator last)
+        {
 
-            while (first != last) {
+            while (first != last)
+            {
                 m_Block[m_Idx++] = *first++;
                 low += 8;
-                if (low == 0x00) {
+                if (low == 0x00)
+                {
                     high++;
-                    if (high == 0x00) {
+                    if (high == 0x00)
+                    {
                         throw 1;
                     }
                 }
@@ -59,22 +69,29 @@ namespace cry {
         }
 
         template <class OutputIterator>
-        void Final(OutputIterator result) {
-            if (m_Idx > 111) {
+        void Final(OutputIterator result)
+        {
+            if (m_Idx > 111)
+            {
                 m_Block[m_Idx++] = 0x80;
-                while (m_Idx < 128) {
+                while (m_Idx < 128)
+                {
                     m_Block[m_Idx++] = 0x00;
                 }
 
                 transform();
 
-                while (m_Idx < 112) {
+                while (m_Idx < 112)
+                {
                     m_Block[m_Idx++] = 0x00;
                 }
-            } else {
+            }
+            else
+            {
                 m_Block[m_Idx++] = 0x80;
 
-                while (m_Idx < 112) {
+                while (m_Idx < 112)
+                {
                     m_Block[m_Idx++] = 0x00;
                 }
             }
@@ -173,25 +190,48 @@ namespace cry {
         }
 
       protected:
-	    static uint64_t inline ROTR(uint64_t x, int shift) { return ((x >> shift) | (x << (64 - shift))); }
+        static uint64_t inline ROTR(uint64_t x, int shift)
+        {
+            return ((x >> shift) | (x << (64 - shift)));
+        }
 
-	    static uint64_t inline SUM0(uint64_t x) { return (ROTR(x, 28) ^ ROTR(x, 34) ^ ROTR(x, 39)); }
+        static uint64_t inline SUM0(uint64_t x)
+        {
+            return (ROTR(x, 28) ^ ROTR(x, 34) ^ ROTR(x, 39));
+        }
 
-	    static uint64_t inline SUM1(uint64_t x) { return (ROTR(x, 14) ^ ROTR(x, 18) ^ ROTR(x, 41)); }
+        static uint64_t inline SUM1(uint64_t x)
+        {
+            return (ROTR(x, 14) ^ ROTR(x, 18) ^ ROTR(x, 41));
+        }
 
-	    static uint64_t inline sigma_0(uint64_t x) { return (ROTR(x, 1) ^ ROTR(x, 8) ^ (x >> 7)); }
+        static uint64_t inline sigma_0(uint64_t x)
+        {
+            return (ROTR(x, 1) ^ ROTR(x, 8) ^ (x >> 7));
+        }
 
-	    static uint64_t inline sigma_1(uint64_t x) { return (ROTR(x, 19) ^ ROTR(x, 61) ^ (x >> 6)); }
+        static uint64_t inline sigma_1(uint64_t x)
+        {
+            return (ROTR(x, 19) ^ ROTR(x, 61) ^ (x >> 6));
+        }
 
-	    static uint64_t inline Ch(uint64_t x, uint64_t y, uint64_t z) { return ((x & y) ^ (~(x) & (z))); }
+        static uint64_t inline Ch(uint64_t x, uint64_t y, uint64_t z)
+        {
+            return ((x & y) ^ (~(x) & (z)));
+        }
 
-	    static uint64_t inline Maj(uint64_t x, uint64_t y, uint64_t z) { return ((x & y) ^ (x & z) ^ (y & z)); }
+        static uint64_t inline Maj(uint64_t x, uint64_t y, uint64_t z)
+        {
+            return ((x & y) ^ (x & z) ^ (y & z));
+        }
 
-        void transform() {
+        void transform()
+        {
             uint64_t W[80] = {0x00};
 
-	        // 1. Prepare the message schedule
-            for (int t = 0; t < 16; ++t) {
+            // 1. Prepare the message schedule
+            for (int t = 0; t < 16; ++t)
+            {
 
                 W[t] |= uint64_t(m_Block[t * 8 + 0]) << 56;
                 W[t] |= uint64_t(m_Block[t * 8 + 1]) << 48;
@@ -203,7 +243,8 @@ namespace cry {
                 W[t] |= uint64_t(m_Block[t * 8 + 7]) << 0;
             }
 
-            for (int t = 16; t < 80; ++t) {
+            for (int t = 16; t < 80; ++t)
+            {
                 W[t] = sigma_1(W[t - 2]) + W[t - 7] + sigma_0(W[t - 15]) + W[t - 16];
             }
 
@@ -221,7 +262,8 @@ namespace cry {
             uint64_t T1 = 0;
             uint64_t T2 = 0;
 
-            for (int t = 0; t < 80; ++t) {
+            for (int t = 0; t < 80; ++t)
+            {
 
                 T1 = h + SUM1(e) + Ch(e, f, g) + K[t] + W[t];
                 T2 = SUM0(a) + Maj(a, b, c);
@@ -253,7 +295,8 @@ namespace cry {
         uint8_t m_Block[128]; // 1024
         uint8_t m_Idx;
 
-        struct {
+        struct
+        {
             uint64_t high;
             uint64_t low;
         };

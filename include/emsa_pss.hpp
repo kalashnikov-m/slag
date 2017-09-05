@@ -7,7 +7,7 @@
 
 namespace cry {
 
-    template <class HashType, class MGFType = MGF1<SHA1>, size_t sLen = HashType::size>
+    template <class HashType, class MGFType = mgf1<sha1>, size_t sLen = HashType::size>
     class emsa_pss{
 
       public:

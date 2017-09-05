@@ -9,22 +9,23 @@
 
 #include "basic_int.hpp"
 
-namespace cry {
+namespace cry
+{
 
     template <class T = bigint8_t>
-    class rsa {
+    class rsa
+    {
 
-    public:
+      public:
         struct rsa_key
         {
             T exponent;
             T modulus;
         };
 
-    public:
+      public:
         void generate_key_pair(const T& p, const T& q)
         {
-
         }
 
         void generate_key_pair(rsa_key& pub, rsa_key& prv, const T& e, uint32_t modulusbits)
@@ -34,28 +35,27 @@ namespace cry {
             p = cry::generate_probably_prime<T>(modulusbits, e);
             q = cry::generate_probably_prime<T>(modulusbits, e);
 
-            std::cout<<"p: "<<p<<std::endl;
-            std::cout<<"q: "<<q<<std::endl;
+            std::cout << "p: " << p << std::endl;
+            std::cout << "q: " << q << std::endl;
 
-            T N = p*q;
+            T N = p * q;
 
-            std::cout<<"N: "<<N<<std::endl;
+            std::cout << "N: " << N << std::endl;
 
-            T Phi = (p - 1)*(q-1);
-            std::cout<<"Phi: "<<Phi<<std::endl;
+            T Phi = (p - 1) * (q - 1);
+            std::cout << "Phi: " << Phi << std::endl;
 
             T d;
             cry::mod_inverse(d, T(e), Phi);
-            std::cout<<"d: "<<d<<std::endl;
+            std::cout << "d: " << d << std::endl;
 
             pub.exponent = e;
-            pub.modulus = N;
+            pub.modulus  = N;
 
             prv.exponent = d;
-            prv.modulus = N;
-        }      
+            prv.modulus  = N;
+        }
     };
 }
 
-
-#endif //CRY_RSA_H
+#endif // CRY_RSA_H

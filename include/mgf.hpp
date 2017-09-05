@@ -4,7 +4,7 @@
 namespace cry {
 
     template <class HashType>
-    struct MGF1 {
+    struct mgf1 {
         template <class InputIterator, class OutputIterator>
         void operator()(InputIterator first, InputIterator last, OutputIterator result, size_t maskLen) const {
 

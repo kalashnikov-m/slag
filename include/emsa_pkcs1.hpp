@@ -5,7 +5,7 @@
 
 namespace cry {
     
-	template<class DigestType=SHA1>
+	template<class DigestType=sha1>
     class emsa_pkcs1 {
 
       public:

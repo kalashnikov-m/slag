@@ -3,20 +3,25 @@
 
 #include <cstdint>
 
-namespace cry {
+namespace cry
+{
 
-    class SHA256 {
+    class sha256
+    {
 
       public:
-        SHA256(): m_Idx(0), m_Len(0)
-	    {
-	    }
+        sha256() : m_Idx(0), m_Len(0)
+        {
+        }
 
-	    ~SHA256() {}
+        ~sha256()
+        {
+        }
 
         static const size_t size = 32;
 
-        void Init() {
+        void Init()
+        {
             m_Idx = 0;
             m_Len = 0;
 
@@ -31,7 +36,8 @@ namespace cry {
         }
 
         template <class InputIterator, class OutputIterator>
-        void operator()(InputIterator first, InputIterator last, OutputIterator result) {
+        void operator()(InputIterator first, InputIterator last, OutputIterator result)
+        {
 
             Init();
             Update(first, last);
@@ -39,9 +45,11 @@ namespace cry {
         }
 
         template <class InputIterator>
-        void Update(InputIterator first, InputIterator last) {
+        void Update(InputIterator first, InputIterator last)
+        {
 
-            while (first != last) {
+            while (first != last)
+            {
                 m_Block[m_Idx++] = *first++;
                 m_Len += 8;
 
@@ -53,22 +61,29 @@ namespace cry {
         }
 
         template <class OutputIterator>
-        void Final(OutputIterator result) {
-            if (m_Idx > 55) {
+        void Final(OutputIterator result)
+        {
+            if (m_Idx > 55)
+            {
                 m_Block[m_Idx++] = 0x80;
-                while (m_Idx < 64) {
+                while (m_Idx < 64)
+                {
                     m_Block[m_Idx++] = 0x00;
                 }
 
                 transform();
 
-                while (m_Idx < 56) {
+                while (m_Idx < 56)
+                {
                     m_Block[m_Idx++] = 0x00;
                 }
-            } else {
+            }
+            else
+            {
                 m_Block[m_Idx++] = 0x80;
 
-                while (m_Idx < 56) {
+                while (m_Idx < 56)
+                {
                     m_Block[m_Idx++] = 0x00;
                 }
             }
@@ -127,24 +142,46 @@ namespace cry {
         }
 
       protected:
-	    static uint32_t inline ROTR(uint32_t x, int shift) { return ((x >> shift) | (x << (32 - shift))); }
+        static uint32_t inline ROTR(uint32_t x, int shift)
+        {
+            return ((x >> shift) | (x << (32 - shift)));
+        }
 
-	    static uint32_t inline SUM0(uint32_t x) { return (ROTR(x, 2) ^ ROTR(x, 13) ^ ROTR(x, 22)); }
+        static uint32_t inline SUM0(uint32_t x)
+        {
+            return (ROTR(x, 2) ^ ROTR(x, 13) ^ ROTR(x, 22));
+        }
 
-	    static uint32_t inline SUM1(uint32_t x) { return (ROTR(x, 6) ^ ROTR(x, 11) ^ ROTR(x, 25)); }
+        static uint32_t inline SUM1(uint32_t x)
+        {
+            return (ROTR(x, 6) ^ ROTR(x, 11) ^ ROTR(x, 25));
+        }
 
-	    static uint32_t inline sigma_0(uint32_t x) { return (ROTR(x, 7) ^ ROTR(x, 18) ^ (x >> 3)); }
+        static uint32_t inline sigma_0(uint32_t x)
+        {
+            return (ROTR(x, 7) ^ ROTR(x, 18) ^ (x >> 3));
+        }
 
-	    static uint32_t inline sigma_1(uint32_t x) { return (ROTR(x, 17) ^ ROTR(x, 19) ^ (x >> 10)); }
+        static uint32_t inline sigma_1(uint32_t x)
+        {
+            return (ROTR(x, 17) ^ ROTR(x, 19) ^ (x >> 10));
+        }
 
-	    static uint32_t inline Ch(uint32_t x, uint32_t y, uint32_t z) { return ((x & y) ^ (~(x) & (z))); }
+        static uint32_t inline Ch(uint32_t x, uint32_t y, uint32_t z)
+        {
+            return ((x & y) ^ (~(x) & (z)));
+        }
 
-	    static uint32_t inline Maj(uint32_t x, uint32_t y, uint32_t z) { return ((x & y) ^ (x & z) ^ (y & z)); }
+        static uint32_t inline Maj(uint32_t x, uint32_t y, uint32_t z)
+        {
+            return ((x & y) ^ (x & z) ^ (y & z));
+        }
 
-        void transform() {
+        void transform()
+        {
             uint32_t W[64] = {0x00};
 
-	        // digest init
+            // digest init
             uint32_t a = m_Digest[0];
             uint32_t b = m_Digest[1];
             uint32_t c = m_Digest[2];
@@ -154,14 +191,16 @@ namespace cry {
             uint32_t g = m_Digest[6];
             uint32_t h = m_Digest[7];
 
-            for (int t = 0; t < 16; ++t) {
+            for (int t = 0; t < 16; ++t)
+            {
                 W[t] = m_Block[t * 4] << 24;
                 W[t] |= m_Block[t * 4 + 1] << 16;
                 W[t] |= m_Block[t * 4 + 2] << 8;
                 W[t] |= m_Block[t * 4 + 3];
             }
 
-            for (int t = 16; t < 64; ++t) {
+            for (int t = 16; t < 64; ++t)
+            {
                 W[t] = sigma_1(W[t - 2]) + W[t - 7] + sigma_0(W[t - 15]) + W[t - 16];
             }
 
@@ -169,7 +208,8 @@ namespace cry {
             uint32_t T1 = 0;
             uint32_t T2 = 0;
 
-            for (int t = 0; t < 64; ++t) {
+            for (int t = 0; t < 64; ++t)
+            {
 
                 T1 = h + SUM1(e) + Ch(e, f, g) + K[t] + W[t];
                 T2 = SUM0(a) + Maj(a, b, c);

@@ -3,20 +3,25 @@
 
 #include <cstdint>
 
-namespace cry {
+namespace cry
+{
 
-    class SHA1 {
+    class sha1
+    {
 
       public:
-        SHA1(): m_Idx(0), m_Len(0)
-	    {
-	    }
+        sha1() : m_Idx(0), m_Len(0)
+        {
+        }
 
-	    ~SHA1() {}
+        ~sha1()
+        {
+        }
 
         static const size_t size = 20;
 
-        void Init() {
+        void Init()
+        {
             m_Idx = 0;
             m_Len = 0;
 
@@ -28,7 +33,8 @@ namespace cry {
         }
 
         template <class InputIterator, class OutputIterator>
-        void operator()(InputIterator first, InputIterator last, OutputIterator result) {
+        void operator()(InputIterator first, InputIterator last, OutputIterator result)
+        {
 
             Init();
             Update(first, last);
@@ -36,9 +42,11 @@ namespace cry {
         }
 
         template <class InputIterator>
-        void Update(InputIterator first, InputIterator last) {
+        void Update(InputIterator first, InputIterator last)
+        {
 
-            while (first != last) {
+            while (first != last)
+            {
                 m_Block[m_Idx++] = *first++;
                 m_Len += 8;
 
@@ -50,22 +58,29 @@ namespace cry {
         }
 
         template <class OutputIterator>
-        void Final(OutputIterator result) {
-            if (m_Idx > 55) {
+        void Final(OutputIterator result)
+        {
+            if (m_Idx > 55)
+            {
                 m_Block[m_Idx++] = 0x80;
-                while (m_Idx < 64) {
+                while (m_Idx < 64)
+                {
                     m_Block[m_Idx++] = 0x00;
                 }
 
                 transform();
 
-                while (m_Idx < 56) {
+                while (m_Idx < 56)
+                {
                     m_Block[m_Idx++] = 0x00;
                 }
-            } else {
+            }
+            else
+            {
                 m_Block[m_Idx++] = 0x80;
 
-                while (m_Idx < 56) {
+                while (m_Idx < 56)
+                {
                     m_Block[m_Idx++] = 0x00;
                 }
             }
@@ -109,46 +124,69 @@ namespace cry {
         }
 
       protected:
-	    static uint32_t inline ROTL(uint32_t x, int shift) { return ((x << shift) | (x >> (32 - shift))); }
+        static uint32_t inline ROTL(uint32_t x, int shift)
+        {
+            return ((x << shift) | (x >> (32 - shift)));
+        }
 
-	    static uint32_t inline Ch(uint32_t x, uint32_t y, uint32_t z) { return ((x & y) ^ (~(x) & (z))); }
+        static uint32_t inline Ch(uint32_t x, uint32_t y, uint32_t z)
+        {
+            return ((x & y) ^ (~(x) & (z)));
+        }
 
-	    static uint32_t inline Parity(uint32_t x, uint32_t y, uint32_t z) { return ((x) ^ (y) ^ (z)); }
+        static uint32_t inline Parity(uint32_t x, uint32_t y, uint32_t z)
+        {
+            return ((x) ^ (y) ^ (z));
+        }
 
-	    static uint32_t inline Maj(uint32_t x, uint32_t y, uint32_t z) { return ((x & y) ^ (x & z) ^ (y & z)); }
+        static uint32_t inline Maj(uint32_t x, uint32_t y, uint32_t z)
+        {
+            return ((x & y) ^ (x & z) ^ (y & z));
+        }
 
-        void transform() {
+        void transform()
+        {
             uint32_t W[80] = {0x00};
 
-	        // digest init
+            // digest init
             uint32_t a = m_Digest[0];
             uint32_t b = m_Digest[1];
             uint32_t c = m_Digest[2];
             uint32_t d = m_Digest[3];
             uint32_t e = m_Digest[4];
 
-            for (int t = 0; t < 16; ++t) {
+            for (int t = 0; t < 16; ++t)
+            {
                 W[t] = m_Block[t * 4] << 24;
                 W[t] |= m_Block[t * 4 + 1] << 16;
                 W[t] |= m_Block[t * 4 + 2] << 8;
                 W[t] |= m_Block[t * 4 + 3];
             }
 
-            for (int i = 16; i < 80; ++i) {
+            for (int i = 16; i < 80; ++i)
+            {
                 W[i] = ROTL(W[i - 3] ^ W[i - 8] ^ W[i - 14] ^ W[i - 16], 1);
             }
 
             // main cycle
             uint32_t T = 0;
 
-            for (int t = 0; t < 80; ++t) {
-                if (t < 20) {
+            for (int t = 0; t < 80; ++t)
+            {
+                if (t < 20)
+                {
                     T = ROTL(a, 5) + Ch(b, c, d) + e + 0x5A827999 + W[t];
-                } else if (t < 40) {
+                }
+                else if (t < 40)
+                {
                     T = ROTL(a, 5) + Parity(b, c, d) + e + 0x6ED9EBA1 + W[t];
-                } else if (t < 60) {
+                }
+                else if (t < 60)
+                {
                     T = ROTL(a, 5) + Maj(b, c, d) + e + 0x8F1BBCDC + W[t];
-                } else if (t < 80) {
+                }
+                else if (t < 80)
+                {
                     T = ROTL(a, 5) + Parity(b, c, d) + e + 0xCA62C1D6 + W[t];
                 }
 

@@ -7,32 +7,49 @@
 #include <sstream>
 #include <vector>
 
-#include <cstdint>
 #include <cctype>
+#include <cstdint>
 
 #include <HugeCore.h>
 
 using namespace std;
 
-namespace cry {
+namespace cry
+{
     template <class IntType = uint8_t>
-    class basic_int {
+    class basic_int
+    {
       public:
-        basic_int() : m_Buffer(1), m_Negative(false) {}
+        basic_int() : m_Buffer(1), m_Negative(false)
+        {
+        }
 
-        ~basic_int() {}
+        ~basic_int()
+        {
+        }
 
-        constexpr basic_int(const basic_int& other) : m_Buffer(other.m_Buffer), m_Negative(other.m_Negative) {}
+        constexpr basic_int(const basic_int& other) : m_Buffer(other.m_Buffer), m_Negative(other.m_Negative)
+        {
+        }
 
-        basic_int(basic_int&& other) noexcept { *this = std::move(other); }
+        basic_int(basic_int&& other) noexcept
+        {
+            *this = std::move(other);
+        }
 
-        basic_int(const std::initializer_list<IntType>& il, bool negative = false) : basic_int(std::begin(il), std::end(il), negative) {}
+        basic_int(const std::initializer_list<IntType>& il, bool negative = false) : basic_int(std::begin(il), std::end(il), negative)
+        {
+        }
 
-        basic_int(const std::vector<IntType>& iv, bool negative = false) : basic_int(std::begin(iv), std::end(iv), negative) {}
+        basic_int(const std::vector<IntType>& iv, bool negative = false) : basic_int(std::begin(iv), std::end(iv), negative)
+        {
+        }
 
-        basic_int(uint32_t x) : basic_int({static_cast<IntType>((x & 0xff000000) >> 24), static_cast<IntType>((x & 0x00ff0000) >> 16), static_cast<IntType>((x & 0x0000ff00) >> 8), static_cast<IntType>(x & 0x000000ff)}) {}
+        basic_int(uint32_t x) : basic_int({static_cast<IntType>((x & 0xff000000) >> 24), static_cast<IntType>((x & 0x00ff0000) >> 16), static_cast<IntType>((x & 0x0000ff00) >> 8), static_cast<IntType>(x & 0x000000ff)})
+        {
+        }
 
-        basic_int(const std::string& hex):m_Buffer(1), m_Negative(false)
+        basic_int(const std::string& hex) : m_Buffer(1), m_Negative(false)
         {
             if (hex.empty())
             {
@@ -49,7 +66,7 @@ namespace cry {
 
             ////////////// counting hexadecimal characters //////////////
             //
-            size_t nchars = std::count_if(rit, rend, [](unsigned char c){ return std::isalnum(c); });
+            size_t nchars = std::count_if(rit, rend, [](unsigned char c) { return std::isalnum(c); });
             size_t nbytes = nchars / 2;
             nbytes += nchars % 2;
 
@@ -60,7 +77,7 @@ namespace cry {
                 nwords += 1;
 
             IntType word = 0;
-            size_t cnt     = 0;
+            size_t cnt   = 0;
 
             m_Buffer.resize(nwords);
             auto ret(m_Buffer.rbegin());
@@ -100,13 +117,14 @@ namespace cry {
         }
 
         template <class InputIterator>
-        basic_int(InputIterator first, InputIterator last, bool negative = false)
-            : m_Buffer(1), m_Negative(false) {
+        basic_int(InputIterator first, InputIterator last, bool negative = false) : m_Buffer(1), m_Negative(false)
+        {
             for (; first != last && *first == 0x00; ++first)
                 ;
 
-            if (first != last) {
-                m_Buffer = std::vector<IntType>(first, last);
+            if (first != last)
+            {
+                m_Buffer   = std::vector<IntType>(first, last);
                 m_Negative = negative;
             }
         }
@@ -160,41 +178,58 @@ namespace cry {
         template <class X>
         friend ostream& operator<<(ostream& stream, const basic_int<X>& huge);
 
-        friend bool operator&&(const basic_int& lhs, const basic_int& rhs) {
+        friend bool operator&&(const basic_int& lhs, const basic_int& rhs)
+        {
             bool f1 = static_cast<bool>(lhs);
             bool f2 = static_cast<bool>(rhs);
 
             return (f1 && f2);
         }
 
-        friend bool operator||(const basic_int& lhs, const basic_int& rhs) {
+        friend bool operator||(const basic_int& lhs, const basic_int& rhs)
+        {
             bool f1 = static_cast<bool>(lhs);
             bool f2 = static_cast<bool>(rhs);
 
             return (f1 || f2);
         }
 
-        friend bool operator<(const basic_int& lhs, const basic_int& rhs) {
+        friend bool operator<(const basic_int& lhs, const basic_int& rhs)
+        {
             short cmp = compare(lhs, rhs);
 
             return (cmp == -1);
         }
 
-        friend bool operator>(const basic_int& lhs, const basic_int& rhs) { return rhs < lhs; }
+        friend bool operator>(const basic_int& lhs, const basic_int& rhs)
+        {
+            return rhs < lhs;
+        }
 
-        friend bool operator<=(const basic_int& lhs, const basic_int& rhs) { return !(lhs > rhs); }
+        friend bool operator<=(const basic_int& lhs, const basic_int& rhs)
+        {
+            return !(lhs > rhs);
+        }
 
-        friend bool operator>=(const basic_int& lhs, const basic_int& rhs) { return !(lhs < rhs); }
+        friend bool operator>=(const basic_int& lhs, const basic_int& rhs)
+        {
+            return !(lhs < rhs);
+        }
 
-        friend bool operator==(const basic_int& lhs, const basic_int& rhs) {
+        friend bool operator==(const basic_int& lhs, const basic_int& rhs)
+        {
             short cmp = compare(lhs, rhs);
 
             return (cmp == 0);
         }
 
-        friend bool operator!=(const basic_int& lhs, const basic_int& rhs) { return !(lhs == rhs); }
+        friend bool operator!=(const basic_int& lhs, const basic_int& rhs)
+        {
+            return !(lhs == rhs);
+        }
 
-        friend const basic_int operator&(const basic_int& lhs, const basic_int& rhs) {
+        friend const basic_int operator&(const basic_int& lhs, const basic_int& rhs)
+        {
             auto max = std::max(lhs.m_Buffer.size(), rhs.m_Buffer.size());
 
             std::vector<IntType> out(max);
@@ -204,7 +239,8 @@ namespace cry {
             return basic_int(out);
         }
 
-        friend const basic_int operator|(const basic_int& lhs, const basic_int& rhs) {
+        friend const basic_int operator|(const basic_int& lhs, const basic_int& rhs)
+        {
             auto max = std::max(lhs.m_Buffer.size(), rhs.m_Buffer.size());
 
             std::vector<IntType> out(max);
@@ -214,7 +250,8 @@ namespace cry {
             return basic_int(out);
         }
 
-        friend const basic_int operator^(const basic_int& lhs, const basic_int& rhs) {
+        friend const basic_int operator^(const basic_int& lhs, const basic_int& rhs)
+        {
             auto max = std::max(lhs.m_Buffer.size(), rhs.m_Buffer.size());
 
             std::vector<IntType> out(max);
@@ -224,8 +261,8 @@ namespace cry {
             return basic_int(out);
         }
 
-        friend const basic_int
-        operator+(const basic_int& lhs, const basic_int& rhs) {
+        friend const basic_int operator+(const basic_int& lhs, const basic_int& rhs)
+        {
             const auto& lhsBuf = lhs.m_Buffer;
             const auto& rhsBuf = rhs.m_Buffer;
 
@@ -235,20 +272,26 @@ namespace cry {
             std::vector<IntType> out(std::max(lsize, rsize));
 
             // если знаки аргументов различны: (a)+(-b), (-a)+(b) ==> ?(a-b)
-            if (lhs.m_Negative ^ rhs.m_Negative) {
+            if (lhs.m_Negative ^ rhs.m_Negative)
+            {
                 short cmp = HUGE_Compare(&lhsBuf[0], &lhsBuf[0] + lsize, &rhsBuf[0], &rhsBuf[0] + rsize);
 
-                if (cmp == -1) { // (|a| < |b|) ==> (|b| - |a|)
+                if (cmp == -1)
+                { // (|a| < |b|) ==> (|b| - |a|)
                     HUGE_Subtract(&out[0] + out.size(), &rhsBuf[0], &rhsBuf[0] + rsize, &lhsBuf[0], &lhsBuf[0] + lsize);
 
                     return basic_int(out, rhs.m_Negative);
-                } else if (cmp == +1) {
+                }
+                else if (cmp == +1)
+                {
                     // (|a| > |b|) ==> (|a| - |b|)
                     HUGE_Subtract(&out[0] + out.size(), &lhsBuf[0], &lhsBuf[0] + lsize, &rhsBuf[0], &rhsBuf[0] + rsize);
 
                     return basic_int(out, lhs.m_Negative);
                 }
-            } else { // если знаки аргументов одинаковы
+            }
+            else
+            { // если знаки аргументов одинаковы
                 HUGE_Add(&out[0] + out.size(), &lhsBuf[0], &lhsBuf[0] + lsize, &rhsBuf[0], &rhsBuf[0] + rsize);
 
                 return basic_int<IntType>(out, lhs.m_Negative & rhs.m_Negative);
@@ -257,11 +300,13 @@ namespace cry {
             return basic_int();
         }
 
-        friend const basic_int operator-(const basic_int& lhs, const basic_int& rhs) {
+        friend const basic_int operator-(const basic_int& lhs, const basic_int& rhs)
+        {
             short cmp = HUGE_Compare(&lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size());
 
             // если знаки аргументов различны: (a)-(-b), (-a)-(b) ==> ?(a+b)
-            if (lhs.m_Negative ^ rhs.m_Negative) {
+            if (lhs.m_Negative ^ rhs.m_Negative)
+            {
                 basic_int temp((cmp == -1) ? rhs : lhs);
 
                 HUGE_Add(&temp.m_Buffer[0] + temp.m_Buffer.size(), &lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size());
@@ -272,7 +317,8 @@ namespace cry {
             }
 
             // если знаки аргументов одинаковы:
-            if (cmp == -1) { // (|a| < |b|) ==> (|b| - |a|)
+            if (cmp == -1)
+            { // (|a| < |b|) ==> (|b| - |a|)
                 basic_int temp(rhs);
 
                 HUGE_Subtract(&temp.m_Buffer[0] + temp.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size(), &lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size());
@@ -280,7 +326,9 @@ namespace cry {
                 temp.m_Negative = (!lhs.m_Negative & !rhs.m_Negative);
 
                 return temp;
-            } else if (cmp == +1) {
+            }
+            else if (cmp == +1)
+            {
                 // (|a| > |b|) ==> (|a| - |b|)
                 basic_int temp(lhs);
 
@@ -294,7 +342,8 @@ namespace cry {
             return basic_int();
         }
 
-        friend const basic_int operator*(const basic_int& lhs, const basic_int& rhs) {
+        friend const basic_int operator*(const basic_int& lhs, const basic_int& rhs)
+        {
             const std::vector<byte>& lhsBuf = lhs.m_Buffer;
             const std::vector<byte>& rhsBuf = rhs.m_Buffer;
 
@@ -308,7 +357,8 @@ namespace cry {
             return basic_int(out, lhs.m_Negative ^ rhs.m_Negative);
         }
 
-        friend const basic_int operator/(const basic_int& lhs, const basic_int& rhs) {
+        friend const basic_int operator/(const basic_int& lhs, const basic_int& rhs)
+        {
             basic_int div;
             basic_int rem;
 
@@ -317,7 +367,8 @@ namespace cry {
             return div;
         }
 
-        friend const basic_int operator%(const basic_int& lhs, const basic_int& rhs) {
+        friend const basic_int operator%(const basic_int& lhs, const basic_int& rhs)
+        {
             basic_int div;
             basic_int rem;
 
@@ -326,31 +377,42 @@ namespace cry {
             return rem;
         }
 
-		void DivRem(basic_int& q, basic_int& r, const basic_int& other) const;
+        void DivRem(basic_int& q, basic_int& r, const basic_int& other) const;
 
       protected:
-        void __swap(basic_int& other) noexcept {
+        void __swap(basic_int& other) noexcept
+        {
             m_Buffer.swap(other.m_Buffer);
 
             std::swap(m_Negative, other.m_Negative);
         }
 
-		template <class X, size_t sz> struct SwapBytes {
-			constexpr inline X operator()(X val) const { return val; }
-		};
+        template <class X, size_t sz>
+        struct SwapBytes
+        {
+            constexpr inline X operator()(X val) const
+            {
+                return val;
+            }
+        };
 
-		template <class X> struct SwapBytes<X, 2> {
-			constexpr inline X operator()(X val) const {
-				return ((((val) >> 8) & 0x00FF) | (((val) << 8) & 0xFF00));
-			}
-		};
+        template <class X>
+        struct SwapBytes<X, 2>
+        {
+            constexpr inline X operator()(X val) const
+            {
+                return ((((val) >> 8) & 0x00FF) | (((val) << 8) & 0xFF00));
+            }
+        };
 
-		template <class X> struct SwapBytes<X, 4> {
-			constexpr inline X operator()(X val) const {
-				return ((((val) >> 24) & 0x000000FF) | (((val) >> 8) & 0x0000FF00) |
-					(((val) << 8) & 0x00FF0000) | (((val) << 24) & 0xFF000000));
-			}
-		};
+        template <class X>
+        struct SwapBytes<X, 4>
+        {
+            constexpr inline X operator()(X val) const
+            {
+                return ((((val) >> 24) & 0x000000FF) | (((val) >> 8) & 0x0000FF00) | (((val) << 8) & 0x00FF0000) | (((val) << 24) & 0xFF000000));
+            }
+        };
 
         template <class X>
         friend short compare(const basic_int<X>& lhs, const basic_int<X>& rhs);
@@ -363,8 +425,10 @@ namespace cry {
     // =================================================================================
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator=(const basic_int<X>& other) {
-        if (this != &other) {
+    basic_int<X>& basic_int<X>::operator=(const basic_int<X>& other)
+    {
+        if (this != &other)
+        {
             auto temp(other);
 
             this->__swap(temp);
@@ -376,8 +440,9 @@ namespace cry {
     template <class X>
     basic_int<X>& basic_int<X>::operator=(basic_int<X>&& other) noexcept
     {
-        if (this != &other) {
-            m_Buffer = std::move(other.m_Buffer);
+        if (this != &other)
+        {
+            m_Buffer   = std::move(other.m_Buffer);
             m_Negative = std::move(other.m_Negative);
         }
 
@@ -385,47 +450,53 @@ namespace cry {
     }
 
     template <class X>
-    basic_int<X>::operator bool() const {
+    basic_int<X>::operator bool() const
+    {
         bool flag = HUGE_IsZero(&m_Buffer[0], (&m_Buffer[0] + m_Buffer.size()));
 
         return !flag;
     }
 
     template <class ElemT>
-    inline basic_int<ElemT>::operator const std::vector<uint8_t>() const {
-      auto first = m_Buffer.begin(), last = m_Buffer.end();
-      auto n = std::distance(first, last);
-      std::vector<uint8_t> out(sizeof(ElemT) * n);
-      auto it(out.begin());
+    inline basic_int<ElemT>::operator const std::vector<uint8_t>() const
+    {
+        auto first = m_Buffer.begin(), last = m_Buffer.end();
+        auto n = std::distance(first, last);
+        std::vector<uint8_t> out(sizeof(ElemT) * n);
+        auto it(out.begin());
 
-      std::for_each(first, last, [&it](auto x) {
-        ElemT val = SwapBytes<ElemT, sizeof(ElemT)>()(x);
+        std::for_each(first, last, [&it](auto x) {
+            ElemT val = SwapBytes<ElemT, sizeof(ElemT)>()(x);
 
-        for (size_t i = 0; i < sizeof(ElemT); ++i) {
-          *it++ = static_cast<uint8_t>(val & 0xff);
-          val >>= 8;
-        }
-      });
+            for (size_t i = 0; i < sizeof(ElemT); ++i)
+            {
+                *it++ = static_cast<uint8_t>(val & 0xff);
+                val >>= 8;
+            }
+        });
 
-      return out;
+        return out;
     }
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator++() {
+    basic_int<X>& basic_int<X>::operator++()
+    {
         HUGE_Increment(&m_Buffer[0], &m_Buffer[0] + m_Buffer.size());
 
         return *this;
     }
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator--() {
+    basic_int<X>& basic_int<X>::operator--()
+    {
         HUGE_Decrement(&m_Buffer[0], &m_Buffer[0] + m_Buffer.size());
 
         return *this;
     }
 
     template <class X>
-    const basic_int<X> basic_int<X>::operator++(int) {
+    const basic_int<X> basic_int<X>::operator++(int)
+    {
         basic_int temp(*this);
 
         ++(*this);
@@ -434,7 +505,8 @@ namespace cry {
     }
 
     template <class X>
-    const basic_int<X> basic_int<X>::operator--(int) {
+    const basic_int<X> basic_int<X>::operator--(int)
+    {
         basic_int temp(*this);
 
         --(*this);
@@ -443,31 +515,36 @@ namespace cry {
     }
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator+=(const basic_int<X>& rhs) {
+    basic_int<X>& basic_int<X>::operator+=(const basic_int<X>& rhs)
+    {
         *this = *this + rhs;
 
         return *this;
     }
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator-=(const basic_int<X>& rhs) {
+    basic_int<X>& basic_int<X>::operator-=(const basic_int<X>& rhs)
+    {
         *this = *this - rhs;
 
         return *this;
     }
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator+() {
+    basic_int<X>& basic_int<X>::operator+()
+    {
         return (*this);
     }
 
     template <class X>
-    const basic_int<X> basic_int<X>::operator-() const {
+    const basic_int<X> basic_int<X>::operator-() const
+    {
         return basic_int(m_Buffer, !m_Negative);
     }
 
     template <class X>
-    const basic_int<X> basic_int<X>::operator~() const {
+    const basic_int<X> basic_int<X>::operator~() const
+    {
         basic_int temp(*this);
 
         HUGE_Inverse(&temp.m_Buffer[0], &temp.m_Buffer[0] + temp.m_Buffer.size());
@@ -476,56 +553,64 @@ namespace cry {
     }
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator%=(const basic_int<X>& rhs) {
+    basic_int<X>& basic_int<X>::operator%=(const basic_int<X>& rhs)
+    {
         *this = *this % rhs;
 
         return *this;
     }
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator&=(const basic_int<X>& rhs) {
+    basic_int<X>& basic_int<X>::operator&=(const basic_int<X>& rhs)
+    {
         *this = *this & rhs;
 
         return *this;
     }
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator|=(const basic_int<X>& rhs) {
+    basic_int<X>& basic_int<X>::operator|=(const basic_int<X>& rhs)
+    {
         *this = *this | rhs;
 
         return *this;
     }
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator^=(const basic_int<X>& rhs) {
+    basic_int<X>& basic_int<X>::operator^=(const basic_int<X>& rhs)
+    {
         *this = *this ^ rhs;
 
         return *this;
     }
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator*=(const basic_int<X>& rhs) {
+    basic_int<X>& basic_int<X>::operator*=(const basic_int<X>& rhs)
+    {
         *this = *this * rhs;
 
         return *this;
     }
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator/=(const basic_int<X>& rhs) {
+    basic_int<X>& basic_int<X>::operator/=(const basic_int<X>& rhs)
+    {
         *this = *this / rhs;
 
         return *this;
     }
 
     template <class X>
-    ostream& operator<<(ostream& stream, const basic_int<X>& huge) {
+    ostream& operator<<(ostream& stream, const basic_int<X>& huge)
+    {
         stringstream ss;
 
         ss.flags(std::ios::hex | std::ios::uppercase);
         ss.fill('0');
 
         const std::vector<X>& buf = huge.m_Buffer;
-        for (const auto& x : buf) {
+        for (const auto& x : buf)
+        {
             ss.width(2);
             ss << static_cast<uint16_t>(x);
         }
@@ -537,26 +622,36 @@ namespace cry {
     }
 
     template <class T>
-    short compare(const basic_int<T>& lhs, const basic_int<T>& rhs) {
+    short compare(const basic_int<T>& lhs, const basic_int<T>& rhs)
+    {
         short cmp = HUGE_Compare(&lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size());
 
-        if (lhs.m_Negative && rhs.m_Negative) {
-            if (cmp == -1) {
+        if (lhs.m_Negative && rhs.m_Negative)
+        {
+            if (cmp == -1)
+            {
                 return 1;
-            } else if (cmp == 1) {
+            }
+            else if (cmp == 1)
+            {
                 return -1;
             }
 
             return 0;
-        } else if (!lhs.m_Negative && !rhs.m_Negative) {
+        }
+        else if (!lhs.m_Negative && !rhs.m_Negative)
+        {
             return cmp;
-        } else {
+        }
+        else
+        {
             return lhs.m_Negative ? -1 : 1;
         }
     }
 
     template <class T>
-    const basic_int<T> basic_int<T>::operator<<(int nbits) const {
+    const basic_int<T> basic_int<T>::operator<<(int nbits) const
+    {
         std::vector<T> out(m_Buffer);
 
         HUGE_ShiftLeft(&out[0], &out[0] + out.size(), nbits);
@@ -565,14 +660,16 @@ namespace cry {
     }
 
     template <class T>
-    basic_int<T>& basic_int<T>::operator<<=(int nbits) {
+    basic_int<T>& basic_int<T>::operator<<=(int nbits)
+    {
         *this = *this << nbits;
 
         return *this;
     }
 
     template <class T>
-    const basic_int<T> basic_int<T>::operator>>(int nbits) const {
+    const basic_int<T> basic_int<T>::operator>>(int nbits) const
+    {
         std::vector<T> out(this->m_Buffer);
 
         HUGE_ShiftRight(&out[0], &out[0] + out.size(), nbits);
@@ -581,28 +678,33 @@ namespace cry {
     }
 
     template <class T>
-    basic_int<T>& basic_int<T>::operator>>=(int nbits) {
+    basic_int<T>& basic_int<T>::operator>>=(int nbits)
+    {
         *this = *this >> nbits;
 
         return *this;
     }
 
     template <class X>
-    bool operator!(const basic_int<X>& h) {
+    bool operator!(const basic_int<X>& h)
+    {
         bool f = static_cast<bool>(h);
 
         return !f;
     }
 
     template <class T>
-	void basic_int<T>::DivRem(basic_int<T>& q, basic_int<T>& r, const basic_int<T>& other) const {
+    void basic_int<T>::DivRem(basic_int<T>& q, basic_int<T>& r, const basic_int<T>& other) const
+    {
         bool isZero = HUGE_IsZero(&other.m_Buffer[0], &other.m_Buffer[0] + other.m_Buffer.size());
-        if (isZero) {
+        if (isZero)
+        {
             throw std::invalid_argument("division by zero");
         }
 
         short cmp = HUGE_Compare(&m_Buffer[0], &m_Buffer[0] + m_Buffer.size(), &other.m_Buffer[0], &other.m_Buffer[0] + other.m_Buffer.size());
-        if (cmp == -1) {
+        if (cmp == -1)
+        {
             q = basic_int<T>();
             r = *this;
             return;
@@ -622,7 +724,7 @@ namespace cry {
         r = rem;
     }
 
-    using bigint8_t = basic_int<uint8_t >;
+    using bigint8_t = basic_int<uint8_t>;
 }
 
 #endif
