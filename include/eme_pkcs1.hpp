@@ -12,7 +12,7 @@ namespace cry
 
       public:
         template <class InputIterator, class OutputIterator>
-        static OutputIterator encode(InputIterator first, InputIterator last, OutputIterator result, size_t k)
+        static OutputIterator encode(InputIterator first, InputIterator last, OutputIterator result, size_t k, const std::vector<uint8_t>& randVal = std::vector<uint8_t>())
         {
 
             size_t mLen  = std::distance(first, last);
