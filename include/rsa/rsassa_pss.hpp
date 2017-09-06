@@ -10,7 +10,7 @@
 
 namespace cry
 {
-    template <class Encoder = emsa_pss<sha1>, class IntType = bigint8_t>
+    template <class Encoder = emsa_pss<>, class IntType = bigint8_t>
     struct rsassa_pss
     {
         template <class InputIterator, class OutputIterator>

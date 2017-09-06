@@ -11,7 +11,7 @@
 namespace cry
 {
 
-    template <class Encoder, class IntType = bigint8_t>
+    template <class Encoder = eme_oaep<>, class IntType = bigint8_t>
     struct rsaes_oaep
     {
         template <class InputIterator, class OutputIterator>
