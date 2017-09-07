@@ -10,6 +10,7 @@
 #include <cctype>
 #include <cstdint>
 
+#include "encoders.hpp"
 #include <HugeCore.h>
 
 using namespace std;
@@ -387,33 +388,6 @@ namespace cry
             std::swap(m_Negative, other.m_Negative);
         }
 
-        template <class X, size_t sz>
-        struct SwapBytes
-        {
-            constexpr inline X operator()(X val) const
-            {
-                return val;
-            }
-        };
-
-        template <class X>
-        struct SwapBytes<X, 2>
-        {
-            constexpr inline X operator()(X val) const
-            {
-                return ((((val) >> 8) & 0x00FF) | (((val) << 8) & 0xFF00));
-            }
-        };
-
-        template <class X>
-        struct SwapBytes<X, 4>
-        {
-            constexpr inline X operator()(X val) const
-            {
-                return ((((val) >> 24) & 0x000000FF) | (((val) >> 8) & 0x0000FF00) | (((val) << 8) & 0x00FF0000) | (((val) << 24) & 0xFF000000));
-            }
-        };
-
         template <class X>
         friend short compare(const basic_int<X>& lhs, const basic_int<X>& rhs);
 
@@ -457,23 +431,18 @@ namespace cry
         return !flag;
     }
 
-    template <class ElemT>
-    inline basic_int<ElemT>::operator const std::vector<uint8_t>() const
+    template <class IntType>
+    inline basic_int<IntType>::operator const std::vector<uint8_t>() const
     {
-        auto first = m_Buffer.begin(), last = m_Buffer.end();
-        auto n = std::distance(first, last);
-        std::vector<uint8_t> out(sizeof(ElemT) * n);
-        auto it(out.begin());
+        auto n = m_Buffer.size();
+        std::vector<uint8_t> out(sizeof(IntType) * n);
+        auto result(out.begin());
 
-        std::for_each(first, last, [&it](auto x) {
-            ElemT val = SwapBytes<ElemT, sizeof(ElemT)>()(x);
-
-            for (size_t i = 0; i < sizeof(ElemT); ++i)
-            {
-                *it++ = static_cast<uint8_t>(val & 0xff);
-                val >>= 8;
-            }
-        });
+        for (auto xVal : m_Buffer)
+        {
+            auto x = swap_bytes()(xVal);
+            result = i2sp()(x, result);
+        }
 
         return out;
     }
