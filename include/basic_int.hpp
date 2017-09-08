@@ -231,7 +231,10 @@ namespace cry
 
         friend const basic_int operator&(const basic_int& lhs, const basic_int& rhs)
         {
-            auto max = std::max(lhs.m_Buffer.size(), rhs.m_Buffer.size());
+			const auto& lhsBuf = lhs.m_Buffer;
+			const auto& rhsBuf = rhs.m_Buffer;
+
+            auto max = std::max(lhsBuf.size(), rhsBuf.size());
 
             std::vector<IntType> out(max);
 
@@ -242,7 +245,10 @@ namespace cry
 
         friend const basic_int operator|(const basic_int& lhs, const basic_int& rhs)
         {
-            auto max = std::max(lhs.m_Buffer.size(), rhs.m_Buffer.size());
+			const auto& lhsBuf = lhs.m_Buffer;
+			const auto& rhsBuf = rhs.m_Buffer;
+
+            auto max = std::max(lhsBuf.size(), rhsBuf.size());
 
             std::vector<IntType> out(max);
 
@@ -253,7 +259,10 @@ namespace cry
 
         friend const basic_int operator^(const basic_int& lhs, const basic_int& rhs)
         {
-            auto max = std::max(lhs.m_Buffer.size(), rhs.m_Buffer.size());
+			const auto& lhsBuf = lhs.m_Buffer;
+			const auto& rhsBuf = rhs.m_Buffer;
+
+            auto max = std::max(lhsBuf.size(), rhsBuf.size());
 
             std::vector<IntType> out(max);
 
@@ -593,7 +602,10 @@ namespace cry
     template <class T>
     short compare(const basic_int<T>& lhs, const basic_int<T>& rhs)
     {
-        short cmp = HUGE_Compare(&lhs.m_Buffer[0], &lhs.m_Buffer[0] + lhs.m_Buffer.size(), &rhs.m_Buffer[0], &rhs.m_Buffer[0] + rhs.m_Buffer.size());
+		const auto& lhsBuf = lhs.m_Buffer;
+		const auto& rhsBuf = rhs.m_Buffer;
+
+        short cmp = HUGE_Compare(&lhsBuf[0], &lhsBuf[0] + lhsBuf.size(), &rhsBuf[0], &rhsBuf[0] + rhsBuf.size());
 
         if (lhs.m_Negative && rhs.m_Negative)
         {
