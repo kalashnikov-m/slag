@@ -25,6 +25,7 @@ set (HEADERS
 	../include/sha384.hpp
 	../include/sha512.hpp
 	../utility/encoders.hpp
+	../include/internal/bigint_core.hpp
 )
 
 set (SOURCES
