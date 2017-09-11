@@ -231,8 +231,8 @@ namespace cry
 
         friend const basic_int operator&(const basic_int& lhs, const basic_int& rhs)
         {
-			const auto& lhsBuf = lhs.m_Buffer;
-			const auto& rhsBuf = rhs.m_Buffer;
+            const auto& lhsBuf = lhs.m_Buffer;
+            const auto& rhsBuf = rhs.m_Buffer;
 
             auto max = std::max(lhsBuf.size(), rhsBuf.size());
 
@@ -245,8 +245,8 @@ namespace cry
 
         friend const basic_int operator|(const basic_int& lhs, const basic_int& rhs)
         {
-			const auto& lhsBuf = lhs.m_Buffer;
-			const auto& rhsBuf = rhs.m_Buffer;
+            const auto& lhsBuf = lhs.m_Buffer;
+            const auto& rhsBuf = rhs.m_Buffer;
 
             auto max = std::max(lhsBuf.size(), rhsBuf.size());
 
@@ -259,8 +259,8 @@ namespace cry
 
         friend const basic_int operator^(const basic_int& lhs, const basic_int& rhs)
         {
-			const auto& lhsBuf = lhs.m_Buffer;
-			const auto& rhsBuf = rhs.m_Buffer;
+            const auto& lhsBuf = lhs.m_Buffer;
+            const auto& rhsBuf = rhs.m_Buffer;
 
             auto max = std::max(lhsBuf.size(), rhsBuf.size());
 
@@ -602,8 +602,8 @@ namespace cry
     template <class T>
     short compare(const basic_int<T>& lhs, const basic_int<T>& rhs)
     {
-		const auto& lhsBuf = lhs.m_Buffer;
-		const auto& rhsBuf = rhs.m_Buffer;
+        const auto& lhsBuf = lhs.m_Buffer;
+        const auto& rhsBuf = rhs.m_Buffer;
 
         short cmp = HUGE_Compare(&lhsBuf[0], &lhsBuf[0] + lhsBuf.size(), &rhsBuf[0], &rhsBuf[0] + rhsBuf.size());
 
@@ -705,7 +705,10 @@ namespace cry
         r = rem;
     }
 
-    using bigint8_t = basic_int<uint8_t>;
+    using bigint8_t  = basic_int<uint8_t>;
+    using bigint16_t = basic_int<uint16_t>;
+    using bigint32_t = basic_int<uint32_t>;
+    using bigint64_t = basic_int<uint64_t>;
 }
 
 #endif
