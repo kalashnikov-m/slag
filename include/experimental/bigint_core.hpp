@@ -80,13 +80,13 @@ void Cry_add(InputIterator first1, InputIterator last1, InputIterator first2, In
 template <class T, class Traits = traits<T>, class InputIterator, class OutputIterator>
 void Cry_subtract(InputIterator first1, InputIterator last1, InputIterator first2, InputIterator last2, OutputIterator rlast)
 {
-	std::reverse_iterator<InputIterator> rfirst1(last1);
-	std::reverse_iterator<InputIterator> rlast1(first1);
+    std::reverse_iterator<InputIterator> rfirst1(last1);
+    std::reverse_iterator<InputIterator> rlast1(first1);
 
-	std::reverse_iterator<InputIterator> rfirst2(last2);
-	std::reverse_iterator<InputIterator> rlast2(first2);
+    std::reverse_iterator<InputIterator> rfirst2(last2);
+    std::reverse_iterator<InputIterator> rlast2(first2);
 
-	std::reverse_iterator<OutputIterator> result(rlast);
+    std::reverse_iterator<OutputIterator> result(rlast);
 
     T carry = 0;
 
@@ -106,37 +106,65 @@ void Cry_subtract(InputIterator first1, InputIterator last1, InputIterator first
 
     for (; rfirst1 != rlast1; ++rfirst1)
     {
-        *(result++) = *(rfirst1) - carry;
+        *(result++) = *(rfirst1)-carry;
         carry       = 0;
     }
 }
 
 template <class T, class Traits = traits<T>, class InputIterator, class OutputIterator>
-OutputIterator Cry_multiply(OutputIterator result, InputIterator first1, InputIterator last1, InputIterator first2, InputIterator last2)
+void Cry_multiply(InputIterator first1, InputIterator last1, InputIterator first2, InputIterator last2, OutputIterator rlast)
 {
+    std::reverse_iterator<InputIterator> rfirst1(last1);
+    std::reverse_iterator<InputIterator> rlast1(first1);
+
+    std::reverse_iterator<InputIterator> rfirst2(last2);
+    std::reverse_iterator<InputIterator> rlast2(first2);
+
+    std::reverse_iterator<OutputIterator> result(rlast);
+
+    typedef typename Traits::wide_type wide_t;
+    wide_t tmp = 0;
+
     T carry = 0x00;
 
-    for (; first2 != last2;)
+    for (; rfirst2 != rlast2; ++rfirst2)
     {
-        auto resultIter = --result;
-        --last2;
+        auto resultIter = result++;
 
-        for (auto last_1 = last1; first1 != last_1;)
+        for (auto rfirst_1 = rfirst1; rfirst_1 != rlast1; ++rfirst_1)
         {
-            typename Traits::wide_type temp = (*resultIter) + *(--last_1) * (*last2) + carry;
+            tmp = static_cast<wide_t>(*resultIter) + static_cast<wide_t>(*rfirst_1) * static_cast<wide_t>(*rfirst2) + static_cast<wide_t>(carry);
 
-            carry = static_cast<T>((temp) / Traits::base);
+            carry = tmp / Traits::base;
 
-            *(resultIter) = static_cast<T>(temp % Traits::base);
-
-            --resultIter;
+            *(resultIter++) = tmp % Traits::base;
         }
 
-        *(--resultIter) = carry;
+        *(resultIter++) = carry;
         carry           = 0x00;
     }
+}
 
-    return result;
+template <class T, class Traits = traits<T>, class InputIterator>
+void Cry_Increment(InputIterator first, InputIterator last)
+{
+    typedef typename Traits::wide_type wide_t;
+
+    T carry = 0x00;
+
+    std::reverse_iterator<InputIterator> rfirst(last);
+    std::reverse_iterator<InputIterator> rlast(first);
+
+    wide_t tmp  = (*rfirst) + 0x01 + carry;
+    *(rfirst++) = static_cast<T>(tmp);
+    carry       = tmp >> 8;
+
+    for (; (rfirst != rlast) && carry;)
+    {
+        tmp         = (*rfirst) + carry;
+        *(rfirst++) = static_cast<T>(tmp);
+        carry       = tmp >> 8;
+    }
 }
 
 #endif

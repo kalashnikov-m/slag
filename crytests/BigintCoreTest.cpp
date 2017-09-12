@@ -26,7 +26,7 @@ static bool ASSERT_BYTES_EQ(InputIterator f1, InputIterator l1, InputIterator f2
 class BigintCoreTest : public ::testing::Test
 {
 
-  protected:    
+  protected:
     void addition(const std::string& a, const std::string& b, const std::string& expected)
     {
         {
@@ -72,47 +72,134 @@ class BigintCoreTest : public ::testing::Test
         }
     }
 
-	void subtract(const std::string& a, const std::string& b, const std::string& expected)
+    void subtract(const std::string& a, const std::string& b, const std::string& expected)
+    {
+        {
+            using T = uint8_t;
+            auto aa = hex2polynomial<T>(a);
+            auto bb = hex2polynomial<T>(b);
+            auto ex = hex2polynomial<T>(expected);
+
+            std::vector<T> actual(15);
+
+            Cry_subtract<T>(begin(aa), end(aa), begin(bb), end(bb), end(actual));
+
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+            EXPECT_TRUE(eq);
+        }
+
+        {
+            using T = uint16_t;
+            auto aa = hex2polynomial<T>(a);
+            auto bb = hex2polynomial<T>(b);
+            auto ex = hex2polynomial<T>(expected);
+
+            std::vector<T> actual(15);
+
+            Cry_subtract<T>(begin(aa), end(aa), begin(bb), end(bb), end(actual));
+
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+            EXPECT_TRUE(eq);
+        }
+
+        {
+            using T = uint32_t;
+            auto aa = hex2polynomial<T>(a);
+            auto bb = hex2polynomial<T>(b);
+            auto ex = hex2polynomial<T>(expected);
+
+            std::vector<T> actual(15);
+
+            Cry_subtract<T>(begin(aa), end(aa), begin(bb), end(bb), end(actual));
+
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+            EXPECT_TRUE(eq);
+        }
+    }
+
+    void multiply(const std::string& a, const std::string& b, const std::string& expected)
+    {
+        {
+            using T = uint8_t;
+            auto aa = hex2polynomial<T>(a);
+            auto bb = hex2polynomial<T>(b);
+            auto ex = hex2polynomial<T>(expected);
+
+            std::vector<T> actual(15);
+
+            Cry_multiply<T>(begin(aa), end(aa), begin(bb), end(bb), end(actual));
+
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+            EXPECT_TRUE(eq);
+        }
+
+        {
+            using T = uint16_t;
+            auto aa = hex2polynomial<T>(a);
+            auto bb = hex2polynomial<T>(b);
+            auto ex = hex2polynomial<T>(expected);
+
+            std::vector<T> actual(15);
+
+            Cry_multiply<T>(begin(aa), end(aa), begin(bb), end(bb), end(actual));
+
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+            EXPECT_TRUE(eq);
+        }
+
+        {
+            using T = uint32_t;
+            auto aa = hex2polynomial<T>(a);
+            auto bb = hex2polynomial<T>(b);
+            auto ex = hex2polynomial<T>(expected);
+
+            std::vector<T> actual(15);
+
+            Cry_multiply<T>(begin(aa), end(aa), begin(bb), end(bb), end(actual));
+
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+            EXPECT_TRUE(eq);
+        }
+    }
+
+	void increment(const std::string& a, const std::string& expected)
     {
 		{
 			using T = uint8_t;
 			auto aa = hex2polynomial<T>(a);
-			auto bb = hex2polynomial<T>(b);
 			auto ex = hex2polynomial<T>(expected);
 
 			std::vector<T> actual(15);
 
-			Cry_subtract<T>(begin(aa), end(aa), begin(bb), end(bb), end(actual));
+			Cry_Increment<T>(begin(aa), end(aa));
 
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
 			EXPECT_TRUE(eq);
 		}
 
 		{
 			using T = uint16_t;
 			auto aa = hex2polynomial<T>(a);
-			auto bb = hex2polynomial<T>(b);
 			auto ex = hex2polynomial<T>(expected);
 
 			std::vector<T> actual(15);
 
-			Cry_subtract<T>(begin(aa), end(aa), begin(bb), end(bb), end(actual));
+			Cry_Increment<T>(begin(aa), end(aa));
 
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
 			EXPECT_TRUE(eq);
 		}
 
 		{
 			using T = uint32_t;
 			auto aa = hex2polynomial<T>(a);
-			auto bb = hex2polynomial<T>(b);
 			auto ex = hex2polynomial<T>(expected);
 
 			std::vector<T> actual(15);
 
-			Cry_subtract<T>(begin(aa), end(aa), begin(bb), end(bb), end(actual));
+			Cry_Increment<T>(begin(aa), end(aa));
 
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
 			EXPECT_TRUE(eq);
 		}
     }
@@ -201,15 +288,31 @@ TEST_F(BigintCoreTest, Cry_add)
 
 TEST_F(BigintCoreTest, Cry_subtract)
 {
-	subtract("0101", "02", "ff");
-	subtract("000100", "0000000000000100", "00");
-	subtract("00000000000000000101", "00000080", "0081");
-	subtract("ffffffffffffffffffffffff", "01", "fffffffffffffffffffffffe");
-	subtract("ffffffff", "ffffffff", "0000");
+    subtract("0101", "02", "ff");
+    subtract("000100", "0000000000000100", "00");
+    subtract("00000000000000000101", "00000080", "0081");
+    subtract("ffffffffffffffffffffffff", "01", "fffffffffffffffffffffffe");
+    subtract("ffffffff", "ffffffff", "0000");
+    subtract("00ff", "00", "ff");
+    subtract("001a03", "000011", "19F2");
+    subtract("00ffff", "0000ffff", "00");
+    subtract("f4ab41fa14bace68", "00000a1405f5ef382a14", "EA973C042582A454");
+    subtract("ffffffffff", "01", "fffffffffe");
+}
 
-	subtract("00ff", "00", "ff");
-	subtract("001a03", "000011", "19F2");
-	subtract("00ffff", "0000ffff", "00");
-	subtract("f4ab41fa14bace68", "00000a1405f5ef382a14", "EA973C042582A454");
-	subtract("ffffffffff", "01", "fffffffffe");
+TEST_F(BigintCoreTest, Cry_multiply)
+{
+    multiply("00000000000000001a03", "00000011", "01BA33");
+    multiply("00ffff", "0000ffff", "FFFE0001");
+    multiply("00ff", "00", "00");
+    multiply("02", "0080", "000100");
+    multiply("1232AF42", "1232AF42", "14B2AAE35C34D04");
+}
+
+TEST_F(BigintCoreTest, Cry_Increment)
+{
+	increment("000001", "02");
+	increment("0000ff", "000100");
+	increment("00ffff", "010000");
+	increment("00fffe", "00ffff");
 }
