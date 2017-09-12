@@ -26,8 +26,7 @@ static bool ASSERT_BYTES_EQ(InputIterator f1, InputIterator l1, InputIterator f2
 class BigintCoreTest : public ::testing::Test
 {
 
-  protected:
-    // template <class T>
+  protected:    
     void addition(const std::string& a, const std::string& b, const std::string& expected)
     {
         {
@@ -36,7 +35,7 @@ class BigintCoreTest : public ::testing::Test
             auto bb = hex2polynomial<T>(b);
             auto ex = hex2polynomial<T>(expected);
 
-            std::vector<T> actual(10);
+            std::vector<T> actual(ex.size());
 
             Cry_add<T>(begin(aa), end(aa), begin(bb), end(bb), end(actual));
 
@@ -50,7 +49,7 @@ class BigintCoreTest : public ::testing::Test
             auto bb = hex2polynomial<T>(b);
             auto ex = hex2polynomial<T>(expected);
 
-            std::vector<T> actual(10);
+            std::vector<T> actual(ex.size());
 
             Cry_add<T>(begin(aa), end(aa), begin(bb), end(bb), end(actual));
 
@@ -64,13 +63,58 @@ class BigintCoreTest : public ::testing::Test
             auto bb = hex2polynomial<T>(b);
             auto ex = hex2polynomial<T>(expected);
 
-            std::vector<T> actual(10);
+            std::vector<T> actual(ex.size());
 
             Cry_add<T>(begin(aa), end(aa), begin(bb), end(bb), end(actual));
 
             bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
             EXPECT_TRUE(eq);
         }
+    }
+
+	void subtract(const std::string& a, const std::string& b, const std::string& expected)
+    {
+		{
+			using T = uint8_t;
+			auto aa = hex2polynomial<T>(a);
+			auto bb = hex2polynomial<T>(b);
+			auto ex = hex2polynomial<T>(expected);
+
+			std::vector<T> actual(15);
+
+			Cry_subtract<T>(begin(aa), end(aa), begin(bb), end(bb), end(actual));
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+			EXPECT_TRUE(eq);
+		}
+
+		{
+			using T = uint16_t;
+			auto aa = hex2polynomial<T>(a);
+			auto bb = hex2polynomial<T>(b);
+			auto ex = hex2polynomial<T>(expected);
+
+			std::vector<T> actual(15);
+
+			Cry_subtract<T>(begin(aa), end(aa), begin(bb), end(bb), end(actual));
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+			EXPECT_TRUE(eq);
+		}
+
+		{
+			using T = uint32_t;
+			auto aa = hex2polynomial<T>(a);
+			auto bb = hex2polynomial<T>(b);
+			auto ex = hex2polynomial<T>(expected);
+
+			std::vector<T> actual(15);
+
+			Cry_subtract<T>(begin(aa), end(aa), begin(bb), end(bb), end(actual));
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+			EXPECT_TRUE(eq);
+		}
     }
 
     template <class P>
@@ -153,18 +197,19 @@ TEST_F(BigintCoreTest, Cry_add)
     addition("000001fa14bace680235", "00000a1405f5ef382a14", "0c0e1ab0bda02c49");
     addition("10", "ff", "010f");
     addition("ffffffffff", "01", "010000000000");
+}
 
-    /*addition<uint16_t>("00ff", "00", "ff");
-    addition<uint16_t>("001a03", "000011", "1a14");
-    addition<uint16_t>("00ffff", "0000ffff", "01FFFE");
-    addition<uint16_t>("000001fa14bace680235", "00000a1405f5ef382a14", "0c0e1ab0bda02c49");
-    addition<uint16_t>("10", "ff", "010f");
-    addition<uint16_t>("ffffffffff", "01", "010000000000");
+TEST_F(BigintCoreTest, Cry_subtract)
+{
+	subtract("0101", "02", "ff");
+	subtract("000100", "0000000000000100", "00");
+	subtract("00000000000000000101", "00000080", "0081");
+	subtract("ffffffffffffffffffffffff", "01", "fffffffffffffffffffffffe");
+	subtract("ffffffff", "ffffffff", "0000");
 
-    addition<uint32_t>("00ff", "00", "ff");
-    addition<uint32_t>("001a03", "000011", "1a14");
-    addition<uint32_t>("00ffff", "0000ffff", "01FFFE");
-    addition<uint32_t>("000001fa14bace680235", "00000a1405f5ef382a14", "0c0e1ab0bda02c49");
-    addition<uint32_t>("10", "ff", "010f");
-    addition<uint32_t>("ffffffffff", "01", "010000000000");*/
+	subtract("00ff", "00", "ff");
+	subtract("001a03", "000011", "19F2");
+	subtract("00ffff", "0000ffff", "00");
+	subtract("f4ab41fa14bace68", "00000a1405f5ef382a14", "EA973C042582A454");
+	subtract("ffffffffff", "01", "fffffffffe");
 }

@@ -78,31 +78,37 @@ void Cry_add(InputIterator first1, InputIterator last1, InputIterator first2, In
 }
 
 template <class T, class Traits = traits<T>, class InputIterator, class OutputIterator>
-OutputIterator Cry_subtract(OutputIterator result, InputIterator first1, InputIterator last1, InputIterator first2, InputIterator last2)
+void Cry_subtract(InputIterator first1, InputIterator last1, InputIterator first2, InputIterator last2, OutputIterator rlast)
 {
+	std::reverse_iterator<InputIterator> rfirst1(last1);
+	std::reverse_iterator<InputIterator> rlast1(first1);
+
+	std::reverse_iterator<InputIterator> rfirst2(last2);
+	std::reverse_iterator<InputIterator> rlast2(first2);
+
+	std::reverse_iterator<OutputIterator> result(rlast);
+
     T carry = 0;
 
-    for (; (first1 != last1) && (first2 != last2);)
+    for (; (rfirst1 != rlast1) && (rfirst2 != rlast2); ++rfirst1, ++rfirst2)
     {
-        if (*(--last1) < *(--last2) + carry)
+        if (*(rfirst1) < *(rfirst2) + carry)
         {
-            *(--result) = static_cast<T>((*last1) - (*last2) - carry + Traits::base);
+            *(result++) = static_cast<T>((*rfirst1) - (*rfirst2) - carry + Traits::base);
             carry       = 1;
         }
         else
         {
-            *(--result) = static_cast<T>((*last1) - (*last2) - carry);
+            *(result++) = static_cast<T>((*rfirst1) - (*rfirst2) - carry);
             carry       = 0;
         }
     }
 
-    for (; first1 != last1;)
+    for (; rfirst1 != rlast1; ++rfirst1)
     {
-        *(--result) = *(--last1) - carry;
+        *(result++) = *(rfirst1) - carry;
         carry       = 0;
     }
-
-    return result;
 }
 
 template <class T, class Traits = traits<T>, class InputIterator, class OutputIterator>
