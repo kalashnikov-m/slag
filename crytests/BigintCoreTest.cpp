@@ -3,10 +3,13 @@
 
 #include <bigint_core.hpp>
 
+#include <cctype>
+
 using namespace std;
 
 template <class InputIterator>
-static bool ASSERT_BYTES_EQ(InputIterator f1, InputIterator l1, InputIterator f2, InputIterator l2) {
+static bool ASSERT_BYTES_EQ(InputIterator f1, InputIterator l1, InputIterator f2, InputIterator l2)
+{
 
     for (; (f1 != l1) && (*f1 == 0x00); ++f1)
         ;
@@ -22,81 +25,115 @@ static bool ASSERT_BYTES_EQ(InputIterator f1, InputIterator l1, InputIterator f2
 
 class BigintCoreTest : public ::testing::Test
 {
-	
-protected:
-	template<class T>
-	void addition(const std::initializer_list<unsigned char>& a, const std::initializer_list<unsigned char>& b, const std::initializer_list<unsigned char>& expected)
-	{
-		auto aa = os2polynomial<T>(a.begin(), a.end());
-		auto bb = os2polynomial<T>(b.begin(), b.end());
-		auto ex = os2polynomial<T>(expected.begin(), expected.end());
 
-		std::vector<T> actual(10);
+  protected:
+    template <class T>
+    void addition(const std::string& a, const std::string& b, const std::string& expected)
+    {
+        auto aa = hex2polynomial<T>(a);
+        auto bb = hex2polynomial<T>(b);
+        auto ex = hex2polynomial<T>(expected);
 
-		Cry_add<T>(begin(aa), end(aa), begin(bb), end(bb), end(actual));
+        std::vector<T> actual(10);
 
-		bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
-		EXPECT_TRUE(eq);
-	}
+        Cry_add<T>(begin(aa), end(aa), begin(bb), end(bb), end(actual));
 
-	template<class P, class OctetIterator>
-	std::vector<P> os2polynomial(OctetIterator first, OctetIterator last)
-	{
-		std::reverse_iterator<OctetIterator> rfirst(last), rend(first);
+        bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+        EXPECT_TRUE(eq);
+    }
 
-		auto noctets = std::distance(rfirst, rend);
-		auto nwords = noctets / sizeof(P);
-		if (noctets % sizeof(P))
-		{
-			++nwords;
-		}
+    template <class P>
+    std::vector<P> hex2polynomial(const std::string& hex)
+    {
+        if (hex.empty())
+        {
+            return std::vector<P>();
+        }
 
-		std::vector<P> dst(nwords);
-		auto result = dst.rbegin();
+        /////////////////////////////////
+        // skiping zeros and whitespaces
+        auto it(hex.begin());
+        for (; it != hex.end() && ((*it == '0') || (*it == ' '));)
+            ++it;
 
-		P word(0);
-		size_t cnt(0);
-		for (; rfirst != rend; ++rfirst)
-		{
-			word = (static_cast<P>(*rfirst) << cnt * 8) | word;
-			++cnt;
-			if (cnt == sizeof(P))
-			{
-				*result++ = word;
-				word = 0;
-				cnt = 0;
-			}
-		}
+        std::string::const_reverse_iterator rit(hex.rbegin()), rend(it);
 
-		if (word && cnt)
-		{
-			*result++ = word;
-		}
+        //////////////////////////////////
+        // counting hexadecimal characters
+        size_t nchars = std::count_if(rit, rend, [](unsigned char c) { return std::isalnum(c); });
+        size_t nbytes = nchars / 2;
+        nbytes += nchars % 2;
 
-		return dst;
-	}
+        size_t nwords = nbytes / sizeof(P);
+        if (nbytes % sizeof(P))
+            nwords += 1;
+
+        P word     = 0;
+        size_t cnt = 0;
+
+        std::vector<P> dst(nwords);
+        auto ret(dst.rbegin());
+
+        for (; rit != rend; ++rit)
+        {
+            uint8_t bt = *rit;
+
+            //////////////////////////////////////////////////////////
+            // transform hex character to the 4bit equivalent number,
+            // using the ascii table indexes
+            if (bt >= '0' && bt <= '9')
+                bt = bt - '0';
+            else if (bt >= 'a' && bt <= 'f')
+                bt = bt - 'a' + 10;
+            else if (bt >= 'A' && bt <= 'F')
+                bt = bt - 'A' + 10;
+            else if (bt == ' ')
+                continue;
+            else
+                throw std::logic_error("Invalid hex string. Only hex numbers are allowed.");
+
+            ////////////////////////////////////////////////////////////////////////////
+            // shift 4 to make space for new digit, and add the 4 bits of the new digit
+            // word = (word << 4) | (bt & 0xF);
+            word = (static_cast<P>(bt) << static_cast<P>(cnt * 4)) | (word);
+
+            ++cnt;
+
+            if (cnt == sizeof(P) * 2)
+            {
+                *ret++ = word;
+                word   = 0;
+                cnt    = 0;
+            }
+        }
+
+        if (ret != dst.rend())
+            *ret++ = word;
+
+        return dst;
+    }
 };
 
 TEST_F(BigintCoreTest, Cry_add)
 {
-	addition<uint8_t>({ 0x00, 0xff }, { 0x00 }, { 0xff });
-	addition<uint8_t>({ 0x00, 0x1a, 0x03 }, { 0x00, 0x00, 0x11 }, { 0x1a, 0x14 });
-	addition<uint8_t>({ 0x00, 0xff, 0xff }, { 0x00, 0x00, 0xff, 0xff }, { 0x01, 0xFF, 0xFE });
-	addition<uint8_t>({ 0x00, 0x00, 0x01, 0xfa, 0x14, 0xba, 0xce, 0x68, 0x02, 0x35 }, { 0x00, 0x00, 0x0a, 0x14, 0x05, 0xf5, 0xef, 0x38, 0x2a, 0x14 }, { 0x0c, 0x0e, 0x1a, 0xb0, 0xbd, 0xa0, 0x2c, 0x49 });
-	addition<uint8_t>({ 0x10 }, { 0xff, }, { 0x01, 0x0f });
-	addition<uint8_t>({ 0xff, 0xff, 0xff, 0xff, 0xff }, { 0x01, }, { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 });
+    addition<uint8_t>("00ff", "00", "ff");
+    addition<uint8_t>("001a03", "000011", "1a14");
+    addition<uint8_t>("00ffff", "0000ffff", "01FFFE");
+    addition<uint8_t>("000001fa14bace680235", "00000a1405f5ef382a14", "0c0e1ab0bda02c49");
+    addition<uint8_t>("10", "ff", "010f");
+    addition<uint8_t>("ffffffffff", "01", "010000000000");
 
-	addition<uint16_t>({ 0x00, 0xff }, { 0x00 }, { 0xff });
-	addition<uint16_t>({ 0x00, 0x1a, 0x03 }, { 0x00, 0x00, 0x11 }, { 0x1a, 0x14 });
-	addition<uint16_t>({ 0x00, 0xff, 0xff }, { 0x00, 0x00, 0xff, 0xff }, { 0x01, 0xFF, 0xFE });
-	addition<uint16_t>({ 0x00, 0x00, 0x01, 0xfa, 0x14, 0xba, 0xce, 0x68, 0x02, 0x35 }, { 0x00, 0x00, 0x0a, 0x14, 0x05, 0xf5, 0xef, 0x38, 0x2a, 0x14 }, { 0x0c, 0x0e, 0x1a, 0xb0, 0xbd, 0xa0, 0x2c, 0x49 });
-	addition<uint16_t>({ 0x10 }, { 0xff, }, { 0x01, 0x0f });
-	addition<uint16_t>({ 0xff, 0xff, 0xff, 0xff, 0xff }, { 0x01, }, { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 });
+    addition<uint16_t>("00ff", "00", "ff");
+    addition<uint16_t>("001a03", "000011", "1a14");
+    addition<uint16_t>("00ffff", "0000ffff", "01FFFE");
+    addition<uint16_t>("000001fa14bace680235", "00000a1405f5ef382a14", "0c0e1ab0bda02c49");
+    addition<uint16_t>("10", "ff", "010f");
+    addition<uint16_t>("ffffffffff", "01", "010000000000");
 
-	addition<uint32_t>({ 0x00, 0xff }, { 0x00 }, { 0xff });
-	addition<uint32_t>({ 0x00, 0x1a, 0x03 }, { 0x00, 0x00, 0x11 }, { 0x1a, 0x14 });
-	addition<uint32_t>({ 0x00, 0xff, 0xff }, { 0x00, 0x00, 0xff, 0xff }, { 0x01, 0xFF, 0xFE });
-	addition<uint32_t>({ 0x00, 0x00, 0x01, 0xfa, 0x14, 0xba, 0xce, 0x68, 0x02, 0x35 }, { 0x00, 0x00, 0x0a, 0x14, 0x05, 0xf5, 0xef, 0x38, 0x2a, 0x14 }, { 0x0c, 0x0e, 0x1a, 0xb0, 0xbd, 0xa0, 0x2c, 0x49 });
-	addition<uint32_t>({ 0x10 }, { 0xff, }, { 0x01, 0x0f });
-	addition<uint32_t>({ 0xff, 0xff, 0xff, 0xff, 0xff }, { 0x01, }, { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 });
+    addition<uint32_t>("00ff", "00", "ff");
+    addition<uint32_t>("001a03", "000011", "1a14");
+    addition<uint32_t>("00ffff", "0000ffff", "01FFFE");
+    addition<uint32_t>("000001fa14bace680235", "00000a1405f5ef382a14", "0c0e1ab0bda02c49");
+    addition<uint32_t>("10", "ff", "010f");
+    addition<uint32_t>("ffffffffff", "01", "010000000000");
 }
