@@ -27,19 +27,50 @@ class BigintCoreTest : public ::testing::Test
 {
 
   protected:
-    template <class T>
+    // template <class T>
     void addition(const std::string& a, const std::string& b, const std::string& expected)
     {
-        auto aa = hex2polynomial<T>(a);
-        auto bb = hex2polynomial<T>(b);
-        auto ex = hex2polynomial<T>(expected);
+        {
+            using T = uint8_t;
+            auto aa = hex2polynomial<T>(a);
+            auto bb = hex2polynomial<T>(b);
+            auto ex = hex2polynomial<T>(expected);
 
-        std::vector<T> actual(10);
+            std::vector<T> actual(10);
 
-        Cry_add<T>(begin(aa), end(aa), begin(bb), end(bb), end(actual));
+            Cry_add<T>(begin(aa), end(aa), begin(bb), end(bb), end(actual));
 
-        bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
-        EXPECT_TRUE(eq);
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+            EXPECT_TRUE(eq);
+        }
+
+        {
+            using T = uint16_t;
+            auto aa = hex2polynomial<T>(a);
+            auto bb = hex2polynomial<T>(b);
+            auto ex = hex2polynomial<T>(expected);
+
+            std::vector<T> actual(10);
+
+            Cry_add<T>(begin(aa), end(aa), begin(bb), end(bb), end(actual));
+
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+            EXPECT_TRUE(eq);
+        }
+
+        {
+            using T = uint32_t;
+            auto aa = hex2polynomial<T>(a);
+            auto bb = hex2polynomial<T>(b);
+            auto ex = hex2polynomial<T>(expected);
+
+            std::vector<T> actual(10);
+
+            Cry_add<T>(begin(aa), end(aa), begin(bb), end(bb), end(actual));
+
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+            EXPECT_TRUE(eq);
+        }
     }
 
     template <class P>
@@ -116,14 +147,14 @@ class BigintCoreTest : public ::testing::Test
 
 TEST_F(BigintCoreTest, Cry_add)
 {
-    addition<uint8_t>("00ff", "00", "ff");
-    addition<uint8_t>("001a03", "000011", "1a14");
-    addition<uint8_t>("00ffff", "0000ffff", "01FFFE");
-    addition<uint8_t>("000001fa14bace680235", "00000a1405f5ef382a14", "0c0e1ab0bda02c49");
-    addition<uint8_t>("10", "ff", "010f");
-    addition<uint8_t>("ffffffffff", "01", "010000000000");
+    addition("00ff", "00", "ff");
+    addition("001a03", "000011", "1a14");
+    addition("00ffff", "0000ffff", "01FFFE");
+    addition("000001fa14bace680235", "00000a1405f5ef382a14", "0c0e1ab0bda02c49");
+    addition("10", "ff", "010f");
+    addition("ffffffffff", "01", "010000000000");
 
-    addition<uint16_t>("00ff", "00", "ff");
+    /*addition<uint16_t>("00ff", "00", "ff");
     addition<uint16_t>("001a03", "000011", "1a14");
     addition<uint16_t>("00ffff", "0000ffff", "01FFFE");
     addition<uint16_t>("000001fa14bace680235", "00000a1405f5ef382a14", "0c0e1ab0bda02c49");
@@ -135,5 +166,5 @@ TEST_F(BigintCoreTest, Cry_add)
     addition<uint32_t>("00ffff", "0000ffff", "01FFFE");
     addition<uint32_t>("000001fa14bace680235", "00000a1405f5ef382a14", "0c0e1ab0bda02c49");
     addition<uint32_t>("10", "ff", "010f");
-    addition<uint32_t>("ffffffffff", "01", "010000000000");
+    addition<uint32_t>("ffffffffff", "01", "010000000000");*/
 }
