@@ -26,7 +26,7 @@ set (HEADERS
 	../include/sha512.hpp
 	../utility/encoders.hpp
 	../utility/os2ip.hpp
-	../include/internal/bigint_core.hpp
+	../include/experimental/bigint_core.hpp
 )
 
 set (SOURCES
@@ -34,12 +34,14 @@ set (SOURCES
     HugeCoreTest.cpp
     HugeTest.cpp
     RsaTest.cpp
+    BigintCoreTest.cpp
     ../include/internal/HugeCore.cpp
 )
 
 include_directories(../utility)
 include_directories(../include)
 include_directories(../include/internal)
+include_directories(../include/experimental)
 include_directories(./googletest/include)
 
 add_executable(crytests ${HEADERS} ${SOURCES})

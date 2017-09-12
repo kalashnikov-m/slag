@@ -7,6 +7,7 @@
 
 #ifndef BIGINT_CORE_H
 #define BIGINT_CORE_H
+
 #include <cstdint>
 
 namespace
@@ -17,55 +18,63 @@ namespace
     template <>
     struct traits<uint8_t>
     {
-        using carry_type             = uint16_t;
-        static const carry_type base = 0xff + 1; // 256;
+        using wide_type             = uint16_t;
+        static const wide_type base = UINT8_MAX + 1;
     };
 
     template <>
     struct traits<uint16_t>
     {
-        using carry_type             = uint32_t;
-        static const carry_type base = 0xffff + 1; // 65536;
+        using wide_type             = uint32_t;
+        static const wide_type base = UINT16_MAX + 1;
     };
 
     template <>
     struct traits<uint32_t>
     {
-        using carry_type             = uint64_t;
-        static const carry_type base = 4294967296LL;
+        using wide_type             = uint64_t;
+        static const wide_type base = static_cast<uint64_t>(UINT32_MAX) + 1;
     };
 }
 
 template <class T, class Traits = traits<T>, class InputIterator, class OutputIterator>
-OutputIterator Cry_add(OutputIterator result, InputIterator first1, InputIterator last1, InputIterator first2, InputIterator last2)
+void Cry_add(InputIterator first1, InputIterator last1, InputIterator first2, InputIterator last2, OutputIterator rlast)
 {
-    T carry                      = 0;
-    typename Traits::ex_type tmp = 0;
+    std::reverse_iterator<InputIterator> rfirst1(last1);
+    std::reverse_iterator<InputIterator> rlast1(first1);
 
-    for (; (first1 != last1) && (first2 != last2);)
+    std::reverse_iterator<InputIterator> rfirst2(last2);
+    std::reverse_iterator<InputIterator> rlast2(first2);
+
+    std::reverse_iterator<OutputIterator> result(rlast);
+
+    T carry = 0;
+    typedef typename Traits::wide_type wide_t;
+    wide_t tmp = 0;
+
+    for (; (rfirst1 != rlast1) && (rfirst2 != rlast2); ++rfirst1, ++rfirst2)
     {
-        tmp         = *(--last1) + *(--last2) + carry;
-        *(--result) = static_cast<T>(tmp);
+        tmp         = static_cast<wide_t>(*rfirst1) + static_cast<wide_t>(*rfirst2) + carry;
+        *(result++) = static_cast<T>(tmp);
         carry       = tmp >> sizeof(carry) * 8;
     }
 
-    for (; first1 != last1;)
+    for (; rfirst1 != rlast1; ++rfirst1)
     {
-        tmp         = *(--last1) + (carry);
-        *(--result) = static_cast<T>(tmp);
+        tmp         = static_cast<wide_t>(*rfirst1) + static_cast<wide_t>(carry);
+        *(result++) = static_cast<T>(tmp);
         carry       = tmp >> sizeof(carry) * 8;
     }
 
-    for (; first2 != last2;)
+    for (; rfirst2 != rlast2; ++rfirst2)
     {
-        tmp         = *(--last2) + (carry);
-        *(--result) = static_cast<T>(tmp);
+        tmp         = static_cast<wide_t>(*rfirst2) + static_cast<wide_t>(carry);
+        *(result++) = static_cast<T>(tmp);
         carry       = tmp >> sizeof(carry) * 8;
     }
 
-    *(--result) = static_cast<T>(carry);
-
-    return result;
+    if (carry)
+        *(result++) = static_cast<T>(carry);
 }
 
 template <class T, class Traits = traits<T>, class InputIterator, class OutputIterator>
@@ -108,7 +117,7 @@ OutputIterator Cry_multiply(OutputIterator result, InputIterator first1, InputIt
 
         for (auto last_1 = last1; first1 != last_1;)
         {
-            typename Traits::carry_type temp = (*resultIter) + *(--last_1) * (*last2) + carry;
+            typename Traits::wide_type temp = (*resultIter) + *(--last_1) * (*last2) + carry;
 
             carry = static_cast<T>((temp) / Traits::base);
 
