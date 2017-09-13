@@ -54,7 +54,7 @@ void Cry_add(InputIterator first1, InputIterator last1, InputIterator first2, In
 
     for (; (rfirst1 != rlast1) && (rfirst2 != rlast2); ++rfirst1, ++rfirst2)
     {
-        tmp         = static_cast<wide_t>(*rfirst1) + static_cast<wide_t>(*rfirst2) + carry;
+        tmp         = static_cast<wide_t>(*rfirst1) + static_cast<wide_t>(*rfirst2) + static_cast<wide_t>(carry);
         *(result++) = static_cast<T>(tmp);
         carry       = tmp >> sizeof(carry) * 8;
     }
@@ -135,7 +135,7 @@ void Cry_multiply(InputIterator first1, InputIterator last1, InputIterator first
         {
             tmp = static_cast<wide_t>(*resultIter) + static_cast<wide_t>(*rfirst_1) * static_cast<wide_t>(*rfirst2) + static_cast<wide_t>(carry);
 
-            carry = tmp / Traits::base;
+            carry = static_cast<T>(tmp / Traits::base);
 
             *(resultIter++) = tmp % Traits::base;
         }
@@ -155,16 +155,368 @@ void Cry_Increment(InputIterator first, InputIterator last)
     std::reverse_iterator<InputIterator> rfirst(last);
     std::reverse_iterator<InputIterator> rlast(first);
 
-    wide_t tmp  = (*rfirst) + 0x01 + carry;
+    wide_t tmp  = static_cast<wide_t>(*rfirst) + 0x01 + static_cast<wide_t>(carry);
     *(rfirst++) = static_cast<T>(tmp);
-    carry       = tmp >> 8;
+    carry       = tmp >> sizeof(carry) * 8;
 
-    for (; (rfirst != rlast) && carry;)
+    for (; (rfirst != rlast) && carry; ++rfirst)
     {
-        tmp         = (*rfirst) + carry;
-        *(rfirst++) = static_cast<T>(tmp);
-        carry       = tmp >> 8;
+        tmp       = static_cast<wide_t>(*rfirst) + static_cast<wide_t>(carry);
+        *(rfirst) = static_cast<T>(tmp);
+        carry     = tmp >> sizeof(carry) * 8;
     }
+}
+
+template <class T, class Traits = traits<T>, class InputIterator>
+void Cry_decrement(InputIterator first, InputIterator last)
+{
+    typedef typename Traits::wide_type wide_t;
+
+    T carry = 0x00;
+
+    std::reverse_iterator<InputIterator> rfirst(last);
+    std::reverse_iterator<InputIterator> rlast(first);
+
+    if (*rfirst < 0x01)
+    {
+        *(rfirst) = static_cast<T>(static_cast<wide_t>(*rfirst) - static_cast<wide_t>(0x01) - static_cast<wide_t>(carry) + static_cast<wide_t>(Traits::base));
+        carry     = 1;
+    }
+    else
+    {
+        *(rfirst) = static_cast<T>(static_cast<wide_t>(*rfirst) - static_cast<wide_t>(0x01) - static_cast<wide_t>(carry));
+        carry     = 0;
+    }
+
+    ++rfirst;
+
+    for (; (rfirst != rlast && carry); ++rfirst)
+    {
+        if (*rfirst < carry)
+        {
+            *(rfirst) = static_cast<T>(static_cast<wide_t>(*rfirst) - static_cast<wide_t>(carry) + static_cast<wide_t>(Traits::base));
+            carry     = 1;
+        }
+        else
+        {
+            *(rfirst) = static_cast<T>(static_cast<wide_t>(*rfirst) - static_cast<wide_t>(carry));
+            carry     = 0;
+        }
+    }
+}
+
+template <class T, class Traits = traits<T>, class InputIterator>
+bool Cry_is_odd(InputIterator first, InputIterator last)
+{
+    std::reverse_iterator<InputIterator> rfirst(last);
+
+    return (*rfirst & 0x01) == 0x01;
+}
+
+template <class T, class Traits = traits<T>, class InputIterator>
+bool Cry_is_even(InputIterator first, InputIterator last)
+{
+    std::reverse_iterator<InputIterator> rfirst(last);
+
+    return (*rfirst & 0x01) == 0x00;
+}
+
+template <class T, class Traits = traits<T>, class InputIterator>
+void Cry_rotl(InputIterator first, InputIterator last)
+{
+    std::reverse_iterator<InputIterator> rfirst(last);
+    std::reverse_iterator<InputIterator> rlast(first);
+
+    T carry = (*(rlast - 1) >> (sizeof(T) * 8 - 1)) & 0x01;
+
+    for (; rfirst != rlast; ++rfirst)
+    {
+        T z = (*rfirst >> (sizeof(T) * 8 - 1)) & 0x01;
+
+        *rfirst <<= 1;
+        *rfirst |= static_cast<T>(carry);
+        carry = z;
+    }
+}
+
+template <class T, class Traits = traits<T>, class InputIterator>
+void Cry_rotr(InputIterator first, InputIterator last)
+{
+    std::reverse_iterator<InputIterator> rfirst(last);
+
+    T carry = *(rfirst)&0x01;
+
+    for (; first != last; ++first)
+    {
+        T z = *first & 0x01;
+
+        *first >>= 1;
+        *first |= static_cast<T>(carry << (sizeof(T) * 8 - 1));
+        carry = z;
+    }
+}
+
+template <class T, class Traits = traits<T>, class InputIterator>
+void Cry_rshift(InputIterator first, InputIterator last)
+{
+    T carry = 0;
+
+    for (; first != last; ++first)
+    {
+        T z = (*first) & 0x01;
+
+        *first >>= 1;
+        *first |= static_cast<T>(carry << (sizeof(T) * 8 - 1));
+        carry = z;
+    }
+}
+
+template <class T, class Traits = traits<T>, class InputIterator>
+void Cry_lshift(InputIterator first, InputIterator last)
+{
+    std::reverse_iterator<InputIterator> rfirst(last);
+    std::reverse_iterator<InputIterator> rlast(first);
+
+    T carry = 0;
+
+    for (; rfirst != rlast; ++rfirst)
+    {
+        T z = (*rfirst >> (sizeof(T) * 8 - 1)) & 0x01;
+
+        *rfirst <<= 1;
+        *rfirst |= static_cast<T>(carry);
+        carry = z;
+    }
+}
+
+template <class T, class Traits = traits<T>, class InputIterator>
+void Cry_rotl(InputIterator first, InputIterator last, int n)
+{
+    while (n--)
+    {
+        Cry_rotl(first, last);
+    }
+}
+
+template <class T, class Traits = traits<T>, class InputIterator>
+void Cry_rotr(InputIterator first, InputIterator last, int n)
+{
+    --last;
+
+    while (n--)
+    {
+        Cry_rotr(first, last);
+    }
+}
+
+template <class T, class Traits = traits<T>, class InputIterator>
+void Cry_lshift(InputIterator first, InputIterator last, int n)
+{
+    while (n--)
+    {
+        Cry_lshift(first, last);
+    }
+}
+
+template <class T, class Traits = traits<T>, class InputIterator>
+void Cry_rshift(InputIterator first, InputIterator last, int n)
+{
+    while (n--)
+    {
+        Cry_rshift(first, last);
+    }
+}
+
+template <class T, class Traits = traits<T>, class InputIterator, class OutputIterator>
+void Cry_or(InputIterator first1, InputIterator last1, InputIterator first2, InputIterator last2, OutputIterator rlast)
+{
+    std::reverse_iterator<InputIterator> rfirst1(last1);
+    std::reverse_iterator<InputIterator> rlast1(first1);
+
+    std::reverse_iterator<InputIterator> rfirst2(last2);
+    std::reverse_iterator<InputIterator> rlast2(first2);
+
+    std::reverse_iterator<OutputIterator> result(rlast);
+
+    for (; (rfirst1 != rlast1) && (rfirst2 != rlast2); ++rfirst1, ++rfirst2)
+    {
+        *(result++) = *(rfirst1) | *(rfirst2);
+    }
+
+    for (; rfirst1 != rlast1; ++rfirst1)
+    {
+        *(result++) = *rfirst1;
+    }
+
+    for (; rfirst2 != rlast2; ++rfirst2)
+    {
+        *(result++) = *rfirst2;
+    }
+}
+
+template <class T, class Traits = traits<T>, class InputIterator, class OutputIterator>
+void Cry_xor(InputIterator first1, InputIterator last1, InputIterator first2, InputIterator last2, OutputIterator rlast)
+{
+    std::reverse_iterator<InputIterator> rfirst1(last1);
+    std::reverse_iterator<InputIterator> rlast1(first1);
+
+    std::reverse_iterator<InputIterator> rfirst2(last2);
+    std::reverse_iterator<InputIterator> rlast2(first2);
+
+    std::reverse_iterator<OutputIterator> result(rlast);
+
+    for (; (rfirst1 != rlast1) && (rfirst2 != rlast2); ++rfirst1, ++rfirst2)
+    {
+        *(result++) = *(rfirst1) ^ *(rfirst2);
+    }
+
+    for (; rfirst1 != rlast1; ++rfirst1)
+    {
+        *(result++) = *rfirst1;
+    }
+
+    for (; rfirst2 != rlast2; ++rfirst2)
+    {
+        *(result++) = *rfirst2;
+    }
+}
+
+template <class T, class Traits = traits<T>, class InputIterator, class OutputIterator>
+void Cry_and(InputIterator first1, InputIterator last1, InputIterator first2, InputIterator last2, OutputIterator rlast)
+{
+    std::reverse_iterator<InputIterator> rfirst1(last1);
+    std::reverse_iterator<InputIterator> rlast1(first1);
+
+    std::reverse_iterator<InputIterator> rfirst2(last2);
+    std::reverse_iterator<InputIterator> rlast2(first2);
+
+    std::reverse_iterator<OutputIterator> result(rlast);
+
+    for (; (rfirst1 != rlast1) && (rfirst2 != rlast2); ++rfirst1, ++rfirst2)
+    {
+        *(result++) = *(rfirst1) & *(rfirst2);
+    }
+
+    for (; rfirst1 != rlast1; ++rfirst1)
+    {
+        *(result++) = *rfirst1;
+    }
+
+    for (; rfirst2 != rlast2; ++rfirst2)
+    {
+        *(result++) = *rfirst2;
+    }
+}
+
+template <class T, class Traits = traits<T>, class InputIterator>
+void Cry_inverse(InputIterator first, InputIterator last)
+{
+    for (; first != last; ++first)
+    {
+        *first = ~(*first);
+    }
+}
+
+template <class T, class Traits = traits<T>, class InputIterator>
+short Cry_compare(InputIterator first1, InputIterator last1, InputIterator first2, InputIterator last2)
+{
+    for (; (first1 != last1) && (*first1 == 0);)
+    {
+        ++first1;
+    }
+
+    for (; (first2 != last2) && (*first2 == 0);)
+    {
+        ++first2;
+    }
+
+    for (; (first1 != last1) && (first2 != last2) && (*first1 == *first2); ++first1, ++first2)
+        ;
+
+    auto dA = std::distance(first1, last1);
+    auto dB = std::distance(first2, last2);
+
+    if (dA == dB)
+    {
+        if ((first1 < last1) && (first2 < last2))
+        {
+            return static_cast<short>((*first1 < *first2) ? -1 : 1);
+        }
+    }
+
+    if (dA < dB)
+    {
+        return -1;
+    }
+
+    if (dA > dB)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+template <class T, class Traits = traits<T>, class InputIterator>
+bool Cry_equal(InputIterator first1, InputIterator last1, InputIterator first2, InputIterator last2)
+{
+
+    for (; (first1 != last1) && (*first1 == 0x00); ++first1)
+        ;
+
+    for (; (first2 != last2) && (*first2 == 0x00); ++first2)
+        ;
+
+    for (; (first1 != last1) && (first2 != last2) && (*first1) == (*first2); ++first1, ++first2)
+        ;
+
+    return (first1 == last1) && (first2 == last2);
+}
+
+template <class T, class Traits = traits<T>, class InputIterator>
+bool Cry_is_zero(InputIterator first, InputIterator last)
+{
+    for (; (first != last) && (*first == 0x00);)
+    {
+        ++first;
+    }
+
+    return first == last;
+}
+
+template <class T, class Traits = traits<T>, class InputIterator>
+int Cry_get_lowest_set_bit(InputIterator first, InputIterator last)
+{
+    return ((*std::prev(last)) & 0x01);
+}
+
+template <class T, class Traits = traits<T>, class InputIterator>
+int Cry_get_highest_set_bit(InputIterator first, InputIterator last)
+{
+    return (*first & 0x80);
+}
+
+template <class T, class Traits = traits<T>, class InputIterator>
+bool Cry_is_power_of_two(InputIterator first, InputIterator last)
+{
+    return false;
+}
+
+template <class T, class Traits = traits<T>, class InputIterator>
+bool Cry_is_one(InputIterator first, InputIterator last)
+{
+    std::reverse_iterator<InputIterator> rfirst(last);
+    std::reverse_iterator<InputIterator> rlast(first);
+
+    if (*rfirst == 0x01)
+    {
+        for (; (rfirst != rlast) && (*rfirst == 0x00); ++rfirst)
+            ;
+
+        return !(first != last);
+    }
+
+    return false;
 }
 
 #endif

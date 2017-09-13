@@ -169,8 +169,6 @@ class BigintCoreTest : public ::testing::Test
 			auto aa = hex2polynomial<T>(a);
 			auto ex = hex2polynomial<T>(expected);
 
-			std::vector<T> actual(15);
-
 			Cry_Increment<T>(begin(aa), end(aa));
 
 			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
@@ -181,8 +179,6 @@ class BigintCoreTest : public ::testing::Test
 			using T = uint16_t;
 			auto aa = hex2polynomial<T>(a);
 			auto ex = hex2polynomial<T>(expected);
-
-			std::vector<T> actual(15);
 
 			Cry_Increment<T>(begin(aa), end(aa));
 
@@ -195,14 +191,192 @@ class BigintCoreTest : public ::testing::Test
 			auto aa = hex2polynomial<T>(a);
 			auto ex = hex2polynomial<T>(expected);
 
-			std::vector<T> actual(15);
-
 			Cry_Increment<T>(begin(aa), end(aa));
 
 			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
 			EXPECT_TRUE(eq);
 		}
     }
+
+	void decrement(const std::string& a, const std::string& expected)
+    {
+		{
+			using T = uint8_t;
+			auto aa = hex2polynomial<T>(a);
+			auto ex = hex2polynomial<T>(expected);
+
+			Cry_decrement<T>(begin(aa), end(aa));
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+			EXPECT_TRUE(eq);
+		}
+
+		{
+			using T = uint16_t;
+			auto aa = hex2polynomial<T>(a);
+			auto ex = hex2polynomial<T>(expected);
+
+			Cry_decrement<T>(begin(aa), end(aa));
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+			EXPECT_TRUE(eq);
+		}
+
+		{
+			using T = uint32_t;
+			auto aa = hex2polynomial<T>(a);
+			auto ex = hex2polynomial<T>(expected);
+
+			Cry_decrement<T>(begin(aa), end(aa));
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+			EXPECT_TRUE(eq);
+		}
+    }
+
+	void rotl(const std::string& a, const std::string& expected)
+    {
+		{
+			using T = uint8_t;
+			auto aa = hex2polynomial<T>(a);
+			auto ex = hex2polynomial<T>(expected);
+
+			Cry_rotl<T>(begin(aa), end(aa));
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+			EXPECT_TRUE(eq);
+		}
+
+		{
+			using T = uint16_t;
+			auto aa = hex2polynomial<T>(a);
+			auto ex = hex2polynomial<T>(expected);
+
+			Cry_rotl<T>(begin(aa), end(aa));
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+			EXPECT_TRUE(eq);
+		}
+
+		{
+			using T = uint32_t;
+			auto aa = hex2polynomial<T>(a);
+			auto ex = hex2polynomial<T>(expected);
+
+			Cry_rotl<T>(begin(aa), end(aa));
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+			EXPECT_TRUE(eq);
+		}
+    }
+
+	void rotr(const std::string& a, const std::string& expected)
+	{
+		{
+			using T = uint8_t;
+			auto aa = hex2polynomial<T>(a);
+			auto ex = hex2polynomial<T>(expected);
+
+			Cry_decrement<T>(begin(aa), end(aa));
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+			EXPECT_TRUE(eq);
+		}
+
+		{
+			using T = uint16_t;
+			auto aa = hex2polynomial<T>(a);
+			auto ex = hex2polynomial<T>(expected);
+
+			Cry_decrement<T>(begin(aa), end(aa));
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+			EXPECT_TRUE(eq);
+		}
+
+		{
+			using T = uint32_t;
+			auto aa = hex2polynomial<T>(a);
+			auto ex = hex2polynomial<T>(expected);
+
+			Cry_decrement<T>(begin(aa), end(aa));
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+			EXPECT_TRUE(eq);
+		}
+	}
+
+	void rshift(const std::string& a, const std::string& expected)
+	{
+		{
+			using T = uint8_t;
+			auto aa = hex2polynomial<T>(a);
+			auto ex = hex2polynomial<T>(expected);
+
+			Cry_rshift<T>(begin(aa), end(aa));
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+			EXPECT_TRUE(eq);
+		}
+
+		{
+			using T = uint16_t;
+			auto aa = hex2polynomial<T>(a);
+			auto ex = hex2polynomial<T>(expected);
+
+			Cry_rshift<T>(begin(aa), end(aa));
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+			EXPECT_TRUE(eq);
+		}
+
+		{
+			using T = uint32_t;
+			auto aa = hex2polynomial<T>(a);
+			auto ex = hex2polynomial<T>(expected);
+
+			Cry_rshift<T>(begin(aa), end(aa));
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+			EXPECT_TRUE(eq);
+		}
+	}
+
+	void lshift(const std::string& a, const std::string& expected)
+	{
+		{
+			using T = uint8_t;
+			auto aa = hex2polynomial<T>(a);
+			auto ex = hex2polynomial<T>(expected);
+
+			Cry_lshift<T>(begin(aa), end(aa));
+			
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+			EXPECT_TRUE(eq);
+		}
+
+		{
+			using T = uint16_t;
+			auto aa = hex2polynomial<T>(a);
+			auto ex = hex2polynomial<T>(expected);
+
+			Cry_lshift<T>(begin(aa), end(aa));
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+			EXPECT_TRUE(eq);
+		}
+
+		{
+			using T = uint32_t;
+			auto aa = hex2polynomial<T>(a);
+			auto ex = hex2polynomial<T>(expected);
+
+			Cry_lshift<T>(begin(aa), end(aa));
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+			EXPECT_TRUE(eq);
+		}
+	}
 
     template <class P>
     std::vector<P> hex2polynomial(const std::string& hex)
@@ -309,10 +483,38 @@ TEST_F(BigintCoreTest, Cry_multiply)
     multiply("1232AF42", "1232AF42", "14B2AAE35C34D04");
 }
 
-TEST_F(BigintCoreTest, Cry_Increment)
+TEST_F(BigintCoreTest, Cry_increment)
 {
 	increment("000001", "02");
-	increment("0000ff", "000100");
-	increment("00ffff", "010000");
+	increment("0001ff", "200");
+	increment("01ffff", "20000");
 	increment("00fffe", "00ffff");
+}
+
+TEST_F(BigintCoreTest, Cry_decrement)
+{
+	decrement("000002", "000001");
+	decrement("000100", "0000ff");
+	decrement("000101", "000100");
+	decrement("ffffff", "FFFFFE");
+}
+
+/*TEST_F(BigintCoreTest, Cry_rotl)
+{
+	rotl("ff", "ff");
+	//rotl("80", "01");
+	//rotl("01", "02");
+	//rotl("7Fff", "FFFE");
+}*/
+
+TEST_F(BigintCoreTest, Cry_rshift)
+{
+	rshift("123456789", "91A2B3C4");
+	rshift("123456789ABCDEF", "91A2B3C4D5E6F7");
+}
+
+TEST_F(BigintCoreTest, Cry_lshift)
+{
+	lshift("123456789", "2468ACF12");
+	lshift("123456789ABCDEF", "2468ACF13579BDE");
 }
