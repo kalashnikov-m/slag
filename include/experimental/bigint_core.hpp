@@ -399,12 +399,12 @@ void Cry_and(InputIterator first1, InputIterator last1, InputIterator first2, In
 
     for (; rfirst1 != rlast1; ++rfirst1)
     {
-        *(result++) = *rfirst1;
+        *(result++) = 0;
     }
 
     for (; rfirst2 != rlast2; ++rfirst2)
     {
-        *(result++) = *rfirst2;
+        *(result++) = 0;
     }
 }
 

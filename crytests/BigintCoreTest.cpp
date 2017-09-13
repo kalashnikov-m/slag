@@ -378,6 +378,132 @@ class BigintCoreTest : public ::testing::Test
 		}
 	}
 
+	void and(const std::string& a, const std::string& b, const std::string& expected)
+    {
+		{
+			using T = uint8_t;
+			auto aa = hex2polynomial<T>(a);
+			auto bb = hex2polynomial<T>(b);
+			auto ex = hex2polynomial<T>(expected);
+
+			std::vector<T> actual(15);
+			Cry_and<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+			EXPECT_TRUE(eq);
+		}
+
+		{
+			using T = uint16_t;
+			auto aa = hex2polynomial<T>(a);
+			auto bb = hex2polynomial<T>(b);
+			auto ex = hex2polynomial<T>(expected);
+
+			std::vector<T> actual(15);
+			Cry_and<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+			EXPECT_TRUE(eq);
+		}
+
+		{
+			using T = uint32_t;
+			auto aa = hex2polynomial<T>(a);
+			auto bb = hex2polynomial<T>(b);
+			auto ex = hex2polynomial<T>(expected);
+
+			std::vector<T> actual(15);
+			Cry_and<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+			EXPECT_TRUE(eq);
+		}
+    }
+
+	void xor(const std::string& a, const std::string& b, const std::string& expected)
+	{
+		{
+			using T = uint8_t;
+			auto aa = hex2polynomial<T>(a);
+			auto bb = hex2polynomial<T>(b);
+			auto ex = hex2polynomial<T>(expected);
+
+			std::vector<T> actual(15);
+			Cry_xor<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+			EXPECT_TRUE(eq);
+		}
+
+		{
+			using T = uint16_t;
+			auto aa = hex2polynomial<T>(a);
+			auto bb = hex2polynomial<T>(b);
+			auto ex = hex2polynomial<T>(expected);
+
+			std::vector<T> actual(15);
+			Cry_xor<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+			EXPECT_TRUE(eq);
+		}
+
+		{
+			using T = uint32_t;
+			auto aa = hex2polynomial<T>(a);
+			auto bb = hex2polynomial<T>(b);
+			auto ex = hex2polynomial<T>(expected);
+
+			std::vector<T> actual(15);
+			Cry_xor<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+			EXPECT_TRUE(eq);
+		}
+	}
+
+	void or(const std::string& a, const std::string& b, const std::string& expected)
+	{
+		{
+			using T = uint8_t;
+			auto aa = hex2polynomial<T>(a);
+			auto bb = hex2polynomial<T>(b);
+			auto ex = hex2polynomial<T>(expected);
+
+			std::vector<T> actual(15);
+			Cry_or<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+			EXPECT_TRUE(eq);
+		}
+
+		{
+			using T = uint16_t;
+			auto aa = hex2polynomial<T>(a);
+			auto bb = hex2polynomial<T>(b);
+			auto ex = hex2polynomial<T>(expected);
+
+			std::vector<T> actual(15);
+			Cry_or<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+			EXPECT_TRUE(eq);
+		}
+
+		{
+			using T = uint32_t;
+			auto aa = hex2polynomial<T>(a);
+			auto bb = hex2polynomial<T>(b);
+			auto ex = hex2polynomial<T>(expected);
+
+			std::vector<T> actual(15);
+			Cry_or<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+			EXPECT_TRUE(eq);
+		}
+	}
+
     template <class P>
     std::vector<P> hex2polynomial(const std::string& hex)
     {
@@ -511,10 +637,35 @@ TEST_F(BigintCoreTest, Cry_rshift)
 {
 	rshift("123456789", "91A2B3C4");
 	rshift("123456789ABCDEF", "91A2B3C4D5E6F7");
+	rshift("8000000000000000", "4000000000000000");
 }
 
 TEST_F(BigintCoreTest, Cry_lshift)
 {
 	lshift("123456789", "2468ACF12");
 	lshift("123456789ABCDEF", "2468ACF13579BDE");
+	lshift("8000000000000000", "00");
+}
+
+TEST_F(BigintCoreTest, Cry_and)
+{
+	and("0100000000ff1032", "0100000000ff1031", "0100000000ff1030");
+	and("0100000000ff1032", "0000ff1031", "0000000000ff1030");
+	and("01ff4432", "0000ff1031", "0000000000ff0030");
+}
+
+TEST_F(BigintCoreTest, Cry_xor)
+{
+	xor ("0100000000ff1032", "0100000000ff1032", "00");
+	xor ("0100000000ff1032", "0000000000000000", "0100000000ff1032");
+	xor ("010000ff1032", "0000000000000000", "0000010000ff1032");
+	xor ("030303", "00", "030303");
+}
+
+TEST_F(BigintCoreTest, Cry_or)
+{
+	or("0100000000ff1032", "0100000000ff1031", "0100000000ff1033");
+	or("0100000000ff1032", "0100aa1131", "0100000100ff1133");
+	or("0116ff1032", "0100000005aa1131", "0100000117ff1133");
+	or("030303", "00", "030303");
 }
