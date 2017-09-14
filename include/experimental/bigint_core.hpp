@@ -528,8 +528,8 @@ void Cry_inverse(InputIterator first, InputIterator last)
     }
 }
 
-template <class T, class Traits = traits<T>, class InputIterator>
-short Cry_compare(InputIterator first1, InputIterator last1, InputIterator first2, InputIterator last2)
+template <class T, class Traits = traits<T>, class InputIterator1, class InputIterator2>
+short Cry_compare(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, InputIterator2 last2)
 {
     for (; (first1 != last1) && (*first1 == 0);)
     {
