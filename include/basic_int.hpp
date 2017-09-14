@@ -57,24 +57,22 @@ namespace cry
                 return;
             }
 
-            ////////////// skiping zeros and whitespaces //////////////
-            //
+			/////////////////////////////////
+			// skiping zeros and whitespaces
             auto it(hex.begin());
             for (; it != hex.end() && ((*it == '0') || (*it == ' '));)
                 ++it;
 
             std::string::const_reverse_iterator rit(hex.rbegin()), rend(it);
 
-            ////////////// counting hexadecimal characters //////////////
-            //
+			//////////////////////////////////
+			// counting hexadecimal characters
             size_t nchars = std::count_if(rit, rend, [](unsigned char c) { return std::isalnum(c); });
             size_t nbytes = nchars / 2;
             nbytes += nchars % 2;
 
             size_t nwords = nbytes / sizeof(IntType);
-            if (nbytes >= sizeof(IntType))
-                nwords += nbytes % sizeof(IntType);
-            else
+            if (nbytes % sizeof(IntType))
                 nwords += 1;
 
             IntType word = 0;
