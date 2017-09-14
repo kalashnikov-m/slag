@@ -12,10 +12,10 @@ namespace cry
     template <class P>
     struct os2ip<cry::basic_int<P>>
     {
-        template <class OctetInputIterator>
-        cry::basic_int<P> operator()(OctetInputIterator first, OctetInputIterator last) const noexcept
+        template <class OctetIterator>
+        cry::basic_int<P> operator()(OctetIterator first, OctetIterator last) const noexcept
         {
-            std::reverse_iterator<OctetInputIterator> rfirst(last), rend(first);
+            std::reverse_iterator<OctetIterator> rfirst(last), rend(first);
 
             auto noctets = std::distance(rfirst, rend);
             auto nwords  = noctets / sizeof(P);
