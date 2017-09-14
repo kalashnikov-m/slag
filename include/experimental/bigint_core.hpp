@@ -383,6 +383,15 @@ void Cry_rshift(InputIterator first, InputIterator last)
 }
 
 template <class T, class Traits = traits<T>, class InputIterator>
+void Cry_rshift(InputIterator first, InputIterator last, int n)
+{
+	while (n--)
+	{
+		Cry_rshift<T>(first, last);
+	}
+}
+
+template <class T, class Traits = traits<T>, class InputIterator>
 void Cry_lshift(InputIterator first, InputIterator last)
 {
     std::reverse_iterator<InputIterator> rfirst(last);
@@ -398,6 +407,15 @@ void Cry_lshift(InputIterator first, InputIterator last)
         *rfirst |= static_cast<T>(carry);
         carry = z;
     }
+}
+
+template <class T, class Traits = traits<T>, class InputIterator>
+void Cry_lshift(InputIterator first, InputIterator last, int n)
+{
+	while (n--)
+	{
+		Cry_lshift<T>(first, last);
+	}
 }
 
 template <class T, class Traits = traits<T>, class InputIterator>
@@ -417,24 +435,6 @@ void Cry_rotr(InputIterator first, InputIterator last, int n)
     while (n--)
     {
         Cry_rotr(first, last);
-    }
-}
-
-template <class T, class Traits = traits<T>, class InputIterator>
-void Cry_lshift(InputIterator first, InputIterator last, int n)
-{
-    while (n--)
-    {
-        Cry_lshift(first, last);
-    }
-}
-
-template <class T, class Traits = traits<T>, class InputIterator>
-void Cry_rshift(InputIterator first, InputIterator last, int n)
-{
-    while (n--)
-    {
-        Cry_rshift(first, last);
     }
 }
 
