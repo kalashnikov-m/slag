@@ -167,26 +167,27 @@ void Cry_multiply(InputIterator first, InputIterator last, T x, OutputIterator r
 }
 
 template <class T, class Traits = traits<T>, class InputIterator, class OutputIterator>
-void Cry_div_rem(InputIterator first1, InputIterator last1, InputIterator first2, InputIterator last2, OutputIterator div_last, OutputIterator rem_last)
+void Cry_div_rem(InputIterator a_first, InputIterator a_last, InputIterator b_first, InputIterator b_last, OutputIterator div_last, OutputIterator rem_last)
 {
-    while ((first1 != last1) && (*first1 == 0x00))
+    while ((a_first != a_last) && (*a_first == 0x00))
     {
-        ++first1;
+        ++a_first;
     }
 
-    while ((first2 != last2) && (*first2 == 0x00))
+    while ((b_first != b_last) && (*b_first == 0x00))
     {
-        ++first2;
+        ++b_first;
     }
 
-    auto rTmp         = std::vector<T>(first1, last1);
-    auto d1     = std::distance(first1, last1);
-    auto d2     = std::distance(first2, last2);
+    auto rTmp   = std::vector<T>(a_first, a_last);
+    auto d1     = std::distance(a_first, a_last);
+    auto d2     = std::distance(b_first, b_last);
     auto shift  = d1 - d2 + 1;
-	auto rFirst = rTmp.begin();
-    auto rLast  = rFirst + d2;;
-    auto dFirst = first2;
-    auto dLast  = last2;
+    auto rFirst = rTmp.begin();
+    auto rLast  = rFirst + d2;
+    ;
+    auto dFirst = b_first;
+    auto dLast  = b_last;
 
     std::advance(div_last, -shift);
 
