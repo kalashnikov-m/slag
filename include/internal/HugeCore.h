@@ -10,61 +10,61 @@
 
 typedef unsigned char byte;
 
-void HUGE_Add(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
+void Cry_add(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
-void HUGE_Subtract(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
+void Cry_subtract(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
-void HUGE_Multiply(byte* last_result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
+void Cry_multiply(byte* last_result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
-void HUGE_Multiply(byte* last_result, const byte* first1, const byte* last1, byte x);
+void Cry_multiply(byte* last_result, const byte* first1, const byte* last1, byte x);
 
-void HUGE_DivRem(byte* div_last, byte* rem_last, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
+void Cry_div_rem(byte* div_last, byte* rem_last, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
-void HUGE_Increment(byte* first1, byte* last1);
+void Cry_increment(byte* first1, byte* last1);
 
-void HUGE_Decrement(byte* first1, byte* last1);
+void Cry_decrement(byte* first1, byte* last1);
 
-bool HUGE_IsEven(const byte* first, const byte* last);
+bool Cry_is_even(const byte* first, const byte* last);
 
-bool HUGE_IsOdd(const byte* first, const byte* last);
+bool Cry_is_odd(const byte* first, const byte* last);
 
-bool HUGE_IsOne(const byte* first, const byte* last);
+bool Cry_is_one(const byte* first, const byte* last);
 
-bool HUGE_IsZero(const byte* first, const byte* last);
+bool Cry_is_zero(const byte* first, const byte* last);
 
-void HUGE_Reverse(byte* first, byte* last);
+void Cry_reverse(byte* first, byte* last);
 
-void HUGE_RotateLeft(byte* first, byte* last);
+void Cry_rotl(byte* first, byte* last);
 
-void HUGE_RotateRight(byte* first, byte* last);
+void Cry_rotl(byte* first, byte* last, int n);
 
-void HUGE_ShiftRight(byte* first, byte* last);
+void Cry_rotr(byte* first, byte* last);
 
-void HUGE_ShiftLeft(byte* first, byte* last);
+void Cry_rotr(byte* first, byte* last, int n);
 
-void HUGE_RotateLeft(byte* first, byte* last, int n);
+void Cry_rshift(byte* first, byte* last);
 
-void HUGE_RotateRight(byte* first, byte* last, int n);
+void Cry_rshift(byte* first, byte* last, int n);
 
-void HUGE_ShiftLeft(byte* first, byte* last, int n);
+void Cry_lshift(byte* first, byte* last);
 
-void HUGE_ShiftRight(byte* first, byte* last, int n);
+void Cry_lshift(byte* first, byte* last, int n);
 
-void HUGE_Or(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
+void Cry_or(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
-void HUGE_Xor(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
+void Cry_xor(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
-void HUGE_And(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
+void Cry_and(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
-void HUGE_Inverse(byte* first, byte* last);
+void Cry_inverse(byte* first, byte* last);
 
-short HUGE_Compare(const byte* first1, const byte* last1, const byte* first2, const byte* last2);
+short Cry_compare(const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
-bool HUGE_Equal(const byte* first1, const byte* last1, const byte* first2, const byte* last2);
+bool Cry_equal(const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
-int HUGE_GetLowestSetBit(const byte* first, const byte* last);
+int Cry_get_lowest_set_bit(const byte* first, const byte* last);
 
-int HUGE_GetHighestSetBit(const byte* first, const byte* last);
+int Cry_get_highest_set_bit(const byte* first, const byte* last);
 
 // TODO isPowerOfTwo()
 

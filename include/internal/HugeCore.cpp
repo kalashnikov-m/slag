@@ -5,7 +5,7 @@
 #include <iterator>
 #include <vector>
 
-void HUGE_Add(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+void Cry_add(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
     byte carry = 0;
     unsigned short tmp;
@@ -38,7 +38,7 @@ void HUGE_Add(byte* result, const byte* first1, const byte* last1, const byte* f
         *(--result) = static_cast<byte>(carry);
 }
 
-void HUGE_Subtract(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+void Cry_subtract(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
     unsigned short carry = 0;
 
@@ -66,7 +66,7 @@ void HUGE_Subtract(byte* result, const byte* first1, const byte* last1, const by
     }
 }
 
-void HUGE_Multiply(byte* last_result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+void Cry_multiply(byte* last_result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
     --last1;
     --last2;
@@ -95,7 +95,7 @@ void HUGE_Multiply(byte* last_result, const byte* first1, const byte* last1, con
     }
 }
 
-void HUGE_Multiply(byte* last_result, const byte* first1, const byte* last1, byte x)
+void Cry_multiply(byte* last_result, const byte* first1, const byte* last1, byte x)
 {
     --last1;
     --last_result;
@@ -115,7 +115,7 @@ void HUGE_Multiply(byte* last_result, const byte* first1, const byte* last1, byt
     *last_result = carry;
 }
 
-void HUGE_DivRem(byte* div_last, byte* rem_last, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+void Cry_div_rem(byte* div_last, byte* rem_last, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
     while ((first1 != last1) && (*first1 == 0x00))
     {
@@ -139,7 +139,7 @@ void HUGE_DivRem(byte* div_last, byte* rem_last, const byte* first1, const byte*
 
     std::advance(div_last, -shift);
 
-    auto cmp = HUGE_Compare(rFirst, rLast, dFirst, dLast);
+    auto cmp = Cry_compare(rFirst, rLast, dFirst, dLast);
     if (cmp == -1)
     {
         ++rLast;
@@ -155,7 +155,7 @@ void HUGE_DivRem(byte* div_last, byte* rem_last, const byte* first1, const byte*
         uint8_t Down = 0x00;
         uint16_t Up  = 0x00100;
 
-        auto cmp = HUGE_Compare(rFirst, rLast, dFirst, dLast);
+        auto cmp = Cry_compare(rFirst, rLast, dFirst, dLast);
         if (cmp == -1)
         {
             ++rLast;
@@ -169,9 +169,9 @@ void HUGE_DivRem(byte* div_last, byte* rem_last, const byte* first1, const byte*
             // 2. mul <-- d * c;
             std::fill(&mul[0], &mul[0] + nbytes, 0x00);
 
-            HUGE_Multiply(&mul[0] + nbytes, dFirst, dLast, Middle);
+            Cry_multiply(&mul[0] + nbytes, dFirst, dLast, Middle);
 
-            short mulCmp = HUGE_Compare(&mul[0], &mul[0] + nbytes, rFirst, rLast);
+            short mulCmp = Cry_compare(&mul[0], &mul[0] + nbytes, rFirst, rLast);
 
             if (mulCmp == -1)
             { // if(c < a): down <-- c
@@ -190,9 +190,9 @@ void HUGE_DivRem(byte* div_last, byte* rem_last, const byte* first1, const byte*
 
         std::fill(&mul[0], &mul[0] + nbytes, 0x00);
 
-        HUGE_Multiply(&mul[0] + nbytes, dFirst, dLast, Down);
+        Cry_multiply(&mul[0] + nbytes, dFirst, dLast, Down);
 
-        HUGE_Subtract(rLast, rFirst, rLast, &mul[0], &mul[0] + nbytes);
+        Cry_subtract(rLast, rFirst, rLast, &mul[0], &mul[0] + nbytes);
 
         *(div_last++) = Down;
 
@@ -202,7 +202,7 @@ void HUGE_DivRem(byte* div_last, byte* rem_last, const byte* first1, const byte*
     std::copy_backward(rFirst, rLast, rem_last);
 }
 
-void HUGE_Increment(byte* first, byte* last)
+void Cry_increment(byte* first, byte* last)
 {
     byte carry = 0x00;
 
@@ -218,7 +218,7 @@ void HUGE_Increment(byte* first, byte* last)
     }
 }
 
-void HUGE_Decrement(byte* first, byte* last)
+void Cry_decrement(byte* first, byte* last)
 {
     unsigned short carry = 0;
 
@@ -248,22 +248,22 @@ void HUGE_Decrement(byte* first, byte* last)
     }
 }
 
-bool HUGE_IsOdd(const byte* first, const byte* last)
+bool Cry_is_odd(const byte* first, const byte* last)
 {
     return (*(--last) & 0x01) == 0x01;
 }
 
-bool HUGE_IsEven(const byte* first, const byte* last)
+bool Cry_is_even(const byte* first, const byte* last)
 {
     return (*(--last) & 0x01) == 0x00;
 }
 
-void HUGE_Reverse(byte* first, byte* last)
+void Cry_reverse(byte* first, byte* last)
 {
     std::reverse(first, last);
 }
 
-void HUGE_RotateLeft(byte* first, byte* last)
+void Cry_rotl(byte* first, byte* last)
 {
     int carry = (*first >> 7) & 0x01;
 
@@ -277,7 +277,7 @@ void HUGE_RotateLeft(byte* first, byte* last)
     }
 }
 
-void HUGE_RotateRight(byte* first, byte* last)
+void Cry_rotr(byte* first, byte* last)
 {
     int carry = *(last - 1) & 0x01; // *(std::prev(last)) & 0x01;
 
@@ -291,7 +291,7 @@ void HUGE_RotateRight(byte* first, byte* last)
     }
 }
 
-void HUGE_ShiftRight(byte* first, byte* last)
+void Cry_rshift(byte* first, byte* last)
 {
     int carry = 0;
 
@@ -305,7 +305,7 @@ void HUGE_ShiftRight(byte* first, byte* last)
     }
 }
 
-void HUGE_ShiftLeft(byte* first, byte* last)
+void Cry_lshift(byte* first, byte* last)
 {
     int carry = 0;
 
@@ -321,41 +321,41 @@ void HUGE_ShiftLeft(byte* first, byte* last)
     }
 }
 
-void HUGE_RotateLeft(byte* first, byte* last, int n)
+void Cry_rotl(byte* first, byte* last, int n)
 {
     while (n--)
     {
-        HUGE_RotateLeft(first, last);
+        Cry_rotl(first, last);
     }
 }
 
-void HUGE_RotateRight(byte* first, byte* last, int n)
+void Cry_rotr(byte* first, byte* last, int n)
 {
     --last;
 
     while (n--)
     {
-        HUGE_RotateRight(first, last);
+        Cry_rotr(first, last);
     }
 }
 
-void HUGE_ShiftLeft(byte* first, byte* last, int n)
+void Cry_lshift(byte* first, byte* last, int n)
 {
     while (n--)
     {
-        HUGE_ShiftLeft(first, last);
+        Cry_lshift(first, last);
     }
 }
 
-void HUGE_ShiftRight(byte* first, byte* last, int n)
+void Cry_rshift(byte* first, byte* last, int n)
 {
     while (n--)
     {
-        HUGE_ShiftRight(first, last);
+        Cry_rshift(first, last);
     }
 }
 
-void HUGE_Or(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+void Cry_or(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
     --last1;
     --last2;
@@ -376,7 +376,7 @@ void HUGE_Or(byte* result, const byte* first1, const byte* last1, const byte* fi
     }
 }
 
-void HUGE_Xor(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+void Cry_xor(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
     --last1;
     --last2;
@@ -397,7 +397,7 @@ void HUGE_Xor(byte* result, const byte* first1, const byte* last1, const byte* f
     }
 }
 
-void HUGE_And(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+void Cry_and(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
     --last1;
     --last2;
@@ -418,7 +418,7 @@ void HUGE_And(byte* result, const byte* first1, const byte* last1, const byte* f
     }
 }
 
-void HUGE_Inverse(byte* first, byte* last)
+void Cry_inverse(byte* first, byte* last)
 {
     for (; first != last; ++first)
     {
@@ -426,7 +426,7 @@ void HUGE_Inverse(byte* first, byte* last)
     }
 }
 
-short HUGE_Compare(const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+short Cry_compare(const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
     for (; (first1 != last1) && (*first1 == 0);)
     {
@@ -465,7 +465,7 @@ short HUGE_Compare(const byte* first1, const byte* last1, const byte* first2, co
     return 0;
 }
 
-bool HUGE_Equal(const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+bool Cry_equal(const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
 
     for (; (first1 != last1) && (*first1 == 0x00); ++first1)
@@ -480,7 +480,7 @@ bool HUGE_Equal(const byte* first1, const byte* last1, const byte* first2, const
     return (first1 == last1) && (first2 == last2);
 }
 
-bool HUGE_IsZero(const byte* first, const byte* last)
+bool Cry_is_zero(const byte* first, const byte* last)
 {
     for (; (first != last) && (*first == 0x00);)
     {
@@ -490,22 +490,22 @@ bool HUGE_IsZero(const byte* first, const byte* last)
     return first == last;
 }
 
-int HUGE_GetLowestSetBit(const byte* first, const byte* last)
+int Cry_get_lowest_set_bit(const byte* first, const byte* last)
 {
     return ((*std::prev(last)) & 0x01);
 }
 
-int HUGE_GetHighestSetBit(const byte* first, const byte* last)
+int Cry_get_highest_set_bit(const byte* first, const byte* last)
 {
     return (*first & 0x80);
 }
 
-bool HUGE_isPowerOfTwo(const byte* first, const byte* last)
+/*bool HUGE_isPowerOfTwo(const byte* first, const byte* last)
 {
     return false;
-}
+}*/
 
-bool HUGE_IsOne(const byte* first, const byte* last)
+bool Cry_is_one(const byte* first, const byte* last)
 {
     --last;
 

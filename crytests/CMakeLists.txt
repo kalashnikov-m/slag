@@ -27,6 +27,7 @@ set (HEADERS
 	../utility/encoders.hpp
 	../utility/os2ip.hpp
 	../include/experimental/bigint_core.hpp
+	../include/internal/HugeCore.h
 )
 
 set (SOURCES

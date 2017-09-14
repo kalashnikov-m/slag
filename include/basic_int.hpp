@@ -236,7 +236,7 @@ namespace cry
 
             std::vector<IntType> out(max);
 
-            HUGE_And(&out[0] + out.size(), &lhs.m_Polynomial[0], &lhs.m_Polynomial[0] + lhs.m_Polynomial.size(), &rhs.m_Polynomial[0], &rhs.m_Polynomial[0] + rhs.m_Polynomial.size());
+            Cry_and(&out[0] + out.size(), &lhs.m_Polynomial[0], &lhs.m_Polynomial[0] + lhs.m_Polynomial.size(), &rhs.m_Polynomial[0], &rhs.m_Polynomial[0] + rhs.m_Polynomial.size());
 
             return basic_int(out);
         }
@@ -250,7 +250,7 @@ namespace cry
 
             std::vector<IntType> out(max);
 
-            HUGE_Or(&out[0] + out.size(), &lhs.m_Polynomial[0], &lhs.m_Polynomial[0] + lhs.m_Polynomial.size(), &rhs.m_Polynomial[0], &rhs.m_Polynomial[0] + rhs.m_Polynomial.size());
+            Cry_or(&out[0] + out.size(), &lhs.m_Polynomial[0], &lhs.m_Polynomial[0] + lhs.m_Polynomial.size(), &rhs.m_Polynomial[0], &rhs.m_Polynomial[0] + rhs.m_Polynomial.size());
 
             return basic_int(out);
         }
@@ -264,7 +264,7 @@ namespace cry
 
             std::vector<IntType> out(max);
 
-            HUGE_Xor(&out[0] + out.size(), &lhs.m_Polynomial[0], &lhs.m_Polynomial[0] + lhs.m_Polynomial.size(), &rhs.m_Polynomial[0], &rhs.m_Polynomial[0] + rhs.m_Polynomial.size());
+            Cry_xor(&out[0] + out.size(), &lhs.m_Polynomial[0], &lhs.m_Polynomial[0] + lhs.m_Polynomial.size(), &rhs.m_Polynomial[0], &rhs.m_Polynomial[0] + rhs.m_Polynomial.size());
 
             return basic_int(out);
         }
@@ -282,25 +282,25 @@ namespace cry
             // если знаки аргументов различны: (a)+(-b), (-a)+(b) ==> ?(a-b)
             if (lhs.m_Negative ^ rhs.m_Negative)
             {
-                short cmp = HUGE_Compare(&a[0], &a[0] + lsize, &b[0], &b[0] + rsize);
+                short cmp = Cry_compare(&a[0], &a[0] + lsize, &b[0], &b[0] + rsize);
 
                 if (cmp == -1)
                 { // (|a| < |b|) ==> (|b| - |a|)
-                    HUGE_Subtract(&out[0] + out.size(), &b[0], &b[0] + rsize, &a[0], &a[0] + lsize);
+                    Cry_subtract(&out[0] + out.size(), &b[0], &b[0] + rsize, &a[0], &a[0] + lsize);
 
                     return basic_int(out, rhs.m_Negative);
                 }
                 else if (cmp == +1)
                 {
                     // (|a| > |b|) ==> (|a| - |b|)
-                    HUGE_Subtract(&out[0] + out.size(), &a[0], &a[0] + lsize, &b[0], &b[0] + rsize);
+                    Cry_subtract(&out[0] + out.size(), &a[0], &a[0] + lsize, &b[0], &b[0] + rsize);
 
                     return basic_int(out, lhs.m_Negative);
                 }
             }
             else
             { // если знаки аргументов одинаковы
-                HUGE_Add(&out[0] + out.size(), &a[0], &a[0] + lsize, &b[0], &b[0] + rsize);
+                Cry_add(&out[0] + out.size(), &a[0], &a[0] + lsize, &b[0], &b[0] + rsize);
 
                 return basic_int<IntType>(out, lhs.m_Negative & rhs.m_Negative);
             }
@@ -310,14 +310,14 @@ namespace cry
 
         friend const basic_int operator-(const basic_int& lhs, const basic_int& rhs)
         {
-            short cmp = HUGE_Compare(&lhs.m_Polynomial[0], &lhs.m_Polynomial[0] + lhs.m_Polynomial.size(), &rhs.m_Polynomial[0], &rhs.m_Polynomial[0] + rhs.m_Polynomial.size());
+            short cmp = Cry_compare(&lhs.m_Polynomial[0], &lhs.m_Polynomial[0] + lhs.m_Polynomial.size(), &rhs.m_Polynomial[0], &rhs.m_Polynomial[0] + rhs.m_Polynomial.size());
 
             // если знаки аргументов различны: (a)-(-b), (-a)-(b) ==> ?(a+b)
             if (lhs.m_Negative ^ rhs.m_Negative)
             {
                 basic_int temp((cmp == -1) ? rhs : lhs);
 
-                HUGE_Add(&temp.m_Polynomial[0] + temp.m_Polynomial.size(), &lhs.m_Polynomial[0], &lhs.m_Polynomial[0] + lhs.m_Polynomial.size(), &rhs.m_Polynomial[0], &rhs.m_Polynomial[0] + rhs.m_Polynomial.size());
+                Cry_add(&temp.m_Polynomial[0] + temp.m_Polynomial.size(), &lhs.m_Polynomial[0], &lhs.m_Polynomial[0] + lhs.m_Polynomial.size(), &rhs.m_Polynomial[0], &rhs.m_Polynomial[0] + rhs.m_Polynomial.size());
 
                 temp.m_Negative = lhs.m_Negative;
 
@@ -329,7 +329,7 @@ namespace cry
             { // (|a| < |b|) ==> (|b| - |a|)
                 basic_int temp(rhs);
 
-                HUGE_Subtract(&temp.m_Polynomial[0] + temp.m_Polynomial.size(), &rhs.m_Polynomial[0], &rhs.m_Polynomial[0] + rhs.m_Polynomial.size(), &lhs.m_Polynomial[0], &lhs.m_Polynomial[0] + lhs.m_Polynomial.size());
+                Cry_subtract(&temp.m_Polynomial[0] + temp.m_Polynomial.size(), &rhs.m_Polynomial[0], &rhs.m_Polynomial[0] + rhs.m_Polynomial.size(), &lhs.m_Polynomial[0], &lhs.m_Polynomial[0] + lhs.m_Polynomial.size());
 
                 temp.m_Negative = (!lhs.m_Negative & !rhs.m_Negative);
 
@@ -340,7 +340,7 @@ namespace cry
                 // (|a| > |b|) ==> (|a| - |b|)
                 basic_int temp(lhs);
 
-                HUGE_Subtract(&temp.m_Polynomial[0] + temp.m_Polynomial.size(), &lhs.m_Polynomial[0], &lhs.m_Polynomial[0] + lhs.m_Polynomial.size(), &rhs.m_Polynomial[0], &rhs.m_Polynomial[0] + rhs.m_Polynomial.size());
+                Cry_subtract(&temp.m_Polynomial[0] + temp.m_Polynomial.size(), &lhs.m_Polynomial[0], &lhs.m_Polynomial[0] + lhs.m_Polynomial.size(), &rhs.m_Polynomial[0], &rhs.m_Polynomial[0] + rhs.m_Polynomial.size());
 
                 temp.m_Negative = (lhs.m_Negative & rhs.m_Negative);
 
@@ -360,7 +360,7 @@ namespace cry
 
             std::vector<IntType> out(l_size + r_size);
 
-            HUGE_Multiply(&out[0] + out.size(), &a[0], &a[0] + l_size, &b[0], &b[0] + r_size);
+            Cry_multiply(&out[0] + out.size(), &a[0], &a[0] + l_size, &b[0], &b[0] + r_size);
 
             return basic_int(out, lhs.m_Negative ^ rhs.m_Negative);
         }
@@ -433,7 +433,7 @@ namespace cry
     template <class X>
     basic_int<X>::operator bool() const
     {
-        bool flag = HUGE_IsZero(&m_Polynomial[0], (&m_Polynomial[0] + m_Polynomial.size()));
+        bool flag = Cry_is_zero(&m_Polynomial[0], (&m_Polynomial[0] + m_Polynomial.size()));
 
         return !flag;
     }
@@ -457,7 +457,7 @@ namespace cry
     template <class X>
     basic_int<X>& basic_int<X>::operator++()
     {
-        HUGE_Increment(&m_Polynomial[0], &m_Polynomial[0] + m_Polynomial.size());
+        Cry_increment(&m_Polynomial[0], &m_Polynomial[0] + m_Polynomial.size());
 
         return *this;
     }
@@ -465,7 +465,7 @@ namespace cry
     template <class X>
     basic_int<X>& basic_int<X>::operator--()
     {
-        HUGE_Decrement(&m_Polynomial[0], &m_Polynomial[0] + m_Polynomial.size());
+        Cry_decrement(&m_Polynomial[0], &m_Polynomial[0] + m_Polynomial.size());
 
         return *this;
     }
@@ -523,7 +523,7 @@ namespace cry
     {
         basic_int temp(*this);
 
-        HUGE_Inverse(&temp.m_Polynomial[0], &temp.m_Polynomial[0] + temp.m_Polynomial.size());
+        Cry_inverse(&temp.m_Polynomial[0], &temp.m_Polynomial[0] + temp.m_Polynomial.size());
 
         return temp;
     }
@@ -603,7 +603,7 @@ namespace cry
         const auto& a = lhs.m_Polynomial;
         const auto& b = rhs.m_Polynomial;
 
-        short cmp = HUGE_Compare(&a[0], &a[0] + a.size(), &b[0], &b[0] + b.size());
+        short cmp = Cry_compare(&a[0], &a[0] + a.size(), &b[0], &b[0] + b.size());
 
         if (lhs.m_Negative && rhs.m_Negative)
         {
@@ -633,7 +633,7 @@ namespace cry
     {
         std::vector<T> out(m_Polynomial);
 
-        HUGE_ShiftLeft(&out[0], &out[0] + out.size(), nbits);
+        Cry_lshift(&out[0], &out[0] + out.size(), nbits);
 
         return basic_int<T>(out);
     }
@@ -651,7 +651,7 @@ namespace cry
     {
         std::vector<T> out(m_Polynomial);
 
-        HUGE_ShiftRight(&out[0], &out[0] + out.size(), nbits);
+        Cry_rshift(&out[0], &out[0] + out.size(), nbits);
 
         return basic_int<T>(out);
     }
@@ -675,13 +675,13 @@ namespace cry
     template <class T>
     void basic_int<T>::DivRem(basic_int<T>& q, basic_int<T>& r, const basic_int<T>& other) const
     {
-        bool isZero = HUGE_IsZero(&other.m_Polynomial[0], &other.m_Polynomial[0] + other.m_Polynomial.size());
+        bool isZero = Cry_is_zero(&other.m_Polynomial[0], &other.m_Polynomial[0] + other.m_Polynomial.size());
         if (isZero)
         {
             throw std::invalid_argument("division by zero");
         }
 
-        short cmp = HUGE_Compare(&m_Polynomial[0], &m_Polynomial[0] + m_Polynomial.size(), &other.m_Polynomial[0], &other.m_Polynomial[0] + other.m_Polynomial.size());
+        short cmp = Cry_compare(&m_Polynomial[0], &m_Polynomial[0] + m_Polynomial.size(), &other.m_Polynomial[0], &other.m_Polynomial[0] + other.m_Polynomial.size());
         if (cmp == -1)
         {
             q = basic_int<T>();
@@ -694,7 +694,7 @@ namespace cry
         std::vector<T> v_div(l_size);
         std::vector<T> v_rem(l_size);
 
-        HUGE_DivRem(&v_div[0] + v_div.size(), &v_rem[0] + v_rem.size(), &m_Polynomial[0], &m_Polynomial[0] + m_Polynomial.size(), &other.m_Polynomial[0], &other.m_Polynomial[0] + other.m_Polynomial.size());
+        Cry_div_rem(&v_div[0] + v_div.size(), &v_rem[0] + v_rem.size(), &m_Polynomial[0], &m_Polynomial[0] + m_Polynomial.size(), &other.m_Polynomial[0], &other.m_Polynomial[0] + other.m_Polynomial.size());
 
         basic_int<T> div(v_div, this->m_Negative ^ other.m_Negative);
         basic_int<T> rem(v_rem, this->m_Negative ^ other.m_Negative);
