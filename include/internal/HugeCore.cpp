@@ -66,7 +66,7 @@ void HUGE_Subtract(byte* result, const byte* first1, const byte* last1, const by
     }
 }
 
-void HUGE_Multiply(byte* first_result, byte* last_result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+void HUGE_Multiply(byte* last_result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
     --last1;
     --last2;
@@ -95,7 +95,7 @@ void HUGE_Multiply(byte* first_result, byte* last_result, const byte* first1, co
     }
 }
 
-void HUGE_Multiply(byte* first_result, byte* last_result, const byte* first1, const byte* last1, byte x)
+void HUGE_Multiply(byte* last_result, const byte* first1, const byte* last1, byte x)
 {
     --last1;
     --last_result;
@@ -115,7 +115,7 @@ void HUGE_Multiply(byte* first_result, byte* last_result, const byte* first1, co
     *last_result = carry;
 }
 
-void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_last, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+void HUGE_DivRem(byte* div_last, byte* rem_last, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
     while ((first1 != last1) && (*first1 == 0x00))
     {
@@ -169,7 +169,7 @@ void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_las
             // 2. mul <-- d * c;
             std::fill(&mul[0], &mul[0] + nbytes, 0x00);
 
-            HUGE_Multiply(&mul[0], &mul[0] + nbytes, dFirst, dLast, Middle);
+            HUGE_Multiply(&mul[0] + nbytes, dFirst, dLast, Middle);
 
             short mulCmp = HUGE_Compare(&mul[0], &mul[0] + nbytes, rFirst, rLast);
 
@@ -190,7 +190,7 @@ void HUGE_DivRem(byte* div_first, byte* div_last, byte* rem_first, byte* rem_las
 
         std::fill(&mul[0], &mul[0] + nbytes, 0x00);
 
-        HUGE_Multiply(&mul[0], &mul[0] + nbytes, dFirst, dLast, Down);
+        HUGE_Multiply(&mul[0] + nbytes, dFirst, dLast, Down);
 
         HUGE_Subtract(rLast, rFirst, rLast, &mul[0], &mul[0] + nbytes);
 

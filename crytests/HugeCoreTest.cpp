@@ -44,7 +44,7 @@ TEST(HugeCore_Test, Multiply_1) {
     auto Multiply1Test = [](const std::initializer_list<byte>& a, byte b, const std::initializer_list<byte>& expected) -> void {
         byte actual[8] = {0x00};
 
-        HUGE_Multiply(begin(actual), end(actual), begin(a), end(a), b);
+        HUGE_Multiply(end(actual), begin(a), end(a), b);
 
         bool eq = ASSERT_BYTES_EQ<const byte*>(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
         EXPECT_TRUE(eq);
@@ -58,7 +58,7 @@ TEST(HugeCore_Test, Multiply_1) {
 TEST(HugeCore_Test, Multiply) {
     auto MultiplyTest = [](const std::initializer_list<byte>& a, const std::initializer_list<byte>& b, const std::initializer_list<byte>& expected) -> void {
         byte actual[14] = {0x00};
-        HUGE_Multiply(begin(actual), end(actual), begin(a), end(a), begin(b), end(b));
+        HUGE_Multiply(end(actual), begin(a), end(a), begin(b), end(b));
 
         bool eq = ASSERT_BYTES_EQ<const byte*>(std::begin(expected), std::end(expected), std::begin(actual), std::end(actual));
 
@@ -100,7 +100,7 @@ TEST(HugeCore_Test, DivRem) {
         const byte* b_ = &_arg2[0];
         const byte* _b = b_ + _arg2.size();
 
-        HUGE_DivRem(divb, dive, remb, reme, a_, _a, b_, _b);
+        HUGE_DivRem(dive, reme, a_, _a, b_, _b);
 
         bool eq = ASSERT_BYTES_EQ(_expected_div.begin(), _expected_div.end(), div.cbegin(), div.cend());
         EXPECT_TRUE(eq);
