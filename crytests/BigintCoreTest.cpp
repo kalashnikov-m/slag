@@ -117,7 +117,7 @@ class BigintCoreTest : public ::testing::Test
         }
     }
 
-    void multiply(const std::string& a, const std::string& b, const std::string& expected)
+    void multiply_1(const std::string& a, const std::string& b, const std::string& expected)
     {
         {
             using T = uint8_t;
@@ -162,16 +162,18 @@ class BigintCoreTest : public ::testing::Test
         }
     }
 
-	void increment(const std::string& a, const std::string& expected)
-    {
+	void multiply_2(const std::string& a, uint32_t b, const std::string& expected)
+	{
 		{
 			using T = uint8_t;
 			auto aa = hex2polynomial<T>(a);
 			auto ex = hex2polynomial<T>(expected);
 
-			Cry_Increment<T>(begin(aa), end(aa));
+			std::vector<T> actual(15);
 
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+			Cry_multiply<T>(begin(aa), end(aa), b, end(actual));
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
 			EXPECT_TRUE(eq);
 		}
 
@@ -180,9 +182,11 @@ class BigintCoreTest : public ::testing::Test
 			auto aa = hex2polynomial<T>(a);
 			auto ex = hex2polynomial<T>(expected);
 
-			Cry_Increment<T>(begin(aa), end(aa));
+			std::vector<T> actual(15);
 
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+			Cry_multiply<T>(begin(aa), end(aa), b, end(actual));
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
 			EXPECT_TRUE(eq);
 		}
 
@@ -191,318 +195,485 @@ class BigintCoreTest : public ::testing::Test
 			auto aa = hex2polynomial<T>(a);
 			auto ex = hex2polynomial<T>(expected);
 
-			Cry_Increment<T>(begin(aa), end(aa));
+			std::vector<T> actual(15);
 
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+			Cry_multiply<T>(begin(aa), end(aa), b, end(actual));
+
+			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
 			EXPECT_TRUE(eq);
 		}
+	}
+
+    void div_rem(const std::string& a, const std::string& b, const std::string& div_expected, const std::string& rem_expected)
+    {
+        {
+            using T     = uint8_t;
+            auto aa     = hex2polynomial<T>(a);
+            auto bb     = hex2polynomial<T>(b);
+            auto div_ex = hex2polynomial<T>(div_expected);
+            auto rem_ex = hex2polynomial<T>(rem_expected);
+
+            std::vector<T> div(15);
+            std::vector<T> rem(15);
+
+            Cry_div_rem<T>(begin(aa), end(aa), begin(bb), end(bb), end(div), end(rem));
+
+            bool eq1 = ASSERT_BYTES_EQ(std::begin(div_ex), std::end(div_ex), std::begin(div), std::end(div));
+            EXPECT_TRUE(eq1);
+
+            bool eq2 = ASSERT_BYTES_EQ(std::begin(rem_ex), std::end(rem_ex), std::begin(rem), std::end(rem));
+            EXPECT_TRUE(eq2);
+        }
+
+        {
+            using T     = uint16_t;
+            auto aa     = hex2polynomial<T>(a);
+            auto bb     = hex2polynomial<T>(b);
+            auto div_ex = hex2polynomial<T>(div_expected);
+            auto rem_ex = hex2polynomial<T>(rem_expected);
+
+            std::vector<T> div(15);
+            std::vector<T> rem(15);
+
+            Cry_div_rem<T>(begin(aa), end(aa), begin(bb), end(bb), end(div), end(rem));
+
+            bool eq1 = ASSERT_BYTES_EQ(std::begin(div_ex), std::end(div_ex), std::begin(div), std::end(div));
+            EXPECT_TRUE(eq1);
+
+            bool eq2 = ASSERT_BYTES_EQ(std::begin(rem_ex), std::end(rem_ex), std::begin(rem), std::end(rem));
+            EXPECT_TRUE(eq2);
+        }
+
+        {
+            using T     = uint32_t;
+            auto aa     = hex2polynomial<T>(a);
+            auto bb     = hex2polynomial<T>(b);
+            auto div_ex = hex2polynomial<T>(div_expected);
+            auto rem_ex = hex2polynomial<T>(rem_expected);
+
+            std::vector<T> div(15);
+            std::vector<T> rem(15);
+
+            Cry_div_rem<T>(begin(aa), end(aa), begin(bb), end(bb), end(div), end(rem));
+
+            bool eq1 = ASSERT_BYTES_EQ(std::begin(div_ex), std::end(div_ex), std::begin(div), std::end(div));
+            EXPECT_TRUE(eq1);
+
+            bool eq2 = ASSERT_BYTES_EQ(std::begin(rem_ex), std::end(rem_ex), std::begin(rem), std::end(rem));
+            EXPECT_TRUE(eq2);
+        }
     }
 
-	void decrement(const std::string& a, const std::string& expected)
+    void increment(const std::string& a, const std::string& expected)
     {
-		{
-			using T = uint8_t;
-			auto aa = hex2polynomial<T>(a);
-			auto ex = hex2polynomial<T>(expected);
+        {
+            using T = uint8_t;
+            auto aa = hex2polynomial<T>(a);
+            auto ex = hex2polynomial<T>(expected);
 
-			Cry_decrement<T>(begin(aa), end(aa));
+            Cry_increment<T>(begin(aa), end(aa));
 
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
-			EXPECT_TRUE(eq);
-		}
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+            EXPECT_TRUE(eq);
+        }
 
-		{
-			using T = uint16_t;
-			auto aa = hex2polynomial<T>(a);
-			auto ex = hex2polynomial<T>(expected);
+        {
+            using T = uint16_t;
+            auto aa = hex2polynomial<T>(a);
+            auto ex = hex2polynomial<T>(expected);
 
-			Cry_decrement<T>(begin(aa), end(aa));
+            Cry_increment<T>(begin(aa), end(aa));
 
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
-			EXPECT_TRUE(eq);
-		}
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+            EXPECT_TRUE(eq);
+        }
 
-		{
-			using T = uint32_t;
-			auto aa = hex2polynomial<T>(a);
-			auto ex = hex2polynomial<T>(expected);
+        {
+            using T = uint32_t;
+            auto aa = hex2polynomial<T>(a);
+            auto ex = hex2polynomial<T>(expected);
 
-			Cry_decrement<T>(begin(aa), end(aa));
+            Cry_increment<T>(begin(aa), end(aa));
 
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
-			EXPECT_TRUE(eq);
-		}
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+            EXPECT_TRUE(eq);
+        }
     }
 
-	void rotl(const std::string& a, const std::string& expected)
+    void decrement(const std::string& a, const std::string& expected)
     {
-		{
-			using T = uint8_t;
-			auto aa = hex2polynomial<T>(a);
-			auto ex = hex2polynomial<T>(expected);
+        {
+            using T = uint8_t;
+            auto aa = hex2polynomial<T>(a);
+            auto ex = hex2polynomial<T>(expected);
 
-			Cry_rotl<T>(begin(aa), end(aa));
+            Cry_decrement<T>(begin(aa), end(aa));
 
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
-			EXPECT_TRUE(eq);
-		}
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+            EXPECT_TRUE(eq);
+        }
 
-		{
-			using T = uint16_t;
-			auto aa = hex2polynomial<T>(a);
-			auto ex = hex2polynomial<T>(expected);
+        {
+            using T = uint16_t;
+            auto aa = hex2polynomial<T>(a);
+            auto ex = hex2polynomial<T>(expected);
 
-			Cry_rotl<T>(begin(aa), end(aa));
+            Cry_decrement<T>(begin(aa), end(aa));
 
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
-			EXPECT_TRUE(eq);
-		}
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+            EXPECT_TRUE(eq);
+        }
 
-		{
-			using T = uint32_t;
-			auto aa = hex2polynomial<T>(a);
-			auto ex = hex2polynomial<T>(expected);
+        {
+            using T = uint32_t;
+            auto aa = hex2polynomial<T>(a);
+            auto ex = hex2polynomial<T>(expected);
 
-			Cry_rotl<T>(begin(aa), end(aa));
+            Cry_decrement<T>(begin(aa), end(aa));
 
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
-			EXPECT_TRUE(eq);
-		}
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+            EXPECT_TRUE(eq);
+        }
     }
 
-	void rotr(const std::string& a, const std::string& expected)
-	{
-		{
-			using T = uint8_t;
-			auto aa = hex2polynomial<T>(a);
-			auto ex = hex2polynomial<T>(expected);
-
-			Cry_decrement<T>(begin(aa), end(aa));
-
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
-			EXPECT_TRUE(eq);
-		}
-
-		{
-			using T = uint16_t;
-			auto aa = hex2polynomial<T>(a);
-			auto ex = hex2polynomial<T>(expected);
-
-			Cry_decrement<T>(begin(aa), end(aa));
-
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
-			EXPECT_TRUE(eq);
-		}
-
-		{
-			using T = uint32_t;
-			auto aa = hex2polynomial<T>(a);
-			auto ex = hex2polynomial<T>(expected);
-
-			Cry_decrement<T>(begin(aa), end(aa));
-
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
-			EXPECT_TRUE(eq);
-		}
-	}
-
-	void rshift(const std::string& a, const std::string& expected)
-	{
-		{
-			using T = uint8_t;
-			auto aa = hex2polynomial<T>(a);
-			auto ex = hex2polynomial<T>(expected);
-
-			Cry_rshift<T>(begin(aa), end(aa));
-
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
-			EXPECT_TRUE(eq);
-		}
-
-		{
-			using T = uint16_t;
-			auto aa = hex2polynomial<T>(a);
-			auto ex = hex2polynomial<T>(expected);
-
-			Cry_rshift<T>(begin(aa), end(aa));
-
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
-			EXPECT_TRUE(eq);
-		}
-
-		{
-			using T = uint32_t;
-			auto aa = hex2polynomial<T>(a);
-			auto ex = hex2polynomial<T>(expected);
-
-			Cry_rshift<T>(begin(aa), end(aa));
-
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
-			EXPECT_TRUE(eq);
-		}
-	}
-
-	void lshift(const std::string& a, const std::string& expected)
-	{
-		{
-			using T = uint8_t;
-			auto aa = hex2polynomial<T>(a);
-			auto ex = hex2polynomial<T>(expected);
-
-			Cry_lshift<T>(begin(aa), end(aa));
-			
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
-			EXPECT_TRUE(eq);
-		}
-
-		{
-			using T = uint16_t;
-			auto aa = hex2polynomial<T>(a);
-			auto ex = hex2polynomial<T>(expected);
-
-			Cry_lshift<T>(begin(aa), end(aa));
-
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
-			EXPECT_TRUE(eq);
-		}
-
-		{
-			using T = uint32_t;
-			auto aa = hex2polynomial<T>(a);
-			auto ex = hex2polynomial<T>(expected);
-
-			Cry_lshift<T>(begin(aa), end(aa));
-
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
-			EXPECT_TRUE(eq);
-		}
-	}
-
-	void and(const std::string& a, const std::string& b, const std::string& expected)
+    void rotl(const std::string& a, const std::string& expected)
     {
-		{
-			using T = uint8_t;
-			auto aa = hex2polynomial<T>(a);
-			auto bb = hex2polynomial<T>(b);
-			auto ex = hex2polynomial<T>(expected);
+        {
+            using T = uint8_t;
+            auto aa = hex2polynomial<T>(a);
+            auto ex = hex2polynomial<T>(expected);
 
-			std::vector<T> actual(15);
-			Cry_and<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+            Cry_rotl<T>(begin(aa), end(aa));
 
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
-			EXPECT_TRUE(eq);
-		}
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+            EXPECT_TRUE(eq);
+        }
 
-		{
-			using T = uint16_t;
-			auto aa = hex2polynomial<T>(a);
-			auto bb = hex2polynomial<T>(b);
-			auto ex = hex2polynomial<T>(expected);
+        {
+            using T = uint16_t;
+            auto aa = hex2polynomial<T>(a);
+            auto ex = hex2polynomial<T>(expected);
 
-			std::vector<T> actual(15);
-			Cry_and<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+            Cry_rotl<T>(begin(aa), end(aa));
 
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
-			EXPECT_TRUE(eq);
-		}
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+            EXPECT_TRUE(eq);
+        }
 
-		{
-			using T = uint32_t;
-			auto aa = hex2polynomial<T>(a);
-			auto bb = hex2polynomial<T>(b);
-			auto ex = hex2polynomial<T>(expected);
+        {
+            using T = uint32_t;
+            auto aa = hex2polynomial<T>(a);
+            auto ex = hex2polynomial<T>(expected);
 
-			std::vector<T> actual(15);
-			Cry_and<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+            Cry_rotl<T>(begin(aa), end(aa));
 
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
-			EXPECT_TRUE(eq);
-		}
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+            EXPECT_TRUE(eq);
+        }
     }
 
-	void xor(const std::string& a, const std::string& b, const std::string& expected)
-	{
-		{
-			using T = uint8_t;
-			auto aa = hex2polynomial<T>(a);
-			auto bb = hex2polynomial<T>(b);
-			auto ex = hex2polynomial<T>(expected);
+    void rotr(const std::string& a, const std::string& expected)
+    {
+        {
+            using T = uint8_t;
+            auto aa = hex2polynomial<T>(a);
+            auto ex = hex2polynomial<T>(expected);
 
-			std::vector<T> actual(15);
-			Cry_xor<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+            Cry_decrement<T>(begin(aa), end(aa));
 
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
-			EXPECT_TRUE(eq);
-		}
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+            EXPECT_TRUE(eq);
+        }
 
-		{
-			using T = uint16_t;
-			auto aa = hex2polynomial<T>(a);
-			auto bb = hex2polynomial<T>(b);
-			auto ex = hex2polynomial<T>(expected);
+        {
+            using T = uint16_t;
+            auto aa = hex2polynomial<T>(a);
+            auto ex = hex2polynomial<T>(expected);
 
-			std::vector<T> actual(15);
-			Cry_xor<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+            Cry_decrement<T>(begin(aa), end(aa));
 
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
-			EXPECT_TRUE(eq);
-		}
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+            EXPECT_TRUE(eq);
+        }
 
-		{
-			using T = uint32_t;
-			auto aa = hex2polynomial<T>(a);
-			auto bb = hex2polynomial<T>(b);
-			auto ex = hex2polynomial<T>(expected);
+        {
+            using T = uint32_t;
+            auto aa = hex2polynomial<T>(a);
+            auto ex = hex2polynomial<T>(expected);
 
-			std::vector<T> actual(15);
-			Cry_xor<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+            Cry_decrement<T>(begin(aa), end(aa));
 
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
-			EXPECT_TRUE(eq);
-		}
-	}
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+            EXPECT_TRUE(eq);
+        }
+    }
 
-	void or(const std::string& a, const std::string& b, const std::string& expected)
-	{
-		{
-			using T = uint8_t;
-			auto aa = hex2polynomial<T>(a);
-			auto bb = hex2polynomial<T>(b);
-			auto ex = hex2polynomial<T>(expected);
+    void rshift(const std::string& a, const std::string& expected)
+    {
+        {
+            using T = uint8_t;
+            auto aa = hex2polynomial<T>(a);
+            auto ex = hex2polynomial<T>(expected);
 
-			std::vector<T> actual(15);
-			Cry_or<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+            Cry_rshift<T>(begin(aa), end(aa));
 
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
-			EXPECT_TRUE(eq);
-		}
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+            EXPECT_TRUE(eq);
+        }
 
-		{
-			using T = uint16_t;
-			auto aa = hex2polynomial<T>(a);
-			auto bb = hex2polynomial<T>(b);
-			auto ex = hex2polynomial<T>(expected);
+        {
+            using T = uint16_t;
+            auto aa = hex2polynomial<T>(a);
+            auto ex = hex2polynomial<T>(expected);
 
-			std::vector<T> actual(15);
-			Cry_or<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+            Cry_rshift<T>(begin(aa), end(aa));
 
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
-			EXPECT_TRUE(eq);
-		}
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+            EXPECT_TRUE(eq);
+        }
 
-		{
-			using T = uint32_t;
-			auto aa = hex2polynomial<T>(a);
-			auto bb = hex2polynomial<T>(b);
-			auto ex = hex2polynomial<T>(expected);
+        {
+            using T = uint32_t;
+            auto aa = hex2polynomial<T>(a);
+            auto ex = hex2polynomial<T>(expected);
 
-			std::vector<T> actual(15);
-			Cry_or<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+            Cry_rshift<T>(begin(aa), end(aa));
 
-			bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
-			EXPECT_TRUE(eq);
-		}
-	}
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+            EXPECT_TRUE(eq);
+        }
+    }
+
+    void lshift(const std::string& a, const std::string& expected)
+    {
+        {
+            using T = uint8_t;
+            auto aa = hex2polynomial<T>(a);
+            auto ex = hex2polynomial<T>(expected);
+
+            Cry_lshift<T>(begin(aa), end(aa));
+
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+            EXPECT_TRUE(eq);
+        }
+
+        {
+            using T = uint16_t;
+            auto aa = hex2polynomial<T>(a);
+            auto ex = hex2polynomial<T>(expected);
+
+            Cry_lshift<T>(begin(aa), end(aa));
+
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+            EXPECT_TRUE(eq);
+        }
+
+        {
+            using T = uint32_t;
+            auto aa = hex2polynomial<T>(a);
+            auto ex = hex2polynomial<T>(expected);
+
+            Cry_lshift<T>(begin(aa), end(aa));
+
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+            EXPECT_TRUE(eq);
+        }
+    }
+
+    void f_and(const std::string& a, const std::string& b, const std::string& expected)
+    {
+        {
+            using T = uint8_t;
+            auto aa = hex2polynomial<T>(a);
+            auto bb = hex2polynomial<T>(b);
+            auto ex = hex2polynomial<T>(expected);
+
+            std::vector<T> actual(15);
+            Cry_and<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+            EXPECT_TRUE(eq);
+        }
+
+        {
+            using T = uint16_t;
+            auto aa = hex2polynomial<T>(a);
+            auto bb = hex2polynomial<T>(b);
+            auto ex = hex2polynomial<T>(expected);
+
+            std::vector<T> actual(15);
+            Cry_and<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+            EXPECT_TRUE(eq);
+        }
+
+        {
+            using T = uint32_t;
+            auto aa = hex2polynomial<T>(a);
+            auto bb = hex2polynomial<T>(b);
+            auto ex = hex2polynomial<T>(expected);
+
+            std::vector<T> actual(15);
+            Cry_and<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+            EXPECT_TRUE(eq);
+        }
+    }
+
+    void f_xor(const std::string& a, const std::string& b, const std::string& expected)
+    {
+        {
+            using T = uint8_t;
+            auto aa = hex2polynomial<T>(a);
+            auto bb = hex2polynomial<T>(b);
+            auto ex = hex2polynomial<T>(expected);
+
+            std::vector<T> actual(15);
+            Cry_xor<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+            EXPECT_TRUE(eq);
+        }
+
+        {
+            using T = uint16_t;
+            auto aa = hex2polynomial<T>(a);
+            auto bb = hex2polynomial<T>(b);
+            auto ex = hex2polynomial<T>(expected);
+
+            std::vector<T> actual(15);
+            Cry_xor<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+            EXPECT_TRUE(eq);
+        }
+
+        {
+            using T = uint32_t;
+            auto aa = hex2polynomial<T>(a);
+            auto bb = hex2polynomial<T>(b);
+            auto ex = hex2polynomial<T>(expected);
+
+            std::vector<T> actual(15);
+            Cry_xor<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+            EXPECT_TRUE(eq);
+        }
+    }
+
+    void f_or(const std::string& a, const std::string& b, const std::string& expected)
+    {
+        {
+            using T = uint8_t;
+            auto aa = hex2polynomial<T>(a);
+            auto bb = hex2polynomial<T>(b);
+            auto ex = hex2polynomial<T>(expected);
+
+            std::vector<T> actual(15);
+            Cry_or<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+            EXPECT_TRUE(eq);
+        }
+
+        {
+            using T = uint16_t;
+            auto aa = hex2polynomial<T>(a);
+            auto bb = hex2polynomial<T>(b);
+            auto ex = hex2polynomial<T>(expected);
+
+            std::vector<T> actual(15);
+            Cry_or<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+            EXPECT_TRUE(eq);
+        }
+
+        {
+            using T = uint32_t;
+            auto aa = hex2polynomial<T>(a);
+            auto bb = hex2polynomial<T>(b);
+            auto ex = hex2polynomial<T>(expected);
+
+            std::vector<T> actual(15);
+            Cry_or<T>(begin(aa), end(aa), begin(bb), end(bb), actual.end());
+
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(actual), std::end(actual));
+            EXPECT_TRUE(eq);
+        }
+    }
+
+    void inverse(const std::string& a, const std::string& expected)
+    {
+        {
+            using T = uint8_t;
+            auto aa = hex2polynomial<T>(a);
+            auto ex = hex2polynomial<T>(expected);
+
+            std::vector<T> actual(15);
+            Cry_inverse<T>(begin(aa), end(aa));
+
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+            EXPECT_TRUE(eq);
+        }
+
+        {
+            using T = uint16_t;
+            auto aa = hex2polynomial<T>(a);
+            auto ex = hex2polynomial<T>(expected);
+
+            std::vector<T> actual(15);
+            Cry_inverse<T>(begin(aa), end(aa));
+
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+            EXPECT_TRUE(eq);
+        }
+
+        {
+            using T = uint32_t;
+            auto aa = hex2polynomial<T>(a);
+            auto ex = hex2polynomial<T>(expected);
+
+            std::vector<T> actual(15);
+            Cry_inverse<T>(begin(aa), end(aa));
+
+            bool eq = ASSERT_BYTES_EQ(std::begin(ex), std::end(ex), std::begin(aa), std::end(aa));
+            EXPECT_TRUE(eq);
+        }
+    }
+
+    void is_one(const std::string& a)
+    {
+        {
+            using T = uint8_t;
+            auto aa = hex2polynomial<T>(a);
+
+            bool f = Cry_is_one<T>(begin(aa), end(aa));
+
+            EXPECT_EQ(f, true);
+        }
+
+        {
+            using T = uint16_t;
+            auto aa = hex2polynomial<T>(a);
+
+            bool f = Cry_is_one<T>(begin(aa), end(aa));
+
+            EXPECT_EQ(f, true);
+        }
+
+        {
+            using T = uint32_t;
+            auto aa = hex2polynomial<T>(a);
+
+            bool f = Cry_is_one<T>(begin(aa), end(aa));
+
+            EXPECT_EQ(f, true);
+        }
+    }
 
     template <class P>
     std::vector<P> hex2polynomial(const std::string& hex)
@@ -602,70 +773,101 @@ TEST_F(BigintCoreTest, Cry_subtract)
 
 TEST_F(BigintCoreTest, Cry_multiply)
 {
-    multiply("00000000000000001a03", "00000011", "01BA33");
-    multiply("00ffff", "0000ffff", "FFFE0001");
-    multiply("00ff", "00", "00");
-    multiply("02", "0080", "000100");
-    multiply("1232AF42", "1232AF42", "14B2AAE35C34D04");
+    multiply_1("00000000000000001a03", "00000011", "01BA33");
+    multiply_1("00ffff", "0000ffff", "FFFE0001");
+    multiply_1("00ff", "00", "00");
+    multiply_1("02", "0080", "000100");
+    multiply_1("1232AF42", "1232AF42", "14B2AAE35C34D04");
+}
+
+TEST_F(BigintCoreTest, Cry_multiply_2)
+{
+	multiply_2("00000000000000001a03", 0x11, "01BA33");
+	multiply_2("0010000000001a03", 0x22, "220000000037466");
+	multiply_2("0010000000001a03", 0x33, "330000000052E99");
+}
+
+TEST_F(BigintCoreTest, Cry_dev_rem)
+{
+	div_rem("010107", "02", "8083", "01");
+    div_rem("010107", "0003", "0055ad", "000000");
+    div_rem("000000010107", "000303", "0055", "000108");
+    div_rem("0000161455D642212241", "004315552224414F", "0054", "001155E70E3BB455");
+    div_rem("0000161455D642212241", "0024414F", "009BE78DBEAA", "1221CB");
+    div_rem("000808", "000009", "0000e4", "000004");
+    div_rem("030303", "010203", "000002", "00fefd");
+    div_rem("000008", "000004", "000002", "000000");
 }
 
 TEST_F(BigintCoreTest, Cry_increment)
 {
-	increment("000001", "02");
-	increment("0001ff", "200");
-	increment("01ffff", "20000");
-	increment("00fffe", "00ffff");
+    increment("000001", "02");
+    increment("0001ff", "200");
+    increment("01ffff", "20000");
+    increment("00fffe", "00ffff");
 }
 
 TEST_F(BigintCoreTest, Cry_decrement)
 {
-	decrement("000002", "000001");
-	decrement("000100", "0000ff");
-	decrement("000101", "000100");
-	decrement("ffffff", "FFFFFE");
+    decrement("000002", "000001");
+    decrement("000100", "0000ff");
+    decrement("000101", "000100");
+    decrement("ffffff", "FFFFFE");
 }
 
 /*TEST_F(BigintCoreTest, Cry_rotl)
 {
-	rotl("ff", "ff");
-	//rotl("80", "01");
-	//rotl("01", "02");
-	//rotl("7Fff", "FFFE");
+        rotl("ff", "ff");
+        //rotl("80", "01");
+        //rotl("01", "02");
+        //rotl("7Fff", "FFFE");
 }*/
 
 TEST_F(BigintCoreTest, Cry_rshift)
 {
-	rshift("123456789", "91A2B3C4");
-	rshift("123456789ABCDEF", "91A2B3C4D5E6F7");
-	rshift("8000000000000000", "4000000000000000");
+    rshift("123456789", "91A2B3C4");
+    rshift("123456789ABCDEF", "91A2B3C4D5E6F7");
+    rshift("8000000000000000", "4000000000000000");
 }
 
 TEST_F(BigintCoreTest, Cry_lshift)
 {
-	lshift("123456789", "2468ACF12");
-	lshift("123456789ABCDEF", "2468ACF13579BDE");
-	lshift("8000000000000000", "00");
+    lshift("123456789", "2468ACF12");
+    lshift("123456789ABCDEF", "2468ACF13579BDE");
+    lshift("8000000000000000", "00");
 }
 
 TEST_F(BigintCoreTest, Cry_and)
 {
-	and("0100000000ff1032", "0100000000ff1031", "0100000000ff1030");
-	and("0100000000ff1032", "0000ff1031", "0000000000ff1030");
-	and("01ff4432", "0000ff1031", "0000000000ff0030");
+    f_and("0100000000ff1032", "0100000000ff1031", "0100000000ff1030");
+    f_and("0100000000ff1032", "0000ff1031", "0000000000ff1030");
+    f_and("01ff4432", "0000ff1031", "0000000000ff0030");
 }
 
 TEST_F(BigintCoreTest, Cry_xor)
 {
-	xor ("0100000000ff1032", "0100000000ff1032", "00");
-	xor ("0100000000ff1032", "0000000000000000", "0100000000ff1032");
-	xor ("010000ff1032", "0000000000000000", "0000010000ff1032");
-	xor ("030303", "00", "030303");
+    f_xor("0100000000ff1032", "0100000000ff1032", "00");
+    f_xor("0100000000ff1032", "0000000000000000", "0100000000ff1032");
+    f_xor("010000ff1032", "0000000000000000", "0000010000ff1032");
+    f_xor("030303", "00", "030303");
 }
 
 TEST_F(BigintCoreTest, Cry_or)
 {
-	or("0100000000ff1032", "0100000000ff1031", "0100000000ff1033");
-	or("0100000000ff1032", "0100aa1131", "0100000100ff1133");
-	or("0116ff1032", "0100000005aa1131", "0100000117ff1133");
-	or("030303", "00", "030303");
+    f_or("0100000000ff1032", "0100000000ff1031", "0100000000ff1033");
+    f_or("0100000000ff1032", "0100aa1131", "0100000100ff1133");
+    f_or("0116ff1032", "0100000005aa1131", "0100000117ff1133");
+    f_or("030303", "00", "030303");
+}
+
+TEST_F(BigintCoreTest, Cry_invserse)
+{
+    inverse("0100000000ff1032", "feffffffff00efcd");
+    inverse("0100000000000000", "feffffffffffffff");
+}
+
+TEST_F(BigintCoreTest, Cry_is_one)
+{
+    is_one("0000000000000001");
+    is_one("1");
 }

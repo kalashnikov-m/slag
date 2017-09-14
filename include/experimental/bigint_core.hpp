@@ -145,8 +145,118 @@ void Cry_multiply(InputIterator first1, InputIterator last1, InputIterator first
     }
 }
 
+template <class T, class Traits = traits<T>, class InputIterator, class OutputIterator>
+void Cry_multiply(InputIterator first, InputIterator last, T x, OutputIterator result_last)
+{
+    std::reverse_iterator<InputIterator> rfirst(last);
+    std::reverse_iterator<InputIterator> rlast(first);
+    std::reverse_iterator<OutputIterator> result(result_last);
+
+    typedef typename Traits::wide_type wide_t;
+    T carry = 0;
+
+    for (; rfirst != rlast; ++rfirst)
+    {
+        wide_t temp = static_cast<wide_t>(*rfirst) * static_cast<wide_t>(x) + static_cast<wide_t>(carry);
+
+        carry       = static_cast<T>(temp / Traits::base);
+        *(result++) = temp % Traits::base;
+    }
+
+    *result++ = carry;
+}
+
+template <class T, class Traits = traits<T>, class InputIterator, class OutputIterator>
+void Cry_div_rem(InputIterator first1, InputIterator last1, InputIterator first2, InputIterator last2, OutputIterator div_last, OutputIterator rem_last)
+{
+    while ((first1 != last1) && (*first1 == 0x00))
+    {
+        ++first1;
+    }
+
+    while ((first2 != last2) && (*first2 == 0x00))
+    {
+        ++first2;
+    }
+
+    // auto rTmp         = std::vector<T>(first1, last1);
+    auto d1     = std::distance(first1, last1);
+    auto d2     = std::distance(first2, last2);
+    auto shift  = d1 - d2 + 1;
+    auto rFirst = first1;
+    auto rLast  = rFirst + d2;;
+    auto dFirst = first2;
+    auto dLast  = last2;
+
+    std::advance(div_last, -shift);
+
+    auto cmp = Cry_compare<T>(rFirst, rLast, dFirst, dLast);
+    if (cmp == -1)
+    {
+        ++rLast;
+        ++div_last;
+        --shift;
+    }
+
+    size_t nbytes = d2 + 1;
+    std::vector<T> mul(nbytes);
+
+    typedef typename Traits::wide_type wide_t;
+
+    while (shift > 0)
+    {
+        T Down    = 0;
+        wide_t Up = Traits::base;
+
+        auto cmp = Cry_compare<T>(rFirst, rLast, dFirst, dLast);
+        if (cmp == -1)
+        {
+            ++rLast;
+        }
+
+        for (; Down < Up - 1;)
+        {
+            // 1. c <-- (down + up) / 2;
+            T Middle = static_cast<T>((Down + Up) / 2);
+
+            // 2. mul <-- d * c;
+            std::fill(mul.begin(), mul.end(), 0x00);
+
+            Cry_multiply<T>(dFirst, dLast, Middle, mul.end());
+
+            short mulCmp = Cry_compare<T>(mul.begin(), mul.end(), rFirst, rLast);
+
+            if (mulCmp == -1)
+            { // if(c < a): down <-- c
+                Down = Middle;
+            }
+            else if (mulCmp == 1)
+            { // if(c > a) Up <-- c
+                Up = Middle;
+            }
+            else if (mulCmp == 0)
+            { // if(mul == a) Up <-- C; Down <-- Up;
+                Up   = Middle;
+                Down = static_cast<T>(Up);
+            }
+        }
+
+        std::fill(mul.begin(), mul.end(), 0x00);
+
+        Cry_multiply(dFirst, dLast, Down, mul.end());
+
+        Cry_subtract<T>(rFirst, rLast, mul.begin(), mul.end(), rLast);
+
+        *(div_last++) = Down;
+
+        --shift;
+    }
+
+    std::copy_backward(rFirst, rLast, rem_last);
+}
+
 template <class T, class Traits = traits<T>, class InputIterator>
-void Cry_Increment(InputIterator first, InputIterator last)
+void Cry_increment(InputIterator first, InputIterator last)
 {
     typedef typename Traits::wide_type wide_t;
 
@@ -510,10 +620,14 @@ bool Cry_is_one(InputIterator first, InputIterator last)
 
     if (*rfirst == 0x01)
     {
-        for (; (rfirst != rlast) && (*rfirst == 0x00); ++rfirst)
-            ;
+        ++rfirst;
 
-        return !(first != last);
+        for (; (rfirst != rlast) && (*rfirst == 0x00);)
+        {
+            ++rfirst;
+        }
+
+        return (rfirst == rlast);
     }
 
     return false;
