@@ -179,11 +179,11 @@ void Cry_div_rem(InputIterator first1, InputIterator last1, InputIterator first2
         ++first2;
     }
 
-    // auto rTmp         = std::vector<T>(first1, last1);
+    auto rTmp         = std::vector<T>(first1, last1);
     auto d1     = std::distance(first1, last1);
     auto d2     = std::distance(first2, last2);
     auto shift  = d1 - d2 + 1;
-    auto rFirst = first1;
+	auto rFirst = rTmp.begin();
     auto rLast  = rFirst + d2;;
     auto dFirst = first2;
     auto dLast  = last2;
