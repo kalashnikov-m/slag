@@ -17,7 +17,7 @@ using namespace std;
 
 namespace cry
 {
-    template <class IntType = uint8_t>
+    template <class IntType>
     class basic_int
     {
       public:
