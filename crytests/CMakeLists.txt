@@ -28,6 +28,7 @@ set (HEADERS
 	../utility/os2ip.hpp
 	../include/experimental/bigint_core.hpp
 	../include/internal/HugeCore.h
+	../include/internal/cry_core.hpp
 )
 
 set (SOURCES
