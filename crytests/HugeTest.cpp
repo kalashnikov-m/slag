@@ -10,6 +10,8 @@ using namespace cry;
 
 class HugeTest : public ::testing::Test {};
 
+using byte = uint8_t;
+
 TEST(HugeTest, LogicalNOT) {
     {
         basic_int<byte> a = {0x01, 0x02, 0x03};
