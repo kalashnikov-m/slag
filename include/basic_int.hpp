@@ -11,7 +11,7 @@
 #include <cstdint>
 
 #include "encoders.hpp"
-#include <HugeCore.h>
+#include <cry_core.hpp>
 
 using namespace std;
 
