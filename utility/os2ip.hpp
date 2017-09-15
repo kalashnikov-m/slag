@@ -62,7 +62,14 @@ namespace cry
 
     template <class P>
     struct ip2os<basic_int<P>>
-    {	
+    {
+        std::vector<uint8_t> operator()(const basic_int<P>& ip)
+        {
+            std::vector<uint8_t> dst(ip);
+
+            return dst;
+        }
+
         template <class OutputIterator>
         OutputIterator operator()(const basic_int<P>& ip, OutputIterator oct)
         {

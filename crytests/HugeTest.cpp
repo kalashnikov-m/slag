@@ -4,6 +4,7 @@
 #include "algorithm.hpp"
 
 #include "basic_int.hpp"
+#include "os2ip.hpp"
 
 using namespace std;
 using namespace cry;
@@ -1205,4 +1206,34 @@ TEST(HugeTest, StringInit)
     
     StringInit_EXPECT_ANY_THROW("123aw");
     StringInit_EXPECT_ANY_THROW("*23aw");
+}
+
+TEST(HugeTest, OS2IP_IP2OS)
+{
+	{
+		std::vector<uint8_t> octets = {1, 2, 3,4, 5, 6, 7};
+		auto ip = os2ip<bigint8_t>()(octets);
+
+		auto os = ip2os<bigint8_t>()(ip);
+
+		EXPECT_EQ(ip, os);
+	}
+
+	{
+		std::vector<uint8_t> octets = { 1, 2, 3,4, 5, 6, 7 };
+		auto ip = os2ip<bigint16_t>()(octets);
+
+		auto os = ip2os<bigint16_t>()(ip);
+
+		EXPECT_EQ(octets, os);
+	}
+
+	{
+		std::vector<uint8_t> octets = { 1, 2, 3,4, 5, 6, 7 };
+		auto ip = os2ip<bigint32_t>()(octets);
+
+		auto os = ip2os<bigint32_t>()(ip);
+
+		EXPECT_EQ(octets, os);
+	}
 }
