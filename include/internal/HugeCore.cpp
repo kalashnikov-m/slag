@@ -100,7 +100,7 @@ void Cry_multiply(byte* last_result, const byte* first1, const byte* last1, byte
     --last1;
     --last_result;
 
-    uint8_t carry = 0x00;
+    byte carry = 0x00;
 
     for (; first1 <= last1; --last1)
     {
@@ -152,7 +152,7 @@ void Cry_div_rem(byte* div_last, byte* rem_last, const byte* first1, const byte*
 
     while (shift > 0)
     {
-        uint8_t Down = 0x00;
+        byte Down = 0x00;
         uint16_t Up  = 0x00100;
 
         auto cmp = Cry_compare(rFirst, rLast, dFirst, dLast);
@@ -164,7 +164,7 @@ void Cry_div_rem(byte* div_last, byte* rem_last, const byte* first1, const byte*
         for (; Down < Up - 1;)
         {
             // 1. c <-- (down + up) / 2;
-            uint8_t Middle = ((Down + Up) / 2);
+            byte Middle = ((Down + Up) / 2);
 
             // 2. mul <-- d * c;
             std::fill(&mul[0], &mul[0] + nbytes, 0x00);
@@ -184,7 +184,7 @@ void Cry_div_rem(byte* div_last, byte* rem_last, const byte* first1, const byte*
             else if (mulCmp == 0)
             { // if(mul == a) Up <-- C; Down <-- Up;
                 Up   = Middle;
-                Down = static_cast<uint8_t>(Up);
+                Down = static_cast<byte>(Up);
             }
         }
 
