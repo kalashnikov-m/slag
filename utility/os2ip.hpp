@@ -12,6 +12,11 @@ namespace cry
     template <class P>
     struct os2ip<cry::basic_int<P>>
     {
+        cry::basic_int<P> operator()(const std::vector<uint8_t>& octets) const noexcept
+        {
+            return operator()(octets.begin(), octets.end());
+        }
+
         template <class OctetIterator>
         cry::basic_int<P> operator()(OctetIterator first, OctetIterator last) const noexcept
         {
@@ -49,6 +54,24 @@ namespace cry
             cry::basic_int<P> out(dst);
 
             return out;
+        }
+    };
+
+    template <class T>
+    struct ip2os;
+
+    template <class P>
+    struct ip2os<basic_int<P>>
+    {	
+        template <class OutputIterator>
+        OutputIterator operator()(const basic_int<P>& ip, OutputIterator oct)
+        {
+
+            std::vector<uint8_t> dst(ip);
+
+            oct = std::copy(dst.begin(), dst.end(), oct);
+
+            return oct;
         }
     };
 
