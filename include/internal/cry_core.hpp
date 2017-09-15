@@ -2,7 +2,6 @@
 #ifndef CRY_CORE_HPP
 #define CRY_CORE_HPP
 
-#include <iterator>
 #include <vector>
 
 namespace
