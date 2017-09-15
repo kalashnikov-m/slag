@@ -26,7 +26,6 @@ set (HEADERS
 	../include/sha512.hpp
 	../utility/encoders.hpp
 	../utility/os2ip.hpp
-	../include/experimental/bigint_core.hpp
 	../include/internal/HugeCore.h
 	../include/internal/cry_core.hpp
 )
@@ -36,7 +35,6 @@ set (SOURCES
     HugeCoreTest.cpp
     HugeTest.cpp
     RsaTest.cpp
-    BigintCoreTest.cpp
     ../include/internal/HugeCore.cpp
 )
 
