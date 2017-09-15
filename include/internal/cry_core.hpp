@@ -153,6 +153,62 @@ void Cry_multiply(byte* last_result, const byte* first1, const byte* last1, byte
 }
 
 template <class byte, class Traits = traits<byte>>
+short Cry_compare(const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+{
+    for (; (first1 != last1) && (*first1 == 0);)
+    {
+        ++first1;
+    }
+
+    for (; (first2 != last2) && (*first2 == 0);)
+    {
+        ++first2;
+    }
+
+    for (; (first1 != last1) && (first2 != last2) && (*first1 == *first2); ++first1, ++first2)
+        ;
+
+    auto dA = std::distance(first1, last1);
+    auto dB = std::distance(first2, last2);
+
+    if (dA == dB)
+    {
+        if ((first1 < last1) && (first2 < last2))
+        {
+            return static_cast<typename Traits::wide_type>((*first1 < *first2) ? -1 : 1);
+        }
+    }
+
+    if (dA < dB)
+    {
+        return -1;
+    }
+
+    if (dA > dB)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+template <class byte, class Traits = traits<byte>>
+bool Cry_equal(const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+{
+
+    for (; (first1 != last1) && (*first1 == 0x00); ++first1)
+        ;
+
+    for (; (first2 != last2) && (*first2 == 0x00); ++first2)
+        ;
+
+    for (; (first1 != last1) && (first2 != last2) && (*first1) == (*first2); ++first1, ++first2)
+        ;
+
+    return (first1 == last1) && (first2 == last2);
+}
+
+template <class byte, class Traits = traits<byte>>
 void Cry_div_rem(byte* div_last, byte* rem_last, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
     typedef typename Traits::wide_type wide_t;
@@ -179,7 +235,7 @@ void Cry_div_rem(byte* div_last, byte* rem_last, const byte* first1, const byte*
 
     std::advance(div_last, -shift);
 
-    auto cmp = Cry_compare(rFirst, rLast, dFirst, dLast);
+    auto cmp = Cry_compare<byte>(rFirst, rLast, dFirst, dLast);
     if (cmp == -1)
     {
         ++rLast;
@@ -195,7 +251,7 @@ void Cry_div_rem(byte* div_last, byte* rem_last, const byte* first1, const byte*
         byte Down = 0x00;
         wide_t Up = Traits::base;
 
-        auto cmp = Cry_compare<>(rFirst, rLast, dFirst, dLast);
+        auto cmp = Cry_compare<byte>(rFirst, rLast, dFirst, dLast);
         if (cmp == -1)
         {
             ++rLast;
@@ -484,62 +540,6 @@ void Cry_inverse(byte* first, byte* last)
     {
         *first = ~(*first);
     }
-}
-
-template <class byte, class Traits = traits<byte>>
-short Cry_compare(const byte* first1, const byte* last1, const byte* first2, const byte* last2)
-{
-    for (; (first1 != last1) && (*first1 == 0);)
-    {
-        ++first1;
-    }
-
-    for (; (first2 != last2) && (*first2 == 0);)
-    {
-        ++first2;
-    }
-
-    for (; (first1 != last1) && (first2 != last2) && (*first1 == *first2); ++first1, ++first2)
-        ;
-
-    auto dA = std::distance(first1, last1);
-    auto dB = std::distance(first2, last2);
-
-    if (dA == dB)
-    {
-        if ((first1 < last1) && (first2 < last2))
-        {
-            return static_cast<short>((*first1 < *first2) ? -1 : 1);
-        }
-    }
-
-    if (dA < dB)
-    {
-        return -1;
-    }
-
-    if (dA > dB)
-    {
-        return 1;
-    }
-
-    return 0;
-}
-
-template <class byte, class Traits = traits<byte>>
-bool Cry_equal(const byte* first1, const byte* last1, const byte* first2, const byte* last2)
-{
-
-    for (; (first1 != last1) && (*first1 == 0x00); ++first1)
-        ;
-
-    for (; (first2 != last2) && (*first2 == 0x00); ++first2)
-        ;
-
-    for (; (first1 != last1) && (first2 != last2) && (*first1) == (*first2); ++first1, ++first2)
-        ;
-
-    return (first1 == last1) && (first2 == last2);
 }
 
 template <class byte, class Traits = traits<byte>>
