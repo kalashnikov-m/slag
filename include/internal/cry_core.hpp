@@ -250,7 +250,7 @@ void Cry_div_rem(byte* div_last, byte* rem_last, const byte* first1, const byte*
         byte Down = 0x00;
         wide_t Up = Traits::base;
 
-        auto cmp = Cry_compare<byte>(rFirst, rLast, dFirst, dLast);
+        cmp = Cry_compare<byte>(rFirst, rLast, dFirst, dLast);
         if (cmp == -1)
         {
             ++rLast;
