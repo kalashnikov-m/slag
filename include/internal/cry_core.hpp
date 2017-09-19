@@ -31,10 +31,10 @@ namespace
     };
 }
 
-template <class byte, class Traits = traits<byte>>
-void Cry_add(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+template <class T, class Traits = traits<T>>
+void Cry_add(T* result, const T* first1, const T* last1, const T* first2, const T* last2)
 {
-    byte carry = 0;
+    T carry = 0;
     typedef typename Traits::wide_type wide_t;
     wide_t tmp = 0;
 
@@ -44,30 +44,30 @@ void Cry_add(byte* result, const byte* first1, const byte* last1, const byte* fi
     for (; (first1 <= last1) && (first2 <= last2); --last1, --last2)
     {
         tmp         = static_cast<wide_t>(*last1) + static_cast<wide_t>(*last2) + static_cast<wide_t>(carry);
-        *(--result) = static_cast<byte>(tmp);
+        *(--result) = static_cast<T>(tmp);
         carry       = tmp >> sizeof(carry) * 8;
     }
 
     for (; first1 <= last1; --last1)
     {
         tmp         = static_cast<wide_t>(*last1) + static_cast<wide_t>(carry);
-        *(--result) = static_cast<byte>(tmp);
+        *(--result) = static_cast<T>(tmp);
         carry       = tmp >> sizeof(carry) * 8;
     }
 
     for (; first2 <= last2; --last2)
     {
         tmp         = static_cast<wide_t>(*last2) + static_cast<wide_t>(carry);
-        *(--result) = static_cast<byte>(tmp);
+        *(--result) = static_cast<T>(tmp);
         carry       = tmp >> sizeof(carry) * 8;
     }
 
     if (carry)
-        *(--result) = static_cast<byte>(carry);
+        *(--result) = static_cast<T>(carry);
 }
 
-template <class byte, class Traits = traits<byte>>
-void Cry_subtract(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+template <class T, class Traits = traits<T>>
+void Cry_subtract(T* result, const T* first1, const T* last1, const T* first2, const T* last2)
 {
     typedef typename Traits::wide_type wide_t;
     wide_t carry = 0;
@@ -79,12 +79,12 @@ void Cry_subtract(byte* result, const byte* first1, const byte* last1, const byt
     {
         if (*(last1) < *(last2) + carry)
         {
-            *(--result) = static_cast<byte>((*last1) - (*last2) - carry + Traits::base);
+            *(--result) = static_cast<T>((*last1) - (*last2) - carry + Traits::base);
             carry       = 1;
         }
         else
         {
-            *(--result) = static_cast<byte>((*last1) - (*last2) - carry);
+            *(--result) = static_cast<T>((*last1) - (*last2) - carry);
             carry       = 0;
         }
     }
@@ -96,23 +96,23 @@ void Cry_subtract(byte* result, const byte* first1, const byte* last1, const byt
     }
 }
 
-template <class byte, class Traits = traits<byte>>
-void Cry_multiply(byte* last_result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+template <class T, class Traits = traits<T>>
+void Cry_multiply(T* last_result, const T* first1, const T* last1, const T* first2, const T* last2)
 {
     typedef typename Traits::wide_type wide_t;
 
     --last1;
     --last2;
 
-    byte carry = 0x00;
+    T carry = 0x00;
 
     for (; first2 <= last2; --last2)
     {
         --last_result;
 
-        byte* resultIter = last_result;
+        T* resultIter = last_result;
 
-        for (const byte* last_1 = last1; first1 <= last_1; --last_1)
+        for (const T* last_1 = last1; first1 <= last_1; --last_1)
         {
             wide_t temp = static_cast<wide_t>(*resultIter) + static_cast<wide_t>(*last_1) * static_cast<wide_t>(*last2) + static_cast<wide_t>(carry);
 
@@ -128,15 +128,15 @@ void Cry_multiply(byte* last_result, const byte* first1, const byte* last1, cons
     }
 }
 
-template <class byte, class Traits = traits<byte>>
-void Cry_multiply(byte* last_result, const byte* first1, const byte* last1, byte x)
+template <class T, class Traits = traits<T>>
+void Cry_multiply(T* last_result, const T* first1, const T* last1, T x)
 {
     typedef typename Traits::wide_type wide_t;
 
     --last1;
     --last_result;
 
-    byte carry = 0x00;
+    T carry = 0x00;
 
     for (; first1 <= last1; --last1)
     {
@@ -151,8 +151,8 @@ void Cry_multiply(byte* last_result, const byte* first1, const byte* last1, byte
     *last_result = carry;
 }
 
-template <class byte, class Traits = traits<byte>>
-short Cry_compare(const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+template <class T, class Traits = traits<T>>
+short Cry_compare(const T* first1, const T* last1, const T* first2, const T* last2)
 {
     for (; (first1 != last1) && (*first1 == 0);)
     {
@@ -191,8 +191,8 @@ short Cry_compare(const byte* first1, const byte* last1, const byte* first2, con
     return 0;
 }
 
-template <class byte, class Traits = traits<byte>>
-bool Cry_equal(const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+template <class T, class Traits = traits<T>>
+bool Cry_equal(const T* first1, const T* last1, const T* first2, const T* last2)
 {
 
     for (; (first1 != last1) && (*first1 == 0x00); ++first1)
@@ -207,8 +207,8 @@ bool Cry_equal(const byte* first1, const byte* last1, const byte* first2, const 
     return (first1 == last1) && (first2 == last2);
 }
 
-template <class byte, class Traits = traits<byte>>
-void Cry_divide(byte* div_last, byte* rem_last, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+template <class T, class Traits = traits<T>>
+void Cry_divide(T* div_last, T* rem_last, const T* first1, const T* last1, const T* first2, const T* last2)
 {
     typedef typename Traits::wide_type wide_t;
 
@@ -222,19 +222,19 @@ void Cry_divide(byte* div_last, byte* rem_last, const byte* first1, const byte* 
         ++first2;
     }
 
-    auto rTmp = std::vector<byte>(first1, last1);
+    auto rTmp = std::vector<T>(first1, last1);
 
     auto d1            = std::distance(first1, last1);
     auto d2            = std::distance(first2, last2);
     auto shift         = d1 - d2 + 1;
-    byte* rFirst       = &rTmp[0];
-    byte* rLast        = rFirst + d2;
-    const byte* dFirst = first2;
-    const byte* dLast  = last2;
+    T* rFirst       = &rTmp[0];
+    T* rLast        = rFirst + d2;
+    const T* dFirst = first2;
+    const T* dLast  = last2;
 
     std::advance(div_last, -shift);
 
-    auto cmp = Cry_compare<byte>(rFirst, rLast, dFirst, dLast);
+    auto cmp = Cry_compare<T>(rFirst, rLast, dFirst, dLast);
     if (cmp == -1)
     {
         ++rLast;
@@ -243,14 +243,14 @@ void Cry_divide(byte* div_last, byte* rem_last, const byte* first1, const byte* 
     }
 
     size_t nbytes = d2 + 1;
-    std::vector<byte> mul(nbytes);
+    std::vector<T> mul(nbytes);
 
     while (shift > 0)
     {
-        byte Down = 0x00;
+        T Down = 0x00;
         wide_t Up = Traits::base;
 
-        cmp = Cry_compare<byte>(rFirst, rLast, dFirst, dLast);
+        cmp = Cry_compare<T>(rFirst, rLast, dFirst, dLast);
         if (cmp == -1)
         {
             ++rLast;
@@ -259,7 +259,7 @@ void Cry_divide(byte* div_last, byte* rem_last, const byte* first1, const byte* 
         for (; Down < Up - 1;)
         {
             // 1. c <-- (down + up) / 2;
-            byte Middle = ((Down + Up) / 2);
+            T Middle = ((Down + Up) / 2);
 
             // 2. mul <-- d * c;
             std::fill(&mul[0], &mul[0] + nbytes, 0x00);
@@ -279,7 +279,7 @@ void Cry_divide(byte* div_last, byte* rem_last, const byte* first1, const byte* 
             else if (mulCmp == 0)
             { // if(mul == a) Up <-- C; Down <-- Up;
                 Up   = Middle;
-                Down = static_cast<byte>(Up);
+                Down = static_cast<T>(Up);
             }
         }
 
@@ -297,27 +297,27 @@ void Cry_divide(byte* div_last, byte* rem_last, const byte* first1, const byte* 
     std::copy_backward(rFirst, rLast, rem_last);
 }
 
-template <class byte, class Traits = traits<byte>>
-void Cry_increment(byte* first, byte* last)
+template <class T, class Traits = traits<T>>
+void Cry_increment(T* first, T* last)
 {
     typedef typename Traits::wide_type wide_t;
 
-    byte carry = 0x00;
+    T carry = 0x00;
 
     wide_t tmp = static_cast<wide_t>(*--last) + static_cast<wide_t>(0x01) + static_cast<wide_t>(carry);
-    *(last)    = static_cast<byte>(tmp);
+    *(last)    = static_cast<T>(tmp);
     carry      = tmp >> sizeof(carry) * 8;
 
     for (; (first <= last) && carry;)
     {
         tmp     = static_cast<wint_t>(*--last) + static_cast<wint_t>(carry);
-        *(last) = static_cast<byte>(tmp);
+        *(last) = static_cast<T>(tmp);
         carry   = tmp >> sizeof(carry) * 8;
     }
 }
 
-template <class byte, class Traits = traits<byte>>
-void Cry_decrement(byte* first, byte* last)
+template <class T, class Traits = traits<T>>
+void Cry_decrement(T* first, T* last)
 {
     typedef typename Traits::wide_type wide_t;
     wide_t carry = 0;
@@ -348,41 +348,41 @@ void Cry_decrement(byte* first, byte* last)
     }
 }
 
-template <class byte, class Traits = traits<byte>>
-bool Cry_is_odd(const byte* first, const byte* last)
+template <class T, class Traits = traits<T>>
+bool Cry_is_odd(const T* first, const T* last)
 {
     return (*(--last) & 0x01) == 0x01;
 }
 
-template <class byte, class Traits = traits<byte>>
-bool Cry_is_even(const byte* first, const byte* last)
+template <class T, class Traits = traits<T>>
+bool Cry_is_even(const T* first, const T* last)
 {
     return (*(--last) & 0x01) == 0x00;
 }
 
-template <class byte, class Traits = traits<byte>>
-void Cry_reverse(byte* first, byte* last)
+template <class T, class Traits = traits<T>>
+void Cry_reverse(T* first, T* last)
 {
     std::reverse(first, last);
 }
 
-template <class byte, class Traits = traits<byte>>
-void Cry_rotl(byte* first, byte* last)
+template <class T, class Traits = traits<T>>
+void Cry_rotl(T* first, T* last)
 {
-    byte carry = (*first >> (sizeof(byte) * 8 - 1)) & 0x01;
+    T carry = (*first >> (sizeof(T) * 8 - 1)) & 0x01;
 
     for (; first != last; --last)
     {
 	    const int z = (*last >> 7) & 0x01;
 
         *last <<= 1;
-        *last |= static_cast<byte>(carry);
+        *last |= static_cast<T>(carry);
         carry = z;
     }
 }
 
-template <class byte, class Traits = traits<byte>>
-void Cry_rotl(byte* first, byte* last, int n)
+template <class T, class Traits = traits<T>>
+void Cry_rotl(T* first, T* last, int n)
 {
     while (n--)
     {
@@ -390,23 +390,23 @@ void Cry_rotl(byte* first, byte* last, int n)
     }
 }
 
-template <class byte, class Traits = traits<byte>>
-void Cry_rotr(byte* first, byte* last)
+template <class T, class Traits = traits<T>>
+void Cry_rotr(T* first, T* last)
 {
-    byte carry = *(last - 1) & 0x01;
+    T carry = *(last - 1) & 0x01;
 
     for (; first != last; ++first)
     {
 	    const int z = *first & 0x01;
 
         *first >>= 1;
-        *first |= static_cast<byte>(carry << (sizeof(byte) * 8 - 1));
+        *first |= static_cast<T>(carry << (sizeof(T) * 8 - 1));
         carry = z;
     }
 }
 
-template <class byte, class Traits = traits<byte>>
-void Cry_rotr(byte* first, byte* last, int n)
+template <class T, class Traits = traits<T>>
+void Cry_rotr(T* first, T* last, int n)
 {
     --last;
 
@@ -416,23 +416,23 @@ void Cry_rotr(byte* first, byte* last, int n)
     }
 }
 
-template <class byte, class Traits = traits<byte>>
-void Cry_rshift(byte* first, byte* last)
+template <class T, class Traits = traits<T>>
+void Cry_rshift(T* first, T* last)
 {
-    byte carry = 0;
+    T carry = 0;
 
     for (; first != last; ++first)
     {
 	    const int z = (*first) & 0x01;
 
         *first >>= 1;
-        *first |= static_cast<byte>(carry << (sizeof(byte) * 8 - 1));
+        *first |= static_cast<T>(carry << (sizeof(T) * 8 - 1));
         carry = z;
     }
 }
 
-template <class byte, class Traits = traits<byte>>
-void Cry_rshift(byte* first, byte* last, int n)
+template <class T, class Traits = traits<T>>
+void Cry_rshift(T* first, T* last, int n)
 {
     while (n--)
     {
@@ -440,25 +440,25 @@ void Cry_rshift(byte* first, byte* last, int n)
     }
 }
 
-template <class byte, class Traits = traits<byte>>
-void Cry_lshift(byte* first, byte* last)
+template <class T, class Traits = traits<T>>
+void Cry_lshift(T* first, T* last)
 {
-    byte carry = 0;
+    T carry = 0;
 
     --last;
 
     for (; first <= last; --last)
     {
-        byte z = (*(last) >> (sizeof(byte) * 8 - 1)) & 0x01;
+        T z = (*(last) >> (sizeof(T) * 8 - 1)) & 0x01;
 
         *last <<= 1;
-        *last |= static_cast<byte>(carry);
+        *last |= static_cast<T>(carry);
         carry = z;
     }
 }
 
-template <class byte, class Traits = traits<byte>>
-void Cry_lshift(byte* first, byte* last, int n)
+template <class T, class Traits = traits<T>>
+void Cry_lshift(T* first, T* last, int n)
 {
     while (n--)
     {
@@ -466,8 +466,8 @@ void Cry_lshift(byte* first, byte* last, int n)
     }
 }
 
-template <class byte, class Traits = traits<byte>>
-void Cry_or(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+template <class T, class Traits = traits<T>>
+void Cry_or(T* result, const T* first1, const T* last1, const T* first2, const T* last2)
 {
     --last1;
     --last2;
@@ -488,8 +488,8 @@ void Cry_or(byte* result, const byte* first1, const byte* last1, const byte* fir
     }
 }
 
-template <class byte, class Traits = traits<byte>>
-void Cry_xor(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+template <class T, class Traits = traits<T>>
+void Cry_xor(T* result, const T* first1, const T* last1, const T* first2, const T* last2)
 {
     --last1;
     --last2;
@@ -510,8 +510,8 @@ void Cry_xor(byte* result, const byte* first1, const byte* last1, const byte* fi
     }
 }
 
-template <class byte, class Traits = traits<byte>>
-void Cry_and(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+template <class T, class Traits = traits<T>>
+void Cry_and(T* result, const T* first1, const T* last1, const T* first2, const T* last2)
 {
     --last1;
     --last2;
@@ -532,8 +532,8 @@ void Cry_and(byte* result, const byte* first1, const byte* last1, const byte* fi
     }
 }
 
-template <class byte, class Traits = traits<byte>>
-void Cry_inverse(byte* first, byte* last)
+template <class T, class Traits = traits<T>>
+void Cry_inverse(T* first, T* last)
 {
     for (; first != last; ++first)
     {
@@ -541,8 +541,8 @@ void Cry_inverse(byte* first, byte* last)
     }
 }
 
-template <class byte, class Traits = traits<byte>>
-bool Cry_is_zero(const byte* first, const byte* last)
+template <class T, class Traits = traits<T>>
+bool Cry_is_zero(const T* first, const T* last)
 {
     for (; (first != last) && (*first == 0x00);)
     {
@@ -552,20 +552,20 @@ bool Cry_is_zero(const byte* first, const byte* last)
     return first == last;
 }
 
-template <class byte, class Traits = traits<byte>>
-int Cry_get_lowest_set_bit(const byte* first, const byte* last)
+template <class T, class Traits = traits<T>>
+int Cry_get_lowest_set_bit(const T* first, const T* last)
 {
     return ((*std::prev(last)) & 0x01);
 }
 
-template <class byte, class Traits = traits<byte>>
-int Cry_get_highest_set_bit(const byte* first, const byte* last)
+template <class T, class Traits = traits<T>>
+int Cry_get_highest_set_bit(const T* first, const T* last)
 {
     return (*first & 0x80);
 }
 
-template <class byte, class Traits = traits<byte>>
-bool Cry_is_one(const byte* first, const byte* last)
+template <class T, class Traits = traits<T>>
+bool Cry_is_one(const T* first, const T* last)
 {
     --last;
 
