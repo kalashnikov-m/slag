@@ -5,7 +5,7 @@
 #ifndef RSAES_PKCS1_H
 #define RSAES_PKCS1_H
 
-#include "OS2IP.hpp"
+#include "os2ip.hpp"
 #include "algorithm.hpp"
 #include "basic_int.hpp"
 #include "eme_pkcs1.hpp"

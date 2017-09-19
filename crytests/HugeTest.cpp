@@ -4,7 +4,7 @@
 #include "algorithm.hpp"
 
 #include "basic_int.hpp"
-#include "OS2IP.hpp"
+#include "os2ip.hpp"
 
 using namespace std;
 using namespace cry;

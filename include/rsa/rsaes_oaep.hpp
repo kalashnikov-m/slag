@@ -5,7 +5,7 @@
 #ifndef RSAES_OAEP_H
 #define RSAES_OAEP_H
 
-#include "OS2IP.hpp"
+#include "os2ip.hpp"
 #include "algorithm.hpp"
 #include "basic_int.hpp"
 

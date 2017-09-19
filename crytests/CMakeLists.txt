@@ -13,7 +13,7 @@ set (HEADERS
 	../include/rsa/rsaes_pkcs1.hpp
 	../include/algorithm.hpp
 	../include/basic_int.hpp
-	../include/mgf.hpp	
+	../include/mgf.hpp
 	../include/oid.hpp
 	../include/emsa_pkcs1.hpp
 	../include/emsa_pss.hpp
@@ -25,7 +25,7 @@ set (HEADERS
 	../include/sha384.hpp
 	../include/sha512.hpp
 	../utility/encoders.hpp
-	../utility/OS2IP.hpp
+	../utility/os2ip.hpp
 	../include/internal/HugeCore.h
 	../include/internal/cry_core.hpp
 )

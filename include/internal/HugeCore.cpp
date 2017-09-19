@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <iterator>
 #include <vector>
+#include <algorithm>
 
 void Cry_add(byte* result, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
