@@ -7,6 +7,7 @@
 
 #include "algorithm.hpp"
 #include "basic_int.hpp"
+#include "os2ip.hpp"
 
 namespace cry
 {
@@ -42,7 +43,7 @@ namespace cry
 
             ////////////////////////////////////////////////////////////////////////////
             // a. Convert the encoded message EM to an integer message representative m
-            IntType m(EM);
+			IntType m = os2ip<IntType>()(EM);
 
             //////////////////////////////////////////////////////////////////////////
             // b. Apply the RSAEP encryption primitiveto the RSA public key(n, e) and
@@ -54,7 +55,7 @@ namespace cry
             ///////////////////////////////////////////////////////////////////////////////////
             // c. Convert the ciphertext representative c to a ciphertext C of length koctets
 
-            std::vector<uint8_t> C(c);
+            std::vector<uint8_t> C = ip2os<IntType>()(c);
 
             result = std::copy(C.begin(), C.end(), result);
 
@@ -100,7 +101,7 @@ namespace cry
 
             ////////////////////////////////////////////////////////////////////////////////////////
             // c. Convert the message representative m to an encoded message EM of length k octets:
-            std::vector<uint8_t> EM(m);
+            std::vector<uint8_t> EM = ip2os<IntType>()(m);
 
             ///////////////////////////
             // 3. EME - OAEP decoding:

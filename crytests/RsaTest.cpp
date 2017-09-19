@@ -11,6 +11,7 @@
 #include "rsa/rsassa_pss.hpp"
 #include "sha1.hpp"
 #include "rsa/rsaes_pkcs1.hpp"
+#include "os2ip.hpp"
 
 using namespace std;
 using namespace cry;
@@ -24,20 +25,21 @@ TEST(RsaTest, Encrypt_EME_PKCS1_1024)
 	auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const std::vector<uint8_t>& rand, const std::vector<uint8_t>& m, const bigint8_t& cipher) {
 		std::vector<uint8_t> C(128);
 		rsaes_pkcs1<eme_pkcs1>::encrypt(m.begin(), m.end(), C.begin(), e, n, 1024);
-		//EXPECT_EQ(cipher, C);
+		EXPECT_EQ(os2ip<bigint8_t>()(C), cipher);
 
 		std::vector<uint8_t> D(128);
 		auto end = rsaes_oaep<eme_oaep<sha1>>::decrypt(C.begin(), C.end(), D.begin(), d, n, 1024);
-		EXPECT_EQ(m, bigint8_t(D.begin(), end));
+		EXPECT_EQ(os2ip<bigint8_t>()(m), bigint8_t(D.begin(), end));
 	};
 
 	bigint8_t n("bcb47b2e0dafcba81ff2a2b5cb115ca7e757184c9d72bcdcda707a146b3b4e29989ddc660bd694865b932b71ca24a335cf4d339c719183e6222e4c9ea6875acd528a49ba21863fe08147c3a47e41990b51a03f77d22137f8d74c43a5a45f4e9e18a2d15db051dc89385db9cf8374b63a8cc88113710e6d8179075b7dc79ee76b");
 	bigint8_t e("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010001");
 	bigint8_t d("383a6f19e1ea27fd08c7fbc3bfa684bd6329888c0bbe4c98625e7181f411cfd0853144a3039404dda41bce2e31d588ec57c0e148146f0fa65b39008ba5835f829ba35ae2f155d61b8a12581b99c927fd2f22252c5e73cba4a610db3973e019ee0f95130d4319ed413432f2e5e20d5215cdd27c2164206b3f80edee51938a25c1");
 	bigint8_t Msg("1248f62a4389f42f7b4bb131053d6c88a994db2075b912ccbe3ea7dc611714f14e075c104858f2f6e6cfd6abdedf015a821d03608bf4eba3169a6725ec422cd9069498b5515a9608ae7cc30e3d2ecfc1db6825f3e996ce9a5092926bc1cf61aa42d7f240e6f7aa0edb38bf81aa929d66bb5d890018088458720d72d569247b0c");
-	//bigint8_t C("682cf53c1145d22a50caa9eb1a9ba70670c5915e0fdfde6457a765de2a8fe12de9794172a78d14e668d498acedad616504bb1764d094607070080592c3a69c343d982bd77865873d35e24822caf43443cc10249af6a1e26ef344f28b9ef6f14e09ad839748e5148bcceb0fd2aa63709cb48975cbf9c7b49abc66a1dc6cb5b31a");
+	bigint8_t C("682cf53c1145d22a50caa9eb1a9ba70670c5915e0fdfde6457a765de2a8fe12de9794172a78d14e668d498acedad616504bb1764d094607070080592c3a69c343d982bd77865873d35e24822caf43443cc10249af6a1e26ef344f28b9ef6f14e09ad839748e5148bcceb0fd2aa63709cb48975cbf9c7b49abc66a1dc6cb5b31a");
 
-	//test(n, e, d, std::vector<uint8_t>(), Msg);
+    auto m = ip2os<bigint8_t>()(Msg);
+	//test(n, e, d, std::vector<uint8_t>(), m, C);
 }
 
 TEST(RsaTest, Encrypt_OAEP_SHA__1_1024)
@@ -45,11 +47,11 @@ TEST(RsaTest, Encrypt_OAEP_SHA__1_1024)
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const std::vector<uint8_t>& seed, const std::vector<uint8_t>& m, const bigint8_t& cipher) {
         std::vector<uint8_t> C(128);
         rsaes_oaep<eme_oaep<sha1>>::encrypt(m.begin(), m.end(), C.begin(), e, n, 1024, seed);
-        EXPECT_EQ(cipher, C);
+        EXPECT_EQ(cipher, os2ip<bigint8_t>()(C));
 
         std::vector<uint8_t> D(128);
         auto end = rsaes_oaep<eme_oaep<sha1>>::decrypt(C.begin(), C.end(), D.begin(), d, n, 1024);
-        EXPECT_EQ(m, bigint8_t(D.begin(), end));
+        EXPECT_EQ(os2ip<bigint8_t>()(m), bigint8_t(D.begin(), end));
     };
 
     //# RSA modulus n :
@@ -104,17 +106,17 @@ TEST(RsaTest, Encrypt_OAEP_SHA__1_1024)
 TEST(RsaTest, SigGen_SHA__1_RSA_PSS_SHA1)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S, const std::vector<uint8_t>& saltVal) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(1024 / 8);
 
         rsassa_pss<emsa_pss<sha1>>::sign(plain.begin(), plain.end(), signature.begin(), n, d, 1024, saltVal);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pss<emsa_pss<sha1>>::verify(plain.begin(), plain.end(), signature.begin(), signature.end(), n, e, 1024);
         EXPECT_EQ(f, true);
     };
 
-    bigint8_t SaltVal("6f2841166a64471d4f0b8ed0dbb7db32161da13b");
+	const std::vector<uint8_t> SaltVal = { 0x6f, 0x28, 0x41, 0x16, 0x6a, 0x64, 0x47, 0x1d, 0x4f, 0x0b, 0x8e, 0xd0, 0xdb, 0xb7, 0xdb, 0x32, 0x16, 0x1d, 0xa1, 0x3b };
     bigint8_t n("bcb47b2e0dafcba81ff2a2b5cb115ca7e757184c9d72bcdcda707a146b3b4e29989ddc660bd694865b932b71ca24a335cf4d339c719183e6222e4c9ea6875acd528a49ba21863fe08147c3a47e41990b51a03f77d22137f8d74c43a5a45f4e9e18a2d15db051dc89385db9cf8374b63a8cc88113710e6d8179075b7dc79ee76b");
     bigint8_t e("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010001");
     bigint8_t d("383a6f19e1ea27fd08c7fbc3bfa684bd6329888c0bbe4c98625e7181f411cfd0853144a3039404dda41bce2e31d588ec57c0e148146f0fa65b39008ba5835f829ba35ae2f155d61b8a12581b99c927fd2f22252c5e73cba4a610db3973e019ee0f95130d4319ed413432f2e5e20d5215cdd27c2164206b3f80edee51938a25c1");
@@ -124,7 +126,7 @@ TEST(RsaTest, SigGen_SHA__1_RSA_PSS_SHA1)
             "1248f62a4389f42f7b4bb131053d6c88a994db2075b912ccbe3ea7dc611714f14e075c104858f2f6e6cfd6abdedf015a821d03608bf4eba3169a6725ec422cd9069498b5515a9608ae7cc30e3d2ecfc1db6825f3e996ce9a5092926bc1cf61aa42d7f240e6f7aa0edb38bf81aa929d66bb5d890018088458720d72d569247b0c");
         bigint8_t S("682cf53c1145d22a50caa9eb1a9ba70670c5915e0fdfde6457a765de2a8fe12de9794172a78d14e668d498acedad616504bb1764d094607070080592c3a69c343d982bd77865873d35e24822caf43443cc10249af6a1e26ef344f28b9ef6f14e09ad839748e5148bcceb0fd2aa63709cb48975cbf9c7b49abc66a1dc6cb5b31a");
 
-        test(n, e, d, Msg, S, static_cast<std::vector<uint8_t>>(SaltVal));
+        test(n, e, d, Msg, S, SaltVal);
     }
 
     {
@@ -204,11 +206,11 @@ TEST(RsaTest, SigGen_SHA__1_RSA_PKCS_1024)
 {
     // [mod = 1024]
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(128);
 
         rsassa_pkcs1<emsa_pkcs1<sha1>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1024);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pkcs1<emsa_pkcs1<sha1>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1024);
         EXPECT_EQ(f, true);
@@ -396,11 +398,11 @@ TEST(RsaTest, SigGen_SHA__1_RSA_PKCS_1024)
 TEST(RsaTest, SigGen_SHA224_RSA_PKCS_1024)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(128);
 
         rsassa_pkcs1<emsa_pkcs1<sha224>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1024);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pkcs1<emsa_pkcs1<sha224>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1024);
         EXPECT_EQ(f, true);
@@ -576,11 +578,11 @@ TEST(RsaTest, SigGen_SHA224_RSA_PKCS_1024)
 TEST(RsaTest, SigGen_SHA384_RSA_PKCS_1024)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(128);
 
         rsassa_pkcs1<emsa_pkcs1<sha384>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1024);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pkcs1<emsa_pkcs1<sha384>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1024);
         EXPECT_EQ(f, true);
@@ -755,11 +757,11 @@ TEST(RsaTest, SigGen_SHA384_RSA_PKCS_1024)
 TEST(RsaTest, SigGen_SHA512_RSA_PKCS_1024)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(128);
 
         rsassa_pkcs1<emsa_pkcs1<sha512>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1024);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pkcs1<emsa_pkcs1<sha512>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1024);
         EXPECT_EQ(f, true);
@@ -936,11 +938,11 @@ TEST(RsaTest, SigGen_SHA256_RSA_PKCS_1024)
 {
     // [mod = 1024]
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(128);
 
         rsassa_pkcs1<emsa_pkcs1<sha256>>::sign<>(plain.begin(), plain.end(), signature.begin(), d, n, 1024);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pkcs1<emsa_pkcs1<sha256>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1024);
         EXPECT_EQ(f, true);
@@ -1105,11 +1107,11 @@ TEST(RsaTest, SigGen_SHA__1_RSA_PKCS_1536)
 {
     // [mod = 1536]
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(1536 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha1>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1536);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pkcs1<emsa_pkcs1<sha1>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1536);
         EXPECT_EQ(f, true);
@@ -1218,11 +1220,11 @@ TEST(RsaTest, SigGen_SHA224_RSA_PKCS_1536)
 {
     // [mod = 1536]
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(1536 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha224>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1536);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pkcs1<emsa_pkcs1<sha224>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1536);
         EXPECT_EQ(f, true);
@@ -1332,11 +1334,11 @@ TEST(RsaTest, SigGen_SHA256_RSA_PKCS_1536)
 {
     // [mod = 1536]
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(1536 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha256>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1536);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pkcs1<emsa_pkcs1<sha256>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1536);
         EXPECT_EQ(f, true);
@@ -1446,11 +1448,11 @@ TEST(RsaTest, SigGen_SHA384_RSA_PKCS_1536)
 {
     // [mod = 1536]
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(1536 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha384>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1536);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pkcs1<emsa_pkcs1<sha384>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1536);
         EXPECT_EQ(f, true);
@@ -1560,11 +1562,11 @@ TEST(RsaTest, SigGen_SHA512_RSA_PKCS_1536)
 {
     // [mod = 1536]
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(1536 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha512>>::sign<>(plain.begin(), plain.end(), signature.begin(), d, n, 1536);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pkcs1<emsa_pkcs1<sha512>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1536);
         EXPECT_EQ(f, true);
@@ -1674,17 +1676,17 @@ TEST(RsaTest, SigGen_SHA__1_RSA_PKCS_2048)
 {
     // [mod = 2048]
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(2048 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha1>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 2048);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pkcs1<emsa_pkcs1<sha1>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 2048);
         EXPECT_EQ(f, true);
     };
 
-    /*[mod = 2048]*/
+  
 
     bigint8_t n("e0b14b99cd61cd3db9c2076668841324fa3174f33ce66ffd514394d34178d29a49493276b6777233e7d46a3e68bc7ca7e899e901d54f6dee0749c3e48ddf68685867ee2ae66df88eb563f6db137a9f6b175a112e0eda8368e88e45efe1ce14bc6016d52639627066af1872c72f60b9161c1d237eeb34b0f841b3f0896f9fe0e16b0f74"
                 "352d101292cc464a7e7861bbeb86f6df6151cb265417c66c565ed8974bd8fc984d5ddfd4eb91a3d5234ce1b5467f3ade375f802ec07293f1236efa3068bc91b158551c875c5dc0a9d6fa321bf9421f08deac910e35c1c28549ee8eed8330cf70595ff70b94b49907e27698a9d911f7ac0706afcb1a4a39feb38b0a8049");
@@ -1787,11 +1789,11 @@ TEST(RsaTest, SigGen_SHA__1_RSA_PKCS_2048)
 TEST(RsaTest, SigGen_SHA224_RSA_PKCS_2048)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(2048 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha224>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 2048);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pkcs1<emsa_pkcs1<sha224>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 2048);
         EXPECT_EQ(f, true);
@@ -1898,11 +1900,11 @@ TEST(RsaTest, SigGen_SHA224_RSA_PKCS_2048)
 TEST(RsaTest, SigGen_SHA256_RSA_PKCS_2048)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(2048 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha256>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 2048);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pkcs1<emsa_pkcs1<sha256>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 2048);
         EXPECT_EQ(f, true);
@@ -2009,11 +2011,11 @@ TEST(RsaTest, SigGen_SHA256_RSA_PKCS_2048)
 TEST(RsaTest, SigGen_SHA384_RSA_PKCS_2048)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(2048 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha384>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 2048);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pkcs1<emsa_pkcs1<sha384>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 2048);
         EXPECT_EQ(f, true);
@@ -2117,11 +2119,11 @@ TEST(RsaTest, SigGen_SHA384_RSA_PKCS_2048)
 TEST(RsaTest, SigGen_SHA512_RSA_PKCS_2048)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(2048 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha512>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 2048);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pkcs1<emsa_pkcs1<sha512>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 2048);
         EXPECT_EQ(f, true);
@@ -2218,11 +2220,11 @@ TEST(RsaTest, SigGen_SHA512_RSA_PKCS_2048)
 TEST(RsaTest, SigGen_SHA__1_RSA_PKCS_3072)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(3072 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha1>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 3072);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pkcs1<emsa_pkcs1<sha1>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 3072);
         EXPECT_EQ(f, true);
@@ -2337,11 +2339,11 @@ TEST(RsaTest, SigGen_SHA__1_RSA_PKCS_3072)
 TEST(RsaTest, SigGen_SHA224_RSA_PKCS_3072)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(3072 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha224>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 3072);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pkcs1<emsa_pkcs1<sha224>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 3072);
         EXPECT_EQ(f, true);
@@ -2461,11 +2463,11 @@ TEST(RsaTest, SigGen_SHA224_RSA_PKCS_3072)
 TEST(RsaTest, SigGen_SHA256_RSA_PKCS_3072)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(3072 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha256>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 3072);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pkcs1<emsa_pkcs1<sha256>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 3072);
         EXPECT_EQ(f, true);
@@ -2584,11 +2586,11 @@ TEST(RsaTest, SigGen_SHA256_RSA_PKCS_3072)
 TEST(RsaTest, SigGen_SHA384_RSA_PKCS_3072)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(3072 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha384>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 3072);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pkcs1<emsa_pkcs1<sha384>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 3072);
         EXPECT_EQ(f, true);
@@ -2708,11 +2710,11 @@ TEST(RsaTest, SigGen_SHA384_RSA_PKCS_3072)
 TEST(RsaTest, SigGen_SHA512_RSA_PKCS_3072)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(3072 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha512>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 3072);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pkcs1<emsa_pkcs1<sha512>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 3072);
         EXPECT_EQ(f, true);
@@ -2832,11 +2834,11 @@ TEST(RsaTest, SigGen_SHA512_RSA_PKCS_3072)
 TEST(RsaTest, SigGen_SHA__1_RSA_PKCS_4096)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(4096 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha1>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 4096);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pkcs1<emsa_pkcs1<sha1>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 4096);
         EXPECT_EQ(f, true);
@@ -2968,11 +2970,11 @@ TEST(RsaTest, SigGen_SHA__1_RSA_PKCS_4096)
 TEST(RsaTest, SigGen_SHA224_RSA_PKCS_4096)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(4096 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha224>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 4096);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pkcs1<emsa_pkcs1<sha224>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 4096);
         EXPECT_EQ(f, true);
@@ -3105,11 +3107,11 @@ TEST(RsaTest, SigGen_SHA224_RSA_PKCS_4096)
 TEST(RsaTest, SigGen_SHA256_RSA_PKCS_4096)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(4096 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha256>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 4096);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pkcs1<emsa_pkcs1<sha256>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 4096);
         EXPECT_EQ(f, true);
@@ -3240,11 +3242,11 @@ TEST(RsaTest, SigGen_SHA256_RSA_PKCS_4096)
 TEST(RsaTest, SigGen_SHA384_RSA_PKCS_4096)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(4096 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha384>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 4096);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pkcs1<emsa_pkcs1<sha384>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 4096);
         EXPECT_EQ(f, true);
@@ -3378,11 +3380,11 @@ TEST(RsaTest, SigGen_SHA512_RSA_PKCS_4096)
 {
     // [mod = 4096]
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain(Msg);
+        std::vector<uint8_t> plain = ip2os<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(4096 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha512>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 4096);
-        EXPECT_EQ(signature, S);
+        EXPECT_EQ(os2ip<bigint8_t>()(signature), S);
 
         bool f = rsassa_pkcs1<emsa_pkcs1<sha512>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 4096);
         EXPECT_EQ(f, true);
@@ -3545,15 +3547,6 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*n = a0a69a287b74fc5a179beab2d70485735763c78198e185906c3a57a25caf9983f61d4a80f7b57879ea38dd96cca717b93a148fefb6958ea7fc9ebf5b3eef90e21adbe5feea0dd76cd4b18538d59206ddc4e022feb75f3857f84c0714b76937c76e382bad3f28e11ffbefa235d0f41d642abfcbf9c10aff9ca1197b13783290eb
-            e = d2f24b31e027c0b9bc2929f2a2a38c9d003ae5b45d153957d2d0fe1cd05a87f375d050f6341d1e83f0583276902503259190aa7b0353e99a8b404da6feabe3a3b4a54263523a3619aedffe301db8be0aa07b04b8d8c1210cbb3034856d6f46dec94cf866558439083e26bd03
-            d = 1c60340de5c8bf5b22f0f7f0532af217b303b70a4b64c03be2a89bb0e78571db4e49b74d12423e3712648e8751c43c4498176438fbb844960240e4878e382c8b8b11e548ce24b8c52ab8eba5ef6d4d6945e952fe0bae77208f88db1db5fc7df848c2b3daac8e15319cc0c6b3682a2aebd3fde60fda4a3142c317e521f6cf5ccb
-            c = b4b437586695ee63f908514864b9ac2e051cf157e6a612f63e3caf413becf1c8fedbb605e87eee34140d4465243502cf410e2e675d4cf9b1bbb95bd6b2e3f7f8ae1144c2777cee43b6bc7afcb5812a376683209ba7bcc5fec4d46c7a3ddd33c3ca402ab79df7b837e7fd3a369d03ec0f7c650d1c4b5c3e8460752c5465426ed2
-            Result = Fail*/
-    }
-
-    {
-        /*COUNT = 3*/
         bigint8_t n("bd74c62141cc4cf8228224d7e2de0d52b51e67e2d43676249470304d30d662ea3d6e5225101317369ae1de6bab944cde823d182cc0177f1905ca843611a2f67b9c32f975feccc8e9422b05d8831f0a013d8f9c68b1b8c25e5925d516414d34d57d84f38311bbebc7f1faf6548de9968e871f8e7e16b1fae5545d3f3cf04121b7");
         bigint8_t e("c08b122dd36a9965916287d08d8e2ece0500d4f1e37b45e29cb056efcd1449220d602e7cf13ec97b6c4f17a7e57af9c8ec65cb9864b7a4c83290855c8ffc55bc1da64e43b9ec4e9f266dce489d14aa8cda67cd50b638d8454a6854741126c4a07cc716330a37576e5021ca2f");
         bigint8_t d("0217f64f638419c8741b4b98a0678e40cb0e0c703a8c823224d88be40ea4d2bb8183233c9be2760ccff280a51ba714646344885212569ee9aaa80e610f2de30f42ef26a55bbb2bdbf31b9238036cb387be57067116e97386e9aac9cf2695e266873ef2944a4b010804408b039bd543a7f622983efdf56ec4ebb151ad80d5f4cf");
@@ -3565,7 +3558,6 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 4*/
         bigint8_t n("8ae197e5bb30172ff378eb37f08709aa87b73802a027617fe959439399b3a0ae58ee46ec6e9fc3f29fa03ec08db9d16371dec03e9a6422d539cb4deb2dee52fd4dc1978f72cce77726886ce81c62b880f29623758aa615c65e500101d0980b2fba68e466a2545aeae7a3bfa6a549ce9a62ad7f171385feccbdfa902494d78443");
         bigint8_t e("f7dfd3273f5ec1a26fcc9d7df3c448f4c9ff6408bc35a26f6897875b2213ac6a6ccfc061ce46d6df12ec86f376377b51c9b4feccafbb8f3df628fd05af868a7d066aed834cdb9d9e3a3a5b60ded9799b40fa0edbbcc80b1808182f5eaeb77735213231178f3637cea7b9b0b7");
         bigint8_t d("2cd9eb9d91370fa049e778dc7b2eed16032a396d96d391f58df1c269ca2b354451bd13ffb929df047e356617f6d7394ca30622651d84823e7400805ea20d4eac617146eb8b11d0e53048c74ec02037e8b58946d95f10505dcb9dc468e5ade82fdec0edfafe09dd0bd2d13a07dbe96b741554b4806f4beeaa50562a1040e024af");
@@ -3577,7 +3569,6 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 5*/
         bigint8_t n("b101bd9c2458804386e23d1b7a521430569b4f49029e87db288892159834d827bb2083272bb85bd5934e7ef6d458e40a8549ff338a7e6d84789207b15f824e39ebaefd2076f55c69121e9a90aab7c662734b50b4473c3342f7c57fdb6b891c2697eefe0917d20db468defef1d7acbec6f88390ccc6344b48b273a7d51081c4a5");
         bigint8_t e("b6c13349b9671c7bbce53881ac1112b0b83be497f42b1776c84acd0e9983b2ede9391126d81ddf249fc542fecf52269df27e64bf995a026b71ff631d3dfa8c84a14ebef82079ff92946188eba0c2a04b54c1f324c073081f38380719ab64359dddcb826624975b1d37a43bd7");
         bigint8_t d("22107d6ec7bdf09c9f688448bfae94cdf7268bd72afc96e4ad9d7501b04afe69df7b4274fe90b8f35e1cbf03b71a097489c619d2b87ef0024a6f2c2f1bf7f827c891bf7e42bf1f9a3b973ff0305f5de643092da60d9f039b51902e1b07990d5f3e1f360de4084e92f9bbfe95a51105dd58c266384c5ec815d380eea8dfb248af");
@@ -3589,7 +3580,7 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 6*/
+     
         bigint8_t n("ab04b223f82347bab2547e2cc0abb18ffda653a5284916d90a1fb4c24315a18c778709b18a71abe1a385b305d25813308467d2c29263ca468d5c12e519f8749f267d17df5398b473fbfac9f5b4e98cf5c90e5a65d1a4561c69d82616f1a379bf2c1d0f8477e5339d925082a0bab01f8823d4e46ace967cc526985e03c0e52a4f");
         bigint8_t e("e23bc7155efb1817eae0633b99b178ec507dfce68c2ce2631a625123ebe9cf0b8c142464ed1766b69d7eb5c50bc8c63238b615ebfce42d087ed87c6cb3cd7d83d561dd350f9aee914cb73edcbfcb307e1cf03ea2be449e902d3c15d582c446d9e92eecb5e5fbca71054a857f");
         bigint8_t d("060a93b479b6b56f7655fccf0770321733cedc646711244f08d12b56456e360b879c4007df0d93f35b57b7c51cd1b4f624631d5c3d656d6c67866001f5668a318bdc5259381db72eb50995c95cfdc45fbc3902bc65a1ce9dc92d1622e087db9f6abbee353371d700d5c2efcce47dd044bf5061853e729cdc28bd407837d93bb7");
@@ -3601,7 +3592,7 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 7*/
+        
         bigint8_t n("9d6c06ee50f4528b0d44ab99a87d27f180a73e8fd98512b11cd795fd417173cf44a55f050f5c1df9a80a4917230b4c9a2d4c76e36e4c845abe717e8384e0fe312429ead5a02d0ed98b37c85d034dc88f42d756546215df2bd5c739c1d43b3a37841caa7ade44be1e089eb0bd7cd7205e66cf7539d8ea1126d21b9a6411430c2b");
         bigint8_t e("6367395890cd978cfd461fe82f3bb22f074c6c33ec4ccf395799ab830fbcc73196c8d52f036b4737cc82a3bc596fb56ccb664c98abd4fc3f21682bf7d1f58dc7ec16c3c10da1827e071d840349c281b57f7d11c7f67432f04da27baff2beee40a9f9dd3f39ec1201fcfaa04b");
         bigint8_t d("16de900b71da7850b6c774035beecac0861b29ca03903020b2cf8d573f160a36ed73ac4e28c57a17f460d2ca400a48a239cc2aca97903c9eaae57a1c6d39148a9465795ed87116cd82445eb4998ed913cd3b01c19e08cf91a212a03479fdc1e4db717d0ddf04bd35c17da598f0b7d0dee5a5379ead70e939fdb12f99572bd4fb");
@@ -3611,21 +3602,10 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
 
         test(n, e, d, c, k);
     }
+    
 
     {
-        /*COUNT = 8*/
 
-        // bigint8_t n =
-        // 977884e88c0c8127709843af6d37c02b2394851ea2313ef7f8f95ee02c57e71ebccfd3933f6cd146bb427b0631f5eaafb9e1d9ffeb4a79be75360e0af1299844c9bf896bd3fffb27af43749bbe80868c37ecb8e105063aef02942b57cf8de5f4b573b8835e75e010f76d218e7d69fa573e640983d5b6ebb7ff992c28a9f6048b
-        /// bigint8_t e = 110b390d11c13574297784180be412ff866338e1e8a3a1c0f885e07b4cb38b2836dc1307ce2fc60abd9a47ca24ddfe030f470060a07f742f2a61d1861dbbab3ea6d7654fc1271b0a53a3319215334aafc6d22b8e29913f15be747ec36b7623fbf1c9c32f12a5493fe585e2d
-        // bigint8_t d =
-        // 2958f931484c2f635a86822e4bfdd7ae7c45b854b573d1278a9f699e47354236edeb18497e2d6faadea7c652af9384abf9033dfd20deb4a6811e7a6dcda4a6716d20897a0facd19f61a115101ae4b3c3f77f0fae83ac2cfe3f5855f2e854f5693df67cf76fb4c4d54da15b711dfffafae9aafbea76726efefa44613a74ed9025  bigint8_t c
-        // = be28192aff56f98a1c822e03a44de0ee1d78e0abf50539e5bc99081690258d4dd8c5812f35e9aa3bb5b2ae534a9f25787b68f1d65a2ad200b6c5357c91824d82d4fa6501423375e3ab0bf39262daebbbf15352520aab98d6c1fe7cd6f9ee24b41c8d6da9107d80096655a6c8d4475d3ee500ab27efd0b2ee460b852bafaf3a6a  Result =
-        // Fail*/
-    }
-
-    {
-        /*COUNT = 9*/
         bigint8_t n("a5be019172ef33f82061aae0e88aa81fae292b3e1c0b33220c5822dbc9acdbec2eb7b0fbfae1e9160c47277a85e047c629686cb40be50f2a676bfa702c773cd24ce80a6c07f3c2d9d65029abe0c876cdf3b9f6ca1b4ce8edb74aeb3c63dcd1448de20ee97063a26450bf4db8b83a4f16b9e3ea146aba454b72ba1cca615752bd");
         bigint8_t e("c06312d850e541be4b24c664811e80cb0a8d4ed6b21f1533d55477d1b8ac8e4b25441b52f75a90c23e7c81b42da33e9f7d6a02b8c172a8341aec8222fa2f9540a64c79a0e8837c0b02c82f75aa0a529bb715f2aa7bbe5d63f9e346a354be5b4aaf95a52abdc71ec6ed171581");
         bigint8_t d("22595b2c5ad55e4a96dce4733064e1338ceabf00a2fe2df5ae8afc7990ace25a036732c06f3170844868bc854d8408ac49856bca8314b54b2fefefe0393920da3c4db3e62d8969da7a42f89d93c79954170082db7a44c25780ed7ed21c6475d125877ea1954310bf91031ba2ae6422a15e9b67868224bf6050839cc0ea331f3d");
@@ -3637,7 +3617,7 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 10*/
+
         bigint8_t n("aae790ce66165e1431df2b6234497b11994653c3f70e1724123b5adfb993daafbee368707554d7392314340abe052b6f7f28a6e4528919ed77ee2d0ec7e58ba3503c61d41274af784ea38f9a5ede616cccf011da8c4d7d46103dc29d166f1424a1a19d79e6a3acae603de797f1caac0fd3ecf246c40376fceca0931b164044d5");
         bigint8_t e("c690888a046c216cf843d63b0a71eb930063bbdb884d4c9efd372339bf2bef0fd77793eda3d89508c83719acd72725df7a456c5acfaa54ad27fafcf461e92981322977a38543f3af1c1cd8027e4a4f35b16e1657cfc7ed6ab932fffb0dfd75374195e5fc3f30a36b0eb2ab17");
         bigint8_t d("194c170c8407fe3c9aa81d193f92d933bf49a05af50332b1f6deaa442d85a04580716af33136655881d4b2e50aaed19c5d22c28f755c834bf8c045eaadc0376ee4f0e22779196bf0029fbf0501589338d993c626167b5e576d20b533a150470ab6c0e4bb30a091321a8f63fd2c8a2cfe1e9a9e09ae43a14ba6066823139b56a7");
@@ -3649,7 +3629,6 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 11*/
         bigint8_t n("cc5984a7f60abe9f99ada8fd1de66b1b63a6f58938d1ea58f3981d883f91030fa97a93d54d79d614ad47a283dad02eee1640351b77b83930cb9b5554587ccc0742a29558d36fb5a8fdd19f257de4e5100852bc9e48ddf901651578c4473c1d6f76acf6ad75033a8e08277a91cd4f0589fed41181946f243cd8370969832b467d");
         bigint8_t e("9e06619b72712729e743275562fcc12a8305eb92b4243ea28343d4c2e1238afe94021cab7a0d78bbe1e875fad56837189c46d04e7efb4f72aa81b931a73b40c4c6b9d18c70882d52769649e271e724f08604a0e63d4f5df1fd0608dcdf41292cd1de964de30857a70c90e7a7");
         bigint8_t d("01eb4e4d4074de353dbe9fdaaa98e157e91d09cd36b9274892ad521239021c739abdc5273453f04173a3041e44b53aef72d2c6b375661cee61d158eaa87b3b537145e9aafe21da40e666139c40622366b46bf817bbc0b44b677270467f0ac9edb4b55e023cff5fa6eea870dabba8da7d783a03e1c47c9b04d664c0eb1b4a8e7b");
@@ -3660,19 +3639,8 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
         test(n, e, d, c, k);
     }
 
-    {
-        /*COUNT = 12*/
-
-        /*bigint8_t n = b8f5ce2a47aa93837704cd6c4ac2f23246075df9d7d496d8fe3698f1183036c0e5c4b664eb249e5a04db8c6a1edce062747bfbe49c93af10ee8eea7558bce926b559ae2d8ccaea1a3cd78c429602913593fc6a090a3fdaa206ef405389b20aac47a4de62bdd846efd060c56d68089a1a27194022b08155770844f0709904cc35
-            bigint8_t e = 28eb47109f6336a627460f131bf6c1291dc0d38d251990e306b4ceac3f5e07271799737c602ebc34237cc8b826b2620092b1a3fc1b667363949a8b6d039284cb7888384e1b6f6d16f1d766155c8dd2faf1f06aa68776b58ba7268d9e3b2e61b9341ae3d39fe24993223e4a6f
-            bigint8_t d =
-           2e51b38fd9c7d58e637ba4d32ab138f4c4486b13c9e425765f5aecbc0b82a52e2b1cc3f8a76fbd7e7251d3cdf378c9307a3020b2ded5b029f5803a2c52c892711e70b82421ebecfb51f793475b90033bec13c928ecd9ac7a2881b635e83848a9d34f8d63431eedbdc1a19af228f874d55954f1b7a02817f30677b47318f946a3 bigint8_t c
-           = c33bea44f3dcb03b7b46b4a8fe9a63dddec2cf315f04f43d0ad73f4b50f6510b70b400889b8f9e5b55077e1e1eb1b52452871e674e82a1c2d46bb461b1ee21759cf00a2c62222be040d6608f9012678ba9e3e67200f4b061935f446587c397320f97131891bedf32045b61e19de60178aa803039be83a9810e5ef73f1ba038aa Result =
-           Fail*/
-    }
 
     {
-        /*COUNT = 13*/
         bigint8_t n("bc73128135abff03786ca76b4ca58692c53511eda689bbbc3e90bd23591c416ecdb7e22833cedfa1de94ef047b6d17a8c5f0eb084ba9677ce38039b1b10c72c87f4de26186bda671c855c8798e4b16b6619c012e4679f1d04d90a15da8db1973b1d4bf7b6d94cabe1130f19b34e2a616d8d59684406b23dffebec41a0262247d");
         bigint8_t e("65a07403091e668a7511be81a6e583ed9677699b25069a079cc133ab7860c946f4c4ae7d46497d33070a9a9684a27fdaad4e4380ededa4695e681519359b24ca418181e0c075641c050086f878be7a1b3b3b7138db33b94f0f232d38dc78a8c73db2538038b98aaf25e886f9");
         bigint8_t d("5595768e334e32a7eff447d468d79df392ac43dc4f62a41192d6b411b967be4ae2063700210bb61da026e375394c8baec73442db7e9854594c0768a3342bc4506ff41c239a5b794b32de5059d7572946e52dbee6be391110c029e1b96a8675af94c6025345f0498a993703298557c21130eb59bd84e5110303e72a2681aebc8b");
@@ -3683,7 +3651,8 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
         test(n, e, d, c, k);
     }
 
-    { /*COUNT = 14*/
+    { 
+
         bigint8_t n("eab017d025220d1c3bf6e89ee591aaca4d5a96a3b7f8ccc1932bb98344ef442fb41a1c82029de53dec19d1f448fa4b9b4615992259e3a85cab1a9495ec13458cf2059caa2263255521f80859fb4062aaa6dec660b6bc3685e8fcc296aa9f2a56ea46e65dca824e83f0a6f4000e5a743d6d366bd8134c886a8e466743e19a94b1");
         bigint8_t e("760e3c5173bef4fb2b3e4b103ad8082249c14baa80e85fe0bcf8a253dd36dfd2744533a593165b021872f5ce857da213ecab759e432beeb23cae1ad0836581105496558519fa901451856d68bf52a57db2d87a34341c4c871bf58078144f57425c3fc3dfa090fbb680e17e4b");
         bigint8_t d("1ad0e0fadb7de0801c4d7123599442d00bc9cb31cf15ab37637e2c99df0969534eb9966cb0376c6644abb2f6071970db6fd63be5ac412da37477cabe18dbca529d7afcea827ab810a288f8f7b93cf5555df671e05f1e450977154f41b5a4c6bcd55d119f24ed838b40a0d51ef4ca8427b36978a00af2d1cef55434fbabe7d32f");
@@ -3694,39 +3663,9 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
         test(n, e, d, c, k);
     }
 
+          
     {
-        /*COUNT = 15*/
-
-        /*bigint8_t n =
-        "a39e87b21ae20a21848cb48cea20bb4f3b4ca3b6250638abf7796295408109d956e1a981049d2a1b023b6b12f433de0415f6486213972d27f8bc8505a5717f5b6f1969dc7f7abbfb529a695ded5f140444c327537962a26a91f93fa28b01bbe078070874c1d1cf4bb623f5586bf3f689085ed7490513e9159e901e3d8b18f327 bigint8_t e =
-        "5ab045b42aa62e2b430a692d385849d0084e7a8e11ece2225c3cb5c393988f0ec08ff29dce9d081f16c787bab4eecb2a011989dc31b2e389973d5c4b2d8fd3e13f419697bfa5ae62e0ecaf69bb443faa1d1ca7c88cc1485e0e542c16825fcac0be41bdee32dbd4c6cf4d036d bigint8_t d =
-        43ac1c3ebe097a756ed818810f111362360a2705087d41b6aee4c600ad65fe718084cbd5956c879358ee29c81a3735bf57a71f6e1c9f30c1ab9bf25b020bc2e25ab2b3aa37429bdad492d1a9ad6d1808eb0783734393c0701db2d9ca833a577b58ed3fe55cfbc663c5da913d1372c58a75c5e7f0b0c4b4d8cdf56afa5dd06765 bigint8_t c =
-        d3daa06ca2645f5a968b1ebdcd078921f2e6432c61242bd48b7bded09c7c7d4c5cdfb0e15318eac4312bef3e6dc0945c2b7ac6e76385ce96406ed383c638a1dcb8aca9dbb9f048f8b15b4c5d7288b49a9ca9b79abd1e08d5bd4759c87a961ea2afe893411a15005cdec53b0226866f430b1c1d2db81860facbad7587ffbe7a08 Result = Fail*/
-    }
-
-    {
-        /*
-            COUNT = 16*/
-
-        /*n = ce79188c14fc8e6432ed82a67408a4665055c61f039c77c5d250f30fe986d8b4b3d0428007e2340155a6e5ac275321c33d1364a9aa230bd6ccc37842ffe2542ada03c44426a45828b947aca8adf98f4a7ca9cb6b4545fe94fc5b79e7c4fe81559bc3ce017400495085534c3ffc61b601da77996cad471e0b58d3e3a33eadf551
-        e = 96434d0562cb2045e0017dbb8fcbb11c22f14e7627703cecc970e2de91ecd3e9bc6b575ade98802aad7a30f027263655e0a0ea62cf511a8dcdc0ce5e3d7f74d7d0014f612ac2a6ad1a8a9ab3d08cda37bcd9c8bf1d7077c17e9e78cf3699995ef5dd39ab20586b55f56995c5
-        d = 00fd5621f88d03ff7debd30d55248759f9b87cec3e3bb1c27a4a1f1fa9cb5b22fc52086bfccdbee30c6c029ad67d4aa036a1e61d245933bef0800a827d121c3b5699a79b5cb82af1ceb638e3d94159b30c5b7abfc1ecfb75b7042b70a4d543ef3e435e3f967493375e916e2b9e2fb533456b3261160392170365d1546f8b822d
-        c = eb0b60f4746f7b0c2c81d78652973f949c9dbe9f1e68a93c6e47df5c06db50c2e929bcbb8aeebd09e9320820ff20f0955c152cd30ff7d910c6c8c37f367be0c7bd061db546b85d2d6ecdbf67e540205816e0e26d0aa6eb7f8946f0048304f382afc90a4a72766362027885c3cb9dd8c4122568d7d81de67301e8f051b51f91db
-        Result = Fail*/
-    }
-
-    {
-        /*COUNT = 17
-
-        n = b3a4e307e317a173c3e9992b9ddbb0cbb2733ffe89d477c9106047accc2e1d41879dcd8b336e33ce85a5259301223fccd211f1fb3a3530a62a20a1976f1c242576704e70f52352422897b905a6d69aadb4d7b2342bef1aeaed6b01b9a52816642d9ec9b04fb0923104f44f1a9a53ce14b89fbf3e4874744d0e336901e2b3e649
-        e = 6325a28d28b2343cd8095adbeaff6317d0c9101cc8346ca25bd9f34293d3d29b312439c4bdb1fc14ef9e7aa3db6ed0af3b0bae589c2841cfd059a45a4447d17d2cedf655887063dd41e8a8bab49ab8924c1789242a4690c35a1a02db93dcda752a813cef0911302b7a344f89
-        d = 10e68ea03575078fc37f66601a1eb8965fd3d16824b680c40c1849c68f50ddbeb9d12591602d24590ee027ababc27f890c4cb99696fe9231ba9c6d5940cfea8a0d4a325d4eec3cee41f1cff42f052cb4ac66a48167d2ea58922aca972c373503300a247ff9135b0342bf519478fcf9ccf7ebbb508c9ba6e4002ff1f29d962f19
-        c = e736534836f54ef69aca131c072369379afa70bb8afd32555bed7b735444eb06341a498621491a37e1d072ac4c750b8901af948d59c24bcf992cce476c402e91901146eecf914b8c31faa407706dfb2facd9940c601fdd1f957447eb550655b463e2f2872915087af2114e35595362b101431740875c10ceb58c8e66f9de86f8
-        Result = Fail*/
-    }
-
-    {
-        /*COUNT = 18*/
+  
         bigint8_t n("de6486187b72e8c5ea8fd6599e268315dd277be512b6f88c9a593a65b8fa1573d5c297df5182fa9754911c0df37246407869770fecfb1a8d447e5eeea618c13abda8f15c61586420f9aa1446126cf1fd4b96bb48841f9931e337e236e2d7bdfdd91c02b0b2abb5f2965dacdd45bd1a969b215bb31916857e3144ad72c7030ea7");
         bigint8_t e("d4ea9c310623c90f1c04c6c2fe9c0adcf6e6ebaa083c4cd3b8f7e0bf7a2245fe79b02ec78147e3275d82222141bb2da8857889646ac721582fe23999ea86b5a2c843f6674bf9cb1c6a0bd0e13ff33c19f0cbb72ff70654d2a64c460a1188a26a4beb414075682a595c90939b");
         bigint8_t d("024110ab2212a6ffb81008ccdb18c9cf2398c4e1cf8277aa59c162d69a60585624fc50e3e80dd9d60f4ddd7168b55f3cb533dc2f96f6d4720432dd6e9e508c6534d6ac3b4f07246347a40d3af8dfbc5bf46998810357125871733e4eed010c632f53b28b4226e09b73e0cdef172a0a7cbe72320b0f1a8aace8149c697486d853");
@@ -3738,7 +3677,6 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 19*/
         bigint8_t n("daa9f6cceabbe6d4c3a746ba35cf73e2ad8ba33423e440588068a6856461b119469faa5ae8c34a1706bcc6ffccf87e2bc7c8435c4db172c2ddca00f1a2670f5593d864f20d131c84e6b6d0d2aca8a53393f51d70283ccda0e6fbdca9da2bc58b8917078ef33eeae27e5eccf04f6ce6c6a67f0ccd23df8e138e368ac55f0319e7");
         bigint8_t e("9abb97533bbba5f03f42a767d6760ef258b59e3626b40082cb77bf35c0731d6f892df4130eaf5ebafec080621a8d9456e345c4de8ed636f293e94ea277274ab3c9c240eaccd76c776d8114a306f79329139f632c98e34b03de0ca0ae677c56c623d0f0ee9ed7458d66049cc9");
         bigint8_t d("07b99416fed71aa6163b2460498dc8b04307acedf14c540aacbe0e11099fdac638a7aa5604b435a33a1d206a660ef5b4dc10a9443e77656580d5de7cb6d88eb357324bef2499fafeb3889f21f53c16c29286689c4dfea8c230bc301c8c81b38029b39e28ce53a9d5fdcbf5a913c77cc20404bd162b85957202cdad19b64f5559");
@@ -3750,7 +3688,7 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 20*/
+        
         bigint8_t n("946fbef313db4feb475be7623aee647290d318b912a58f4406ad3223cb91ff639987bfb207851d249908547fba3b10437e25622238f0bd1dc6aaba45dd0312e0606766d179f2e5dc9e9b0f764850b6acb729282f1056860bc16242da9fedb2e0a26c2bb8485d1ec78cfccc45980b332f16b331a2ca2c90ec38612babea7ae94d");
         bigint8_t e("a6b6836f2ff7266120779fa67b5e4663cce025b16ce02864819d1a6ef480282adfa8844e290594dac85aa91e3efb8d3af0292f4401d18d5c34a652d9e5eafebe6a8330c67004e4649c2a742a439ae9a9a530c1b060238f0521a244e581580bd9fd7b2261b3f5e173ad078a31");
         bigint8_t d("23e28b6c311d1273ede5f035fd6ef4bfdde1602b1ac633e4c0bd76f0fead6b16559854a8c4e22cbebe094647af7461d8f48a6b3fdae287ff605cb0802292b47f59b0e5a5f0c3cf0950e4883fe62c7498c4cc2ff1683a2f911d42265311651aaf7075e79eedc4167421fc1bd06f048ea8892d67672724612230ce866921c48ed1");
@@ -3762,7 +3700,7 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 21*/
+        
         bigint8_t n("c808f0ecab4b7ed4a221296651aaa1198325e6a84c831cfa575e7197b26a2c88803a8219dfd4b1375a2725624e4117a775174328ca3ac6f79e512a021c2fcc13cc9fc854e41842c20a837b27c6e282fc11e40a3535121f0d314a50d0ea5df1c3723e0185474c073e17587ca0489b8c795aee3eaf0428fab71623f86b4efc6a93");
         bigint8_t e("2bbefc263e208c3b464aa3728f017932d188a998a10dd18480242453d81985e859cf4060eb9b613400d6aa81313430c0359314430cee62f354d83b1751dc39e358b0239f9e59ceff6db2e18f02e6ecc0d5fbbd09a662bf76ece012141620bcddbdd20a798d11ed9a302f82d5");
         bigint8_t d("07f5bdae6528c0e55abfb79f96aa63f748efc95c05e406b067e309aeccf62d4e7fc27839c0ec54ecfef42890e211af4bd23010e9445585dcae485d91108eff679ec8d578bfe06f475a5fc3772d37ac205b5abbda1a903c4e19f4d3172197d94a2f342009ca3cd307c0eb0456c91f2782193be1c8891a6411c5780ce7f2fb551d");
@@ -3774,7 +3712,7 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 22*/
+        
         bigint8_t n("ce5b881879dac0e0cdc0c86279e0cb930e56f396190cd5e4b23c1d48b22ca6d5c1f4ceaab5806c03e18351974dcd07822094b0d99c76abb45b79a302e428d621858a0997ea8e2b254cb494c5ecc404781b0d6db70bc8373f21656c862cd70d2ec616f7bcd808ac2e3c346c33f99dd80d188d659ea22404505bfccb3844861eb3");
         bigint8_t e("74dfc453110baeb77206b4c8d50f315f36b15a1de4687a971fa8f0f0ace78b1f0ce3833c0732a1e13feda7319eb8e4637598758e3ff0262a9cb0f8ebab4d7f84d2361ff6f67a5077d53ec036950502e6378b4bbe0f9484746d69dec6d731592ec1831137c1cad42f3ce660b");
         bigint8_t d("401a65cfad9dbbcc9517c8fff3d8df2f1c8e49086b31fbb69263373f00902df13f5d564829e976c8cf3172e3b7a9e8da7dc9468b0e3a339c25699aa8beed58cfbebb2d8169a8ca2d43d902fac5fcd4168fc668cdaa7ac19b8ccf1f980c83d4612dfefe95c655dd2d44ddcdab795eaf541ffa68647bb0f289abaf6bc3df9e87eb");
@@ -3785,48 +3723,18 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
         test(n, e, d, c, k);
     }
 
+    //{        
+        //n = e30789a24f07e1c958ebbb76d3512a6f59521fd56d26e5cd090f37b3fbd4375f2d0dd52b0138c7c4becc90f113e02e33ec976f39ac6baab1f9f80b1baa7544231746beff105323da123e5815052a90169eeb465ce973f25e5a6d124b77685b75d3e2e764f627efb32f63649c2df96fa4d99885dc30b9ac3d37d5dd851b71330d
+        //e = 38866527c4c4e12b06f42473e3e3dbeb562f771c1638122087011d7d22b2408959bbb1563c55124d43e54d3fbcc1914cd32b96d0e6721ab8e35cbd1f85927a3a538abb4968f9244700df6720ded241f514d48cd668d282470e7d6f543300731dd31d29616bee987bad9326d9
+        //d = 2f4da1568038e4b1408b2f9d94a229665df873ad38b1c7f0d1df619a13cbbec368283539660cc2217d97ce1c1460718d1478da990ece59ced6edb7bc786883e7369c83a009acf38a2d1eb6643511dc13d9e889fbbd7562e49d22f51a69c957bc4a5a30668e092b2bcd88d2b4b8869272fba0068068e49d8907cece5173a0e403
+        //c = b6782051716f0677b2cbd5a69704b2b99e712765b80dd41b9f7a622f6a46b9395f6e73bc0820900589c56b56303fec444e6f005e45fb460fe34e0cc6eee0795300b70b95952e455263f5a166ea59cc204bc512e95d891726fedbc960a71b92a2445cd223421f8c25e961601decd9b9143e7b474d2840b02899298246bd826dee
+        //Result = Pass
+        //k = 258552b857b95bf5f4f2db3224973380799ae77e062004e25b87fad17706d5d9ec5762789e0197d9b9fffbe8ba60a4cda0b35df9562ac4a8e19ba86832b386328c07a1f663ec8477f7d14295dbfb918fe6f25ca0724b618852c290a2e3f66abf72170560c8e1687fb8104c68c720c78f552d62d6b25890b6afee769ac9e5d6e8
+    //}
+
+       
     {
-        /*COUNT = 23
-        n = e30789a24f07e1c958ebbb76d3512a6f59521fd56d26e5cd090f37b3fbd4375f2d0dd52b0138c7c4becc90f113e02e33ec976f39ac6baab1f9f80b1baa7544231746beff105323da123e5815052a90169eeb465ce973f25e5a6d124b77685b75d3e2e764f627efb32f63649c2df96fa4d99885dc30b9ac3d37d5dd851b71330d
-        e = 38866527c4c4e12b06f42473e3e3dbeb562f771c1638122087011d7d22b2408959bbb1563c55124d43e54d3fbcc1914cd32b96d0e6721ab8e35cbd1f85927a3a538abb4968f9244700df6720ded241f514d48cd668d282470e7d6f543300731dd31d29616bee987bad9326d9
-        d = 2f4da1568038e4b1408b2f9d94a229665df873ad38b1c7f0d1df619a13cbbec368283539660cc2217d97ce1c1460718d1478da990ece59ced6edb7bc786883e7369c83a009acf38a2d1eb6643511dc13d9e889fbbd7562e49d22f51a69c957bc4a5a30668e092b2bcd88d2b4b8869272fba0068068e49d8907cece5173a0e403
-        c = b6782051716f0677b2cbd5a69704b2b99e712765b80dd41b9f7a622f6a46b9395f6e73bc0820900589c56b56303fec444e6f005e45fb460fe34e0cc6eee0795300b70b95952e455263f5a166ea59cc204bc512e95d891726fedbc960a71b92a2445cd223421f8c25e961601decd9b9143e7b474d2840b02899298246bd826dee
-        Result = Pass
-        k = 258552b857b95bf5f4f2db3224973380799ae77e062004e25b87fad17706d5d9ec5762789e0197d9b9fffbe8ba60a4cda0b35df9562ac4a8e19ba86832b386328c07a1f663ec8477f7d14295dbfb918fe6f25ca0724b618852c290a2e3f66abf72170560c8e1687fb8104c68c720c78f552d62d6b25890b6afee769ac9e5d6e8*/
-    }
-
-    {
-        /*COUNT = 24*/
-
-        /*bigint8_t n = a36898249faf8aee7593baf1a4a8d48d783e09c377289f15a6c3a62192901bd3455d3f412a783c5f18f2101c287ac374ee3f6d766d8fdfd99794a322dc6cc942483c1557b6869f43d50d236f01b1a4a117f012139774679cb1e0e4e0fd6c5c5c430248baab152c65797d21fcb94a10482f8ed72f59995cec37b7263053718613
-            bigint8_t e = b159561acbac2b40fa425172dce1201fc91587f5ff35915e02e703e6664a81c75f0cce6b84a46df22cda754111e41bb954a8d8fca0cbe02a2c2bd78959a1fc28bd70d015b5f041742592382120f4b931590f8f38fe728b162a99ab77958e8b92f7833feab3b306372e1c1d4b
-            bigint8_t d =
-        3d3ddebeee22136f80467c5fc1e9c33ea7aae7c11f96600fdee8356f7b325e657c92f44a636059fb482b7f0a01bd50c54e5977ec0cbbf8e28298369a79bed920a8dbf92ca6daeb6106a4b3bab8697cad5794a3092e97570d37d553a5619f8785674567b674fb2be7fcfbcd377d2c449191093f60805abbad0f1fa3c8efc5f7a3 bigint8_t c =
-        bf904e340d13c0269f65f160cb967f99b843617ac0696f0b197a256cb5b1a4c566a3f97f4618a2b556184ee56549e5ec3478c831d7755a205e24bfdab5d1e42ac9c4bfbcec15d8897bc20896beff80de0fcd0e8c3fce9c6e3558faa7d8c8dda430192751c7b5688c568aa5da9d615958936bbaf5bf1d3ddfe63e5c3be63f9719 Result = Fail*/
-    }
-
-    {
-        /*COUNT = 25
-
-        n = c68c0ca6bd889aa0776681d49168bd72e36c48917755df4a910681bd104b6be44f0e9ca187a94f0fe53970365d888bea8da738d88be8741869b2a7d644ffc7ccb3c7ca9673d9d239e93ef7408e1a61573ffb5f0de94dd2bd7ca2d946413ae6554244f1b6d7b72910c6e59801458f12b974716a2f78ab59bad64cb7cddd18a9cf
-        e = 3f2b3682fd25ff3331838e0ab6fc7bbc24911fc722dfc5d1f96be4bb60508bd82f5d3e632e0432fe270354268f85c9159e4555f8590fb86e4d60004ef73438e0bcd58aeaf52d7c0f49c1b5a43231638a3318ae2fc05a51372a620cc238ed13afb69fb96dbb13b38b2bab98c3
-        d = 1a0d98e729059a750f63918bd108bddece80e1d9f8626ec6506514870ae68a4701646955dd915a154813d10763a9de1c801879092984e5adbfa6dee84600af28504fcd357686e38e870a71872789cd82adfe4301a39adc52a03b1d38e54771d8dc902ef34643c0ee8b5d833d1064f647e7700f674c5f68c85abb12c3529aef8b
-        c = d107422826d0d4f288a59fedc2b766e1473fccf773b5b9831443ff2129793e03ea420589081739123572bb13e7864566592d95e4d322ce352c701be78d2a95be775d674b08432fc07ab9a803ecf38701656fa245162757c9df0b2c0c15aeb3648340b196aebc7ea45e62afe65968f35c72ed3b43c22e1ee636fc7bb74a6e609e
-        Result = Fail*/
-    }
-
-    {
-        /*COUNT = 26
-
-        n = a9e491d3eb68230a1659151c6fc8ecc0297eeb628e5fa0fb1e95099d9d67e3e1288ade458970dbfe4654e002616980d7c9018262039991c76389e0bff8473b9a64555de7e9e1e527a512480f4abca07765e735cc67530715a4b1f3681946c9a5d4e8e92b3340e6b5b53853ec595ad39f7d10124d958aaf458804a994172bda69
-        e = af10e3af7480716fa3522cc1ad41850d220d88cfa58356238787727ff30d3f07ad374726f5b37c28ae5bbdb877ef4346014be026aab26d94cd1262bb14fc99b5e1d2b8730f8408e50c050fb2d514038a07e5b36cd57db13bcc76f50777808166e893761d9d926b234f0c6c7
-        d = 28bdb819ec93f05838823358cdad75e276cdd2c27ecb855d4f7da6b92b2a14a269674f7fbcc28b898a301331afe98985ceb8ad950d42dd93ffff7a9510e3a914fecda633cd30e6eb040a56b8b560f427a402fd56fc957ea1aee8196eadf55b295751eff660a33e695a205b9beead0b529febb446fe7e621834c1b3bc747052f3
-        c = bf64eb657b9b469566a5030850658c4e119ea8e7c3584dbe2e86b6f384e5b4dd4f274950a751731ba86246d523353dda94a8d29054fe4cef1082d9407a6ddc243e0a88d93818aeb9e470d30316e886deeb76f19bff99ad3be0f4db31c33c70697655d08896b89f760218d31a8f450e64fe502c912bf017aa8624e34ec71a17b2
-        Result = Fail*/
-    }
-
-    {
-        /*COUNT = 27*/
+     
         bigint8_t n("b0e1efdb536c975763911df7eeb139cdafae27c5ea29610955638ec4da6dfe86d2a9dd2bd7c93514a51bdac4f74457255077d1911558b714f91c10749242708759defa3ba10964fa180e7690d475773c5fff4240f0feed247e1cbcc732c214b582716c58d5e07c6b8ae22aeb0c75bbd798203d459847aae06c5b8a5c7c4fc249");
         bigint8_t e("b6f97acab38255ba1e1811ac2944a9ff08e89db629787fe8322a2a72898fecd06210c28e5ee1450ea4848e9e1851c7f17e3779eb4cb7d4f270b6de12e05c36356f1cc00b8be098cf36a0380ea55a553ccf6e2ea16caa6f39e89c1a581a13c8e9e03e345bf4d284229a456d03");
         bigint8_t d("0215d844c912d19149979c498f997b8660790157541071cc63fb21f284e0abb8275528c0e2879e832b7a87742573f22df8fb668a103b775c0ff69785dff3dbe5420d24ce3ebeb1922d02bd6e6cd5a3e1b12b3bc71d8cd3efeda287f40073eb49b1e69f30330a2d00dc8a12342466bd6622b5f26e363213c0c8afd8092fc2b9ab");
@@ -3837,18 +3745,9 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
         test(n, e, d, c, k);
     }
 
-    {
-        /*COUNT = 28
-
-        n = a9fb028552262e880332309d34ac90bad8d26b60974ebde5f4eabd868baf81e4fd04d188fb2c88aacb388d3764bfa0ea233853e4e9a1d38789b09ba9571c8e7379cf75e6b6dc9426da036e0609826f5c5efa4e4ef6ba69087384c30fc569f9511336f8f3dcc59294ae6baf93b14e315e753cb592a4904456344bcc31f7aa2edd
-        e = ca6fc10dc3915fd64289ab032c02ec2b22d4820b4f4fdecdd1710819efb6a90af512229b957430f0630a7bdb7d22b3c999dcc0988bead88aeaa11ca5025d716183f6233d354e2e10eee029fe60594fe3218dc5fe0407fd0821270afb10a34c22e57aae3591d9c345f069ae41
-        d = 0ff05e75e56e571b4362b84d377670788e53144ebbbfa90ebdc0a57a2cb058940592fd03cb5fe548ba6be9dba4c21e5ee68b09b1ef994d2eceae44df3cd9283bf9e40765aacf41d0b4bd29c5b3466e43e1be31fc31c78d0833c3ae6c979ff33dfb3fe9f70748515f19dde54ec628eb4ca08201b4dbff7fb01a79be5677f2411f
-        c = f51cae56fb219dd6d3d124b60fc788f83bacdb3813a0ce31f3dcc6838e9632b4e3251b746d66fc259a5ed59a7f217b1fcaf232baf8ab7db1c860354cef3fd9dc0dba25fce0e9e617b7290c2b2a0a01cc0968396b92d70bd8e745bf06bfdae80f5b23f477bc7001b5137af2ef7949c206e05519d249ec1daf38d38b3865300652
-        Result = Fail*/
-    }
+    
 
     {
-        /*COUNT = 29*/
         bigint8_t n("89a93f490bafacf6e029b8f9cc3af75a5d59664aaf5dfdc8adb6b0cb5afaf7f6389745efe9a00dbf0256fd128a660a0a8bfbc822e9c80de806d6ea31f3f521f80bde9e52ebc108e2ae07797f20f33adadbe23c16b241158ec81b29e1f789664a8900c4f5ba6e564315ae2c0fd91d3ec3eca88bddef42e3e0abf02494360d9bf5");
         bigint8_t e("229a853be5558da54d189215b844fb02b2e27026f80c7c99d2c6404c40a2dda986050e33e926ef7c0fa60c32f92a04dc7bb706d52fbaa8d616ab8d1c139fedfcb334646bb7422dd3d2b45dc4699940c5599a8dbfcb983cae10f7202f7d62bfe612e6cc8013c743e33f50fbe3");
         bigint8_t d("308df6730957fb2e41cb1e1be1b8cc5cc8ca79aaf767102aae845b9d3c6cdc0f5d10f14597765b9dd761dfe72d55162d78609288ee68b7c3543b242c8153a8151400326078a30be68ac33ca99ae94d42ef004685c539251a9afdc5f5ca8cad0e681197a375dc3d860579b95303a8173e2cbaddad4181e1e101a9794f87a49bfd");
@@ -3859,9 +3758,9 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
         test(n, e, d, c, k);
     }
 
-    /*[mod = 2048]*/
+    
     {
-        /*COUNT = 0*/
+        
         bigint8_t n("d9a098da000ac58efb7d6c989b7468444d369d9865eec8696a4bc54ef47f4d04bb5fb531134d9edc1254c9665f96462c190a1c47ccf970b3a00a922a37e5ceb548ad638c425ee96310db234a97ed04342de813b5b6a4eb1ace5fef5b0c22e2330e4f285a76fb3d955ef13df1e2288c7e8974220f773b436029e5a8b03f7c9d1c"
                     "8743ad2e6edab6604fae212244039c0bc2dffe1fb8a37fa8b935fb314764c76f5aba87e9d5466ec413ce3a72af0eebd0b483f2c298b35248538823d527f40e221557c8b25257a131adc7f81adf9b481c8c24405356ea42009676bd6606e7fede6b76a6a264a97507f15f0f12dec9d7bd473af9e0ae86399cf1f2d4021f13325"
                     "d");
@@ -3881,36 +3780,9 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
         test(n, e, d, c, k);
     }
 
-    /*COUNT = 1*/
-
+     
     {
-        /*n =
-        afd168888b0933005db34786b2ef519b1f66cf637379d68ac563305bb391ce351750f7ca2dbe2d83bbd58fa1c85a0cc5b1781740326e16519c238214130826f1d125d8f48d40112626234d587a110d7aa802ee7e834ebb5f395088abd57b875eafbe67dd5de0043c7c06671a066ed58357536351c8fcf1e46b1abc7db17d18a1b625add8f2003271accbf65c60de19e0bc7d26aa609fc5ebd2457e1d214124e05a300fca82129fce10c9876db0308260419f6df2182d13c220b1ad4f28762eb7cf1d4abb55c5d1255d827631822d30fdacee44f0f9793029c89e6db2c42d18572c3aba967211a2cb40d44cabc63c52841f2413129013ec327f3428f62fa29463
-        e =
-        85b68e7b34fc67bb6920450e2df4f23d3ea4fcb79dafee132f1fdc6362487cdb8e096075002cd127919d2bf8e626ce9351ce6596af5ac8d9a4b43d785f853e37058ff14e98a891bfe23a123d6d8bcfefad77a2b4a89234ca90a2722bea810bc4b75fab7a7f41640a8ddd2784ccdfbda5ba725b2a65fc140862242314d427e9c1f04b4bdacb3678caac0e5742f317f8a3f97460ce79e69c3bfd0cd204dbb8b53292170bedf78370d15167af1356c9c02493ee86eea9cc46ea209752cd4a8e9c1dff1fbd5cd3a11d6db29c0bd80846b58c90de4b7a3cab1a87aa821812c5f53b51ed7a7bb91c44c7cb39a21807
-        d =
-        17ca814c96eb33022139ae6f02e8d4561f81a3861b8d330c3d03eb1d5bb3337231a9c57b00831610ec3c548fab73240f34654d90d07b2b7c73eed189aebb988191fde2f5b4ead9eb40f2c1356bd0aac278268869d10809778652485d1157664147d72e6e07cacb2e8ce855831188cdd7cc3cb5f8c96d37ff3d87a88976a2625eeb6a28f6df8e2311da391dd2e92cd7a72ef0390785566d896b665f78fd3e93bfc70169ac0993940c5e318ce4024262c59aa26d085d28fe8cd4f6adf2b1d3ae71ad5194da7ee7700242139dd3fa69db970355ec082098a0a47690b42a691b1e95a86949c27ea674e6211f4ffb79a2b36f897d7e21cff3aa36e72ccba96e33b6af
-        c =
-        be0c23c657a95073f42526575804a7b8c45537c0c7370923589cd702224dd60e1f2fe9f068c414e94cf434b59f0eeeb6540ae64e4f11318d743f0c0c04a7ce1829971b13cf1e5b18b6cc6adec5b991dfa2c8b6b97f2dcfd4372d9d45992596f203ce23f734bf0b495b342f99730d797cd31a0fc80195cc41c8f0f0758ad216e4d75c67643db00ec462b4ebb051138cd4128559457d510e1c4f106f647eb33736cac7512295f84ad1f4d407e906d2b3318593fcf69a677fadf61380d91ed2df2f069947f8e29fa9b8391de90d3b52d7d954cb60a301e1063be3838d9d1236f718b359b3b0cdae12c05816fae4979cde15a8b5ed165ac68a103ee7fd7901e76839
-        Result = Fail*/
-    }
-
-    {
-        /*COUNT = 2*/
-
-        /*    n =
-           add4fa4a8739880df5f0d447c31703060fb5fb595eb67930891cc12695080f46979e9330e87a210f994264dcad9a3a305e4d918281d1c99588ca7bbff75eb06225381499b8c1a15a79f34a4532b70e14f8e442f3151fb0b76fc6013db13c4ed695920709ae895c92719c240045b795bc91614138a95366987484277561cbefd82416361cc94790b6e4c224924fa6b3dc086d66601152536df76c070253d9f8c2efbe6adba06bb7c164c11d050a16a58a7ffb383159e9f4198e508be04a5de7e0a03d0a5a3610ffc20486e2c67aa4c8e421e4107aa084533fb8522555d58ab90c97e307711d36bac1aa16bc4fe98ea366dce234101770b2ed27ab102fa3138b1d
-                e =
-           15d43816a242725e744bed006ed70043d083bdb1bd5c2b3ad84901915b6223ef2e95d74f2ee264bdae384039aa14176157ac3f6786bd9b5905e552789f0c175b82d7fbe0ac5532058af0132d6f3c823871fd4738e81b27c03c76f499facfc4cb1fe997787aac104f0d2126b4d376bf701e7340285227d8e4d09d72519aa58dce758b866da9f66e5878b0c223a236633f5847e914a06115b57894041e7ac075453929e4fd0d86e55e3f0a94b0c1a690be0c431229565b50e81ed2086329251755f640480fc97ed4020a652182079ed1bacf64d8165f18c68c5e57c1fe56a08ef4a5404e1f715227e985292599
-                d =
-           22619aecf5cef47da45b6573192b4fd33756e0c1e0cd99249c878dd3a4ac8e0dc47151e488e3eef56f2035a9e16ca6c40ec84e662ebee80173219dd5c14c60580696d2fdc33e83be379e77cfaea3342682ec6e9d23e45898e6cf84185b6069c5aa7a15028bfc78e7dd49250f3751790b4713eb2d96bef5e5112884b8446b69d9dfec28b2250a9c8c467e7896c0f67f111431dd2c318a365b11d4b58e6b4130d0724c7684c585126fea00472bdd272e7480e630e6417426cce6dd96e778a641e36a3be11fe69f27a45342659ddc23597c640f100303a53f9adbae0e2e1a1e57098f87ea3dbb061ec364018feff7fd8bade78935a64df10438f935dd520a1fbab9
-                c =
-           f1e607554bfba5280667c5dcf2cf4958a67d274b67b06d1d4b3682259d3dae1c8467dcd1e01c9f1f7524741c4b754794544938b650749e0ceef54cb134cb14be200a8a05902d0a025faefd0ed1d457d631cd640cb8fcc55cb194b6a2db66925a0ff7985722d6efb90d2ce8194b958406832e36b567f0e9f4dc3c45605bb62ed897578e3160be552bc7c7bea4835fd30c9397331925f713bcb71483537c64f2200152f5fa108e4442d5a705193fdb4ed0a92ee5a0bab94a9c8945f7e30518e61a950f541afbedc5e57ef348df48b1fc3b0d1bd3b3eddf967c9cf62979c07911af9ab733f9e984defc0bd40c5e6688e533068785b88711ff443650a27b73307bc5
-                Result = Fail*/
-    }
-
-    {
-        /*COUNT = 3*/
+   
         bigint8_t n("dacf6b379186d92a38e18adf394dd56b2cfdbdb41b22d7c4c6171bc994df4d37edfcbc58f25a6ebf9ce9c4e979ca750f5a5243fcedcf97fbb6c78721028a1b6d6b6ce82d336dc1d8227531fd33103f3166d82fa55e5402459b12f79433c2390078e593a62493ec863622613a9bcba7fbdc09611decc074e4e46a8b657cfeb640"
                     "c43c3f2a6d89ebc797fa0ee76eb782145e8a983eb6f63d4613087b5c8f5a025bfd3580887a6bc3215ffbfb594a3dfde21fc07c8813ff97ff5613d26e4b6f0db333bb706b2194718e86aa22238d64517732b9cb6a203a9937bc960b0e81d695ceff4b1c52120d6905e010a7b191c9caffa2da694faa6e8c3cbe41660de6f46e9"
                     "3");
@@ -3931,7 +3803,7 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 4*/
+   
         bigint8_t n("a2ba78dacf4a1b12888bd52b7eb4af5736a5f578337642ce72fc33bbc4ae1cb195f56c8158feb16c732d841e840ca1cffe799222849298605356d38ca6f057d1cc8fd8a5fd7775b792aa9c24edbd2c73d848d13f15dd48884b67ddc5d082283cfa43d72bdc4c36a48aad2543508f1fad909554e5da069472c92da84d5f004d79"
                     "4c8f743046c5b516d11f4870d8e1cc4e18a97e48350624aba96136435e7460c9b7e498c36a94ddda52a317a41958d5e1f14286e5cd31718e59bb1aaa7c100e812e68cae3cae7dcd5164b22d4bc84c52e9b95749874cc3d9dcbb98582170d5279425cbc8143d3d96141fac99bcdaf34d880557a531f359de2de618a5a87f969f"
                     "7");
@@ -3952,7 +3824,7 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 5*/
+     
         bigint8_t n("c13dd5aa8d4697085ef847d809956cd8fa2c7057f206713ce61a3a1c7a56aea2a00e07d46a04479646e0f6cd306646658b5dbafb209036a0e9f61766d83a51cb6f45d7b38ef7be5483fe46b2b80a50b80737d8fa1f7f9987f0e2bad6f3fb5d8b8a4e7fdbfc29e4496c423f675872d17c307c016b4123a7c813ab507aa0bae63b"
                     "6e23157b08191b1afaa11e85b8208a0bd4a14795ecde7608feb1f51d0da6171b2e2c8e4fa625c629a5b5eaef65a0a71a6c08bdd8a3cb2e9d1eb4c4584689da81fd2106e349df8cf8f50fe9cecc709e1462e3270cc9f934223ce463bf955cd68e36502a059895d9c45fc0d5029dc009d3b629380ee7477a1236064e014241dae"
                     "1");
@@ -3973,7 +3845,7 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 6*/
+        //COUNT = 6
         bigint8_t n("ba1faaa97aabcb0b18afdf3d1f5d67ab589c9442f24f8ce53f55260eb8d6ed1ba72d102d4a8306ce089810aa55df9874b4d85d57672e11816ef895d6754aeed7baa1805a7c94135678a0f80ed3858c2d5e60b331c1ee648c064deea2278e3c83c38a318796bccd5293ad99845bb2dff97d7a5c27c7fed5b892dfa0da9c231ad6"
                     "7ec374f86aba1ebec52b3104a1c9aa294430f639bfa6d26e8112a17866eadf3ea4b437ecae54f4203bd40dc2d196969079a74e9d20e3d69a4a5eebed2bf4e1a92c254ec04341c8c84212d6dd28a5293946c09fdbad4ea0953a43f29372b4f24a98740937ac93144c7095feff2a7833f58bb268bc55528d49b45a4307febf659"
                     "b");
@@ -3994,7 +3866,7 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 7*/
+        //COUNT = 7
         bigint8_t n("bee45e6ca63b88af2c7c4010eefc78ed53c112ee43f0ed6c3289ed4e5ac04014b9e6c9b8d3922c14ef77ad05c0c7853eb084ead872df7d7a4d0cf6eff52914677ce5b0e5ee703d17028cb7e7e6b381748b4b5eb7adafea963c0c5efabda0ab2f2bcdbf97ec6aa8f631235479e54314ba97c538895b750e7eb558c4d673716ba8"
                     "45fbbf7184062dc8f1c839f1a266b698934133f7b633fc75ebba50487165910dd43087585378cc0aef6317cc3ae59598c9f569c88c26d02afde784d0430461120b73577f0ae868b2be68bfd18a95af50167e759afdd787d80a96805d7aba0419e1ea89415c51cd056ed66a20d188e366cff495354cb6b4e3f18d0881aab58a3"
                     "7");
@@ -4015,7 +3887,7 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 8*/
+        //COUNT = 8
         bigint8_t n("d37689a77d930ac8a12af47830e94b62e4ac68d670deeebd675ddabe059b5dd1a788828783891cedac28813e069a3f417c6eaebfa6090b5e0e10526d859b46de9ebd0e760c579a83669ce25622306a8e7090916dbf7c40b1b03fc013cd0198a8ae78838c00b8e90cc9d2343095635810f546b9332175fb857b57b88fcf3a56ff"
                     "506e9c81cf7c11caae57044ed2808adf37a15302651e389a1d94ff4c7f30ca1ec481a8f72b94101d36914e8f3482adf9928b7238661f85ce087f7354ce3dbc1924173bb603d08160bc00b8304f81be0470e221c503c2b4ca5dc3d1c751105944ff2428382d000aa2a20db754cfa224c91368aeda229fb73842aa08ebfd27551"
                     "d");
@@ -4036,7 +3908,7 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 9*/
+        //COUNT = 9
         bigint8_t n("cab0e5eb5d84ff2bf60980815098f51fa06eda89b32b330b43fe15f4c14fbf72e3ce364fa107e9f86dafd3decb14f817f37d71c7c94d0fe11823e842117c01b48445a5c5d40d091334f8b7939868f6e1545c1f7153718cf8bd0b4b953e582bde07061f81a0940f3846f97621f8a459b234f2cab4e0ef3f35074c894b514fcc81"
                     "b7ebc337ebc70a7ec53f4e8425b5e6b367c463ee6467ba73095f75414035a06ed614544cdae9eae9d22a84e9870688d38f29e178c685833a5d899e6fd1aa6d316d3d5cfb716521222566952f9097ef2e4d946956ac52d8e6ea48f98294884871c361ca877b304aebcca85c234e08279736e4e890f1a2e45a466ea622f26a231"
                     "3");
@@ -4057,7 +3929,7 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 10*/
+        //COUNT = 10
         bigint8_t n("b39b390eb567e531a8a9a4616a45dce89b9a3fd3e9bc592bb83211374c9eaef8ee45ffce12138b095514b65b859a034f6c296f25f168a8c23a7c144362675b488fed726b7ed1cd99a2bb4a41c05ff6954883be8110e80f753d39543f291c3027125d07c3f337cc2c43d6d7c1e2c83624d7a17f25ad1d1b7737bd022248c406e7"
                     "ac028746d31257fa390ce506d8e13fa4ed3dcc69b63ec495fbd6ab67cdf33e657d97a792673d1e94c88a2a87618dc21bb6d72779d546d47f2b5ff4f8e3734a3c4e7238d7a4c6701990df7eb9a6a15f42c2f6728b6c8db7fda5b16303ea7bc3bc803a9689891b98d37930aa0c137ee73db52d9b3fb35840e90f306ae51262b00"
                     "1");
@@ -4078,7 +3950,7 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 11*/
+        //COUNT = 11
         bigint8_t n("bd36ab9135d9297c1822cd7d37e8431e2cd4a892fc86b347861fa433abeababa2cadccde47642f20350ecab36f4d352913780d55f53b32e5fe21e402dbe7b462495e682aa5ee3e438f498b09492b16beef675c8478f552f478c560e2e42d97806a9ef2aa56acbca322cc629c2529c9b6880b467f2d843c21f0f623c8ccd4475b"
                     "9cfdf099f99f801a422e2fbeb336e5f569835833241850c66567355d5a74b389a0b7bd11b6cd3a8728e0f12e6323ccc030759fc972ee643294a0e424e224073d0e6a2299afdcebcd3a254726b30e276b2f89d508368aed69f6d1f83f16abeb7d26fb811516472b72162b4cb92a295cbde9293b6a39886b7f0676c55bbce0f55"
                     "7");
@@ -4099,7 +3971,7 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 12*/
+        // COUNT = 12
         bigint8_t n("da1e6ca4f885c8f90aedca0ff72ecdd8782d2c78f4c7f4ba488fc23b701ec01ad0276e37037d84f8317052da21992ac321607289e93a2fc4c23508395af069e6af08d256e472e8e87ba19b6018cca36a916fd9175bcdc4089706f83a7240f757044bd125cadd0b3dc17152e30b63281fb9560d3f05de91dc444edb3fca14a282"
                     "33ddfb086307c551c62ef2ce71b9cb9993747322a1c6d9d6372ffe4ff44b0b92be88173cc3291c2f9096bd69d141ecc59fa08085d8773f014760ab1dd8175190841d5baca2c72dcde8fa2c8a3a018ec905c53006c79fb0e4666057b125a0590aa919676adf832367e1d9546d2705f739d84f0413b4b7e32112e99ce0b2925ce"
                     "5");
@@ -4120,7 +3992,7 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 13*/
+        // COUNT = 13
         bigint8_t n("90cd69af72c6e77b5c6137f2cef9a39773b26cdb04e77b4a1a7621c23f60255c795ddfa893e1b810eb8cc591fffe9d6dbbe06599bcd4c2297bc73293ea074bf35781fe24684dba05805edf2b4ea3e293d6706436d8f867e3883f6d2b5381ac8c6d206e8f49bbcc052e06c5106af30e17400d81c8de72860f9b878f96ea12365e"
                     "063b8f967d667447328681cc4a9a0323e8597300f24cb8cec6c6291fabf39c427e2698280d457813d28fea30323198ca78c9568669d78744ef4c87d105e75c64638b7b5de28b3e0d5083d4f92d84adcb31e1c4dd839fe2911f1bcb7e1da102428a78c3d8b5a3a2be1a9ea033955210fb0d0a0784a102255686e43c5c259241b"
                     "9");
@@ -4141,63 +4013,47 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 14*
+        //COUNT = 14
 
-        n =
-        d61c70c1d95d144b07dfc8cb9bdafdc0bf47fe948fdc29365d3f129b53dc0b94129eb0f19030faac918e38b61521a944d84d9bda2111ba523cf7b5848e216bec4a149119c72aa24c5f0ae7c6597aea87dd1ff8c40ff168570602b4b8ad01e80d4f97820ac3ed979d898adebc348eb022ecc66f8b952f9e124e886b2035a91e54688d9a177e4183dcc3a9bf1349899cc8445a908f9fb4d6b698dc45f734bb43c3db07ff9e8d9342fc629ae0451bc41738eeb30fce79fc903b1006f58e2e22a8585f9c080f560deed22fe4894d388dffe07ef572b0345fb3fc07a241f73882e8f74eaa3e4557fcab444bb8808f016cc1b8273666d8c48490362027eab709806393
-        e =
-        4f1a10816ac1774f7032d1fead8293b85a4bffcfdc7238c1ad3cafc862c0f3b637ad578e10f4f46097ddb45022ab30786dd565d650290f9d85d0c38ee9ca5705b07d54dc4f9ac1534d437324b6bb5e3b9506b364ef6471a773b022bd9a0b5d0b02f1af786463b065a6c3b762da11ce3357fed0e0582bea5007e8872d225cb9475b7ac79c38edecd5dd38da0cf5f00a957d87468bd77bc54ea8786166297fe67302a182e934acbabe49121d1c0c0b811a1dd68b3ca9ddc401158b3bb5a639b92441b91c6e976424abbc94834a3f1c6659cf21c7f9681ed35e6e8294cd0cd171e45c3c531354183be66506c155
-        d =
-        08be6d66ca7bf007f4137309cff63cb84caf1c125b3912a1cc4b749444bf4e491454aa28cd578c7b4e2d54bcb9f1ebc65c67a67954ad75e823f1bd76d48db5c422a10ddef0d8eb0d56ca7f0c9f89904dd5abf9004b781575e5eddb97a9972d9547941c4e0623a1ad15e0ab92db71f78ae567c02619449667d2c60156bc9e00d2360747c3a3a660b0c78c9f85626e3b50cd7cbae7e6b875913876ea1fb55406de167b747ff8250e8ed4e0e2443d8da05c9a89f858ed10deffdf2b98515ba79c48077697253435ed18a9cebc5b36dd7c72fb6f8510a59b412e44bb8477c3e0439346b829887be238f61d278aa7b441f44c832ef39fd0dd1dbb1b37ba502a76c009
-        c =
-        de6a71c63591b31f166ce57e57c9aec1f4030dba0426ee77eb54fcc7d068b7f952d8c6e776e08e34e4dd03d154f7bec64302512feaa6d78470becf1e5fff2af755daa2b2fca34edb3bf2736fae4a9e9f54f8efd1883eb8e833b147c53fe0ff0d4f36ae2dad221a9c8374dd604f0b73d491ad92a8c636b9299af50cc35a535fc4a8b5916272a41b00252ce8ad1d8168ee61e9e0bd8dd504d10f51c720969f72a3c81ff3593473788e87df3d5d02f6a2742b738117c365be68f98f20e5dd0e5f32173c7e19d9d55acf12588478e5b04cee59141ebe522c1274c075be1916e64ff9fed4d8aa4a13e9492e5e6407adf88ce452945fbb2073267fcbcc4ac429706981
-        Result = Fail*/
+        //n =
+        //d61c70c1d95d144b07dfc8cb9bdafdc0bf47fe948fdc29365d3f129b53dc0b94129eb0f19030faac918e38b61521a944d84d9bda2111ba523cf7b5848e216bec4a149119c72aa24c5f0ae7c6597aea87dd1ff8c40ff168570602b4b8ad01e80d4f97820ac3ed979d898adebc348eb022ecc66f8b952f9e124e886b2035a91e54688d9a177e4183dcc3a9bf1349899cc8445a908f9fb4d6b698dc45f734bb43c3db07ff9e8d9342fc629ae0451bc41738eeb30fce79fc903b1006f58e2e22a8585f9c080f560deed22fe4894d388dffe07ef572b0345fb3fc07a241f73882e8f74eaa3e4557fcab444bb8808f016cc1b8273666d8c48490362027eab709806393
+        //e =
+        //4f1a10816ac1774f7032d1fead8293b85a4bffcfdc7238c1ad3cafc862c0f3b637ad578e10f4f46097ddb45022ab30786dd565d650290f9d85d0c38ee9ca5705b07d54dc4f9ac1534d437324b6bb5e3b9506b364ef6471a773b022bd9a0b5d0b02f1af786463b065a6c3b762da11ce3357fed0e0582bea5007e8872d225cb9475b7ac79c38edecd5dd38da0cf5f00a957d87468bd77bc54ea8786166297fe67302a182e934acbabe49121d1c0c0b811a1dd68b3ca9ddc401158b3bb5a639b92441b91c6e976424abbc94834a3f1c6659cf21c7f9681ed35e6e8294cd0cd171e45c3c531354183be66506c155
+        //d =
+        //08be6d66ca7bf007f4137309cff63cb84caf1c125b3912a1cc4b749444bf4e491454aa28cd578c7b4e2d54bcb9f1ebc65c67a67954ad75e823f1bd76d48db5c422a10ddef0d8eb0d56ca7f0c9f89904dd5abf9004b781575e5eddb97a9972d9547941c4e0623a1ad15e0ab92db71f78ae567c02619449667d2c60156bc9e00d2360747c3a3a660b0c78c9f85626e3b50cd7cbae7e6b875913876ea1fb55406de167b747ff8250e8ed4e0e2443d8da05c9a89f858ed10deffdf2b98515ba79c48077697253435ed18a9cebc5b36dd7c72fb6f8510a59b412e44bb8477c3e0439346b829887be238f61d278aa7b441f44c832ef39fd0dd1dbb1b37ba502a76c009
+        //c =
+        //de6a71c63591b31f166ce57e57c9aec1f4030dba0426ee77eb54fcc7d068b7f952d8c6e776e08e34e4dd03d154f7bec64302512feaa6d78470becf1e5fff2af755daa2b2fca34edb3bf2736fae4a9e9f54f8efd1883eb8e833b147c53fe0ff0d4f36ae2dad221a9c8374dd604f0b73d491ad92a8c636b9299af50cc35a535fc4a8b5916272a41b00252ce8ad1d8168ee61e9e0bd8dd504d10f51c720969f72a3c81ff3593473788e87df3d5d02f6a2742b738117c365be68f98f20e5dd0e5f32173c7e19d9d55acf12588478e5b04cee59141ebe522c1274c075be1916e64ff9fed4d8aa4a13e9492e5e6407adf88ce452945fbb2073267fcbcc4ac429706981
+        //Result = Fail
     }
 
     {
-        /*COUNT = 15
-
-        n =
-        91bf251bef75b328aead5a7152d01bceeea88e40de0336bfb75dc0e850889a6e22a63e457ccc255719d6087cfa2f16c88293c774e3bff44316a3fada996fe5a81a80134ecd1c3c8a9f914b7bc9c2e373fab41b35dfe1e74bbbfedf97b91f39aa8c5489dabdc8bb6e3a6fec63e0395160e0437a69f421032c1137dd807532fc0fc4a84a020dd00ea9527bbfec3c2821c277c8fc26095749814cdc0a661e5283648d1ef06e9b75a6bfbed01332c851a81d9cbc8ee9b7e47f5ec794b1831e302e9e52f5fbf607eb979349d9519b4936e27650509ea0bc0ef74e7fd7aec176f8341c9efcad43d55ebb7111e3548e0ddbc21c1afb3f36ad2d32101a468a8fa9a628f7
-        e =
-        c326aeaa1013cf86d4526d1c5b7b78acd6cb0532deaf2679d518cbca03db7ade6d925cace25ab5fe18bcde6e5b0333e1a6dc0ad579565f54fd92b25c8438f5fff8c0db00bdf53595d0bf5be7f8afedba0e32395dc002f9bfd98d76093081a4f0fa09a22b402060ed0de71dc051fa1204165085f81a9c53f07b83134d208d0e49dc278b0558bd0b10882f2c9bdec304684f461f50edbbb96f72b2f5c5eca85db571cd1b7c493a3be536c23a2f3db981fe77346ad82e18af85d079788536be47192081d7184aed05e2580ca16582d23e9d00a70c420000ecb8a2e25e1b057a53d20fc6153c653d77c7035bebb7
-        d =
-        32eaeb4ffc89beb539a34c4bc5ff910f29c277beb4e5613897b941b63db990bf3226f9bf6e91a1e2be63908fe1eebdb73f9d31aef783bf51a67c3336d93448b3203da6bd2fa5676e5bf3425f9cce2e90b02b55942c46acf95307fb1669b5235faa2af59cc1df5e9cca704d623bb3fbdd1340c3d09c15bbf4e2d5d6efd876bcd9ba922c0651b3546c79e71d4d9f1f1a3593be6e58ce24aaed481bc7d664678db92d757d168b63c699db22f8e6216b41c472e9d6c386583a27421ce42c5ad42f6e1f4ace9613acbbe927a95e1598fd1188946fc4f8b27b1cb023c2b61a20fa2cd7819cfc6164c86584a5735e67af7321f412e7fec8565f6d6cfb85ca02e43f028f
-        c =
-        ee4bd9ab7450472ec11ff32049b103e17710666fe6bdb0e3d44f253fd45e1366c29f666cfc507610cfd7238730a6247cad619c54a343eeb6b0bed34b6b61aac253ff0f18060eae16b44d591bd2aa591b136202e8946a8bb0560e1cc7f2d827a788b3fc36f950984756c9be6298844ac8915bc1b222f92cdaaf87273cd089351e4902564e3ddfdcab9e927ae6e8fe9e8a0f93003ab5ba7b3aa1731d326d3c7a2e7e3645e83a83214a74f2b42f2bdefd6a7553e809b67320db1518252f31bb9edf0f95f08d58030f2dc12f95c3caed116eabe3a1a68bedc3c2f4c068bd84cd4a39e56880c4ff294f5b6b92442c2bf37fa0998b52999ef00bf924b10d63ce392645
-        Result = Fail*/
+        //COUNT = 15
+        //n =
+        //91bf251bef75b328aead5a7152d01bceeea88e40de0336bfb75dc0e850889a6e22a63e457ccc255719d6087cfa2f16c88293c774e3bff44316a3fada996fe5a81a80134ecd1c3c8a9f914b7bc9c2e373fab41b35dfe1e74bbbfedf97b91f39aa8c5489dabdc8bb6e3a6fec63e0395160e0437a69f421032c1137dd807532fc0fc4a84a020dd00ea9527bbfec3c2821c277c8fc26095749814cdc0a661e5283648d1ef06e9b75a6bfbed01332c851a81d9cbc8ee9b7e47f5ec794b1831e302e9e52f5fbf607eb979349d9519b4936e27650509ea0bc0ef74e7fd7aec176f8341c9efcad43d55ebb7111e3548e0ddbc21c1afb3f36ad2d32101a468a8fa9a628f7
+        //e =
+        //c326aeaa1013cf86d4526d1c5b7b78acd6cb0532deaf2679d518cbca03db7ade6d925cace25ab5fe18bcde6e5b0333e1a6dc0ad579565f54fd92b25c8438f5fff8c0db00bdf53595d0bf5be7f8afedba0e32395dc002f9bfd98d76093081a4f0fa09a22b402060ed0de71dc051fa1204165085f81a9c53f07b83134d208d0e49dc278b0558bd0b10882f2c9bdec304684f461f50edbbb96f72b2f5c5eca85db571cd1b7c493a3be536c23a2f3db981fe77346ad82e18af85d079788536be47192081d7184aed05e2580ca16582d23e9d00a70c420000ecb8a2e25e1b057a53d20fc6153c653d77c7035bebb7
+        //d =
+        //32eaeb4ffc89beb539a34c4bc5ff910f29c277beb4e5613897b941b63db990bf3226f9bf6e91a1e2be63908fe1eebdb73f9d31aef783bf51a67c3336d93448b3203da6bd2fa5676e5bf3425f9cce2e90b02b55942c46acf95307fb1669b5235faa2af59cc1df5e9cca704d623bb3fbdd1340c3d09c15bbf4e2d5d6efd876bcd9ba922c0651b3546c79e71d4d9f1f1a3593be6e58ce24aaed481bc7d664678db92d757d168b63c699db22f8e6216b41c472e9d6c386583a27421ce42c5ad42f6e1f4ace9613acbbe927a95e1598fd1188946fc4f8b27b1cb023c2b61a20fa2cd7819cfc6164c86584a5735e67af7321f412e7fec8565f6d6cfb85ca02e43f028f
+        //c =
+        //ee4bd9ab7450472ec11ff32049b103e17710666fe6bdb0e3d44f253fd45e1366c29f666cfc507610cfd7238730a6247cad619c54a343eeb6b0bed34b6b61aac253ff0f18060eae16b44d591bd2aa591b136202e8946a8bb0560e1cc7f2d827a788b3fc36f950984756c9be6298844ac8915bc1b222f92cdaaf87273cd089351e4902564e3ddfdcab9e927ae6e8fe9e8a0f93003ab5ba7b3aa1731d326d3c7a2e7e3645e83a83214a74f2b42f2bdefd6a7553e809b67320db1518252f31bb9edf0f95f08d58030f2dc12f95c3caed116eabe3a1a68bedc3c2f4c068bd84cd4a39e56880c4ff294f5b6b92442c2bf37fa0998b52999ef00bf924b10d63ce392645
     }
 
-    {
-        /*COUNT = 16
+    {        
 
-        n =
-        84da326b6c8aa5d02621803201750014b539bedb67002f56006c0c448cd5cc7881ad5c0ed95d3dc285fea85d30db72b89182352903a88caa2b3393d6a4cd9b9d8a543dfa60d14880dd4bb806ffe632d8b3fbccd78a4d5c5f10f12b0645f2dffa924c8cd8ac85bc92555721360513726d05ad984e1ee75c5473d1d3d30c247f3871785adc4b298e4731756f208470f0efde356fbd18a1240a49e670b91aad23f07b1f343f3e5d3d6f5ddd85870ca29aeb9060810de962df81392835ce7924e537e4e456e8118c8418203c5f2b2629fc2080bf233ad1fa376b4ef367d6ea6516409014ebf515ecbe9c7ae9fed7b026ded71108a307b20596010477754223165245
-        e =
-        963e85936ae0a94a8fe3e9be076490cb5acbd51c1665b605cad96dfac7b95171609f30c9588e4dc9041928da8f46f0e1074d106fc94521d8c52069130f81cabffd9e240ba50538b684d00d277223f96880ac966479cbbcd41164a8bbd0ca43702f384bfb17cff76b2ba6ad2740e752ab3c8968104197ea873a0a2f3e13b85a655007628cf78ec8e9ebe55c6212e77a9a818a223116dc4580e22b622d6cdf1548d9c0361de30c11312a620eccc4c7480a28dbffc9a824d85966c4b7e894887c7e5a4490e1025c9009f6e420d340620fd2f7d8fb912bcd42659e81deac115960bb79331aaa4fe2acc9edfb71f3
-        d =
-        1327930132316cc458e2e6a04a3da993d6e3e2c700045957752cfbc4145a8c5dffd1a635614ab362cb97c3559d762575a41bec36c3b4f6bff8e0dd3e85ddb2f883fcef768d18b5dd6cd97498e371a0829c8c80ed2cb4d1e7d113f1e3327e08aac8bf45411bd7c840d7d6174d079fe83863f4ae0c6eca48bb24f55a0e49ae8cb34b9aaa4f58549059049e748b30a553aa56d273623a3eb0d9fd3a98dbc8924dc507cfff9d93d87b9530db0b00a255fd9cdfdc540892ada7d97fff712bea05c203e25ceb66a170d33146310d92bb1f01b1833acf7fa73b4540578c377d3b5947bb40d1b0d3101e215c24451aa85db0f2f51a6e2e8c273c8f1801093f19ea141fcb
-        c =
-        c02eb4df9968f68f64b157f0fa12155625b6fb72a9e385de852f45f676f085eabdf42e112272e980394183dce448966c19366672e57309bcb156cb76c598d0420a08fb8b14810f155f1914d9d99cfd11a139878f0f7a6452f47a995b235225bd30d4e3f4777cb17760a3d291e2f6916c4627276f2ee2dfc9d503784e9806cb83b6beaef4544a17cec44685a9063e9ba68f680eba4a92c249dd5930f72d9c0bbb24302335b2d589411169f4cc4e5c63e6056404196c7255f992e489fde9fc2d8d03910b5c99044ff8d176e8a0c03831552e83d1339a6ae0027e0c4b09d50e7922d9492e1411bfb01c8bd429cd67bb4d1b952e3cb2de62aa8c293a3dc2f7bb36a2
-        Result = Fail*/
+        //n =
+        //84da326b6c8aa5d02621803201750014b539bedb67002f56006c0c448cd5cc7881ad5c0ed95d3dc285fea85d30db72b89182352903a88caa2b3393d6a4cd9b9d8a543dfa60d14880dd4bb806ffe632d8b3fbccd78a4d5c5f10f12b0645f2dffa924c8cd8ac85bc92555721360513726d05ad984e1ee75c5473d1d3d30c247f3871785adc4b298e4731756f208470f0efde356fbd18a1240a49e670b91aad23f07b1f343f3e5d3d6f5ddd85870ca29aeb9060810de962df81392835ce7924e537e4e456e8118c8418203c5f2b2629fc2080bf233ad1fa376b4ef367d6ea6516409014ebf515ecbe9c7ae9fed7b026ded71108a307b20596010477754223165245
+        //e =
+        //963e85936ae0a94a8fe3e9be076490cb5acbd51c1665b605cad96dfac7b95171609f30c9588e4dc9041928da8f46f0e1074d106fc94521d8c52069130f81cabffd9e240ba50538b684d00d277223f96880ac966479cbbcd41164a8bbd0ca43702f384bfb17cff76b2ba6ad2740e752ab3c8968104197ea873a0a2f3e13b85a655007628cf78ec8e9ebe55c6212e77a9a818a223116dc4580e22b622d6cdf1548d9c0361de30c11312a620eccc4c7480a28dbffc9a824d85966c4b7e894887c7e5a4490e1025c9009f6e420d340620fd2f7d8fb912bcd42659e81deac115960bb79331aaa4fe2acc9edfb71f3
+        //d =
+        //1327930132316cc458e2e6a04a3da993d6e3e2c700045957752cfbc4145a8c5dffd1a635614ab362cb97c3559d762575a41bec36c3b4f6bff8e0dd3e85ddb2f883fcef768d18b5dd6cd97498e371a0829c8c80ed2cb4d1e7d113f1e3327e08aac8bf45411bd7c840d7d6174d079fe83863f4ae0c6eca48bb24f55a0e49ae8cb34b9aaa4f58549059049e748b30a553aa56d273623a3eb0d9fd3a98dbc8924dc507cfff9d93d87b9530db0b00a255fd9cdfdc540892ada7d97fff712bea05c203e25ceb66a170d33146310d92bb1f01b1833acf7fa73b4540578c377d3b5947bb40d1b0d3101e215c24451aa85db0f2f51a6e2e8c273c8f1801093f19ea141fcb
+        //c =
+        //c02eb4df9968f68f64b157f0fa12155625b6fb72a9e385de852f45f676f085eabdf42e112272e980394183dce448966c19366672e57309bcb156cb76c598d0420a08fb8b14810f155f1914d9d99cfd11a139878f0f7a6452f47a995b235225bd30d4e3f4777cb17760a3d291e2f6916c4627276f2ee2dfc9d503784e9806cb83b6beaef4544a17cec44685a9063e9ba68f680eba4a92c249dd5930f72d9c0bbb24302335b2d589411169f4cc4e5c63e6056404196c7255f992e489fde9fc2d8d03910b5c99044ff8d176e8a0c03831552e83d1339a6ae0027e0c4b09d50e7922d9492e1411bfb01c8bd429cd67bb4d1b952e3cb2de62aa8c293a3dc2f7bb36a2
+
     }
 
+    
     {
-        /*COUNT = 17
-
-        n =
-        b22c983e0ce92f309ec9f5f9c644d9342fe374d32c752f272d203b6e2612422e9dc8819874d5c38027439d909e21457b764f175fb932c6e824b5b4c57094bc2029c99cde54a562a8278b53b69958d0e47e335e60443f4c09d2808af908c1c4195bc5df9f330c41fecd80de9d4860856e401561e1dfa835a47097e77ba36bbaddce34c10de47ac63f952a32c737eb81beca7815e46a8929422443c3267c74502738884f7898e64fdbc5caad2151a2007c988fff663e0d69dc24692a58b60c3781afc943c35ddfc16dcda91b708e389a2bd292ec203e6473dac91f3b9b74dfd398d4798f60b573464e1b006674399a151ac4d48954298276adf517577e6a9101f7
-        e =
-        e89eb0db23e82e32d6766962367988b3ed2641494150a73ee88aac4afd88abf7337f2cb9092bdc61b48cb3d2cd91337e3df978deec3973f76d5531bf4ef153169be108a0ac1abbb69e26abf7826bf3dfd535ca11003baca4a7357515b6375effbab4cd71bf408f69524f06c11944a9e48687306d6b53f2b3083d023dae602fa83a931242b3fef5d7e57e0805b08536b8b7b45dbebad44f9f8ad944a6c59a0fdf9605913741cbbb5c2e434ab99868cc32776de125c2115ea573b3655ff7c26157cd03a3525d4adca02823bdd31c1c0d4d03fc196746a8acda87ee1fded7e9e610fea4c841204266867c71fecd
-        d =
-        50d16a858841e5a22372e94bf737a3c701487c03174ca5b65f71494f7c0e130460e818c46311b7206db01c625343ca059f3a985adb64ee4518d3dff64f1b41091d8b682087bc9b5d7ff15575b6810e1faa1512e69e3b2014b2ff72017378bb13538948f25aec9fe2c68fca4ddf9645222534a22c9fa23bd863883f2ce89881bf14bc68ab9434fb53ecbdcf44afcdfeb6c0ff8f5b03e0cc9bc00f92e08eb083c22e42cda7236cac7e297a0dea642f7da7df6042c959bdef0329c22529299fbd834f66232a6cf4bacae83da2c56f6ec51719a2e3bb999d38907edd6b7ce5721c111fd83c0f5812266f6554e2ffd99b0dbe73e25cd6bb1d91073a06c2f4a9995f31
-        c =
-        cd2e492e102a4c85328ff73063a20f3b955b3afad369fb38d475e392d0ab061d9277ad4fcf8c4a1cb62bb15fc8a2847cea13ef43b87696181de1cc51200706e001008f3285487d578e09e362ee9d48137d4e58b36a61da40ce54e2ca8763481d435158a0db64cb7de3b2f7027f9b42487797dc128e32aef710548dc4abc6b41c7ff2716178ea1ed8dcac530720a55a620073e327cfeff9870b6b350634383224de6c403d06e15daea28161397bc178ab3f6cd5bbd2a2a536e6204259cbc2aa7e88452ffc2a5270485cb8876038fa84695d091b964252994dcafb1c85186a0473a408a5658e443eee33da2f43ff5566e582d21b80c508bd13de852c52c23a2849
-        Result = Fail*/
-    }
-
-    {
-        /*COUNT = 18*/
+        
         bigint8_t n("b4784cd9b3ba0d7321414dcb1ada0e22bb9f64d98bba019b5cc28f4ae82af35636edb89b43d5ecd40a6ec87d6eb8b245477955e3ff44b838620033c2224328dc61a923045331f8708057920587abd8194ab7c248be45f1b4d216da870fd17da7a024e9bcab6fb2ee3680f2160df09ff3c619a098a88b8bba57ee57d231626e89"
                     "9121aaec1b11e606cbd59b7d6b982da291c91e401dc6377b49488370dcffbdea2841230d7cb878ef910763bb5369878e92c78ba155c4c48eeed803526217c3b6b8d4a3014d49da8dd2d6b02b7b353f9dbd8f1376d31e15568a3ffe8332a2443acab2b1011706fd1b43ca86048f0c1ea3a405730a903ff6479899da079c1c469"
                     "9");
@@ -4218,7 +4074,7 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 19*/
+        //COUNT = 19
         bigint8_t n("cd929c5058128e7d913dfcc070018c1a6ecaaf0ee9b92e6cfd27c0fc2b1c959eaacb93654ba56cd710edb1838f335697dd8f956778fe47a7d0ed7a756582b9372773d398dbc3318691ecca8d97494cc42eee4b7ea7b263838a3ee9af6cb037321582d45aec54e9172738d59611cef8302912e9bfc43352f652b7e247d30dc955"
                     "dd17df99d1bb2a1ae7c101e02d27226aa16a73ae65e0cd09881e605fca8c10d61c864ad0eeb59523af085fd2a823be836d9d3a4172f367341fa85fa6f8b59d1ff442b1a57aa4013f7603a6d769d0f097d20fa306fb55f77a18baf92443200d421d9de7d7c5fe4512a1f5f301580dd7bcec70dc9ecd415e8443028ca24531cb5"
                     "3");
@@ -4239,7 +4095,7 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 20*/
+        // COUNT = 20
         bigint8_t n("95be1e384fdb82684c50748da0664d76f8d2d966b358fdde18c95bafccf4134804b5a6becf8e1230977ebe91e44a28cc86690668ec0091b7772c3b6c6f3b2db0c0dfb97eb4c785a0e35be3fadc7d7a0c422e59710f05792cb4a38b0cfce2be2ae4f14f3fcd4a3065b59922a3558137346c67517e07e283e8d9f1d64d9d98318a"
                     "612f67f563cec2d627faf09fe130fed4e3522379ef242197b2e455091efa797128a170fd891ff7ab1940bfb1c8a64b1584653256343fcb9d96ee398d19be3913fe4deee15a464c5e2cb3cd14d5e787a86775ca4561c44023a4b745c4d0338204d9f2e9530f24e3ee00f98d6228b3db5eff753aeb0dc67707ebec5d932385a0a"
                     "9");
@@ -4259,36 +4115,9 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
         test(n, e, d, c, k);
     }
 
+    
     {
-        /*COUNT = 21
-
-        n =
-        be362e3f54ebf8c54774192458555c0fcceb96cf00fecfc5954c48f92b7e8da2a3285f073a0d20195ccbc20e302121498b8a65ad691072af851b65198855bbdae4f8189f563093428fdfade02e2b0065d7bbe398221d295d4752e8209327b345b2649496f59bfdfc3e49658bebe7620b18c42f1625189b1b78a44c2d9c097b95cf99bdeab52df183d2551b74ef09f017e2c09222b007002d6068589cccbc5bb163b216fc68a193ab59668af853cbd4909e964153b01d471bb6f9b1f862e805ee0431a014784805f837bcfa64e0f15b5f94e1be978a9106aa7b27cb957421a3ea81106d3f3eca090a551a8ebe4d46c86c9bbca41967bde13b2c631e15b0849b5d
-        e =
-        b63029a842edb3c93de8017b990099934edea7de5e99579f362d8d178f4ea2709aeb30c9a42f250b933aadc610c070751c7715e78c6253e0bc0ae25e2a801fc9a54b56ff90ce9d728dafde081016cedbdaf5405fd04a5163b4261fc576312e170067d25a33bbbffaa340ec3fa9c98451eebfd98bb2484d8731eb5183c0c6b1b1a302ca671eb661c6515fac8ba56526a97a9d73199dbb5b2ef55b5539a820a8243d625a719e4c7672dd97824ee28738463c390e34acf8ca6684ef4a64c01509a8658e75ac60b2453e18e13ef308c3a17b7c7cbcdc6ff93beea6bff2a4ca65e178985564feb41f4deccafca829
-        d =
-        20c0f944bb7df0d5f48488d1375b2e564a1582076a3807f8cfbc213e065ef8dc262ba8d31e472bcdf2f589c04b5b961b5aab4109d4a87fd9d9ee5f8458e99bd89de879b74c6cbd253a759beb33684cd1087539458ed3a78884d49fa004baa24888170dcfe55ccffec7884455f89555665cbc6bf258e6df35857cf24427cdc394a74cd9d414a67fa1db0075d3ea9748bd0542ba5dd05017ca968a4aa4d31dd98f342a3cb7dc56986575345a3f923a2f7c64c8957b7f5b2540a61f9f087d79808eb0d9157eccd7588e1c13524212b5a1815eb08af8609234a05ae2ac40b9a8b4a5ccbd29cc3a365f93ff4aa0f1bd6dc74524e8ff552925774c60f701fd61e7300d
-        c =
-        fd4d234133e7dfac588deec09b8213820382ad260303e9744ebb3671ec62f93c8eb982361fcb3f659b73301b241e9bd253d2015bcc70503815365a46a887869f46efc6be8f62c9e4d0c471bb1caf87399e70aec82d5295a42120718465e5ab7ccef6d522ab32e3f09e8998e9aabb3e7f8c629ab54f331f811b8162744e02ce9ccdd699aa9dc5f650adc98dedf6cc286cc6b2af69599a5696aa61155e886859c8ec98f99d8aa36bcda68c380f2969adc8f468d32e7410a2ad77c9728a3e9fb2c6d343dc459d52a82f31da81976b1b355abe8af04ac81c6b8c29c0613f962d435e29df2ce8fb5c173ef5bc50cce36828ebca22ed067c4619fc694fcac6b89c725a
-        Result = Fail*/
-    }
-
-    {
-        /*COUNT = 22
-
-        n =
-        b664d083d67aedeb833c19f3af27517236fce6946f8c71476a0fc70b36860049786bffe1697e22ca7884ff9de14168839650f3f1951bfcf05c38deb4b958b833e48b925a0b94d57929df2838c60d9efe42e18ad977f66584bcaab6f59508d3c4c4f399ccaee9ae4dd0c62bf95897f5ff636efbeb8e6c866cf94e818d572102c7cbbd779725f666c04171e1875058f41412bda1d683003e3ecdf4f93b35132c6f98424c3758b11ffc73b5927065affd8fcf52c0c64becc8af561e92f1409d08a803729393ec1d09a60d583f6cb5720770c8b3019f4d4ac7f9c47e01e121595c860f64ca67ee6e3ebe8e2a93629ea66e6886c68fd059617790a69fd842c40c19e3
-        e =
-        9845c3e40ed6ad8333b77a0e1e8ff690462d7c253621dcf7d701e898e8fd3202f17da41cf884346b81ceb1a860ed3f6df0c2a2890159233115f84959b500f51842509016f44e196ab4defcafe72e3c7a2e7a98283fc10855750e0deea2bd753c4bb7fead04b6fb77c715cb486f283c4ffef0c519bb4e151abbff7d06f3fcf31965d87e216a24317de1fff273620764dc13f55bdfddb49b2b9fce8dc214bd9f1abed688726df9befa83648fc00278f11f092179a4e3bb69e28f24ccc5ebc856172ed0ce5b49afa19125308e9989f9c0297f7a6695a9469f6ae3a4e6f365a78276dcba3bcde350b005325c7f33
-        d =
-        41587cac219102a82350c08aa77a8119f8f1c97f7ad4b00ed47e10916937bec16a8ab614fba6f6e161a481d6840ecc23abc933d090eed3526346b73a3e629381028dc448733e45794e5f5f4e4c35c17e848d8a0bec67719c5cacf35ead5df48302bf7c572e3382202749afef083a3b43297bbbbbecd3e63b69c812a04ec472798592d715904971c7db5b2580396ae1423f5bf191572daafb8e8d58dfce3a96a74f4519d47c59198af00f38ff0cfedd8c6b7eadba6433963af2b0b9975d77b74ccd4a549905aa335f6cd35f1418c1acaf04fee87d040e56b23881b67bc80c1fc66003554909d9731f41af5c7edb735b7632a2cffdeb7615ad8a66a77d761ed6d3
-        c =
-        fcb7973359ea60ef1aff4fd59648805af7939b5e324e61693dee84347c91bc6b7ce117b1e33c91e5a713e4a37f90a10e977c80cd885ff45487e90365dc9055d6977b8b947e9fd2e84928b7f9121a3d9307382c266225ad129bc91421dbf6fd55b54b9ae511594b8268056fde372d7b6fad8f4971a7e6b22adf555e716009db713e1bedab83b3253a6c73b55bd613832cf3487cb441eb2b24bd578a5c541318b19ab12beebef58898be3a3177d7127e51402d6ff9177c41899c953feb9d5adb9e31d5fdb6a9679b25c4228a3a22739467fb04ca4711e01bdfe3d9262524274dbe6b510b0c2c518768e7f369ac9f7eecf58e9634a71761e3b1fce9e712d1c1959c
-        Result = Fail*/
-    }
-
-    {
-        /*COUNT = 23*/
+        //COUNT = 23
         bigint8_t n("ab7274933e9f2ae41740fe62bce2a1d54f6a86cd74cd21dd50236761911b06bb47073dfd210eb51dcab5ed1472389a598a65c8a915937aece2af26db13ee74401b1e2cf9627b9737caae78319b6b0b31b51771e9e21898c95a16fdc57e992136bfb1b80bb35e0c439db6aa114b0b122eb925c8fb78736f7ec0a0478c16d544e8"
                     "f17f571150d26f173575a8bb0216c841cad877dd51e03d7734729dee4dc7bb696292785459d8a15bc796d714b095f97ab84535929f24a4e2375545230aaa8331ca8758b19d6a0b36e6efbedff5305385493e6087e4271d45dfc011ba9cf054482fc80e95897d787dc173f3b66778f93e9da7efddee6ceb2866f44661639bbea"
                     "5");
@@ -4308,7 +4137,7 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
         test(n, e, d, c, k);
     }
     {
-        /*COUNT = 24*/
+        //COUNT = 24
         bigint8_t n("e7bf89dd14eb3132f9098ce62ea46bed94a97d3bc7de936913d250bf6a3740915249ff91a5655eeaa301c799c807a27653cf3d8a2a4d3d85b9ac8d74dcf58c1e2ae8fabf52ce40866be0564cdc45430587f53def99e24e5da73f8d8ed3ff674b597e2eba42f5f2d7c2fa33ee5271737677d807cc0823f6f1bfa3fa4a497e299e"
                     "8459aa64a62bf5122f9b8cdb40a0cc55a4fb06897db080bdbc56b1dbdaa531443a285189a047b8c60d63e11d5f3d502a9d0f2e655ee30607fa5fc8481ecacc709f2cb356c77d3d94b58ff0f3af8ef68b1c2a2b4f0ebfdfd229e609fcd672df3e18bd76e0c5209f503a52f5bea21b8a34a94901888dd7173e836710c1ff26f9c"
                     "3");
@@ -4329,7 +4158,7 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 25*/
+        //COUNT = 25
         bigint8_t n("86bb1ddc17af216ab1c963a34fb53918f01001b042e94534dfe2b4e1d55b1f11797261f297d2c8d40a3bd565253863e142af9ca30a25688e0796e263dbc9008e7b84bb581df4b7e91c105e39eff549f8d0ae6de8c70a1697e1522cff3271ac7d33db74ba8178c1d168b95599bc3a89e3538daf71f0d8a557d43bf6ffc5a6c6c4"
                     "2fca154f04dfb1b69cd3aac3c4d2af89ac5d2c9db0457b6e0439af27af6fb73a928d1604dd0fbb9dee7c880a6840870070754a12dab46aa6d2a201c5556505cbe318c74153589fcb4a5af181fff097cdf1790d8fc72261601c5e68833b1fedb7345e96c0bdeb4fd96506c94530a2cba2f496f816fac60261ea32706aab5a04c"
                     "9");
@@ -4350,7 +4179,7 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 26*/
+        // COUNT = 26
         bigint8_t n("9d27882f5756110a353125f496f0dd0dd96eec6abe26dd900d3a6e68e8c614f8d183901211e65f02520fed0348b2dcd1ede54021d4380165079451b4a45e65dad6c29007b4cd9df36a1e90c4103cd2ecc075eab2eaf58de5e627e4d6b15960498c674266816b7b50e86639c7e8f8676c5077225b49370a90abbc40ed3f3e68f9"
                     "5c74aa02f737f1e74da267945702c5c06b4856867d238d8119968e7c7f5fc9bfb4b83d78fa21c03be825bad7ad5b5c1c6bf5b3a5000b5cefcde0d4705f84967f3589e1623752e08d2c261cbdbe3129eb4f4eb5466c55756939fcbbaaf1799e86f9e314325d5c313ff84918b4473ab96dbc80a067241d1e5fa686731a7426dfc"
                     "b");
@@ -4371,7 +4200,7 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
     }
 
     {
-        /*COUNT = 27*/
+        //COUNT = 27
         bigint8_t n("b2db46421619b868b90e66b3378fbec47648f4e00b60ab6de51327bfe7960f72acb5598ff79046b4441a9e0145f2195a2372265827a28ae03bc5fa25707adbad06af93cbad705529dd8a4022c1b304e93711bc71ea56423ec5f4052b0483a396dec1e60cd372b01bc96bdfe4d72c676f821f5b8bf5f767df767b759d50382bd7"
                     "11050b09761ae1ca8ee70e70b3cabd545bbb7228ff8e1b2ca1358e21b1a48a63bd618d23093f0b48e2d7b8ecc69352e97fabec8d3422ef20ba48b3f3c940271a5043ae724453af99c4a71c5577cdf6e57fb0b3de1511bc77e64ebfbaa9f8f942a53a054896321a98d612172a340d71b5db74bbc7b37de5e88370313406f4fe9"
                     "3");
@@ -4389,38 +4218,10 @@ TEST(RsaTest, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compon
                     "9");
 
         test(n, e, d, c, k);
-    }
-
-    {
-        /*COUNT = 28*
-
-        n =
-        a0c233fe035e540cb4c0f7740bc7f53054af18a75c33a5917c5c827f9500ae4f9588818e4d6cd7eabc6ec38d91bce2d5d908ff7e0223e7277a02dc2bf85d8da68d8e18644cc41702f8faeebf5e024c011455197647b27e92ab73eef7b319edae4241fb59b3278fe9e39253bdb482a0ca2f784303db592a578a5eceb27eacdfb20ee506c724d3fba6ffb7bbe4481e138d2b0d352077105259d22de6cdc196090f38b86163c01c47b59f3ed7aefc7697e471b0a44de4e7c2136681c10553f73fb171fe79b6f662d0ecd2ff0730eb3981c8c36a83b6e33d0de11c4b0eaec0aa3db0814d60576db2b71148b942f48a7df3b484b047fc1d8f5609e23c601981f0b667
-        e =
-        dbf165bea8e32f1c635ec914617694954898efcf06fac3c87a8e194eb56e97b41d3efb895e20c043597c73ebc737c4ad236231bab07402b5e4a23b0e3ca4263ef10e4c2279861992b101bbe61989b37ec54dfb245063a9b55deddc166f8ece7f62bf572255ea5f4ed4d9339d27c604387f61692cc3696417a849084fdcad28ee5f4b5749411edfb01d7463ac7d427feeb86c309504d532f9a362244c2fa7ac0795dd68d90c07dd65e0905e361dc4f8ee54a29b6e571f7f4dd0ab6d2c63f3c9d0dd1efe43682ae912eea423d1f22dd076291f8d787af803287084fbcae2e2170b910370785b94117d28ef8bf7
-        d =
-        395ca50ff05a5394388af7a62080049ec1ce386ecd807fc785a974388ae7ee7bf58e53d8553e4a01a31494a5c8a18f5ecc976b743105c8ace73133ab98badfa7fed37812f447b9a11507bf700ba615b790bae70784a1849ef8f6d8f3c3c9a6ab6b180b15448635fd33fd837eaef64002d41a6432c5d79fc96db48389fed8324ddb553302e4b948e4a2a4fca8c4224ca03bf2e12fb07dee82c123714dadf8713dd4bad6dcc627770a2932dbccb4f55cf44a4f76d134858e01577f9b016b6bbd7a8225f603fb946c8b9af7a0a4f1268af929db07c103376e8b64966f059d35bf44c9272ef95b33635864844644ce0f4a0cb245e36764387c8b1b4b21aaee291f5f
-        c =
-        c946e2c910b9f19ecc1669c8d4a6fe7f95f6985562d94b620cb0899eb3e9968edbc63d23c260c2dff2eb1739123b524301875f8a266ef23d0137c092065def66ac4bcb24c164bae7004672e3e5506901c0628dc909e33685f30959a34354fe5c635cf493b2cdc3001fb0e28df6ec2a00f90c8bdbb342fe8009acba9912d7abb72982203940a4c47077b0cf01ed177d8ad50ec088cd9331786caa4d3c1aeddec12543b7df11f0a4802fcea10571d94ae57cf19397ffdcb9b3438b7954049e7fc0802a214bcdb94d786f92c0622a3b795a153d6ed2f0277d7ab7d5a5a877f276fd61bcc6461d07a6a0618595e0c144f331c978b8ff497b6514f0123b011cf2abc0
-        Result = Fail*/
-    }
-
-    {
-        /*COUNT = 29
-
-        n =
-        a0c233fe035e540cb4c0f7740bc7f53054af18a75c33a5917c5c827f9500ae4f9588818e4d6cd7eabc6ec38d91bce2d5d908ff7e0223e7277a02dc2bf85d8da68d8e18644cc41702f8faeebf5e024c011455197647b27e92ab73eef7b319edae4241fb59b3278fe9e39253bdb482a0ca2f784303db592a578a5eceb27eacdfb20ee506c724d3fba6ffb7bbe4481e138d2b0d352077105259d22de6cdc196090f38b86163c01c47b59f3ed7aefc7697e471b0a44de4e7c2136681c10553f73fb171fe79b6f662d0ecd2ff0730eb3981c8c36a83b6e33d0de11c4b0eaec0aa3db0814d60576db2b71148b942f48a7df3b484b047fc1d8f5609e23c601981f0b667
-        e =
-        dbf165bea8e32f1c635ec914617694954898efcf06fac3c87a8e194eb56e97b41d3efb895e20c043597c73ebc737c4ad236231bab07402b5e4a23b0e3ca4263ef10e4c2279861992b101bbe61989b37ec54dfb245063a9b55deddc166f8ece7f62bf572255ea5f4ed4d9339d27c604387f61692cc3696417a849084fdcad28ee5f4b5749411edfb01d7463ac7d427feeb86c309504d532f9a362244c2fa7ac0795dd68d90c07dd65e0905e361dc4f8ee54a29b6e571f7f4dd0ab6d2c63f3c9d0dd1efe43682ae912eea423d1f22dd076291f8d787af803287084fbcae2e2170b910370785b94117d28ef8bf7
-        d =
-        395ca50ff05a5394388af7a62080049ec1ce386ecd807fc785a974388ae7ee7bf58e53d8553e4a01a31494a5c8a18f5ecc976b743105c8ace73133ab98badfa7fed37812f447b9a11507bf700ba615b790bae70784a1849ef8f6d8f3c3c9a6ab6b180b15448635fd33fd837eaef64002d41a6432c5d79fc96db48389fed8324ddb553302e4b948e4a2a4fca8c4224ca03bf2e12fb07dee82c123714dadf8713dd4bad6dcc627770a2932dbccb4f55cf44a4f76d134858e01577f9b016b6bbd7a8225f603fb946c8b9af7a0a4f1268af929db07c103376e8b64966f059d35bf44c9272ef95b33635864844644ce0f4a0cb245e36764387c8b1b4b21aaee291f5f
-        c =
-        c946e2c910b9f19ecc1669c8d4a6fe7f95f6985562d94b620cb0899eb3e9968edbc63d23c260c2dff2eb1739123b524301875f8a266ef23d0137c092065def66ac4bcb24c164bae7004672e3e5506901c0628dc909e33685f30959a34354fe5c635cf493b2cdc3001fb0e28df6ec2a00f90c8bdbb342fe8009acba9912d7abb72982203940a4c47077b0cf01ed177d8ad50ec088cd9331786caa4d3c1aeddec12543b7df11f0a4802fcea10571d94ae57cf19397ffdcb9b3438b7954049e7fc0802a214bcdb94d786f92c0622a3b795a153d6ed2f0277d7ab7d5a5a877f276fd61bcc6461d07a6a0618595e0c144f331c978b8ff497b6514f0123b011cf2abc0
-        Result = Fail*/
-    }
+    }    
 }
 
-TEST(RsaTest, FIPS_186_4_RSA_PKCS1_v1_5_RSASP1_Signature_Primitive_Component)
+/*TEST(RsaTest, FIPS_186_4_RSA_PKCS1_v1_5_RSASP1_Signature_Primitive_Component)
 {
     // FIPS 186-4 RSA PKCS1-v1_5 RSASP1 Signature Primitive Component Test Vectors
     {
@@ -4456,7 +4257,7 @@ TEST(RsaTest, FIPS_186_4_RSA_PKCS1_v1_5_RSASP1_Signature_Primitive_Component)
                        "74"));
 
         // COUNT = 0
-        /*test(
+        test(
             bigint8_t("b370f70f72ce69c421092ac8314872eafd24f3943ed52ef57df1dda050278d48bd2b28be2e038df372b8f2272e6ab8ee183562b9dc8552798a1ea29452833a146af158b7b75a4bf4e20e716ea97421ddfb220eb551a2f059b8c0a1beb99e88206bcb6567b246418f2eb96445b795a2dd839ae1403d47386e313b902f31e0e4264d117b1e3fff81d58c5a98872b45c29da2eb94b27b836101b79fa33d13468a4dd57b6d49b880e7217aaeb2ec142d5b74c6f08d136da626b479c03646183bfa66ec9363d665e01b1cbfa265dc26c23c3e256d36676309b6dbd021998e6b52095d3f717d327dfb3648d0af19ae81368ca7df2bfa660b76e252bd9bf9cb0808486b"),
             bigint8_t("e57e39b08bebf7992fa52bc3033122e11de88cc4f280370d85c24b732d7718ad538b409c8fa9ae315d668d5ca102be703d765305671f1156e3bb9ee304727f1288c6ff83adf373d35396a3e58a0b4a12aad808ad8845a7d423b2f79147bd9a9b1d9936c7f36eebece8a79789290be828b896bbe293e8b49bf38ecfd5799fec9b"),
             bigint8_t("c82ac7fd25db529adb06218fb2002e0473ca5d63b46b4ce140b83d95e8fd03277563790e9b4355e307fd5cb92ccb8eb2a94100589e9cf66869ad92d8abe5f5db99e662705b79f549e2c07b0563017216008369347a89fbaac5c57eff3d0d821a161fffddb20309472ace25a3b601ed248bea81f9c530e59ec276de1e4de40871"),
@@ -4464,7 +4265,7 @@ TEST(RsaTest, FIPS_186_4_RSA_PKCS1_v1_5_RSASP1_Signature_Primitive_Component)
             bigint8_t("17ad6c9c42e78e6337d7657d71ab555141429d4acec3ade4eccfd11109f7e8c25406718e2eb4d4b2994d0d7edd616db22a7598e7b2267c21d777800d16ef83e6bfcf1add70648a289a4f923e2a3ea3080f2433a6a4a00870fe5a44bd7846bd404743ae721c14532aee87bdfdc90cb0a7396a0d6b943fba92d262415348e9f0e60d8c13ecd0875b27da31e4383195df04e26e2f6a97d2761f12bcca3eae8f4c79228e7501133e14095ce98cf8b68e6d184c004bbcc3cfcbc7f4282df6deb5d1f32f48ef5a0c1d824942b786793c1bd6a1298600aaccc367b2017f08995225899809a6862b52edec2d82b9229b646754fd054849852dde4b2e088a42204ebe11e1"),
             bigint8_t("ff70f70f72ce69c421092ac8314872eafd24f3943ed52ef57df1dda050278d48bd2b28be2e038df372b8f2272e6ab8ee183562b9dc8552798a1ea29452833a146af158b7b75a4bf4e20e716ea97421ddfb220eb551a2f059b8c0a1beb99e88206bcb6567b246418f2eb96445b795a2dd839ae1403d47386e313b902f31e0e4264d117b1e3fff81d58c5a98872b45c29da2eb94b27b836101b79fa33d13468a4dd57b6d49b880e7217aaeb2ec142d5b74c6f08d136da626b479c03646183bfa66ec9363d665e01b1cbfa265dc26c23c3e256d36676309b6dbd021998e6b52095d3f717d327dfb3648d0af19ae81368ca7df2bfa660b76e252bd9bf9cb080849bc"),
             bigint8_t());
-            };*/
+            };
 
         // COUNT = 2
         test(bigint8_t("b968e2aaaee6ac4037af9268d0a90ae37b103c4eb302d0ecc23077752f395e6521647a15ab01117808ed7ddd1279090c42f83deb5029b03216e370a21fcdacc6119385d6e7b278862ff7bfc1461fc7d22ccf02a06c9f4eb63785950bad3b2db9279a973e2fc1e2be6c0d8eb124e0ea97e4642bec8ad0cd16f9ba7c3af22f2d1"
@@ -4487,27 +4288,7 @@ TEST(RsaTest, FIPS_186_4_RSA_PKCS1_v1_5_RSASP1_Signature_Primitive_Component)
                        "73d687525f29d1829d2baf104e24eedec19a25fe57276c176af6fea1cd67ad3f5243dbea52205be786fdacb131412e2b29fe173d0d824315893fc603d755826b5bf29d52e230e82e2afcd2708cf81bf0e4a38741473a0f11a5b578e0a5dfd62c0ad83189fd1fefd2bfb53c8fb67c0747ab0591db02d3b997dafcd35139e8f34"
                        "d3"));
 
-        /*COUNT = 3
-            n =
-           ae607e2dca6d5138c795fb0092c0b8ae0f232af52ada5fbf64136f6a54036af74760b4a8361fd2b9c32a05a3629098a8c594f79b43613775d1ed1edeed649355985ca1425bbabd2e1c593eb1ffe9612808ff2e884ee5ad0fe608a32bd80f9e5e51e65b1b2e21d429117fc3c74028073f55529b8041772082330694b0e775870e3a6c6f1dd17919e185dc076b0330d0ac3bab9aecc56cadecf97b69a4c784b094488af6912ab52a02c2c91651cc08d8a688c70ad449b189d20b6851fb0ff222e0bdb30c24207765155917d380b6ba0f909b801198e62b695701d5bbd798fde610b865fe7d8ad628caf04132479643ae9f202b98bdd804e5a71da837fcba09c9bf
-            p = b637143d1e44bda244c2eb56a23be363ef417ae60344437f49c5a4abfa5cb7981f99186ab5d7b2a8f2e57da381b70286ae991b5c64ab9f85e0deea8d3dc1e77a5d366466335515642fce3c189c7e6e5a6f236f2f2ee9087479caf29e75376a7f5226075ce46754c5a69ca5c08c61c05cec57447c8e6aae56d9dcb3e1a3cf6e97
-            q = f4fce1bb25146e0dd2713c7c4cfdf5f0904fefe1cf49533f858818c4dcaf54b2799d4b360708f095a9e01a5185a6f8c85ba1a93599285440882393b9b92334b705ae153d37cd770f5bb2893b87e00f3bb1f1d56e4a841c1c030f1400da3270f58367d423f9ff0546644bc2e08a23e45581b6da27e6b61eb8fa01d4f3e7a48b19
-            e =
-           00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010001
-            d =
-           0fae7d9a6ecd988736c481390913259bcda07e50ca317bdf0b14d4c2e70de00839162798fb02af07cc3d6c4d61b0e771a8771fff5669cc08b9265acda949dc49b5ce8124d9132bfac87e77536c078b321dcdcf755f43d1cc29860920efc2609dec3dcbf912e07e23388c8c2f69b71ca08a2614f61a79db65aa16101e8a9d5f0910696607ac4675d5fc01a96b7adc27293c979ab7632076b91998247e75446f610b038f2bb6a66d16ff4af689af65a517f1b9604fbe94a7223bb73b2bf696c3cd3d0fa4802edb46fee213f74241153b456c344c63dac7293cce5491c16c3550f0ece90b3ed612a5fdce43ad8792278c118a1aacb8d320c528f83ce4b06d44c529
-            EM =
-           ff607e2dca6d5138c795fb0092c0b8ae0f232af52ada5fbf64136f6a54036af74760b4a8361fd2b9c32a05a3629098a8c594f79b43613775d1ed1edeed649355985ca1425bbabd2e1c593eb1ffe9612808ff2e884ee5ad0fe608a32bd80f9e5e51e65b1b2e21d429117fc3c74028073f55529b8041772082330694b0e775870e3a6c6f1dd17919e185dc076b0330d0ac3bab9aecc56cadecf97b69a4c784b094488af6912ab52a02c2c91651cc08d8a688c70ad449b189d20b6851fb0ff222e0bdb30c24207765155917d380b6ba0f909b801198e62b695701d5bbd798fde610b865fe7d8ad628caf04132479643ae9f202b98bdd804e5a71da837fcba09cabc
-            S = FAIL(EM larger than modulus value)*/
-
-        // COUNT = 4
-        /*bigint8_t("86d023d88ddb3f2b2ae89bfe376c8911fcc39e4f79798044bceceab44e207c3517f89a62697762a7ae04e700607976bbc4cd22772d8f4929f8670e81aa32cc73f20df188134c51a9f303fe44120cd09937771d005344c0ff68747190ca46c0d004daa3a3a057ed6057fcbd928fa7b7be4143622dbc821ec276c67c646713424898ab5abe224a59e0392a3b5825789a2c7ebf69ea62601bccb45cfef447f7b34520670c4c6755ab1822390b82925349e1c9628534c9e5577a0dbef0a0d765c4142e34cadda475df07ef13d87ffd978cedde3f0eeb57fd26fe3eafd23da8213e1a44f13e009749daff9c217e3af821719f57d7e56d6cc2595c984c1f61991eb8b5
-        bigint8_t("b50c921a488ec532b3b0761cbdedd6a8cc92a675dbeb2e557e2ae5789c67948f82f32839a6fa09de3ef63f0500e38fd0f999bba480f7c81d73f4b4d4259f88084a1a08c432809be9756e6f5d5e751550cc163cf949fc419f7c118f5361f1bf005865c644d7da9421f95e4420d905be6300d1f2db46ea83d3e8d13d8306c45ac3
-        bigint8_t("be9f82f043736579b1b84c80c3afc8e3ff049a88e64392cd733ac0096dddbaa3da4edd45bdb31f18a568efd2fbbaf4946e57e6b7de0f2b3ee96aa435341795295d4635dbc3f416aabf48d6d810f4664d0e1ae53b2867a41b8e2f6cbf32f5531ade1fa253be900a652319c985876f1bfaf8fd32512793fb3ffd1ea8f75a273727
-        bigint8_t("00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010001
-        bigint8_t("31868d64a4d882a04d271f07893cea2e1d798fd30a814449fc4ddcfb58283ef9125156060950be81734081cc75a4a9a5d96ab2daad76121ec50eb71993790dfb1a555d01ec75011b3a17a175485c44d5c4b69184e9123d04974f0fd96d3608e762a11fb4a0d72c71546199131a8b36c942188b1cda3fc32515955d6555289214a8d6ceb866e125d61858df0d51dcc46d9ed78610e9ccb7cdddbe18b20b5059cadcb1e189b70c48a205a2df9a1b5d499fa3fc6099b8c8f266a5c0b86402dc029afd855fefd8d8bd87d652e3bb57f83c8bf4b158e0e80021259b418c944e7ff461c2de828baea65404c08172c663e217beffd89f284140941458d1e065b113b991
-        bigint8_t("ffd023d88ddb3f2b2ae89bfe376c8911fcc39e4f79798044bceceab44e207c3517f89a62697762a7ae04e700607976bbc4cd22772d8f4929f8670e81aa32cc73f20df188134c51a9f303fe44120cd09937771d005344c0ff68747190ca46c0d004daa3a3a057ed6057fcbd928fa7b7be4143622dbc821ec276c67c646713424898ab5abe224a59e0392a3b5825789a2c7ebf69ea62601bccb45cfef447f7b34520670c4c6755ab1822390b82925349e1c9628534c9e5577a0dbef0a0d765c4142e34cadda475df07ef13d87ffd978cedde3f0eeb57fd26fe3eafd23da8213e1a44f13e009749daff9c217e3af821719f57d7e56d6cc2595c984c1f61991eb9bc
-            S = FAIL(EM larger than modulus value)*/
+        
 
         // COUNT = 5
         test(bigint8_t("9cc61aadbc7866db61cb03f389782e7369bc9314337efd861e334c7460bac0e6dd9c32e899b88c0e820093a6ef56403b78c459a512538a239c75cb08f3197caeb925a12b7e1685a22632a9022bad2f3e6fb17995292046b8d5bd801474b58797a1d712e902f9c02e61f16d8e72d9880d7fafa40cc7b8d48d1720700e3c310cf"
@@ -4530,18 +4311,7 @@ TEST(RsaTest, FIPS_186_4_RSA_PKCS1_v1_5_RSASP1_Signature_Primitive_Component)
                        "8605c3101c4c479b369cf40deab87e60ee0de6e0f6ca964c4b7b9e4e25e981b6e6b985bc231fb29d11b9a169b0a790f9390a76ca4dbe9dfb0fc53314688c0008bdf6027a594de193ef47cc0f4505334910017e9297a194b26384058287f6036c70172ba1e2897044f54bdf148904b2ad406d196dda716d2278e859b8516a86c"
                        "7e"));
 
-        /*COUNT = 6
-        n =
-        88b4054ef2bdde0c254c1bdc24147a70fa8d9f1d4d952d76a80a5a647ec16f4480857d95a0d8f051326046436eec252c69418fdc5625934229ddf171b7d034601bbadaa39cc0b4334ccee22a739938d7e364a01d458004f828c2b1aeca36239f6d8614d6bad8774630f5c8663f3593f741ade3746dbec57ecb13a2f06aae2826d17792ef6db0209be2400828d755ceb587d6d59100743913612fb26e88e17b3b0480480b84e747c67e1f0df27609b929ac06159758bcb3e7f45822160788bc9a1ef6cb5d21bce7456e21960731771bff9f7eb4b5be7e48d24875efdb2e18066ca82056b291d39a34f1573571b6b82fef37816b1314736fe5d09eb09cc63122e5
-        p = ba681b55c0e7ade53c86831c9a7f8436f2b8d65d015ccbe0fb5c223afd32af9d4f0d435b5e2bfd15e647adca2148794cf1248365437be92f9cbcacfb41936b2ba938510e983b9a83ce33120489d97a212c415f12cc86b9e1891c3c20a0a69574f4c4a6c6f2c80a7e7517d0a4e0b339473d551563c92c28b1ab5be6416dde3b95
-        q = bbbd7c42e1d50c10fb98f2ba9f120b3a57b27bc5384892798f29d9c7c59b0bbdbec36296eb7fadfe1acf2456ae267fe0d3c6e5fe55bc5f6c798ae9808ec14b512b0e09380a9b06dcce15054e3769d4efd9b64edda8142659a119557e6e9f5d60adfcf930e107a5e1f85dbaed2f692250c6c500d5cce8cdd21886a749fcf6f611
-        e =
-        00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010001
-        d =
-        04b447337c8c7699ede5a4d6ca420f2598a5ab7a4f6b69055a8a82aa4f275a6c1dcd1a317e37c0eb5663b43f494fa486d6f76bdb2df6bc8ecc108868bca5d44b9360b679e760c542b7abade23e98a0f962e8994ef08f937c33b0e17aed97f7d95a64410ed39eb3da0d40c3fceac36dfc55fd0525024acc928cabf81134669a5890c02d394322259fe14f1e21e35f37bb222ef336aa6e3f5e197afd1d4fd369a8ac1d46a37e2392c49ca35e259c895a3e71a93c104ad0a47d979e73a362af6e5f6f2ccbb375b9f86143ac6b9d0b7868deb4174eaf16d815c70f82310bfa168a188a15848dc010b3e8fd81d43def469103d02fc7de75280c9ec867e80006a80f11
-        EM =
-        ffb4054ef2bdde0c254c1bdc24147a70fa8d9f1d4d952d76a80a5a647ec16f4480857d95a0d8f051326046436eec252c69418fdc5625934229ddf171b7d034601bbadaa39cc0b4334ccee22a739938d7e364a01d458004f828c2b1aeca36239f6d8614d6bad8774630f5c8663f3593f741ade3746dbec57ecb13a2f06aae2826d17792ef6db0209be2400828d755ceb587d6d59100743913612fb26e88e17b3b0480480b84e747c67e1f0df27609b929ac06159758bcb3e7f45822160788bc9a1ef6cb5d21bce7456e21960731771bff9f7eb4b5be7e48d24875efdb2e18066ca82056b291d39a34f1573571b6b82fef37816b1314736fe5d09eb09cc63123bc
-        S = FAIL(EM larger than modulus value)*/
+        
 
         // COUNT = 7
         test(bigint8_t("c25b9f2a113e6da122df3784f9ae4da81f2b3383d0ac214945a6cd6c9e0521e1da7bb607ed0c759847c6530e3a3c9bb8260f37dfed7c89b7abf0d9197f4e3bbd8ce61c26b994a47092b4424747c7aef64385f3d793bcc14fa3870fdc4aac72d3cce366ebd3004f0df540fd275ce1d6f845a6d345d050c08ae3800b4c1abf02a"
@@ -4564,18 +4334,7 @@ TEST(RsaTest, FIPS_186_4_RSA_PKCS1_v1_5_RSASP1_Signature_Primitive_Component)
                        "486bdb9f2bf8fc996391b8f47576a49cca50cc90744fab3b687d72f0400f96143281bcfde9633d3c4367f5872ed8e2e6e5ac546b9cfa92114ad4c901b0fe1777a7f9a008807f38099c0ca4be29cf5182798aa04b74bb042fe5505cd5a9e766da8b6f81ffb7911f2fb8c8326754ba5b55a8932be5c640dab3b06bba69b7ef0bb"
                        "85"));
 
-        /*COUNT = 8
-        n =
-        df91122aadeb8d05f906623ddcca063402eb412a4d8940013ec42c73b39a489a95473247408cf9fe9c738eb1c96bd7541e6312c4222731a1859f0304f851cc251ce2b0330eed01ee19ceb8fa66424543520acc55e4b33b93f9b31d3bb377a7c37df62b5b0022cd32c80b1851291b9284e756d9a59d4cb11affbb7454366d8b750a779f93882b31fb04039cb6741a8cbfb35eb3ec9e665e591426e1af6629cd83ef1bbf83dcdbfd727fbebf3216188f25eb08ffd7d28a77d1c43ed0d5121fe81a25454313bfc0657be7aefb903b0f24887e34334139ec15fcb9dc8d80262ac571ecfefc2a24ee144bf3ce6ccde06785364ab2ff15a8f902915be9ed6f89ca67fd
-        p = e6daa65ecd711c96a8c81974245257503b27b95bf44bad663f42bb255e3063017d7a0bc3db6d7369f2744e3bd42536ad0f0ec4efd26bb6ae1e942b7b03eb8e8052b25b725b71626fa10cba0737a3dffe4576acb55e976fc598ef9003cd83df604e85f2a1a6d8b36475f208733a2ff42ce7a3c256a7b84b9d61b23dcc7623e2ad
-        q = f7eb3642f0ded767f8978b8c184f4194034c94a9f7f3fdef2ed630784a5f2e959ef4723c9ad359cf1187538b8164b6bec84c76a694f6eccf0d016d528c4d7533fdc33422b1cfe88a96d1e8448e7bc34ce239f818c41aa27b57d4d7a59676ca7fdabbe2bda369077311e8a828657aea4adbc8457538c9563bce72220dca779491
-        e =
-        00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010001
-        d =
-        016ec893057251010ccb81adabd08fa19db32c43bd2378098a016fd77dfb2b23f278f655869060b9c4fee897331741d6042bd65ef36914e4581ae0c6136152d19a11c9d749ed32e9f7b85f6f1b60a958f919a09d9c4d99c0250584d6711bff333d876a57b6f48224252c0d07d81f991cc8eec18e5227bfaad0a0beea1b3f3079987a1729bd856e2c43e5911cd5d62c99e771e91d455f021eafddbf09f6111af935906eaf0ce549b5d49937830ba0de6076e7d22e2925a432b697bf082d48f185c58b5f371ca5bbe1c0e2b0efc360158ff311fcc3b80e631fbcf62ea7e5aeb13e89e6986d0c61b6610ca00f40b33182500e45e227d2e510f59d3232ea1601fb01
-        EM =
-        ff91122aadeb8d05f906623ddcca063402eb412a4d8940013ec42c73b39a489a95473247408cf9fe9c738eb1c96bd7541e6312c4222731a1859f0304f851cc251ce2b0330eed01ee19ceb8fa66424543520acc55e4b33b93f9b31d3bb377a7c37df62b5b0022cd32c80b1851291b9284e756d9a59d4cb11affbb7454366d8b750a779f93882b31fb04039cb6741a8cbfb35eb3ec9e665e591426e1af6629cd83ef1bbf83dcdbfd727fbebf3216188f25eb08ffd7d28a77d1c43ed0d5121fe81a25454313bfc0657be7aefb903b0f24887e34334139ec15fcb9dc8d80262ac571ecfefc2a24ee144bf3ce6ccde06785364ab2ff15a8f902915be9ed6f89ca68bc
-        S = FAIL(EM larger than modulus value)*/
+        
 
         // COUNT = 9
         test(bigint8_t("9ae1bda92193873d8b43ac607463544bcd3cc847c9b6b54a8f7772b57e810f7a5cb2593a2a65d2be9cd81bc0c2281df19f45ae70e75aeff6cfda6b76bffcc493c50f7df53c24ed04e27b32ffca5f480c5e6514f4b3426feb0d43f72818eccc6ed0e830a020c055cf9edbf32f734ffd397b16820938bea0dd3197a38dbcc448e"
@@ -4598,44 +4357,9 @@ TEST(RsaTest, FIPS_186_4_RSA_PKCS1_v1_5_RSASP1_Signature_Primitive_Component)
                        "c8f67dea2f8ed63fa7b51c3d571de1d8185778ed53b11521f2f79323aed476eb6c950e5da3519c46787ae32b37211aba1019162f25e3b09b8a8a0d8fad230c00efba623d030dcb9061f1d3fa8712c12b6319406b36f178a364771a6bde2d90f4692a23eec16e61669ddc6d3f7abf743884b5639d175f32e276029d4b85c5353"
                        "b4"));
 
-        /*COUNT = 10
-        n =
-        ddc640f38d1256e55bb8f613b0f146d351fa10e797f4e41976b429221e627e34ef2b096a8477f648091aeb393ee43d862030a4999a8a7cdf80accbfeac1f2886b970f59d52fc3c53a010432def7710a49553a18b3ada3c8952861be63549a343adedc3d7bdbb403af6f29a1520a05ef887a44e659618d0e7e379e401f4c253f8eb2ad6a39d934cf4f050dcbfa82d122d9dbb020e4539c96fc5cb6ecfd397350b6ff3ddff2d426c5bd13ce79dc9b8aa983a2222c57554772951b49eefbfb606faf3cf732d9d73f6912cf535ec1ee873984ab5fec312f9e36c68b3e7dede5f770777fa3dae7aa488d81294d27a7a1457ee4ff30d7c7972ec90f5a3e19990535e47
-        p = ea9906f3b517a36b714019691271cac0aa325439d65b95dfbc4be130c6ca944fb531bba375a384956902076706be6872cda65176f9a1328bdfcffef575dc888d00ee42d3440bb6a41fb16811b64f73d1e0d6bd57d9d22084a9bbf3139c1ea11c5861b07dd5552d64015bd9e3d51649f79ea81ab4c581506b7a2ade68ffe61687
-        q = f201bda2c68f9ca43490ceeffc313194b8dddf91d174e5182e2936719e3d24add24e1a49bf9417087b48dfbbd868fb7269c971fb5221177fb630b1569665c5437c599d73f4face5a617c84cd692c386bc6dca22f203324d0dd9f4c90bfc8d9c45ff3dedab957e1a40dd4708e9f0fbe02135f1faeb9f6fcc91a9ec0977efeaa41
-        e =
-        00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010001
-        d =
-        64c4e90d615be46d0a0cd48f64f674e29f5c9b62c81aa7ac6451ff60b7e2b40af4639f3f2d9adea6a3b07e12405ff00eaa40c001e58528b15ba3e87b3b155b52401fb212bebacae48a95e9188db711b25f01a5a500645a5e61477b94d240b7f5102a39b3254c58a6923ff0c049d764dfd3ae564af57528333d9acc7e110b5da0a416d584ef1575549851e4a8dbfa30ebd3d879a92e2243dbd52779ac3490f0e2d6ed261f980fbe02968feda4ec417f98e6504b5d1bc60646fcdb88c30c4eb863b180efc04d00a7bae7dfc0f32d7a6d68e329d555b6d72ba024dba67113885663faef66a1b6faf7780b9a99eedf57063095b32a73ae5e711bc60c56777bc2c1c1
-        EM =
-        ffc640f38d1256e55bb8f613b0f146d351fa10e797f4e41976b429221e627e34ef2b096a8477f648091aeb393ee43d862030a4999a8a7cdf80accbfeac1f2886b970f59d52fc3c53a010432def7710a49553a18b3ada3c8952861be63549a343adedc3d7bdbb403af6f29a1520a05ef887a44e659618d0e7e379e401f4c253f8eb2ad6a39d934cf4f050dcbfa82d122d9dbb020e4539c96fc5cb6ecfd397350b6ff3ddff2d426c5bd13ce79dc9b8aa983a2222c57554772951b49eefbfb606faf3cf732d9d73f6912cf535ec1ee873984ab5fec312f9e36c68b3e7dede5f770777fa3dae7aa488d81294d27a7a1457ee4ff30d7c7972ec90f5a3e19990535fbc
-        S = FAIL(EM larger than modulus value)*/
+        
 
-        /*COUNT = 11
-        n =
-        b54084896e2d4dcaff7fc318f8194777e3f511a63737d8a9c678873be6bb9b3a33e706afde924ea7fbb6c6ecb04c22976c293890911e2c9f3f403fc3a27b49d2dc60fccb4637418242f2f6602a3df9951e9b9fc3961bb9261887e09dcc0875e63654a18425afb17cc4ad65ac51030fcdb88098440aa633bf91366a2adb11c4dd8153a9361fdf7133694c5cc2d1741705313dbf49f6286af4da8cd6de38efb7975e93fc201c323019ad798814c8754a08672c7bc370fa6ebfbc924315dc61717b19b922ea2bf76576802857252cd562d675f0c306f829bb8865c0a5ccebb4fbf922650b51e025ad15fa87af64bc6ee2d6b2fdb21adfa02871fbf67fc859b48eb1
-        p = f49c86d5c3ee0505af0fc91d0eb9dc4277e38dedb138cf95c9a5e059c3c77b2d905e775bd403874e4f2bb4ecaf7b52e9f30e7174898ceec9115eff00529e9580d34732aba97536bc3c4d50b16e62fabd40d16eec6e335a8d3989ed1e62d58ccdb9155a39f53e00d6c82063428f6ddf498c4b5328ecb754dc7e3c0de29966029b
-        q = bdb0d2c11a1c3a5865abcee9f7fe7f657fa2da3b62641fbf40ac8c85cc215175fcf43558b222a7d79ad5c66b6d5dfe234435b6769c3662b14610c8c4b31bb5f2e1c22db5e4886c4138bfcdcc59ffd1d29eeeea40b48cb5ce2d2839109e94599c86fcaf9b49518163a460395c8b4879ff2346cc1841ca84f28236d84f3cd612a3
-        e =
-        00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010001
-        d =
-        1228c29e9a4143b800dd2608cc628bfc81043e9e6e8dd3d13ea738b551aa9e24b8aa7ecb03fb9891cff04201d8afe80f4fb0d98ff25a199262dde7058cb3d9739cccc2c702e3ea5648aadaf04b8b260440aacad8e7a3236ba3ad895d85e19b1e53772b2f782f20132609515470516435f234400d211c01b741af37f7cf36fa882337b8a6760c0c101986df8f0902c204d7117d53381f4d65779142a956f9f0743914d80629644e7c1dab5b6b53ae2ec5cbc8f50d888b9f0d22d2cf940bcd774bea5489a2f260e1910b01d12d442d0ecd47a2d61812ffa13cc2d90b0421432087ce390ebf13d95db5dd86ebe48d0d560aba60feb77cbd529795a75badeec21539
-        EM =
-        ff4084896e2d4dcaff7fc318f8194777e3f511a63737d8a9c678873be6bb9b3a33e706afde924ea7fbb6c6ecb04c22976c293890911e2c9f3f403fc3a27b49d2dc60fccb4637418242f2f6602a3df9951e9b9fc3961bb9261887e09dcc0875e63654a18425afb17cc4ad65ac51030fcdb88098440aa633bf91366a2adb11c4dd8153a9361fdf7133694c5cc2d1741705313dbf49f6286af4da8cd6de38efb7975e93fc201c323019ad798814c8754a08672c7bc370fa6ebfbc924315dc61717b19b922ea2bf76576802857252cd562d675f0c306f829bb8865c0a5ccebb4fbf922650b51e025ad15fa87af64bc6ee2d6b2fdb21adfa02871fbf67fc859b48fbc
-        S = FAIL(EM larger than modulus value)*/
-
-        /*COUNT = 12
-        n =
-        a47bb17d530e6a0f96b7e2e80a44f4155d485a0fdc98ea60724874e97611fe4752daebab15d6d9cb21c5aaafbc48b1e62e2c3dad76ca9e0cebeaabf55adea6f567c4b6d26c16341f5ec30b63cfe94cfcec64cf7e937403ee5f5d1e2e1088424b86b03567be14a832142b832b711de2a14a6af5715f4aab42cb660876cf60aedd781d269fcd129de622b6b8a2e1ca893c13610f2f49ad2da0c1163c8b698c2b0d0dc8dbdb6bd8c046ba75dd1b0c1517670d30bf773d780493b4051393d42920a8f8abf285338ffc0eb065c2833ae5c95e417683ef0d0c578f04b4c3983842054cdcc3905dbe58ad137dabb7721632a4a920693e4cfd02e85ba543164399010b0b
-        p = e109d39e0bb2b9b1413dc53a586ceb517a0ba469869c4934fd4faa5e998649dce8b20b1ab9a239b4ba2843b9731b65b3435a0b891acaf0151fb0c1a3f241f45fb791a4562b1e6c9f529d1e4f611c92efd2834f92ceec0067bcb462597f823abe843e5a511448c037ab8ad58ef228128247a32762f0d65125df7926fd15d1b937
-        q = bb1d069810d9ed3071d3135401e39d4c734c87bc7fa1f2f6433577a7de0dd201834c67edecd606e8ce2eb2297fb98d3537677d295cc8638f8fab2933492302b4800c606cfdb482d94eda7833988265a2aa07e5dc19fae8df5f096e8be8f0b0583a1e46032572da8469f214f6e1427c6d604994972b8eebb9bb8a5f20c58316cd
-        e =
-        00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010001
-        d =
-        043413364a0e733ee1d4b39098dd7f27b957eb2ebe96bba4703e80e08bf0e65233c04ff037cceecf04f378df4b32c806e6252ced3e8e5feda1e16e9590801c545b8a1153177e6738f5a5451cf910c83f87887973308d4e2d810b4c9c99a9ebf59d9b4703916c7189c0ffd6f14e7275b4d95131868ea3af0bd71f64219e9c0201c82fe7408e03ab8278e0523b6587a7471d8d8921f9be5f7067becd8f54623d4d7323c0fc07065abfbecf56d243eaee2c8d877584088d2e6c5d4bac4bd647996de3aaf0d242bdfe3f87d5f7415ac6caf8d73ad1a96365ffaa4e3e438959c03087bf2a3e190d432d3fffdc9768f9e7ed19d6630d464979ef7ec75ed04b3c6f6129
-        EM =
-        ff7bb17d530e6a0f96b7e2e80a44f4155d485a0fdc98ea60724874e97611fe4752daebab15d6d9cb21c5aaafbc48b1e62e2c3dad76ca9e0cebeaabf55adea6f567c4b6d26c16341f5ec30b63cfe94cfcec64cf7e937403ee5f5d1e2e1088424b86b03567be14a832142b832b711de2a14a6af5715f4aab42cb660876cf60aedd781d269fcd129de622b6b8a2e1ca893c13610f2f49ad2da0c1163c8b698c2b0d0dc8dbdb6bd8c046ba75dd1b0c1517670d30bf773d780493b4051393d42920a8f8abf285338ffc0eb065c2833ae5c95e417683ef0d0c578f04b4c3983842054cdcc3905dbe58ad137dabb7721632a4a920693e4cfd02e85ba543164399010cbc
-        S = FAIL(EM larger than modulus value)*/
+        
 
         // COUNT = 13
         test(bigint8_t("9f6c1310001d11601224f8167bb9066760ec6a2f393c67dadb5a8aa5388694b3db66f37450473c1d676e219c46d3286cdb96a9086cdf4a8c08718df0236c8a582b18ef72dd511e730a4270b27587b344c72ed267687777e0ebb507cf0972b072834192d72e4ae32be704713fb27bda22198d5e23e08f1be66883cf049ce30e3"
@@ -4678,46 +4402,7 @@ TEST(RsaTest, FIPS_186_4_RSA_PKCS1_v1_5_RSASP1_Signature_Primitive_Component)
              bigint8_t("0e32579a2cba08ceaa6c07bd09591bd819b7b649cc3edcab72734d0ae6eecf9f41a38b6cffcce4c7bb7ce45f32592d50692dd7320785cc6a4e418ac2af4b381490598a72314b0b0186d97bd282092439bb244af3371bebcd9eeac4c5805b70389a84ab81f0d9651c1788e511eb0ae54fcab5c7acc4b1673edc0c1831e5e1443"
                        "e7f00db6698e3e7f53d353bc98c16efbde0d0615f3044dba7a75c1fd9b5ccb0a9c4381d4b68c4d7194fdd27227598b18563c120eac08b42147317296461327c813740771d217dc49a4df6d300f6d4ef17b91989bf87fd05ed4716f60f3498d73f08e4f2af54548a1e07db2240c26e7da0ebd58402c5075aebafe21605579cd3"
                        "40"));
-
-        /*COUNT = 15
-        n =
-        b3ecf23b916515da28c47ff1763238332aa2667368c3745738c662d6ddec3efcaa2d045f34db5153a1053d999b22c6ba13b8b4520f7541dff137a762d0901ed0342914f8604c7a4a1733cfd4e7601b72ac3f4b591455f3986ac1837954ccc7efc785324e87e06f6ac4a9273a35a4cd394adb4b84a640c72c6c6846255e675998fa7cc912a3d2c4d490cea4c01176ca0581bf22931a60f401c24b602c98e5d4df1b07a909b7e7db6638964d916a2f8849ddd8dbe362443737454851125d967ed861b6d50c0a660902276e9704fa040e2320c254ed427e201fb87a70de39e7864e04adbefbe7477bc1026497be74206c4529644badc941d24f12c064d9b94d833f
-        p = c47f527bbb8f1de32a6ab893fba73b653e2a778124a6d05ad4908d2b802bc5559fce8b880b151014ced0749f4b5c1421385eaf60443698638653ce3aa9af4d3af1b283be9e7bab7f17c427a8156736b6489c7a45b67e1c0a54217b0a2b7287042f960be904382f6b8c517756a9e3ff7a6c0b95b5ee03079648b6e59b9ded74b9
-        q = ea68f6613459f7def1ded96b544ccc3748703fee9088ae837c51ba0e10b4cdd24544fef45a06b322e03fb9201a3a30ef0a7725b6cc8ea006b3e1656fe4653eaac8e49260d545a04ead13faad954dd40b1b267f438d65ac884c79dc837cc10fb9f3a5e8f6c61dff8e5c930e23ae19be7ffe77e55073619a9519e1eb9baf942bb7
-        e =
-        00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010001
-        d =
-        1a08863205430d8adfcc32c0f2bba8730acfada83437d79d092b7740a4a29aa87f4cfd2d735dea6201d1dacc5f6c84398741f9e147b84d1c44702b897a28e83472dfa0d7a1435f8c59d816d1b4daac8e068b2ff147267a950a994e571f6473e7674487f761e4a0ea5f632438616ba3800f2b34bd903a9e36f8c68ba3bb8993a676fa99246c103b531dc5e5653b7a9a7b8b1f055b7d384f3d1e1b394f6cd129e582ea7c0331c0331d84ab81ee26d93027651ce67e68aa49decc23eb64ca5b00968884e8e09d995f80f564d4a44b02e137e29b46136d52d2a92913903b9ea15cdfc21c6f446b11a4ecc7ed46775164d9381a6f37f188ef3198705401a2061bdd89
-        EM =
-        ffecf23b916515da28c47ff1763238332aa2667368c3745738c662d6ddec3efcaa2d045f34db5153a1053d999b22c6ba13b8b4520f7541dff137a762d0901ed0342914f8604c7a4a1733cfd4e7601b72ac3f4b591455f3986ac1837954ccc7efc785324e87e06f6ac4a9273a35a4cd394adb4b84a640c72c6c6846255e675998fa7cc912a3d2c4d490cea4c01176ca0581bf22931a60f401c24b602c98e5d4df1b07a909b7e7db6638964d916a2f8849ddd8dbe362443737454851125d967ed861b6d50c0a660902276e9704fa040e2320c254ed427e201fb87a70de39e7864e04adbefbe7477bc1026497be74206c4529644badc941d24f12c064d9b94d84bc
-        S = FAIL(EM larger than modulus value)*/
-
-        /*COUNT = 16
-        n =
-        999fe35aad92f7af978318165ab2ab8c8fa60cbcc92e9a0242c638811cc445c8407212fa6133677078338c599899d2c4c0b53723f8bdd2dff12b842ce1bca00c4acaeea78ceff05a6e47a8da18f8f2020a5a43a8b75b199f132a656f73e23d9f3f1b391c5a3a589e20d2e1bfb11f72005dd18835d5c6257c19d02e5aa053a77bccd7ba509c7f9bf82e61192c9cdf003838d0eac183f04761bed55da09ba9dff71f8ef33fa03e7b8d62b39fb1384822c3d55146376a543ba496a5ce7eee0c772c4d14aea1289c490fb74d1ef896b918f6b5d8cd333b8a79d3471507524afbbaa0786d078e3637c6cfc809e9e59c1905466c907dd5af155c98d28573ce3560bda7
-        p = c45686233f850f64a0b95e27442071e4090e216f4298889158a3f271af82a998c7c97bf30f85cfb2ea5290717df38b260b48d6957ee4ac9df975489886e8d8250e0d4e82cc959223201752877d9e1e61945267eaaa8a4957f3e7a339271ee36a309a5df6da7904771e24c2cc72dd866520f243df155af17a7c226a90c4d432a5
-        q = c84e9cb88e7ce14277a506343709af1e154f1d17c9b775f312f3d8fc62d64dbec947bb094447c7c007428b6a8c4a3bfe1c8dc2e001c0b3b827d9fba0fc72e6ca4a19a24d81bc66155544542132637974672621e46cb69e0d9fc84c13f87d8efae092c0c3659766d4ee163f81067e29a8414efe0b1dcb6a09590ca0faa03c395b
-        e =
-        00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010001
-        d =
-        4555aacc91bb5b8b8603d63abc9b981e5bf4f319bf69077c4ebbdce3b4e286a62f23ed19d105dcc11f9710589dad8b395eca4b0532ae25bf09bf7cabaf042d6deed1b12db0c7d80050768a28490e0e57ca695bd1095415f7bc342dccc40e0f86d07a0e6813f6f26907e2759dc928aa90acc735452ae2ffa70795745e55aefbcf0aab6abcfeb72c3b70062faa959e6701a9a59c4d551163e17440bd3b8ecb13fa735a9f3df6819b09ae153a25dc5e3365196c5d0d35d543c8a0dfba8f42ec5872b68e98556b38104d5ec7476834768cd2831b903ee1bbccd93316c4e50c62b81c8b68864227fe3268fdba0fbf93aa450cf5f0b5d7fdbaec8f971948fc22bda565
-        EM =
-        ff9fe35aad92f7af978318165ab2ab8c8fa60cbcc92e9a0242c638811cc445c8407212fa6133677078338c599899d2c4c0b53723f8bdd2dff12b842ce1bca00c4acaeea78ceff05a6e47a8da18f8f2020a5a43a8b75b199f132a656f73e23d9f3f1b391c5a3a589e20d2e1bfb11f72005dd18835d5c6257c19d02e5aa053a77bccd7ba509c7f9bf82e61192c9cdf003838d0eac183f04761bed55da09ba9dff71f8ef33fa03e7b8d62b39fb1384822c3d55146376a543ba496a5ce7eee0c772c4d14aea1289c490fb74d1ef896b918f6b5d8cd333b8a79d3471507524afbbaa0786d078e3637c6cfc809e9e59c1905466c907dd5af155c98d28573ce3560bebc
-        S = FAIL(EM larger than modulus value)*/
-
-        /*COUNT = 17
-        n =
-        caee0d131f2c7f24399cd3aadf1a68bcebea04b5419aad7ac0daa4370de80da38bbf80acfe2798a35021f092dd2d4dde3445a2a618df25588d59d981c9762e38ff5f98b3c68dc389321a31f2ec710513113cb07fc229fcf2f0cf0038bb27efc7c987c439461b5a3ca1cf31a45e47753394ff7c918a27abe24a5e181093f6f3a82d4760fd29c3ee0927d36f526a5de52944b54d69380d936b26bcbeb8a3964cb6437d56f002f23fc68c7a419548e8e5062ea33720f538ed315c1c15a96bcd5690b95fd447d4378ab1cce2183b18738e95b0cdd7037127c8071f4394472e25a038241f806665d8d4be74c763f0e81da8b4960108d3991e4e0de412bf11e494ca59
-        p = d60b2b4ea6f2eb565f83770a92fe588747229abcfc6923b0adf0c57684a8a2deaf401d0d63ac72adb15934ef459681845841f193d43662afe04c04712d2d265229f7b304c766891800382e659bd560a8522e4de38083ef351c7196214bf4613815193d4bf1ef8ccc3d3c81561327f1cdbf228a1dde170195345face4d5610057
-        q = f2b530205c5e10e452cd688b3312c002728cacf6e8efccfa6e28507883b5aea35ad7bb9008c54c6127c75757329be94443faf81b3df1e4a12f77c506bec7a5de95799c505056e7fd8f6b81d9aa769aec356c2408c487c5dc71f646268df4c522acbedc77be207c9b21876f86066d05a965ff72997e5d89bbc0bcf03d98441ccf
-        e =
-        00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010001
-        d =
-        63eddad9663a02b80378e350db0185bf368b2c5b579d843d1517f5d2b891e3997c3946f3a94a35638293dc046e4f1f6fc31ce16dda84943ee9886bcffa35aca85bb5271cac33662d3ad36472641579b2bc83bec483082b2c350232713d547ac2cece8105d52ca600828be5bdb3c18b88e59ff4273539b8ee3bc1df26d6be3e985b1b94543e41cf2a647a712eab57b851fe636e4f2e958e297473c82bd3383b8729967da0ccc525dd903fa6455408efe43f220a9401055331c3569ddaa842a94d7ee5826987ffb679d63cd376d1b3b433d7a69beacfc9595abcc53df3c976e869e8ba1164219169f48dfe0fdf189f7e6c2b9762becaeeabdb5eef2ca1dfd741db
-        EM =
-        ffee0d131f2c7f24399cd3aadf1a68bcebea04b5419aad7ac0daa4370de80da38bbf80acfe2798a35021f092dd2d4dde3445a2a618df25588d59d981c9762e38ff5f98b3c68dc389321a31f2ec710513113cb07fc229fcf2f0cf0038bb27efc7c987c439461b5a3ca1cf31a45e47753394ff7c918a27abe24a5e181093f6f3a82d4760fd29c3ee0927d36f526a5de52944b54d69380d936b26bcbeb8a3964cb6437d56f002f23fc68c7a419548e8e5062ea33720f538ed315c1c15a96bcd5690b95fd447d4378ab1cce2183b18738e95b0cdd7037127c8071f4394472e25a038241f806665d8d4be74c763f0e81da8b4960108d3991e4e0de412bf11e494cbbc
-        S = FAIL(EM larger than modulus value)*/
-
+                
         // COUNT = 18
         test(bigint8_t("cdbc7d659f98aba9a7ba2e8be0e6f5664ffe1cef25395d21965f9e08fb99574834c6acb8bc6fb3281ef0bb6c2e07211f056c3fc7686ac21d0bf737c0ea17aacd234bae70fa8c7520ffd7e6663677bdac6432e4d2c47fd45bef7c11d75f27d4be0e8c4caeedaa8b6fe58415679ab15e604967c1f92c9f8705fe80c3ded59793b"
                        "8573dcb221c23446828250edf89006677deac83b64a36f82a123711b2f0a8073e55345375e250d949b8334c1055dfea02dbfdbe83651153ab1d8e309bd14c04ed85f1a406c78e3723993ddb2e790cf8319cce0ab2b433a77bfaac8e153e78467b9ce5a40caf8c685e738a8756f31ed6657644e68523f76e8f1a59cc0327f426"
@@ -4739,18 +4424,7 @@ TEST(RsaTest, FIPS_186_4_RSA_PKCS1_v1_5_RSASP1_Signature_Primitive_Component)
                        "a8a71e69c14e865cd2bf92deb756eae2410cd4c51c1b7fad52cfc2f280081a0db68b7160a2120bb2858a5dcffe3d88823a60035b9d85bb29eb9e47e012d4044e6b53c32b455623f3a7a89f15d79f19774d43bd8e6bc753acba2864363591776c6a254a77d61745c51e1cb15b7890009f575545fcd5f9938286732e52292d10a"
                        "f3"));
 
-        /*COUNT = 19
-        n =
-        b618f1145c3134e3f148effd21f9f0c8245b027e20906e55379ea6034416ae476c434617b33d5ebe3f573150ef466f6dc524713c2762c68b51393eeaf1803cabd82c18919a81baff6521039c9b6081c8b027fcbce8e32b1407c14a878d176daf80cc0bf93668b6dbcc2bb5b5d52bede7b2b8d83de59ddc968f8c8a3475bedeab39192aec06f5df2b2371b1a21cca3418321cf69d7dfff16e0521f42ebed72bb165c10c8f4ce5c1ea4f0949df2fada51b3178cc88a8107d4fe3834bd6885b91e33293e2324e8f7f4dc84535d4c1a4b3779c408c843c343454ef3e3c5495ef1d9ca07c49a35f9a4aae4ae7fd7533d2af14f45ad874f44af7977fbf4f1cd75d7531
-        p = fd61c2975f7a9e4a8ddf3672012c97ed0be567c3ac9ec95c89e3f322b98b8ba668ae86129098d890ac3cc0a64a37d9c0f983e2faabe589a525511165e153298826163ac59663c7d35988100b9b120f062fe347168fa909e520e0e55463dc7042ffb8de27d9a55ffd23496fe8adf2b6d5b1ea5f898b94c43ef8890cf1d65c8051
-        q = b7fa9f22c2420b083b458eef50cae51c0162c3cd1accd51d33057680496b25820db7ea2dd288da07a7100c19af34d7df166a8e5c2b6966cbc352c06579601b234202189b24028bf600ce5a26e31c7d309b210aa8b84fabf7268bbaeda599e7f41ed71bb634e3a1ec3309407f838bbbcf8798d0632b8861ac8648211dab784ee1
-        e =
-        00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010001
-        d =
-        08e907666174b9af9fe94b8f7385b832c5e72364062e450cd3cef634fd945dc8a247382f3d92b69fa8e828824b24035cafdf66b04ca5d25ce3af8138f4325bfda563327c50eef1465115ac8861a8b72f09921a5588d081558e83d67493aa82602aa5695e535b8c3b8cf5f453327c2edce6179202b4d92caf9c1472988aaca956ea7a9ece6b86c930060aa2aa90b61ef59d6df165d4cb05145d9291327151f492fde1cd5955ea555cd3cc6343b7471636e7a32e4f4da583e1ef0d077af3abeb23dc4b3f97b9180ae064f3f0e846a469db2bc5d68317c78fbaa20d1155cdc474d5c0c5ce3933ac5ca701080b74341188bfc798e8feea1df36717084feb17eceae1
-        EM =
-        ff18f1145c3134e3f148effd21f9f0c8245b027e20906e55379ea6034416ae476c434617b33d5ebe3f573150ef466f6dc524713c2762c68b51393eeaf1803cabd82c18919a81baff6521039c9b6081c8b027fcbce8e32b1407c14a878d176daf80cc0bf93668b6dbcc2bb5b5d52bede7b2b8d83de59ddc968f8c8a3475bedeab39192aec06f5df2b2371b1a21cca3418321cf69d7dfff16e0521f42ebed72bb165c10c8f4ce5c1ea4f0949df2fada51b3178cc88a8107d4fe3834bd6885b91e33293e2324e8f7f4dc84535d4c1a4b3779c408c843c343454ef3e3c5495ef1d9ca07c49a35f9a4aae4ae7fd7533d2af14f45ad874f44af7977fbf4f1cd75d76bc
-        S = FAIL(EM larger than modulus value)*/
+        
 
         // COUNT = 20
         test(bigint8_t("98e9a73ffaa11016b424f7b7c7704170246013400683821fb07c2d5fe5651393f4aa38a6b2b3717867cf8a46d626d41f21678dbf1766f797500e8f01ffdb7db386a6b7b248b17c54b9cf219f29ef32c2a6e9996fb3d8cc34dce6c0346b96bc26456073123d4eb2e7b931bce0144838127a49152a22a0127610d2d5a265a6df7"
@@ -4773,31 +4447,7 @@ TEST(RsaTest, FIPS_186_4_RSA_PKCS1_v1_5_RSASP1_Signature_Primitive_Component)
                        "5722342677cc22453f665841a08f916311e884d6a53e7791d636be3ef5b7d88bfd59b792cc558047b1f4e6febf484a40ed0da68425cce96bc110ad3def6712954d92d8cd0cbc98201cf6d7b4de47e5fbdd7a68cce37e6ee1fbf598283550219d3330688b765c483017b6a8fabdd2ad7fc60cc6abf12effb07368022843de020"
                        "76"));
 
-        /*COUNT = 21
-        n =
-        e4440bba5c3126dfc183eea442cb8c8ea0bc8840fbb10414e65b928e53620d0ab46920335085b0b89fe721c35fe3d115d85d8ca298df3888cb483bc5f1f79331d06c6251c9c2078aa1b59ea4ae098d58fdf7cdc92ef9c091bf09f7d2e1634a0f5f8f0b3a1cbf77ff440bb27a89c324ea1ee1d38ebb4cb352acba639a25d7f061a20419a95c4e43a36b90475445b71a12c5e1cd5cb676db1e877315ac2734043adecdc32fe6f12e87e995568768e83b42f28bc49a8d6ec806e3c3d55ae6812a41995bf23fb147cff2d37b1b322d835c7c3d30f5a42fd36b5fe9c36d79318bc2befadee0ee0c189bbe013afed54590e990b3fdb8705929893201130d1ec71c3f2f
-        p = e5aa05d64166e19e69ec2ed20f4062b7dd2e85f277bc54cdb7d0893878e0ca7607a6556b1e21f0b0c33448bc9eec8f5414556f5860860c45925d63d96ebf06271aebcac48035e44e6270ec4d23d483e508957e2235609ac72baeae70d68e3d8fdfe6c2946dad39ce0ffd573150f25ea1d492b2b670eddc21886fc425bee76a4f
-        q = fe70f92fc3d0fb52a6dba66e963666580917d97c7d999e3fe3fb24f0e0ffcfdb9b8701e13f56c208624777bc736e32b952a6c0b55ac75ef937c041f4c806b9fb639c785da74e7712f371ad214ca2c7e6e752aedb982ca79fc7135e57e1f5d0867dbaacfccce9822d84a2e163b5df22476233e82c55680cd7210bd2258d8c0521
-        e =
-        00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010001
-        d =
-        040796140114a3a3c00d2830a172e23728f37de80b896cafd85a9f5f3cc82f0bb28238962042b8295945892a5824e4b8f7a643d58afdcd571afdb4a15e6a09285b7f37bc2d2f286638005c163e80fd22beb17bcb9569e3c336702660135cdf791ef1cbfc000deb9a802322d7eef17abca48055b92b52f0f4a652c8bb1cd9cbbf95e107d2e25c1a2c03ddca3e3a37a4aef10231e4f587d8d4b1c17925da74e647a079d80bdb15e2d3fdba3e5fe7999b0e2cd04ea83639aa6e956918ed52a464936ffefa50a81e2c6157049e34e2dd798b1f7407d4e275d5700a10046620aa053813dbb6c2f56b29857c6f369136996bd8b82566d1cdef658659db626b82425b01
-        EM =
-        ff440bba5c3126dfc183eea442cb8c8ea0bc8840fbb10414e65b928e53620d0ab46920335085b0b89fe721c35fe3d115d85d8ca298df3888cb483bc5f1f79331d06c6251c9c2078aa1b59ea4ae098d58fdf7cdc92ef9c091bf09f7d2e1634a0f5f8f0b3a1cbf77ff440bb27a89c324ea1ee1d38ebb4cb352acba639a25d7f061a20419a95c4e43a36b90475445b71a12c5e1cd5cb676db1e877315ac2734043adecdc32fe6f12e87e995568768e83b42f28bc49a8d6ec806e3c3d55ae6812a41995bf23fb147cff2d37b1b322d835c7c3d30f5a42fd36b5fe9c36d79318bc2befadee0ee0c189bbe013afed54590e990b3fdb8705929893201130d1ec71c40bc
-        S = FAIL(EM larger than modulus value)*/
-
-        /*COUNT = 22
-        n =
-        eaffa4567e06a6eddf5bf2f788d64ee4ad77aab660dabf538fb2983942903a14a0cdeb3f9da105dc91500e1cb7e97be6ef1afb1629ca8c38441d54d00af16e88b4d24d95a9424bc5d03070010a3a3603b0d94980c5bd19cade836009669e75705476680c96d4e371e5b374b1d3a5693d3d30e61dbc8d10970eed182de1a36cb61a48c06889ba6ed5ed9fd639576d9d9230bfa154ce98f3d638d7e7e5d2e6e4c51459049f7b9d151d2c1e152d305cbd0d97a2543b28d3ca7091dd02e835c221081d5b2d6ff34d86b491ead520831f9d71d4310642c940cbbcee696bf567a21eee3ca4ed89df8cb6c3140e111e261bf79fcee4f26e6d9aab419285832b6613c2c1
-        p = f10504896ef6eec21750ccd89c845a8f82358a4c1de7acba5af4a254438f0d2c1b500b99c6148d41d00c1c9f4c659723b91cea66019487034fbefce49481b733794bb7b83ad76fb1d25c8884beae4a777c06c9f881db885be29231fc494eb45a930e2fe4b9f121fd82c2689300d9d42b9e847e5e29e4c128ebe98fac7c6cc229
-        q = f99ad23513d1f48d8536e1d45d748b6d0553f8f8c7f8fc51a340b0f2fe9a3498113166b7aeb3696a364b2a0d4d057b14456939b1c2abe15dd7f5ae68eb67c9bb2e2a2063a8ae5af1d1a1934da85dd980f79de124d15458ff352043c828063ff1388adc86397c89f45895ccd59070b4612a03ad4d80cdbee3629f5bb60c1b7ed9
-        e =
-        00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010001
-        d =
-        10428e45cc4c4c4854fe3d1c66cfd24f6517ccbc780ce6b462d2dc10c933e6cae6d9fcab2f0e55541ecb5be09d929697c2e75a647d11865c7dcd0c41656271701cd7d8d5b04b95a7db2900d4f796d1c6355a41895b1543a7bb77fa6108245272aa6b73755c89e02f7131f6b2f7b6a026a4396210c06b3fd0bdf0068e65288c44d6efe0741aed2366f0ad43ce44e8a6abc0b4ad8593080e67ba012618a721f1f985f12eeebe6f085f529a740f2672940c19bf1f2f11be576882e345f57edbdd6f098eebd5a84e5d0b4c5526f8ba3d58383f6792c66faa09b7a996490858007ca0d702d809ae539309693bbf172c3406141a4a78d7c0c9f4f4676efeb71faa2f99
-        EM =
-        ffffa4567e06a6eddf5bf2f788d64ee4ad77aab660dabf538fb2983942903a14a0cdeb3f9da105dc91500e1cb7e97be6ef1afb1629ca8c38441d54d00af16e88b4d24d95a9424bc5d03070010a3a3603b0d94980c5bd19cade836009669e75705476680c96d4e371e5b374b1d3a5693d3d30e61dbc8d10970eed182de1a36cb61a48c06889ba6ed5ed9fd639576d9d9230bfa154ce98f3d638d7e7e5d2e6e4c51459049f7b9d151d2c1e152d305cbd0d97a2543b28d3ca7091dd02e835c221081d5b2d6ff34d86b491ead520831f9d71d4310642c940cbbcee696bf567a21eee3ca4ed89df8cb6c3140e111e261bf79fcee4f26e6d9aab419285832b6613c3bc
-        S = FAIL(EM larger than modulus value)*/
+        
 
         // COUNT = 23
         test(bigint8_t("b233a6f3852556ca64dcaaf7a7a6040280ffbc1ebc2ca20538be2cfdc57e2e91a240ea1f1c3e4b2255fcff5322539b98fdee3951af8b1e91e9489329513d726147f0f47a14dd1e4b99c0ea0844fae41a08101a5e702e53a6f363b445ccf194304062b4973e9385ce7c9c0cd11282c50cd2e119efeb9e09a44125f87843c5639"
@@ -4841,18 +4491,7 @@ TEST(RsaTest, FIPS_186_4_RSA_PKCS1_v1_5_RSASP1_Signature_Primitive_Component)
                        "6580de1153bf9761ea0a7c6c88411061b03e97c9b2a376661cea7ccb969e8e25c2d1eac4c98038483c9b8de73d26e033f9aa47587d44db54e2b00224f64e1aed09e5b7eda74568e338b11a18e4be1e1618b8cf0c4c18f7c9f9bf67fc5226f2131fbabf3f026c16f917058a0b9032a66c9da8bf2a5603781f04a36dcfde48b9f"
                        "13"));
 
-        /*COUNT = 25
-        n =
-        b3f3a07a0a86c30b0c0b7274c78eb9108989d65c69767d65ee4af7b76b132a7b926b52a6d547b4f6fdb2997d5acdf5869ec730aa90aa8da004836110dd0ebee6c85ce8086e6a1c4f67d67ca3b8014d5fd7c4d89d93759422ee9540a0b6756e2ac171185c13fce3a9d8eb9643f7ad31452e484c8964a00a94319c7ea966b8dd12a3c986a8582abeb2c39fa180e5d6940efc04829f5eefcf046c5561cf7ebf946507df1b8162d8ed09d9f4e0df824aa0fb4800ce071e609c99fd3a961ac2222fdb8e49706220eeb5a531d35a7c4b447efb08bc54ff47feb6c548b4778d6ac32fce136981208998477a3b3671c91b38535cfa34a9df2e9aa3d8bc821e618fd5b873
-        p = bfb3905539ecc8d4960e58633ef574e6416f38a8d7b653a40bde39d2b4a56ca5fac3b3555c9779e78f01a1e398e6d9c576350a77b85af53d5b86bc85a7ff1de15870d6ce25f57b1fe0366de13418e3887675c4ba9c26414cbc9d32155562860b37b7f301141dbdb91a6b37021f23536f889fffd9e8c50cf760a19c1cdcba2753
-        q = f04f2bbce16e88b3233a6d3f95ca18de3ce83391a6e60a59777a0c5c7608af41f9ff125e5e662fb813557a57fff8711134090b49ffdf869753660c7feb939e12b7c5874723f00620ad9b0c78ad63215cf4dbf2990dc2bd4a766bab19348981197f6f38c2b169d094341f3ea511ce57e168e5b73015f15d51d0a7015ce05fa661
-        e =
-        00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010001
-        d =
-        062e4905c814c6e03b42ad64bb71f8834be61319cb79896715df3750f2798f0cfd83782c48c914bb230d9e5e02df6e1e7897a8e142e4c8c6854129f555526b562bed9cfea52439e2b45356a69cec568703373ca574ea25f36934712ad3f986962b5cc2146f8f5116855fda226d80625fd8ee1ccadf4cebf0192021ed999ca1e3322c52cb043dafa739ccaff299adabc6a5386bbb7d45006dd754d23d18861d1856aeb377c3db311e95d872679addd7f09c069323b7157a2cacbad95f6fe0f77f2d0264af84f748f867f5b4881a100bb97055b822abe45d1620226bc3f47f0f6379cac179d53629d6142ef8130623f523acacada48ae790de904ea251d4182641
-        EM =
-        fff3a07a0a86c30b0c0b7274c78eb9108989d65c69767d65ee4af7b76b132a7b926b52a6d547b4f6fdb2997d5acdf5869ec730aa90aa8da004836110dd0ebee6c85ce8086e6a1c4f67d67ca3b8014d5fd7c4d89d93759422ee9540a0b6756e2ac171185c13fce3a9d8eb9643f7ad31452e484c8964a00a94319c7ea966b8dd12a3c986a8582abeb2c39fa180e5d6940efc04829f5eefcf046c5561cf7ebf946507df1b8162d8ed09d9f4e0df824aa0fb4800ce071e609c99fd3a961ac2222fdb8e49706220eeb5a531d35a7c4b447efb08bc54ff47feb6c548b4778d6ac32fce136981208998477a3b3671c91b38535cfa34a9df2e9aa3d8bc821e618fd5b9bc
-        S = FAIL(EM larger than modulus value)*/
+        
 
         // COUNT = 26
         test(bigint8_t("ac9f9c620fb18a36ad93a206e86471a0cd420637cc5e03114813a6e0c37de6bc57a189cde2305aeee9fab2928edf6ec478d7895c7432f64c8183c9cf211e58ea32b5202dbf29dd5f9ece3fb86c298b562a7e3bd47d626ec3af777c9b6b13272cb6f10246ae69de01c839711e2907e1cf5aa4760ea6a1f60da8d2797e700c4e3"
@@ -4938,4 +4577,4 @@ TEST(RsaTest, FIPS_186_4_RSA_PKCS1_v1_5_RSASP1_Signature_Primitive_Component)
                        "3592e9feeac2b3af4c4bffc77c424c796f47a83932357c29e8e2ddf63f2288323c4bb06ee2e53e9714d4ef924c1e57d1f822c16b399e9de1bae04e27f42ed80f71bb41317a06c708fd3625b7a51548e4f791961e6eb90565a98b76e854bf3b6c1db8678e4e2087a9f858b822b0ec2e502491a9a869104a0a586807cbbf01363"
                        "2c"));
     }
-}
+}*/

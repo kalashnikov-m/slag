@@ -57,16 +57,16 @@ namespace cry
                 return;
             }
 
-			/////////////////////////////////
-			// skiping zeros and whitespaces
+            /////////////////////////////////
+            // skiping zeros and whitespaces
             auto it(hex.begin());
             for (; it != hex.end() && ((*it == '0') || (*it == ' '));)
                 ++it;
 
             std::string::const_reverse_iterator rit(hex.rbegin()), rend(it);
 
-			//////////////////////////////////
-			// counting hexadecimal characters
+            //////////////////////////////////
+            // counting hexadecimal characters
             size_t nchars = std::count_if(rit, rend, [](unsigned char c) { return std::isalnum(c); });
             size_t nbytes = nchars / 2;
             nbytes += nchars % 2;
@@ -123,9 +123,14 @@ namespace cry
 
             if (first != last)
             {
-                m_Polynomial   = std::vector<IntType>(first, last);
-                m_Negative = negative;
+                m_Polynomial = std::vector<IntType>(first, last);
+                m_Negative   = negative;
             }
+        }
+
+        std::vector<IntType> polynomial() const
+        {
+            return m_Polynomial;
         }
 
         basic_int& operator=(const basic_int& other);
@@ -134,7 +139,7 @@ namespace cry
 
         explicit operator bool() const;
 
-        explicit operator const std::vector<uint8_t>() const;
+        //explicit operator const std::vector<uint8_t>() const;
 
         const basic_int operator<<(int) const;
 
@@ -423,8 +428,8 @@ namespace cry
     {
         if (this != &other)
         {
-            m_Polynomial   = std::move(other.m_Polynomial);
-            m_Negative = std::move(other.m_Negative);
+            m_Polynomial = std::move(other.m_Polynomial);
+            m_Negative   = std::move(other.m_Negative);
         }
 
         return *this;
@@ -438,7 +443,7 @@ namespace cry
         return !flag;
     }
 
-    template <class IntType>
+    /*template <class IntType>
     inline basic_int<IntType>::operator const std::vector<uint8_t>() const
     {
         auto n = m_Polynomial.size();
@@ -447,12 +452,12 @@ namespace cry
 
         for (auto xVal : m_Polynomial)
         {
-            auto x = swap_bytes()(xVal);
-            result = i2sp()(x, result);
+            //auto x = swap_bytes()(xVal);
+            result = i2sp()(xVal, result);
         }
 
         return out;
-    }
+    }*/
 
     template <class X>
     basic_int<X>& basic_int<X>::operator++()

@@ -6,9 +6,8 @@
  */
 
 #include "googletest/include/gtest/gtest.h"
-
-//using namespace std;
-//using namespace cry;
+#include "basic_int.hpp"
+#include "algorithm.hpp"
 
 int main(int argc, char **argv) 
 {

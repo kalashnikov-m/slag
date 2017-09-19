@@ -8,6 +8,7 @@
 #include "algorithm.hpp"
 #include "basic_int.hpp"
 #include "eme_pkcs1.hpp"
+#include "os2ip.hpp"
 
 namespace cry
 {
@@ -29,7 +30,7 @@ namespace cry
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // 2. Convert the encoded message EM to an integer message representative m
-            IntType m(EM);
+            IntType m = os2ip<IntType>()(EM);
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // 3. Apply the RSAEP encryption primitive to the public key(n, e) and the message representative m to produce an integer ciphertext representative c:
@@ -37,7 +38,7 @@ namespace cry
 
             ///////////////////////////////////////////////////////////////////////////////////
             // 4. Convert the ciphertext representative c to a ciphertext C of length k octets
-            std::vector<uint8_t> C(c);
+            std::vector<uint8_t> C = ip2os<IntType>()(c);
 
             result = std::copy(C.begin(), C.end(), result);
 

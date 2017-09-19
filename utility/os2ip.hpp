@@ -60,25 +60,90 @@ namespace cry
     template <class T>
     struct ip2os;
 
+    template <>
+    struct ip2os<uint8_t>
+    {
+        template <class OutputIterator>
+        OutputIterator operator()(uint8_t x, OutputIterator result) const noexcept
+        {
+            *result++ = x;
+
+            return result;
+        }
+    };
+
+    template <>
+    struct ip2os<uint16_t>
+    {
+        template <class OutputIterator>
+        OutputIterator operator()(uint16_t x, OutputIterator result) const noexcept
+        {
+            *result++ = (x & 0xff00) >> 8;
+            *result++ = (x & 0x00ff);
+
+            return result;
+        }
+    };
+
+    template <>
+    struct ip2os<uint32_t>
+    {
+        template <class OutputIterator>
+        OutputIterator operator()(uint32_t x, OutputIterator result) const noexcept
+        {
+            *result++ = (x & 0xff000000) >> 24;
+            *result++ = (x & 0x00ff0000) >> 16;
+            *result++ = (x & 0x0000ff00) >> 8;
+            *result++ = (x & 0x000000ff);
+
+            return result;
+        }
+    };
+
+    template <>
+    struct ip2os<uint64_t>
+    {
+        template <class OutputIterator>
+        OutputIterator operator()(uint64_t x, OutputIterator result) const noexcept
+        {
+            *result++ = (x & 0xff00000000000000) >> 56;
+            *result++ = (x & 0x00ff000000000000) >> 48;
+            *result++ = (x & 0x0000ff0000000000) >> 40;
+            *result++ = (x & 0x000000ff00000000) >> 32;
+            *result++ = (x & 0x00000000ff000000) >> 24;
+            *result++ = (x & 0x0000000000ff0000) >> 16;
+            *result++ = (x & 0x000000000000ff00) >> 8;
+            *result++ = (x & 0x00000000000000ff);
+
+            return result;
+        }
+    };
+
     template <class P>
     struct ip2os<basic_int<P>>
     {
         std::vector<uint8_t> operator()(const basic_int<P>& ip)
         {
-            std::vector<uint8_t> dst(ip);
+            std::vector<uint8_t> octets;
+            octets.reserve(ip.polynomial().size() * sizeof(P));
 
-            return dst;
+            operator()(ip, std::back_inserter(octets));
+
+            return octets;
         }
 
         template <class OutputIterator>
-        OutputIterator operator()(const basic_int<P>& ip, OutputIterator oct)
+        OutputIterator operator()(const basic_int<P>& ip, OutputIterator octetIt)
         {
+            const auto& polynomial = ip.polynomial();
 
-            std::vector<uint8_t> dst(ip);
+            for (auto xVal : polynomial)
+            {
+                // auto x = swap_bytes()(xVal);
+                octetIt = i2sp()(xVal, octetIt);
+            }
 
-            oct = std::copy(dst.begin(), dst.end(), oct);
-
-            return oct;
+            return octetIt;
         }
     };
 

@@ -24,7 +24,7 @@ namespace cry
             IntType arg(encoded.begin(), encoded.end());
             IntType s = cry::pow_mod(arg, d, n);
 
-            std::vector<uint8_t> S(s);
+            std::vector<uint8_t> S = ip2os<IntType>()(s);
 
             result = std::copy(S.begin(), S.end(), result);
 
@@ -57,7 +57,7 @@ namespace cry
 
             ////////////////////////////////////////////////////////////////////////////////////////
             // 2c. Convert the message representative m to an encoded message EM of length k octets
-            std::vector<uint8_t> EM(m);
+            std::vector<uint8_t> EM = ip2os<IntType>()(m);
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // 3. Apply the EMSA-PKCS1-v1_5 encoding operation to the message M to produce a second encoded message EM’ of length k octets:
