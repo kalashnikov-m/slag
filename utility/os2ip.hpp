@@ -68,8 +68,8 @@ namespace cry
     template <>
     struct IP2OS<uint8_t>
     {
-        template <class OutputIterator>
-        OutputIterator operator()(uint8_t x, OutputIterator result) const noexcept
+        template <class OctetIterator>
+        OctetIterator operator()(uint8_t x, OctetIterator result) const noexcept
         {
             *result++ = x;
 
@@ -80,8 +80,8 @@ namespace cry
     template <>
     struct IP2OS<uint16_t>
     {
-        template <class OutputIterator>
-        OutputIterator operator()(uint16_t x, OutputIterator result) const noexcept
+        template <class OctetIterator>
+        OctetIterator operator()(uint16_t x, OctetIterator result) const noexcept
         {
             *result++ = (x & 0xff00) >> 8;
             *result++ = (x & 0x00ff);
@@ -93,8 +93,8 @@ namespace cry
     template <>
     struct IP2OS<uint32_t>
     {
-        template <class OutputIterator>
-        OutputIterator operator()(uint32_t x, OutputIterator result) const noexcept
+        template <class OctetIterator>
+        OctetIterator operator()(uint32_t x, OctetIterator result) const noexcept
         {
             *result++ = (x & 0xff000000) >> 24;
             *result++ = (x & 0x00ff0000) >> 16;
@@ -108,17 +108,17 @@ namespace cry
     template <>
     struct IP2OS<uint64_t>
     {
-        template <class OutputIterator>
-        OutputIterator operator()(uint64_t x, OutputIterator result) const noexcept
+        template <class OctetIterator>
+        OctetIterator operator()(uint64_t x, OctetIterator result) const noexcept
         {
-            *result++ = (x & 0xff00000000000000) >> 56;
-            *result++ = (x & 0x00ff000000000000) >> 48;
-            *result++ = (x & 0x0000ff0000000000) >> 40;
-            *result++ = (x & 0x000000ff00000000) >> 32;
-            *result++ = (x & 0x00000000ff000000) >> 24;
-            *result++ = (x & 0x0000000000ff0000) >> 16;
-            *result++ = (x & 0x000000000000ff00) >> 8;
-            *result++ = (x & 0x00000000000000ff);
+            *result++ = static_cast<uint8_t>((x & 0xff00000000000000) >> 56);
+            *result++ = static_cast<uint8_t>((x & 0x00ff000000000000) >> 48);
+            *result++ = static_cast<uint8_t>((x & 0x0000ff0000000000) >> 40);
+            *result++ = static_cast<uint8_t>((x & 0x000000ff00000000) >> 32);
+            *result++ = static_cast<uint8_t>((x & 0x00000000ff000000) >> 24);
+            *result++ = static_cast<uint8_t>((x & 0x0000000000ff0000) >> 16);
+            *result++ = static_cast<uint8_t>((x & 0x000000000000ff00) >> 8);
+            *result++ = static_cast<uint8_t>((x & 0x00000000000000ff));
 
             return result;
         }
@@ -145,7 +145,7 @@ namespace cry
             for (auto xVal : polynomial)
             {
                 // auto x = swap_bytes()(xVal);
-                octetIt = i2sp()(xVal, octetIt);
+                octetIt = IP2OS<P>()(xVal, octetIt);
             }
 
             return octetIt;

@@ -1165,7 +1165,8 @@ TEST(HugeTest, DivRem)
         basic_int<byte> b = 2;
 
         basic_int<byte> q, r;
-        a.DivRem(q, r, b);
+		q = a / b; 
+		r = a % b;
 
         EXPECT_TRUE(q == expected_div);
         EXPECT_TRUE(r == expected_rem);
@@ -1184,7 +1185,8 @@ TEST(HugeTest, DivRem)
         basic_int<byte> q;
         basic_int<byte> r;
 
-        a.DivRem(q, r, b);
+		q = a / b;
+		r = a % b;
 
         EXPECT_TRUE(q == expected_div);
         EXPECT_TRUE(r == expected_rem);
@@ -1199,7 +1201,8 @@ TEST(HugeTest, DivRem)
         basic_int<byte> q;
         basic_int<byte> r;
 
-        a.DivRem(q, r, b);
+		q = a / b;
+		r = a % b;
 
         EXPECT_TRUE(q == expected_div);
         EXPECT_TRUE(r == expected_rem);

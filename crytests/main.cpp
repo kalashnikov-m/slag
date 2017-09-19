@@ -6,8 +6,6 @@
  */
 
 #include "googletest/include/gtest/gtest.h"
-#include "basic_int.hpp"
-#include "algorithm.hpp"
 
 int main(int argc, char **argv) 
 {

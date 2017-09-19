@@ -91,7 +91,7 @@ void Cry_subtract(T* result, const T* first1, const T* last1, const T* first2, c
 
     for (; first1 <= last1; --last1)
     {
-        *(--result) = *(last1)-carry;
+		*(--result) = *(last1)-carry;
         carry       = 0;
     }
 }
@@ -116,7 +116,7 @@ void Cry_multiply(T* last_result, const T* first1, const T* last1, const T* firs
         {
             wide_t temp = static_cast<wide_t>(*resultIter) + static_cast<wide_t>(*last_1) * static_cast<wide_t>(*last2) + static_cast<wide_t>(carry);
 
-            carry = temp / Traits::base;
+            carry = static_cast<T>(temp / Traits::base);
 
             *(resultIter) = temp % Traits::base;
 
@@ -142,7 +142,7 @@ void Cry_multiply(T* last_result, const T* first1, const T* last1, T x)
     {
         wide_t temp = static_cast<wide_t>(*last1) * static_cast<wide_t>(x) + static_cast<wide_t>(carry);
 
-        carry          = temp / Traits::base;
+        carry          = static_cast<T>(temp / Traits::base);
         *(last_result) = temp % Traits::base;
 
         --last_result;
@@ -259,7 +259,7 @@ void Cry_divide(T* div_last, T* rem_last, const T* first1, const T* last1, const
         for (; Down < Up - 1;)
         {
             // 1. c <-- (down + up) / 2;
-            T Middle = ((Down + Up) / 2);
+            T Middle = static_cast<T>(((Down + Up) / 2));
 
             // 2. mul <-- d * c;
             std::fill(&mul[0], &mul[0] + nbytes, 0x00);
