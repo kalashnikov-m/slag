@@ -5,9 +5,9 @@
 #ifndef RSAES_OAEP_H
 #define RSAES_OAEP_H
 
+#include "OS2IP.hpp"
 #include "algorithm.hpp"
 #include "basic_int.hpp"
-#include "os2ip.hpp"
 
 namespace cry
 {
@@ -23,7 +23,7 @@ namespace cry
             // 1. Length checking:
 
             ////////////////////////////////////////////////////////////////
-            // If mLen > k – 2hLen – 2, output “message too long” and stop.
+            // If mLen > k ï¿½ 2hLen ï¿½ 2, output ï¿½message too longï¿½ and stop.
 
             size_t k    = modBits / 8;
             size_t mLen = std::distance(first, last);
@@ -43,7 +43,7 @@ namespace cry
 
             ////////////////////////////////////////////////////////////////////////////
             // a. Convert the encoded message EM to an integer message representative m
-			IntType m = os2ip<IntType>()(EM);
+            IntType m = OS2IP<IntType>()(EM);
 
             //////////////////////////////////////////////////////////////////////////
             // b. Apply the RSAEP encryption primitiveto the RSA public key(n, e) and
@@ -54,8 +54,7 @@ namespace cry
 
             ///////////////////////////////////////////////////////////////////////////////////
             // c. Convert the ciphertext representative c to a ciphertext C of length koctets
-
-            std::vector<uint8_t> C = ip2os<IntType>()(c);
+            const std::vector<uint8_t> C = IP2OS<IntType>()(c);
 
             result = std::copy(C.begin(), C.end(), result);
 
@@ -73,14 +72,14 @@ namespace cry
             size_t cLen = std::distance(c_first, c_last);
 
             ////////////////////////////////////////////////////////////////////////////////////////////
-            // b. If the length of the ciphertext C is not k octets, output “decryption error” and stop.
+            // b. If the length of the ciphertext C is not k octets, output ï¿½decryption errorï¿½ and stop.
             if (cLen != k)
             {
                 throw std::runtime_error("decryption error");
             }
 
             ///////////////////////////////////////////////////////////
-            // c. If k < 2hLen + 2, output “decryption error” and stop.
+            // c. If k < 2hLen + 2, output ï¿½decryption errorï¿½ and stop.
 
             if (k < 2 * Encoder::hash_type::size + 2)
             {
@@ -92,16 +91,16 @@ namespace cry
 
             /////////////////////////////////////////////////////////////////////////
             // a. Convert the ciphertext C to an integer ciphertext representative c
-            IntType c(c_first, c_last);
+            const IntType c = OS2IP<IntType>()(c_first, c_last);
 
             //////////////////////////////////////////////////////////////////////////////
             // b. Apply the RSADP decryption primitive to the RSA private key K and the
             // ciphertext representative c to produce an integer message representative m:
-            IntType m = cry::pow_mod(c, d, n);
+            const IntType m = cry::pow_mod(c, d, n);
 
             ////////////////////////////////////////////////////////////////////////////////////////
             // c. Convert the message representative m to an encoded message EM of length k octets:
-            std::vector<uint8_t> EM = ip2os<IntType>()(m);
+            const std::vector<uint8_t> EM = IP2OS<IntType>()(m);
 
             ///////////////////////////
             // 3. EME - OAEP decoding:

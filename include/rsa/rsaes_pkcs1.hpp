@@ -5,10 +5,10 @@
 #ifndef RSAES_PKCS1_H
 #define RSAES_PKCS1_H
 
+#include "OS2IP.hpp"
 #include "algorithm.hpp"
 #include "basic_int.hpp"
 #include "eme_pkcs1.hpp"
-#include "os2ip.hpp"
 
 namespace cry
 {
@@ -30,15 +30,15 @@ namespace cry
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // 2. Convert the encoded message EM to an integer message representative m
-            IntType m = os2ip<IntType>()(EM);
+            const IntType m = OS2IP<IntType>()(EM);
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // 3. Apply the RSAEP encryption primitive to the public key(n, e) and the message representative m to produce an integer ciphertext representative c:
-            IntType c = cry::pow_mod(m, e, n);
+            const IntType c = cry::pow_mod(m, e, n);
 
             ///////////////////////////////////////////////////////////////////////////////////
             // 4. Convert the ciphertext representative c to a ciphertext C of length k octets
-            std::vector<uint8_t> C = ip2os<IntType>()(c);
+            const std::vector<uint8_t> C = IP2OS<IntType>()(c);
 
             result = std::copy(C.begin(), C.end(), result);
 
@@ -62,15 +62,15 @@ namespace cry
 
             /////////////////////////////////////////////////////////////////////////
             // 2. Convert the ciphertext C to an integer ciphertext representative c:
-            IntType c(first, last);
+            const IntType c = OS2IP<IntType>()(first, last);
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // 3. Apply the RSADP decryption primitive to the private key(n, d) and the ciphertext representative c to produce an integer message representative m:
-            IntType m = cry::pow_mod(c, d, n);
+            const IntType m = cry::pow_mod(c, d, n);
 
             /////////////////////////////////////////////////////////////////////////////////////////
             // 4. Convert the message representative m to an encoded message EM of length k–1 octets:
-            std::vector<uint8_t> EM(m);
+            const std::vector<uint8_t> EM = IP2OS<IntType>()(m);
 
             result = Encoder::decode(EM.begin(), EM.end(), result);
 

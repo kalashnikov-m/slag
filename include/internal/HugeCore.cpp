@@ -115,7 +115,7 @@ void Cry_multiply(byte* last_result, const byte* first1, const byte* last1, byte
     *last_result = carry;
 }
 
-void Cry_div_rem(byte* div_last, byte* rem_last, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+void Cry_divide(byte* div_last, byte* rem_last, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
     while ((first1 != last1) && (*first1 == 0x00))
     {

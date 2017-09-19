@@ -100,7 +100,7 @@ TEST(HugeCore_Test, DivRem) {
         const byte* b_ = &_arg2[0];
         const byte* _b = b_ + _arg2.size();
 
-        Cry_div_rem(dive, reme, a_, _a, b_, _b);
+        Cry_divide(dive, reme, a_, _a, b_, _b);
 
         bool eq = ASSERT_BYTES_EQ(_expected_div.begin(), _expected_div.end(), div.cbegin(), div.cend());
         EXPECT_TRUE(eq);

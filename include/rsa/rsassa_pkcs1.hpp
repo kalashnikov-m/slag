@@ -21,10 +21,10 @@ namespace cry
             std::vector<uint8_t> encoded(emLen);
             auto end = Encoder::encode(first, last, encoded.begin(), emLen);
 
-            IntType arg(encoded.begin(), encoded.end());
-            IntType s = cry::pow_mod(arg, d, n);
+            const IntType arg = OS2IP<IntType>()(encoded.begin(), encoded.end());
+            const IntType s = cry::pow_mod(arg, d, n);
 
-            std::vector<uint8_t> S = ip2os<IntType>()(s);
+            const std::vector<uint8_t> S = IP2OS<IntType>()(s);
 
             result = std::copy(S.begin(), S.end(), result);
 
@@ -49,15 +49,15 @@ namespace cry
 
             //////////////////////////////////////////////////////////////////////
             // 2a. Convert the signature S to an integer signature representative
-            IntType s(s_first, s_last);
+            const IntType s = OS2IP<IntType>()(s_first, s_last);
 
             ///////////////////////////////////////////////
             // 2b. Apply the RSAVP1 verification primitive
-            IntType m = cry::pow_mod(s, e, n);
+            const IntType m = cry::pow_mod(s, e, n);
 
             ////////////////////////////////////////////////////////////////////////////////////////
             // 2c. Convert the message representative m to an encoded message EM of length k octets
-            std::vector<uint8_t> EM = ip2os<IntType>()(m);
+            const std::vector<uint8_t> EM = IP2OS<IntType>()(m);
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // 3. Apply the EMSA-PKCS1-v1_5 encoding operation to the message M to produce a second encoded message EM’ of length k octets:

@@ -18,7 +18,7 @@ void Cry_multiply(byte* last_result, const byte* first1, const byte* last1, cons
 
 void Cry_multiply(byte* last_result, const byte* first1, const byte* last1, byte x);
 
-void Cry_div_rem(byte* div_last, byte* rem_last, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
+void Cry_divide(byte* div_last, byte* rem_last, const byte* first1, const byte* last1, const byte* first2, const byte* last2);
 
 void Cry_increment(byte* first1, byte* last1);
 

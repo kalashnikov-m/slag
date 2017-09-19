@@ -25,7 +25,7 @@ set (HEADERS
 	../include/sha384.hpp
 	../include/sha512.hpp
 	../utility/encoders.hpp
-	../utility/os2ip.hpp
+	../utility/OS2IP.hpp
 	../include/internal/HugeCore.h
 	../include/internal/cry_core.hpp
 )

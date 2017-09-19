@@ -67,7 +67,7 @@ namespace cry
 
             //////////////////////////////////
             // counting hexadecimal characters
-            size_t nchars = std::count_if(rit, rend, [](unsigned char c) { return std::isalnum(c); });
+	        const size_t nchars = std::count_if(rit, rend, [](unsigned char c) { return std::isalnum(c); });
             size_t nbytes = nchars / 2;
             nbytes += nchars % 2;
 
@@ -139,8 +139,6 @@ namespace cry
 
         explicit operator bool() const;
 
-        //explicit operator const std::vector<uint8_t>() const;
-
         const basic_int operator<<(int) const;
 
         const basic_int operator>>(int) const;
@@ -184,23 +182,23 @@ namespace cry
 
         friend bool operator&&(const basic_int& lhs, const basic_int& rhs)
         {
-            bool f1 = static_cast<bool>(lhs);
-            bool f2 = static_cast<bool>(rhs);
+	        const auto f1 = static_cast<bool>(lhs);
+	        const auto f2 = static_cast<bool>(rhs);
 
             return (f1 && f2);
         }
 
         friend bool operator||(const basic_int& lhs, const basic_int& rhs)
         {
-            bool f1 = static_cast<bool>(lhs);
-            bool f2 = static_cast<bool>(rhs);
+	        const auto f1 = static_cast<bool>(lhs);
+	        const auto f2 = static_cast<bool>(rhs);
 
             return (f1 || f2);
         }
 
         friend bool operator<(const basic_int& lhs, const basic_int& rhs)
         {
-            short cmp = compare(lhs, rhs);
+	        const short cmp = compare(lhs, rhs);
 
             return (cmp == -1);
         }
@@ -222,7 +220,7 @@ namespace cry
 
         friend bool operator==(const basic_int& lhs, const basic_int& rhs)
         {
-            short cmp = compare(lhs, rhs);
+	        const short cmp = compare(lhs, rhs);
 
             return (cmp == 0);
         }
@@ -279,15 +277,15 @@ namespace cry
             const auto& a = lhs.m_Polynomial;
             const auto& b = rhs.m_Polynomial;
 
-            size_t lsize = a.size();
-            size_t rsize = b.size();
+	        const size_t lsize = a.size();
+	        const size_t rsize = b.size();
 
             std::vector<IntType> out(std::max(lsize, rsize));
 
             // если знаки аргументов различны: (a)+(-b), (-a)+(b) ==> ?(a-b)
             if (lhs.m_Negative ^ rhs.m_Negative)
             {
-                short cmp = Cry_compare(&a[0], &a[0] + lsize, &b[0], &b[0] + rsize);
+	            const short cmp = Cry_compare(&a[0], &a[0] + lsize, &b[0], &b[0] + rsize);
 
                 if (cmp == -1)
                 { // (|a| < |b|) ==> (|b| - |a|)
@@ -315,7 +313,7 @@ namespace cry
 
         friend const basic_int operator-(const basic_int& lhs, const basic_int& rhs)
         {
-            short cmp = Cry_compare(&lhs.m_Polynomial[0], &lhs.m_Polynomial[0] + lhs.m_Polynomial.size(), &rhs.m_Polynomial[0], &rhs.m_Polynomial[0] + rhs.m_Polynomial.size());
+	        const short cmp = Cry_compare(&lhs.m_Polynomial[0], &lhs.m_Polynomial[0] + lhs.m_Polynomial.size(), &rhs.m_Polynomial[0], &rhs.m_Polynomial[0] + rhs.m_Polynomial.size());
 
             // если знаки аргументов различны: (a)-(-b), (-a)-(b) ==> ?(a+b)
             if (lhs.m_Negative ^ rhs.m_Negative)
@@ -360,8 +358,8 @@ namespace cry
             const auto& a = lhs.m_Polynomial;
             const auto& b = rhs.m_Polynomial;
 
-            size_t l_size = a.size();
-            size_t r_size = b.size();
+	        const size_t l_size = a.size();
+	        const size_t r_size = b.size();
 
             std::vector<IntType> out(l_size + r_size);
 
@@ -438,26 +436,10 @@ namespace cry
     template <class X>
     basic_int<X>::operator bool() const
     {
-        bool flag = Cry_is_zero(&m_Polynomial[0], (&m_Polynomial[0] + m_Polynomial.size()));
+	    const bool flag = Cry_is_zero(&m_Polynomial[0], (&m_Polynomial[0] + m_Polynomial.size()));
 
         return !flag;
     }
-
-    /*template <class IntType>
-    inline basic_int<IntType>::operator const std::vector<uint8_t>() const
-    {
-        auto n = m_Polynomial.size();
-        std::vector<uint8_t> out(sizeof(IntType) * n);
-        auto result(out.begin());
-
-        for (auto xVal : m_Polynomial)
-        {
-            //auto x = swap_bytes()(xVal);
-            result = i2sp()(xVal, result);
-        }
-
-        return out;
-    }*/
 
     template <class X>
     basic_int<X>& basic_int<X>::operator++()
@@ -608,7 +590,7 @@ namespace cry
         const auto& a = lhs.m_Polynomial;
         const auto& b = rhs.m_Polynomial;
 
-        short cmp = Cry_compare(&a[0], &a[0] + a.size(), &b[0], &b[0] + b.size());
+	    const short cmp = Cry_compare(&a[0], &a[0] + a.size(), &b[0], &b[0] + b.size());
 
         if (lhs.m_Negative && rhs.m_Negative)
         {
@@ -672,7 +654,7 @@ namespace cry
     template <class X>
     bool operator!(const basic_int<X>& h)
     {
-        bool f = static_cast<bool>(h);
+	    const auto f = static_cast<bool>(h);
 
         return !f;
     }
@@ -680,13 +662,13 @@ namespace cry
     template <class T>
     void basic_int<T>::DivRem(basic_int<T>& q, basic_int<T>& r, const basic_int<T>& other) const
     {
-        bool isZero = Cry_is_zero(&other.m_Polynomial[0], &other.m_Polynomial[0] + other.m_Polynomial.size());
-        if (isZero)
+	    const bool is_zero = Cry_is_zero(&other.m_Polynomial[0], &other.m_Polynomial[0] + other.m_Polynomial.size());
+        if (is_zero)
         {
             throw std::invalid_argument("division by zero");
         }
 
-        short cmp = Cry_compare(&m_Polynomial[0], &m_Polynomial[0] + m_Polynomial.size(), &other.m_Polynomial[0], &other.m_Polynomial[0] + other.m_Polynomial.size());
+	    const short cmp = Cry_compare(&m_Polynomial[0], &m_Polynomial[0] + m_Polynomial.size(), &other.m_Polynomial[0], &other.m_Polynomial[0] + other.m_Polynomial.size());
         if (cmp == -1)
         {
             q = basic_int<T>();
@@ -699,10 +681,10 @@ namespace cry
         std::vector<T> v_div(l_size);
         std::vector<T> v_rem(l_size);
 
-        Cry_div_rem(&v_div[0] + v_div.size(), &v_rem[0] + v_rem.size(), &m_Polynomial[0], &m_Polynomial[0] + m_Polynomial.size(), &other.m_Polynomial[0], &other.m_Polynomial[0] + other.m_Polynomial.size());
+        Cry_divide(&v_div[0] + v_div.size(), &v_rem[0] + v_rem.size(), &m_Polynomial[0], &m_Polynomial[0] + m_Polynomial.size(), &other.m_Polynomial[0], &other.m_Polynomial[0] + other.m_Polynomial.size());
 
-        basic_int<T> div(v_div, this->m_Negative ^ other.m_Negative);
-        basic_int<T> rem(v_rem, this->m_Negative ^ other.m_Negative);
+	    const basic_int<T> div(v_div, this->m_Negative ^ other.m_Negative);
+	    const basic_int<T> rem(v_rem, this->m_Negative ^ other.m_Negative);
 
         q = div;
         r = rem;

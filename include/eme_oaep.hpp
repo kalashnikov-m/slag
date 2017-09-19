@@ -34,14 +34,14 @@ namespace cry
             ///////////////////////////////////////////////////////////////////////////////
             // b. Generate an octet string PS consisting of k – mLen – 2hLen – 2 zero octets.
             // The length of PS may be zero.
-            size_t psLen = k - mLen - 2 * hLen - 2;
+	        const size_t psLen = k - mLen - 2 * hLen - 2;
             auto PS      = std::vector<uint8_t>(psLen);
 
             /////////////////////////////////////////////////////////////////////////////
             // c. Concatenate lHash, PS, a single octet with hexadecimal value 0x01, and
             // the message M to form a data block DB of length k – hLen – 1 octets as
             // DB = lHash || PS || 0x01 || M .
-            size_t dbLen = k - hLen - 1;
+	        const auto dbLen = k - hLen - 1;
             auto DB      = std::vector<uint8_t>(dbLen);
             auto it      = DB.begin();
 
@@ -116,7 +116,7 @@ namespace cry
             // b. Separate the encoded message EM into a single octet Y, an octet
             // string maskedSeed of length hLen, and an octet string maskedDB of
             // length k - hLen - 1 as EM = Y || maskedSeed || maskedDB.
-            size_t sz = std::distance(first, last);
+	        const size_t sz = std::distance(first, last);
 
             if (sz > k)
             {
@@ -134,7 +134,7 @@ namespace cry
             std::vector<uint8_t> maskedSeed(first, first + hLen);
             first += hLen;
 
-            size_t dbLen = k - hLen - 1;
+	        const size_t dbLen = k - hLen - 1;
             std::vector<uint8_t> maskedDB(first, first + dbLen);
 
             // c. Let seedMask = MGF(maskedDB, hLen).
@@ -163,7 +163,7 @@ namespace cry
             // nonzero, output "decryption error" and stop.
 
             auto it = DB.begin();
-            std::vector<uint8_t> lHash_(DB.begin(), it + hLen);
+	        const std::vector<uint8_t> lHash_(DB.begin(), it + hLen);
             it += hLen;
             if (lHash != lHash_)
             {

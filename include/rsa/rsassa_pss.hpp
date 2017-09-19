@@ -26,7 +26,7 @@ namespace cry
 
             /////////////////////////////////////////////////////////////////////////////
             // 2a. Convert the encoded message EM to an integer message representative m
-            const IntType m(EM.begin(), EM.end());
+            const IntType m = OS2IP<IntType>()(EM.begin(), EM.end());
 
             ////////////////////////////////////////////
             // 2b. Apply the RSASP1 signature primitive
@@ -34,7 +34,7 @@ namespace cry
 
             //////////////////////////////////////////////////////////////////////////////////
             // 2c. Convert the signature representative s to a signature S of length k octets
-            std::vector<uint8_t> S = ip2os<IntType>()(s);
+            const std::vector<uint8_t> S = IP2OS<IntType>()(s);
 
             result = std::copy(S.begin(), S.end(), result);
 
@@ -55,7 +55,7 @@ namespace cry
 
             ///////////////////////////////////////////////////////////////////////
             // 2a. Convert the signature S to an integer signature representative s
-            const IntType s(s_first, s_last);
+            const IntType s = OS2IP<IntType>()(s_first, s_last);
 
             ///////////////////////////////////////////////////////////////////////
             // 2b. Apply the RSAVP1 verification primitive to to produce an integer message representative m:
@@ -63,7 +63,7 @@ namespace cry
 
             ///////////////////////////////////////////////////////////////////////
             // 2c. Convert the message representative m to an encoded message EM
-            const std::vector<uint8_t> EM = ip2os<IntType>()(m);
+            const std::vector<uint8_t> EM = IP2OS<IntType>()(m);
 
             ////////////////////////////
             // 3. EMSA - PSS verification :

@@ -208,7 +208,7 @@ bool Cry_equal(const byte* first1, const byte* last1, const byte* first2, const 
 }
 
 template <class byte, class Traits = traits<byte>>
-void Cry_div_rem(byte* div_last, byte* rem_last, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
+void Cry_divide(byte* div_last, byte* rem_last, const byte* first1, const byte* last1, const byte* first2, const byte* last2)
 {
     typedef typename Traits::wide_type wide_t;
 
@@ -266,7 +266,7 @@ void Cry_div_rem(byte* div_last, byte* rem_last, const byte* first1, const byte*
 
             Cry_multiply(&mul[0] + nbytes, dFirst, dLast, Middle);
 
-            short mulCmp = Cry_compare(&mul[0], &mul[0] + nbytes, rFirst, rLast);
+	        const short mulCmp = Cry_compare(&mul[0], &mul[0] + nbytes, rFirst, rLast);
 
             if (mulCmp == -1)
             { // if(c < a): down <-- c
@@ -373,7 +373,7 @@ void Cry_rotl(byte* first, byte* last)
 
     for (; first != last; --last)
     {
-        int z = (*last >> 7) & 0x01;
+	    const int z = (*last >> 7) & 0x01;
 
         *last <<= 1;
         *last |= static_cast<byte>(carry);
@@ -397,7 +397,7 @@ void Cry_rotr(byte* first, byte* last)
 
     for (; first != last; ++first)
     {
-        int z = *first & 0x01;
+	    const int z = *first & 0x01;
 
         *first >>= 1;
         *first |= static_cast<byte>(carry << (sizeof(byte) * 8 - 1));
@@ -423,7 +423,7 @@ void Cry_rshift(byte* first, byte* last)
 
     for (; first != last; ++first)
     {
-        int z = (*first) & 0x01;
+	    const int z = (*first) & 0x01;
 
         *first >>= 1;
         *first |= static_cast<byte>(carry << (sizeof(byte) * 8 - 1));

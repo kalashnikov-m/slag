@@ -4,7 +4,7 @@
 #include "algorithm.hpp"
 
 #include "basic_int.hpp"
-#include "os2ip.hpp"
+#include "OS2IP.hpp"
 
 using namespace std;
 using namespace cry;
@@ -1273,36 +1273,36 @@ TEST(HugeTest, OS2IP_IP2OS)
 {
     {
         std::vector<uint8_t> octets = {1, 2, 3, 4, 5, 6, 7, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
-        auto ip                     = os2ip<bigint8_t>()(octets);
+        auto ip                     = OS2IP<bigint8_t>()(octets);
 
-        auto os = ip2os<bigint8_t>()(ip);
-
-        ASSERT_BYTES_EQ(octets.begin(), octets.end(), os.begin(), os.end());
-    }
-
-    {
-        std::vector<uint8_t> octets = {1, 2, 3, 4, 5, 6, 7, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
-        auto ip                     = os2ip<bigint16_t>()(octets);
-
-        auto os = ip2os<bigint16_t>()(ip);
+        auto os = IP2OS<bigint8_t>()(ip);
 
         ASSERT_BYTES_EQ(octets.begin(), octets.end(), os.begin(), os.end());
     }
 
     {
         std::vector<uint8_t> octets = {1, 2, 3, 4, 5, 6, 7, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
-        auto ip                     = os2ip<bigint32_t>()(octets);
+        auto ip                     = OS2IP<bigint16_t>()(octets);
 
-        auto os = ip2os<bigint32_t>()(ip);
+        auto os = IP2OS<bigint16_t>()(ip);
+
+        ASSERT_BYTES_EQ(octets.begin(), octets.end(), os.begin(), os.end());
+    }
+
+    {
+        std::vector<uint8_t> octets = {1, 2, 3, 4, 5, 6, 7, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
+        auto ip                     = OS2IP<bigint32_t>()(octets);
+
+        auto os = IP2OS<bigint32_t>()(ip);
 
         ASSERT_BYTES_EQ(octets.begin(), octets.end(), os.begin(), os.end());
     }
 
 	{
 		std::vector<uint8_t> octets = { 1, 2, 3, 4, 5, 6, 7, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f };
-		auto ip = os2ip<bigint64_t>()(octets);
+		auto ip = OS2IP<bigint64_t>()(octets);
 
-		auto os = ip2os<bigint64_t>()(ip);
+		auto os = IP2OS<bigint64_t>()(ip);
 
 		ASSERT_BYTES_EQ(octets.begin(), octets.end(), os.begin(), os.end());
 	}

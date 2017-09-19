@@ -7,10 +7,10 @@ namespace cry
 {
 
     template <class T>
-    struct os2ip;
+    struct OS2IP;
 
     template <class P>
-    struct os2ip<cry::basic_int<P>>
+    struct OS2IP<cry::basic_int<P>>
     {
         cry::basic_int<P> operator()(const std::vector<uint8_t>& octets) const noexcept
         {
@@ -20,6 +20,11 @@ namespace cry
         template <class OctetIterator>
         cry::basic_int<P> operator()(OctetIterator first, OctetIterator last) const noexcept
         {
+            /////////////////////////////////
+            // skiping zeros and whitespaces
+            for (; first != last && *first == 0x00; ++first)
+                ;
+
             std::reverse_iterator<OctetIterator> rfirst(last), rend(first);
 
             auto noctets = std::distance(rfirst, rend);
@@ -58,10 +63,10 @@ namespace cry
     };
 
     template <class T>
-    struct ip2os;
+    struct IP2OS;
 
     template <>
-    struct ip2os<uint8_t>
+    struct IP2OS<uint8_t>
     {
         template <class OutputIterator>
         OutputIterator operator()(uint8_t x, OutputIterator result) const noexcept
@@ -73,7 +78,7 @@ namespace cry
     };
 
     template <>
-    struct ip2os<uint16_t>
+    struct IP2OS<uint16_t>
     {
         template <class OutputIterator>
         OutputIterator operator()(uint16_t x, OutputIterator result) const noexcept
@@ -86,7 +91,7 @@ namespace cry
     };
 
     template <>
-    struct ip2os<uint32_t>
+    struct IP2OS<uint32_t>
     {
         template <class OutputIterator>
         OutputIterator operator()(uint32_t x, OutputIterator result) const noexcept
@@ -101,7 +106,7 @@ namespace cry
     };
 
     template <>
-    struct ip2os<uint64_t>
+    struct IP2OS<uint64_t>
     {
         template <class OutputIterator>
         OutputIterator operator()(uint64_t x, OutputIterator result) const noexcept
@@ -120,7 +125,7 @@ namespace cry
     };
 
     template <class P>
-    struct ip2os<basic_int<P>>
+    struct IP2OS<basic_int<P>>
     {
         std::vector<uint8_t> operator()(const basic_int<P>& ip)
         {
