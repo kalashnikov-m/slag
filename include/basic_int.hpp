@@ -313,14 +313,17 @@ namespace cry
 
         friend const basic_int operator-(const basic_int& lhs, const basic_int& rhs)
         {
-            const short cmp = Cry_compare(&lhs.m_Polynomial[0], &lhs.m_Polynomial[0] + lhs.m_Polynomial.size(), &rhs.m_Polynomial[0], &rhs.m_Polynomial[0] + rhs.m_Polynomial.size());
+			const auto& a = lhs.m_Polynomial;
+			const auto& b = rhs.m_Polynomial;
+
+            const short cmp = Cry_compare(&a[0], &a[0] + a.size(), &b[0], &b[0] + b.size());
 
             // если знаки аргументов различны: (a)-(-b), (-a)-(b) ==> ?(a+b)
             if (lhs.m_Negative ^ rhs.m_Negative)
             {
                 basic_int temp((cmp == -1) ? rhs : lhs);
 
-                Cry_add(&temp.m_Polynomial[0] + temp.m_Polynomial.size(), &lhs.m_Polynomial[0], &lhs.m_Polynomial[0] + lhs.m_Polynomial.size(), &rhs.m_Polynomial[0], &rhs.m_Polynomial[0] + rhs.m_Polynomial.size());
+                Cry_add(&temp.m_Polynomial[0] + temp.m_Polynomial.size(), &a[0], &a[0] + a.size(), &b[0], &b[0] + b.size());
 
                 temp.m_Negative = lhs.m_Negative;
 
@@ -332,7 +335,7 @@ namespace cry
             { // (|a| < |b|) ==> (|b| - |a|)
                 basic_int temp(rhs);
 
-                Cry_subtract(&temp.m_Polynomial[0] + temp.m_Polynomial.size(), &rhs.m_Polynomial[0], &rhs.m_Polynomial[0] + rhs.m_Polynomial.size(), &lhs.m_Polynomial[0], &lhs.m_Polynomial[0] + lhs.m_Polynomial.size());
+				Cry_subtract(&temp.m_Polynomial[0] + temp.m_Polynomial.size(), &b[0], &b[0] + b.size(), &a[0], &a[0] + a.size());
 
                 temp.m_Negative = (!lhs.m_Negative & !rhs.m_Negative);
 
@@ -343,7 +346,7 @@ namespace cry
                 // (|a| > |b|) ==> (|a| - |b|)
                 basic_int temp(lhs);
 
-                Cry_subtract(&temp.m_Polynomial[0] + temp.m_Polynomial.size(), &lhs.m_Polynomial[0], &lhs.m_Polynomial[0] + lhs.m_Polynomial.size(), &rhs.m_Polynomial[0], &rhs.m_Polynomial[0] + rhs.m_Polynomial.size());
+				Cry_subtract(&temp.m_Polynomial[0] + temp.m_Polynomial.size(), &a[0], &a[0] + a.size(), &b[0], &b[0] + b.size());
 
                 temp.m_Negative = (lhs.m_Negative & rhs.m_Negative);
 
@@ -664,7 +667,7 @@ namespace cry
         const bool is_zero = Cry_is_zero(&other.m_Polynomial[0], &other.m_Polynomial[0] + other.m_Polynomial.size());
         if (is_zero)
         {
-            throw std::invalid_argument("division by zero");
+            throw std::runtime_error("division by zero");
         }
 
         const short cmp = Cry_compare(&m_Polynomial[0], &m_Polynomial[0] + m_Polynomial.size(), &other.m_Polynomial[0], &other.m_Polynomial[0] + other.m_Polynomial.size());

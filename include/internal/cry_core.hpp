@@ -70,7 +70,7 @@ template <class T, class Traits = traits<T>>
 void Cry_subtract(T* result, const T* first1, const T* last1, const T* first2, const T* last2)
 {
     typedef typename Traits::wide_type wide_t;
-    wide_t carry = 0;
+    T carry = 0;
 
     --last1;
     --last2;
@@ -91,7 +91,7 @@ void Cry_subtract(T* result, const T* first1, const T* last1, const T* first2, c
 
     for (; first1 <= last1; --last1)
     {
-		*(--result) = *(last1)-carry;
+        *(--result) = *(last1)-carry;
         carry       = 0;
     }
 }
@@ -167,8 +167,8 @@ short Cry_compare(const T* first1, const T* last1, const T* first2, const T* las
     for (; (first1 != last1) && (first2 != last2) && (*first1 == *first2); ++first1, ++first2)
         ;
 
-    auto dA = std::distance(first1, last1);
-    auto dB = std::distance(first2, last2);
+    auto dA = last1 - first1;
+    auto dB = last2 - first2;
 
     if (dA == dB)
     {
@@ -224,9 +224,9 @@ void Cry_divide(T* div_last, T* rem_last, const T* first1, const T* last1, const
 
     auto rTmp = std::vector<T>(first1, last1);
 
-    auto d1            = std::distance(first1, last1);
-    auto d2            = std::distance(first2, last2);
-    auto shift         = d1 - d2 + 1;
+    auto d1         = last1 - first1;
+    auto d2         = last2 - first2;
+    auto shift      = d1 - d2 + 1;
     T* rFirst       = &rTmp[0];
     T* rLast        = rFirst + d2;
     const T* dFirst = first2;
@@ -247,7 +247,7 @@ void Cry_divide(T* div_last, T* rem_last, const T* first1, const T* last1, const
 
     while (shift > 0)
     {
-        T Down = 0x00;
+        T Down    = 0x00;
         wide_t Up = Traits::base;
 
         cmp = Cry_compare<T>(rFirst, rLast, dFirst, dLast);
@@ -266,7 +266,7 @@ void Cry_divide(T* div_last, T* rem_last, const T* first1, const T* last1, const
 
             Cry_multiply(&mul[0] + nbytes, dFirst, dLast, Middle);
 
-	        const short mulCmp = Cry_compare(&mul[0], &mul[0] + nbytes, rFirst, rLast);
+            const short mulCmp = Cry_compare(&mul[0], &mul[0] + nbytes, rFirst, rLast);
 
             if (mulCmp == -1)
             { // if(c < a): down <-- c
@@ -373,7 +373,7 @@ void Cry_rotl(T* first, T* last)
 
     for (; first != last; --last)
     {
-	    const int z = (*last >> 7) & 0x01;
+        const int z = (*last >> 7) & 0x01;
 
         *last <<= 1;
         *last |= static_cast<T>(carry);
@@ -397,7 +397,7 @@ void Cry_rotr(T* first, T* last)
 
     for (; first != last; ++first)
     {
-	    const int z = *first & 0x01;
+        const int z = *first & 0x01;
 
         *first >>= 1;
         *first |= static_cast<T>(carry << (sizeof(T) * 8 - 1));
@@ -423,7 +423,7 @@ void Cry_rshift(T* first, T* last)
 
     for (; first != last; ++first)
     {
-	    const int z = (*first) & 0x01;
+        const int z = (*first) & 0x01;
 
         *first >>= 1;
         *first |= static_cast<T>(carry << (sizeof(T) * 8 - 1));
