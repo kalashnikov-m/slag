@@ -174,7 +174,7 @@ short Cry_compare(const T* first1, const T* last1, const T* first2, const T* las
     {
         if ((first1 < last1) && (first2 < last2))
         {
-            return static_cast<typename Traits::wide_type>((*first1 < *first2) ? -1 : 1);
+            return ((*first1 < *first2) ? -1 : 1);
         }
     }
 
@@ -319,8 +319,7 @@ void Cry_increment(T* first, T* last)
 template <class T, class Traits = traits<T>>
 void Cry_decrement(T* first, T* last)
 {
-    typedef typename Traits::wide_type wide_t;
-    wide_t carry = 0;
+    T carry = 0;
 
     if (*--last < 0x01)
     {
@@ -348,25 +347,25 @@ void Cry_decrement(T* first, T* last)
     }
 }
 
-template <class T, class Traits = traits<T>>
+template <class T>
 bool Cry_is_odd(const T* first, const T* last)
 {
     return (*(--last) & 0x01) == 0x01;
 }
 
-template <class T, class Traits = traits<T>>
+template <class T>
 bool Cry_is_even(const T* first, const T* last)
 {
     return (*(--last) & 0x01) == 0x00;
 }
 
-template <class T, class Traits = traits<T>>
+template <class T>
 void Cry_reverse(T* first, T* last)
 {
     std::reverse(first, last);
 }
 
-template <class T, class Traits = traits<T>>
+template <class T>
 void Cry_rotl(T* first, T* last)
 {
     T carry = (*first >> (sizeof(T) * 8 - 1)) & 0x01;
@@ -381,7 +380,7 @@ void Cry_rotl(T* first, T* last)
     }
 }
 
-template <class T, class Traits = traits<T>>
+template <class T>
 void Cry_rotl(T* first, T* last, int n)
 {
     while (n--)
@@ -390,7 +389,7 @@ void Cry_rotl(T* first, T* last, int n)
     }
 }
 
-template <class T, class Traits = traits<T>>
+template <class T>
 void Cry_rotr(T* first, T* last)
 {
     T carry = *(last - 1) & 0x01;
@@ -405,7 +404,7 @@ void Cry_rotr(T* first, T* last)
     }
 }
 
-template <class T, class Traits = traits<T>>
+template <class T>
 void Cry_rotr(T* first, T* last, int n)
 {
     --last;
@@ -416,7 +415,7 @@ void Cry_rotr(T* first, T* last, int n)
     }
 }
 
-template <class T, class Traits = traits<T>>
+template <class T>
 void Cry_rshift(T* first, T* last)
 {
     T carry = 0;
@@ -431,7 +430,7 @@ void Cry_rshift(T* first, T* last)
     }
 }
 
-template <class T, class Traits = traits<T>>
+template <class T>
 void Cry_rshift(T* first, T* last, int n)
 {
     while (n--)
@@ -440,7 +439,7 @@ void Cry_rshift(T* first, T* last, int n)
     }
 }
 
-template <class T, class Traits = traits<T>>
+template <class T>
 void Cry_lshift(T* first, T* last)
 {
     T carry = 0;
@@ -457,7 +456,7 @@ void Cry_lshift(T* first, T* last)
     }
 }
 
-template <class T, class Traits = traits<T>>
+template <class T>
 void Cry_lshift(T* first, T* last, int n)
 {
     while (n--)
@@ -466,7 +465,7 @@ void Cry_lshift(T* first, T* last, int n)
     }
 }
 
-template <class T, class Traits = traits<T>>
+template <class T>
 void Cry_or(T* result, const T* first1, const T* last1, const T* first2, const T* last2)
 {
     --last1;
@@ -488,7 +487,7 @@ void Cry_or(T* result, const T* first1, const T* last1, const T* first2, const T
     }
 }
 
-template <class T, class Traits = traits<T>>
+template <class T>
 void Cry_xor(T* result, const T* first1, const T* last1, const T* first2, const T* last2)
 {
     --last1;
@@ -510,7 +509,7 @@ void Cry_xor(T* result, const T* first1, const T* last1, const T* first2, const 
     }
 }
 
-template <class T, class Traits = traits<T>>
+template <class T>
 void Cry_and(T* result, const T* first1, const T* last1, const T* first2, const T* last2)
 {
     --last1;
@@ -532,7 +531,7 @@ void Cry_and(T* result, const T* first1, const T* last1, const T* first2, const 
     }
 }
 
-template <class T, class Traits = traits<T>>
+template <class T>
 void Cry_inverse(T* first, T* last)
 {
     for (; first != last; ++first)
@@ -541,7 +540,7 @@ void Cry_inverse(T* first, T* last)
     }
 }
 
-template <class T, class Traits = traits<T>>
+template <class T>
 bool Cry_is_zero(const T* first, const T* last)
 {
     for (; (first != last) && (*first == 0x00);)
@@ -552,19 +551,19 @@ bool Cry_is_zero(const T* first, const T* last)
     return first == last;
 }
 
-template <class T, class Traits = traits<T>>
+template <class T>
 int Cry_get_lowest_set_bit(const T* first, const T* last)
 {
     return ((*std::prev(last)) & 0x01);
 }
 
-template <class T, class Traits = traits<T>>
+template <class T>
 int Cry_get_highest_set_bit(const T* first, const T* last)
 {
     return (*first & 0x80);
 }
 
-template <class T, class Traits = traits<T>>
+template <class T>
 bool Cry_is_one(const T* first, const T* last)
 {
     --last;
