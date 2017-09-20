@@ -376,7 +376,7 @@ namespace cry
             basic_int div;
             basic_int rem;
 
-            lhs.DivRem(div, rem, rhs);
+            lhs.divide(div, rem, rhs);
 
             return div;
         }
@@ -386,12 +386,12 @@ namespace cry
             basic_int div;
             basic_int rem;
 
-            lhs.DivRem(div, rem, rhs);
+            lhs.divide(div, rem, rhs);
 
             return rem;
         }
 
-        void DivRem(basic_int& q, basic_int& r, const basic_int& other) const;
+        void divide(basic_int& q, basic_int& r, const basic_int& other) const;
 
       protected:
         void __swap(basic_int& other) noexcept
@@ -662,7 +662,7 @@ namespace cry
     }
 
     template <class T>
-    void basic_int<T>::DivRem(basic_int<T>& q, basic_int<T>& r, const basic_int<T>& other) const
+    void basic_int<T>::divide(basic_int<T>& q, basic_int<T>& r, const basic_int<T>& other) const
     {
         const bool is_zero = Cry_is_zero(&other.m_Polynomial[0], &other.m_Polynomial[0] + other.m_Polynomial.size());
         if (is_zero)

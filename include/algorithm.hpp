@@ -46,7 +46,7 @@ namespace cry
             T q;
             T r;
 
-            r1.DivRem(q, r, r2);
+            r1.divide(q, r, r2);
 
             r1 = r2;
             r2 = r;
