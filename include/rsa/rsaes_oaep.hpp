@@ -104,11 +104,7 @@ namespace cry
 
             ///////////////////////////
             // 3. EME - OAEP decoding:
-
-            std::vector<uint8_t> M(k);
-            auto m_end = Encoder::decode(EM.begin(), EM.end(), M.begin(), k);
-
-            result = std::copy(M.begin(), m_end, result);
+            result = Encoder::decode(EM.begin(), EM.end(), result, k);
 
             return result;
         }
