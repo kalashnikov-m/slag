@@ -70,7 +70,7 @@ template <class T, class Traits = traits<T>>
 void Cry_subtract(T* result, const T* first1, const T* last1, const T* first2, const T* last2)
 {
     typedef typename Traits::wide_type wide_t;
-    T carry = 0;
+    wide_t carry = 0;
 
     --last1;
     --last2;
