@@ -102,40 +102,40 @@ namespace cry
 
             // result.resize(28);
 
-            result[0] = (m_Digest[0] >> 24) & 0x000000ff;
-            result[1] = (m_Digest[0] >> 16) & 0x000000ff;
-            result[2] = (m_Digest[0] >> 8) & 0x000000ff;
-            result[3] = (m_Digest[0] >> 0) & 0x000000ff;
+            *result++ = (m_Digest[0] >> 24) & 0x000000ff;
+            *result++ = (m_Digest[0] >> 16) & 0x000000ff;
+            *result++ = (m_Digest[0] >> 8) & 0x000000ff;
+            *result++ = (m_Digest[0] >> 0) & 0x000000ff;
 
-            result[4] = (m_Digest[1] >> 24) & 0x000000ff;
-            result[5] = (m_Digest[1] >> 16) & 0x000000ff;
-            result[6] = (m_Digest[1] >> 8) & 0x000000ff;
-            result[7] = (m_Digest[1] >> 0) & 0x000000ff;
+            *result++ = (m_Digest[1] >> 24) & 0x000000ff;
+            *result++ = (m_Digest[1] >> 16) & 0x000000ff;
+            *result++ = (m_Digest[1] >> 8) & 0x000000ff;
+            *result++ = (m_Digest[1] >> 0) & 0x000000ff;
 
-            result[8]  = (m_Digest[2] >> 24) & 0x000000ff;
-            result[9]  = (m_Digest[2] >> 16) & 0x000000ff;
-            result[10] = (m_Digest[2] >> 8) & 0x000000ff;
-            result[11] = (m_Digest[2] >> 0) & 0x000000ff;
+            *result++ = (m_Digest[2] >> 24) & 0x000000ff;
+            *result++ = (m_Digest[2] >> 16) & 0x000000ff;
+            *result++ = (m_Digest[2] >> 8) & 0x000000ff;
+            *result++ = (m_Digest[2] >> 0) & 0x000000ff;
 
-            result[12] = (m_Digest[3] >> 24) & 0x000000ff;
-            result[13] = (m_Digest[3] >> 16) & 0x000000ff;
-            result[14] = (m_Digest[3] >> 8) & 0x000000ff;
-            result[15] = (m_Digest[3] >> 0) & 0x000000ff;
+            *result++ = (m_Digest[3] >> 24) & 0x000000ff;
+            *result++ = (m_Digest[3] >> 16) & 0x000000ff;
+            *result++ = (m_Digest[3] >> 8) & 0x000000ff;
+            *result++ = (m_Digest[3] >> 0) & 0x000000ff;
 
-            result[16] = (m_Digest[4] >> 24) & 0x000000ff;
-            result[17] = (m_Digest[4] >> 16) & 0x000000ff;
-            result[18] = (m_Digest[4] >> 8) & 0x000000ff;
-            result[19] = (m_Digest[4] >> 0) & 0x000000ff;
+            *result++ = (m_Digest[4] >> 24) & 0x000000ff;
+            *result++ = (m_Digest[4] >> 16) & 0x000000ff;
+            *result++ = (m_Digest[4] >> 8) & 0x000000ff;
+            *result++ = (m_Digest[4] >> 0) & 0x000000ff;
 
-            result[20] = (m_Digest[5] >> 24) & 0x000000ff;
-            result[21] = (m_Digest[5] >> 16) & 0x000000ff;
-            result[22] = (m_Digest[5] >> 8) & 0x000000ff;
-            result[23] = (m_Digest[5] >> 0) & 0x000000ff;
+            *result++ = (m_Digest[5] >> 24) & 0x000000ff;
+            *result++ = (m_Digest[5] >> 16) & 0x000000ff;
+            *result++ = (m_Digest[5] >> 8) & 0x000000ff;
+            *result++ = (m_Digest[5] >> 0) & 0x000000ff;
 
-            result[24] = (m_Digest[6] >> 24) & 0x000000ff;
-            result[25] = (m_Digest[6] >> 16) & 0x000000ff;
-            result[26] = (m_Digest[6] >> 8) & 0x000000ff;
-            result[27] = (m_Digest[6] >> 0) & 0x000000ff;
+            *result++ = (m_Digest[6] >> 24) & 0x000000ff;
+            *result++ = (m_Digest[6] >> 16) & 0x000000ff;
+            *result++ = (m_Digest[6] >> 8) & 0x000000ff;
+            *result++ = (m_Digest[6] >> 0) & 0x000000ff;
         }
 
       protected:
