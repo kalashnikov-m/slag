@@ -164,7 +164,7 @@ namespace cry
                 goto nexta;
             }
 
-            for (int j = 1; j < v; ++j)
+            for (auto j = 1; j < v; ++j)
             {
                 b = pow_mod(b, T(2), p);
                 if (b == 1)
