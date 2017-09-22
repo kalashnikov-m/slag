@@ -128,7 +128,7 @@ namespace cry
             }
         }
 
-        std::vector<IntType> polynomial() const
+        const std::vector<IntType>& polynomial() const
         {
             return m_Polynomial;
         }
@@ -313,8 +313,8 @@ namespace cry
 
         friend const basic_int operator-(const basic_int& lhs, const basic_int& rhs)
         {
-			const auto& a = lhs.m_Polynomial;
-			const auto& b = rhs.m_Polynomial;
+            const auto& a = lhs.m_Polynomial;
+            const auto& b = rhs.m_Polynomial;
 
             const short cmp = Cry_compare(&a[0], &a[0] + a.size(), &b[0], &b[0] + b.size());
 
@@ -335,7 +335,7 @@ namespace cry
             { // (|a| < |b|) ==> (|b| - |a|)
                 basic_int temp(rhs);
 
-				Cry_subtract(&temp.m_Polynomial[0] + temp.m_Polynomial.size(), &b[0], &b[0] + b.size(), &a[0], &a[0] + a.size());
+                Cry_subtract(&temp.m_Polynomial[0] + temp.m_Polynomial.size(), &b[0], &b[0] + b.size(), &a[0], &a[0] + a.size());
 
                 temp.m_Negative = (!lhs.m_Negative & !rhs.m_Negative);
 
@@ -346,7 +346,7 @@ namespace cry
                 // (|a| > |b|) ==> (|a| - |b|)
                 basic_int temp(lhs);
 
-				Cry_subtract(&temp.m_Polynomial[0] + temp.m_Polynomial.size(), &a[0], &a[0] + a.size(), &b[0], &b[0] + b.size());
+                Cry_subtract(&temp.m_Polynomial[0] + temp.m_Polynomial.size(), &a[0], &a[0] + a.size(), &b[0], &b[0] + b.size());
 
                 temp.m_Negative = (lhs.m_Negative & rhs.m_Negative);
 
