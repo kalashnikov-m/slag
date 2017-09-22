@@ -10,12 +10,12 @@
 namespace cry
 {
 
-    template <class HashType = sha1, class MGFType = mgf1<sha1>, size_t hLen = HashType::size>
+    template <class Digest = sha1, class MGFType = mgf1<sha1>, size_t hLen = Digest::size>
     class eme_oaep
     {
 
       public:
-        using hash_type = HashType;
+        using hash_type = Digest;
 
       public:
         template <class InputIterator, class OutputIterator>
@@ -26,24 +26,24 @@ namespace cry
 
             ///////////////////////////////////////////////////////////
             // a. Let lHash = Hash (L), an octet string of length hLen
-            auto lHash = std::vector<uint8_t>(hLen);
+            std::vector<uint8_t> lHash;
+            lHash.reserve(hLen);
 
-            HashType hash;
-            hash(L.begin(), L.end(), lHash.begin());
+            Digest()(L.begin(), L.end(), std::back_inserter(lHash));
 
             ///////////////////////////////////////////////////////////////////////////////
-            // b. Generate an octet string PS consisting of k – mLen – 2hLen – 2 zero octets.
+            // b. Generate an octet string PS consisting of k ï¿½ mLen ï¿½ 2hLen ï¿½ 2 zero octets.
             // The length of PS may be zero.
-	        const size_t psLen = k - mLen - 2 * hLen - 2;
-            auto PS      = std::vector<uint8_t>(psLen);
+            const size_t psLen = k - mLen - 2 * hLen - 2;
+            auto PS            = std::vector<uint8_t>(psLen);
 
             /////////////////////////////////////////////////////////////////////////////
             // c. Concatenate lHash, PS, a single octet with hexadecimal value 0x01, and
-            // the message M to form a data block DB of length k – hLen – 1 octets as
+            // the message M to form a data block DB of length k ï¿½ hLen ï¿½ 1 octets as
             // DB = lHash || PS || 0x01 || M .
-	        const auto dbLen = k - hLen - 1;
-            auto DB      = std::vector<uint8_t>(dbLen);
-            auto it      = DB.begin();
+            const auto dbLen = k - hLen - 1;
+            auto DB          = std::vector<uint8_t>(dbLen);
+            auto it          = DB.begin();
 
             it = std::copy(lHash.begin(), lHash.end(), it);
 
@@ -68,7 +68,7 @@ namespace cry
             }
 
             ////////////////////////////////////////////
-            // e. Let dbMask = MGF (seed, k – hLen – 1)
+            // e. Let dbMask = MGF (seed, k ï¿½ hLen ï¿½ 1)
             auto dbMask = std::vector<uint8_t>(dbLen);
 
             MGFType mgf;
@@ -110,13 +110,13 @@ namespace cry
             // a.
             auto lHash = std::vector<uint8_t>(hLen);
 
-            HashType hash;
+            Digest hash;
             hash(L.begin(), L.end(), lHash.begin());
 
             // b. Separate the encoded message EM into a single octet Y, an octet
             // string maskedSeed of length hLen, and an octet string maskedDB of
             // length k - hLen - 1 as EM = Y || maskedSeed || maskedDB.
-	        const size_t sz = std::distance(first, last);
+            const size_t sz = std::distance(first, last);
 
             if (sz > k)
             {
@@ -134,7 +134,7 @@ namespace cry
             std::vector<uint8_t> maskedSeed(first, first + hLen);
             first += hLen;
 
-	        const size_t dbLen = k - hLen - 1;
+            const size_t dbLen = k - hLen - 1;
             std::vector<uint8_t> maskedDB(first, first + dbLen);
 
             // c. Let seedMask = MGF(maskedDB, hLen).
@@ -163,7 +163,7 @@ namespace cry
             // nonzero, output "decryption error" and stop.
 
             auto it = DB.begin();
-	        const std::vector<uint8_t> lHash_(DB.begin(), it + hLen);
+            const std::vector<uint8_t> lHash_(DB.begin(), it + hLen);
             it += hLen;
             if (lHash != lHash_)
             {

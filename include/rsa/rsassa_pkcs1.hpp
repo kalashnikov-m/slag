@@ -10,21 +10,21 @@
 namespace cry
 {
 
-    template <class Encoder = emsa_pkcs1<>, class IntType = bigint8_t>
+    template <class Encoder = emsa_pkcs1<>, class Integer = bigint8_t>
     struct rsassa_pkcs1
     {
         template <class InputIterator, class OutputIterator>
-        static OutputIterator sign(InputIterator first, InputIterator last, OutputIterator result, const IntType& d, const IntType& n, size_t modBits)
+        static OutputIterator sign(InputIterator first, InputIterator last, OutputIterator result, const Integer& d, const Integer& n, size_t modBits)
         {
 
             size_t emLen = modBits / 8;
             std::vector<uint8_t> encoded(emLen);
             auto end = Encoder::encode(first, last, encoded.begin(), emLen);
 
-            const IntType arg = OS2IP<IntType>()(encoded.begin(), encoded.end());
-            const IntType s = cry::pow_mod(arg, d, n);
+            const Integer arg = OS2IP<Integer>()(encoded.begin(), encoded.end());
+            const Integer s   = cry::pow_mod(arg, d, n);
 
-            const std::vector<uint8_t> S = IP2OS<IntType>()(s);
+            const std::vector<uint8_t> S = IP2OS<Integer>()(s);
 
             result = std::copy(S.begin(), S.end(), result);
 
@@ -32,7 +32,7 @@ namespace cry
         }
 
         template <class InputIterator>
-        static bool verify(InputIterator s_first, InputIterator s_last, InputIterator m_first, InputIterator m_last, const IntType& e, const IntType& n, size_t modulusBits)
+        static bool verify(InputIterator s_first, InputIterator s_last, InputIterator m_first, InputIterator m_last, const Integer& e, const Integer& n, size_t modulusBits)
         {
 
             ///////////////////////
@@ -49,23 +49,23 @@ namespace cry
 
             //////////////////////////////////////////////////////////////////////
             // 2a. Convert the signature S to an integer signature representative
-            const IntType s = OS2IP<IntType>()(s_first, s_last);
+            const Integer s = OS2IP<Integer>()(s_first, s_last);
 
             ///////////////////////////////////////////////
             // 2b. Apply the RSAVP1 verification primitive
-            const IntType m = cry::pow_mod(s, e, n);
+            const Integer m = cry::pow_mod(s, e, n);
 
             ////////////////////////////////////////////////////////////////////////////////////////
             // 2c. Convert the message representative m to an encoded message EM of length k octets
-            const std::vector<uint8_t> EM = IP2OS<IntType>()(m);
+            const std::vector<uint8_t> EM = IP2OS<Integer>()(m);
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            // 3. Apply the EMSA-PKCS1-v1_5 encoding operation to the message M to produce a second encoded message EM’ of length k octets:
+            // 3. Apply the EMSA-PKCS1-v1_5 encoding operation to the message M to produce a second encoded message EMï¿½ of length k octets:
             std::vector<uint8_t> EM_(k);
             Encoder::encode(m_first, m_last, EM_.begin(), k);
 
             ////////////////////////////////////////////////////////////////////////
-            // 4. Compare the encoded message EM and the second encoded message EM’
+            // 4. Compare the encoded message EM and the second encoded message EMï¿½
             auto it(EM_.begin());
 
             if (EM_.size() != EM.size())

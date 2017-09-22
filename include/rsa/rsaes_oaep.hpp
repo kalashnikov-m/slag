@@ -12,11 +12,11 @@
 namespace cry
 {
 
-    template <class Encoder = eme_oaep<>, class IntType = bigint8_t>
+    template <class Encoder = eme_oaep<>, class Integer = bigint8_t>
     struct rsaes_oaep
     {
         template <class InputIterator, class OutputIterator>
-        static OutputIterator encrypt(InputIterator first, InputIterator last, OutputIterator result, const IntType& e, const IntType& n, size_t modBits, const std::vector<uint8_t>& seed = std::vector<uint8_t>(), const std::vector<uint8_t>& label = std::vector<uint8_t>())
+        static OutputIterator encrypt(InputIterator first, InputIterator last, OutputIterator result, const Integer& e, const Integer& n, size_t modBits, const std::vector<uint8_t>& seed = std::vector<uint8_t>(), const std::vector<uint8_t>& label = std::vector<uint8_t>())
         {
 
             ///////////////////////
@@ -43,18 +43,18 @@ namespace cry
 
             ////////////////////////////////////////////////////////////////////////////
             // a. Convert the encoded message EM to an integer message representative m
-            IntType m = OS2IP<IntType>()(EM);
+            Integer m = OS2IP<Integer>()(EM);
 
             //////////////////////////////////////////////////////////////////////////
             // b. Apply the RSAEP encryption primitiveto the RSA public key(n, e) and
             // the message representative m to produce an integer ciphertext
             // representative c :
 
-            IntType c = cry::pow_mod(m, e, n);
+            Integer c = cry::pow_mod(m, e, n);
 
             ///////////////////////////////////////////////////////////////////////////////////
             // c. Convert the ciphertext representative c to a ciphertext C of length koctets
-            const std::vector<uint8_t> C = IP2OS<IntType>()(c);
+            const std::vector<uint8_t> C = IP2OS<Integer>()(c);
 
             result = std::copy(C.begin(), C.end(), result);
 
@@ -62,7 +62,7 @@ namespace cry
         }
 
         template <class InputIterator, class OutputIterator>
-        static OutputIterator decrypt(InputIterator c_first, InputIterator c_last, OutputIterator result, const IntType& d, const IntType& n, size_t modBits)
+        static OutputIterator decrypt(InputIterator c_first, InputIterator c_last, OutputIterator result, const Integer& d, const Integer& n, size_t modBits)
         {
 
             ///////////////////////
@@ -91,16 +91,16 @@ namespace cry
 
             /////////////////////////////////////////////////////////////////////////
             // a. Convert the ciphertext C to an integer ciphertext representative c
-            const IntType c = OS2IP<IntType>()(c_first, c_last);
+            const Integer c = OS2IP<Integer>()(c_first, c_last);
 
             //////////////////////////////////////////////////////////////////////////////
             // b. Apply the RSADP decryption primitive to the RSA private key K and the
             // ciphertext representative c to produce an integer message representative m:
-            const IntType m = cry::pow_mod(c, d, n);
+            const Integer m = cry::pow_mod(c, d, n);
 
             ////////////////////////////////////////////////////////////////////////////////////////
             // c. Convert the message representative m to an encoded message EM of length k octets:
-            const std::vector<uint8_t> EM = IP2OS<IntType>()(m);
+            const std::vector<uint8_t> EM = IP2OS<Integer>()(m);
 
             ///////////////////////////
             // 3. EME - OAEP decoding:

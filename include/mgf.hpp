@@ -3,7 +3,7 @@
 
 namespace cry {
 
-    template <class HashType>
+    template <class Digest>
     struct mgf1 {
         template <class InputIterator, class OutputIterator>
         void operator()(InputIterator first, InputIterator last, OutputIterator result, size_t maskLen) const {
@@ -12,8 +12,8 @@ namespace cry {
                 throw std::runtime_error("mask too long");
             }
 
-            size_t hLen = HashType::size;
-            HashType hash;
+	        const size_t hLen = Digest::size;
+            Digest digest;
 
             size_t i = 0;
             size_t rest = maskLen;
@@ -26,7 +26,7 @@ namespace cry {
                 mgfSeed.push_back(static_cast<uint8_t>((i & 0x0000FF00) >> 8));
                 mgfSeed.push_back(static_cast<uint8_t>((i & 0x000000FF) >> 0));
 
-                hash(mgfSeed.begin(), mgfSeed.end(), result);
+                digest(mgfSeed.begin(), mgfSeed.end(), result);
 
                 result += hLen;
                 rest -= hLen;
@@ -40,9 +40,9 @@ namespace cry {
                 mgfSeed.push_back(static_cast<uint8_t>((i & 0x0000FF00) >> 8));
                 mgfSeed.push_back(static_cast<uint8_t>((i & 0x000000FF) >> 0));
 
-                std::vector<uint8_t> digest(hLen);
-                hash(mgfSeed.begin(), mgfSeed.end(), digest.begin());
-                std::copy_n(digest.begin(), rest, result);
+                std::vector<uint8_t> hash(hLen);
+                digest(mgfSeed.begin(), mgfSeed.end(), hash.begin());
+                std::copy_n(hash.begin(), rest, result);
             }
         }
     };
