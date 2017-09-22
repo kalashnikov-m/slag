@@ -72,7 +72,7 @@ namespace cry
 
             auto oid = OID<Digest>::value();
 
-            size_t oidLen = oid.size();
+	        const size_t oidLen = oid.size();
             bool eq       = std::equal(std::begin(oid), std::end(oid), first);
             if (!eq)
             {

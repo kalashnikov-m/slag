@@ -77,7 +77,7 @@ namespace cry
             // 8.  Let DB = PS || 0x01 || salt;
             // DB is an octet string of length emLen - hLen - 1.
 
-	        const size_t dbLen = emLen - hLen - 1;
+            const size_t dbLen = emLen - hLen - 1;
             std::vector<uint8_t> DB(dbLen);
             std::vector<uint8_t>::iterator itDb(DB.begin());
 
@@ -148,7 +148,7 @@ namespace cry
             ///////////////////////////////////////////////////////////////////
             // 5.  Let maskedDB be the leftmost emLen - hLen - 1 octets of EM,
             // and let H be the next hLen octets.
-            size_t dbLen = emLen - hLen - 1;
+            const size_t dbLen = emLen - hLen - 1;
             std::vector<uint8_t> maskedDB(em_first, em_first + dbLen);
 
             std::vector<uint8_t> H(em_first + dbLen, em_first + dbLen + hLen);
