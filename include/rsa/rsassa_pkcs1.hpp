@@ -16,8 +16,7 @@ namespace cry
         template <class InputIterator, class OutputIterator>
         static OutputIterator sign(InputIterator first, InputIterator last, OutputIterator result, const Integer& d, const Integer& n, size_t modBits)
         {
-
-            size_t emLen = modBits / 8;
+            const size_t emLen = modBits / 8;
             std::vector<uint8_t> encoded(emLen);
             auto end = Encoder::encode(first, last, encoded.begin(), emLen);
 
@@ -37,8 +36,8 @@ namespace cry
 
             ///////////////////////
             // 1. Length checking:
-            size_t k = modulusBits / 8;
-            auto sz  = std::distance(s_first, s_last);
+            const size_t k = modulusBits / 8;
+            auto sz        = std::distance(s_first, s_last);
             if (k != sz)
             {
                 return false;
@@ -60,12 +59,12 @@ namespace cry
             const std::vector<uint8_t> EM = IP2OS<Integer>()(m);
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            // 3. Apply the EMSA-PKCS1-v1_5 encoding operation to the message M to produce a second encoded message EMï¿½ of length k octets:
+            // 3. Apply the EMSA-PKCS1-v1_5 encoding operation to the message M to produce a second encoded message EM’ of length k octets:
             std::vector<uint8_t> EM_(k);
             Encoder::encode(m_first, m_last, EM_.begin(), k);
 
             ////////////////////////////////////////////////////////////////////////
-            // 4. Compare the encoded message EM and the second encoded message EMï¿½
+            // 4. Compare the encoded message EM and the second encoded message EM’
             auto it(EM_.begin());
 
             if (EM_.size() != EM.size())

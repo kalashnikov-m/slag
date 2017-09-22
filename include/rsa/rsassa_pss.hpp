@@ -68,7 +68,7 @@ namespace cry
             ////////////////////////////
             // 3. EMSA - PSS verification :
 
-            bool result = Encoder::verify(m_first, m_last, EM.begin(), EM.end(), modBits - 1);
+            const bool result = Encoder::verify(m_first, m_last, EM.begin(), EM.end(), modBits - 1);
 
             return result;
         }

@@ -24,7 +24,7 @@ namespace cry
                 k++;
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            // 1. Apply the EME-PKCS1-v1_5 encoding operation to the message M to produce an encoded message EM of length kï¿½1 octets:
+            // 1. Apply the EME-PKCS1-v1_5 encoding operation to the message M to produce an encoded message EM of length k–1 octets:
             std::vector<uint8_t> EM(k);
             Encoder::encode(first, last, EM.begin(), k - 1);
 
@@ -53,7 +53,7 @@ namespace cry
                 k++;
 
             ////////////////////////////////////////////////////////////////////////////////////////////
-            // 1. If the length of the ciphertext C is not k octets, output ï¿½decryption errorï¿½ and stop.
+            // 1. If the length of the ciphertext C is not k octets, output “decryption error” and stop.
             auto cLen = std::distance(first, last);
             if (cLen != k)
             {
@@ -69,7 +69,7 @@ namespace cry
             const Integer m = cry::pow_mod(c, d, n);
 
             /////////////////////////////////////////////////////////////////////////////////////////
-            // 4. Convert the message representative m to an encoded message EM of length kï¿½1 octets:
+            // 4. Convert the message representative m to an encoded message EM of length k–1 octets:
             const std::vector<uint8_t> EM = IP2OS<Integer>()(m);
 
             result = Encoder::decode(EM.begin(), EM.end(), result);

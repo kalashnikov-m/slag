@@ -5,9 +5,9 @@
 #ifndef RSAES_OAEP_H
 #define RSAES_OAEP_H
 
-#include "os2ip.hpp"
 #include "algorithm.hpp"
 #include "basic_int.hpp"
+#include "os2ip.hpp"
 
 namespace cry
 {
@@ -25,8 +25,8 @@ namespace cry
             ////////////////////////////////////////////////////////////////
             // If mLen > k � 2hLen � 2, output �message too long� and stop.
 
-            size_t k    = modBits / 8;
-            size_t mLen = std::distance(first, last);
+            const size_t k    = modBits / 8;
+            const size_t mLen = std::distance(first, last);
 
             if (mLen > k - 2 * Encoder::hash_type::size - 2)
             {
@@ -68,8 +68,8 @@ namespace cry
             ///////////////////////
             // 1. Length checking:
 
-            size_t k    = modBits / 8;
-            size_t cLen = std::distance(c_first, c_last);
+            const size_t k    = modBits / 8;
+            const size_t cLen = std::distance(c_first, c_last);
 
             ////////////////////////////////////////////////////////////////////////////////////////////
             // b. If the length of the ciphertext C is not k octets, output �decryption error� and stop.
