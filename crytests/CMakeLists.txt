@@ -26,16 +26,14 @@ set (HEADERS
 	../include/sha512.hpp
 	../utility/encoders.hpp
 	../utility/os2ip.hpp
-	../include/internal/HugeCore.h
 	../include/internal/cry_core.hpp
 )
 
 set (SOURCES
     main.cpp
-    HugeCoreTest.cpp
-    HugeTest.cpp
-    RsaTest.cpp
-    ../include/internal/HugeCore.cpp
+    Test_CryCore.cpp
+    Test_Bigint.cpp
+    Test_Rsa.cpp
 )
 
 include_directories(../utility)
