@@ -14,9 +14,8 @@ namespace cry
         template <class InputIterator, class OutputIterator>
         static OutputIterator encode(InputIterator first, InputIterator last, OutputIterator result, size_t k, const std::vector<uint8_t>& randVal = std::vector<uint8_t>())
         {
-
-            size_t mLen  = std::distance(first, last);
-            size_t psLen = k - mLen - 3;
+            const size_t mLen = std::distance(first, last);
+            size_t psLen      = k - mLen - 3;
 
             *result++ = 0x00;
             *result++ = 0x02;

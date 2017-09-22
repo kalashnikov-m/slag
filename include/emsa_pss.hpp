@@ -8,7 +8,7 @@
 namespace cry
 {
 
-    template <class HashType = sha1, class MGFType = mgf1<sha1>, size_t sLen = HashType::size>
+    template <class Digest = sha1, class MGFType = mgf1<sha1>, size_t sLen = Digest::size>
     class emsa_pss
     {
 
@@ -16,19 +16,16 @@ namespace cry
         template <class InputIterator, class OutputIterator>
         static OutputIterator encode(InputIterator first, InputIterator last, OutputIterator result, size_t emBits, const std::vector<uint8_t>& saltVal = std::vector<uint8_t>())
         {
-
-            size_t k = emBits / 8;
-            // size_t emLen = (emBits % 8) == 0 ? k - 1 : k;
-            size_t emLen = (emBits % 8) == 0 ? k : k + 1;
-            size_t hLen  = HashType::size;
-            size_t zBits = 8 * emLen - emBits;
+            const size_t k     = emBits / 8;
+            const size_t emLen = (emBits % 8) == 0 ? k : k + 1;
+            const size_t hLen  = Digest::size;
+            const size_t zBits = 8 * emLen - emBits;
 
             ///////////////////////////////////////////////////////////
             // 2. Let mHash = Hash(M), an octet string of length hLen.
-            HashType hash;
-
-            std::vector<uint8_t> mHash(hLen);
-            hash(first, last, mHash.begin());
+            std::vector<uint8_t> mHash;
+            mHash.reserve(hLen);
+            Digest()(first, last, std::back_inserter(mHash));
 
             ////////////////////////////////////////////////////////////////////
             // 3.  If emLen < hLen + sLen + 2, output "encoding error" and stop.
@@ -66,20 +63,21 @@ namespace cry
 
             ///////////////////////////////////////////////////////
             // 6. Let H = Hash(M'), an octet string of length hLen.
-            std::vector<uint8_t> H(hLen);
-            hash(M_.begin(), M_.end(), H.begin());
+            std::vector<uint8_t> H;
+            H.reserve(hLen);
+            Digest()(M_.begin(), M_.end(), std::back_inserter(H));
 
             //////////////////////////////////////////////////////////////////////////////////////
             // 7.  Generate an octet string PS consisting of emLen - sLen - hLen - 2 zero octets.
             // The length of PS may be 0.
-            size_t psLen = emLen - sLen - hLen - 2;
+            const size_t psLen = emLen - sLen - hLen - 2;
             std::vector<uint8_t> PS(psLen);
 
             ////////////////////////////////////
             // 8.  Let DB = PS || 0x01 || salt;
             // DB is an octet string of length emLen - hLen - 1.
 
-            size_t dbLen = emLen - hLen - 1;
+	        const size_t dbLen = emLen - hLen - 1;
             std::vector<uint8_t> DB(dbLen);
             std::vector<uint8_t>::iterator itDb(DB.begin());
 
@@ -120,16 +118,14 @@ namespace cry
         template <class InputIterator, class MInputIterator>
         bool static verify(MInputIterator m_first, MInputIterator m_last, InputIterator em_first, InputIterator em_last, size_t emBits)
         {
-
-            size_t k = emBits / 8;
-            // size_t emLen = (emBits % 8) == 0 ? k - 1 : k;
-            size_t emLen = (emBits % 8) == 0 ? k : k + 1;
-            size_t hLen  = HashType::size;
-            size_t zBits = 8 * emLen - emBits;
+            const size_t k     = emBits / 8;
+            const size_t emLen = (emBits % 8) == 0 ? k : k + 1;
+            const size_t hLen  = Digest::size;
+            const size_t zBits = 8 * emLen - emBits;
 
             //////////////////////////////////////////////////////////
             // 2. Let mHash = Hash(M), an octet string of length hLen.
-            HashType hash;
+            Digest hash;
 
             std::vector<uint8_t> mHash(hLen);
             hash(m_first, m_last, mHash.begin());
@@ -207,16 +203,25 @@ namespace cry
             ////////////////////////////////////////////////////////////////
             // 12. Let  M' = (0x)00 00 00 00 00 00 00 00 || mHash || salt ;
             // M' is an octet string of length 8 + hLen + sLen with eight initial zero octets.
-            auto M_ = std::vector<uint8_t>(8 + hLen + sLen);
-            auto it = M_.begin();
-            it += 8;
+            std::vector<uint8_t> M_;
+            M_.reserve(8 + hLen + sLen);
 
-            it = std::copy(mHash.begin(), mHash.end(), it);
+            ///////////////////////////////
+            // (0x)00 00 00 00 00 00 00 00
+            std::fill_n(std::back_inserter(M_), 8, 0);
 
-            it = std::copy(salt.begin(), salt.end(), it);
+            /////////
+            // mHash
+            std::copy(mHash.begin(), mHash.end(), std::back_inserter(M_));
 
-            auto H_ = std::vector<uint8_t>(hLen);
-            hash(M_.begin(), M_.end(), H_.begin());
+            ////////
+            // salt
+            std::copy(salt.begin(), salt.end(), std::back_inserter(M_));
+
+            std::vector<uint8_t> H_;
+            H_.reserve(hLen);
+
+            hash(M_.begin(), M_.end(), std::back_inserter(H_));
 
             return (H == H_);
         }

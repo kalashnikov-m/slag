@@ -32,14 +32,14 @@ namespace cry
             Digest()(L.begin(), L.end(), std::back_inserter(lHash));
 
             ///////////////////////////////////////////////////////////////////////////////
-            // b. Generate an octet string PS consisting of k ï¿½ mLen ï¿½ 2hLen ï¿½ 2 zero octets.
+            // b. Generate an octet string PS consisting of k – mLen – 2hLen – 2 zero octets.
             // The length of PS may be zero.
             const size_t psLen = k - mLen - 2 * hLen - 2;
             auto PS            = std::vector<uint8_t>(psLen);
 
             /////////////////////////////////////////////////////////////////////////////
             // c. Concatenate lHash, PS, a single octet with hexadecimal value 0x01, and
-            // the message M to form a data block DB of length k ï¿½ hLen ï¿½ 1 octets as
+            // the message M to form a data block DB of length k – hLen – 1 octets as
             // DB = lHash || PS || 0x01 || M .
             const auto dbLen = k - hLen - 1;
             auto DB          = std::vector<uint8_t>(dbLen);
@@ -68,7 +68,7 @@ namespace cry
             }
 
             ////////////////////////////////////////////
-            // e. Let dbMask = MGF (seed, k ï¿½ hLen ï¿½ 1)
+            // e. Let dbMask = MGF (seed, k – hLen – 1)
             auto dbMask = std::vector<uint8_t>(dbLen);
 
             MGFType mgf;
