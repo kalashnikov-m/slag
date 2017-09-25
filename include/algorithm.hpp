@@ -86,6 +86,13 @@ namespace cry
         };
     }
 
+    /**
+     * \brief calculates the greatest common divisor of abs(lhs) and abs(rhs).
+     * \tparam T type of arguments and return value
+     * \param lhs first argument
+     * \param rhs second argument
+     * \return Common Greatest Divisor (GCD)
+     */
     template <class T>
     T gcd(const T& lhs, const T& rhs)
     {
@@ -104,6 +111,14 @@ namespace cry
         return r1;
     }
 
+    /**
+     * \brief calculates multiplicative inversion of a value
+     * \tparam T type of arguments
+     * \param inverse inverse of a value
+     * \param a value
+     * \param modulus modulus
+     * \return returns "TRUE" if the value has an inverse
+     */
     template <class T>
     bool mod_inverse(T& inverse, const T& a, const T& modulus)
     {
@@ -149,18 +164,37 @@ namespace cry
         return true;
     }
 
+    /**
+     * \brief
+     * \tparam T
+     * \param arg
+     * \return returns "TRUE" if the "arg" is even
+     */
     template <class T>
     bool is_even(const T& arg) noexcept
     {
         return is_even_impl<is_bigint<T>::value>()(arg);
     }
 
+    /**
+     * \brief
+     * \tparam T
+     * \param arg
+     * \return returns "TRUE" if the "arg" is odd
+     */
     template <class T>
     bool is_odd(const T& arg) noexcept
     {
         return is_odd_impl<is_bigint<T>::value>()(arg);
     }
 
+    /**
+     * \brief
+     * \tparam T
+     * \param arg
+     * \param exp
+     * \return
+     */
     template <class T>
     T pow(const T& arg, const T& exp)
     {
@@ -182,6 +216,14 @@ namespace cry
         return y;
     }
 
+    /**
+     * \brief
+     * \tparam T
+     * \param arg
+     * \param exp
+     * \param mod
+     * \return
+     */
     template <class T>
     T pow_mod(const T& arg, const T& exp, const T& mod)
     {
@@ -206,6 +248,13 @@ namespace cry
         return y;
     }
 
+    /**
+     * \brief
+     * \tparam T
+     * \param p
+     * \param t
+     * \return
+     */
     template <class T>
     bool is_probably_prime(const T& p, uint16_t t)
     {
@@ -374,7 +423,7 @@ namespace cry
         // 3. Miller-Rabin probably test
         uint16_t t = prime_checks(nbits);
 
-        bool flag = cry::is_probably_prime(primeCandidate, t);
+        const bool flag = cry::is_probably_prime(primeCandidate, t);
 
         if (!flag)
         {
