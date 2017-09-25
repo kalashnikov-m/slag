@@ -2,7 +2,9 @@
 #ifndef ALGORITHM_HPP
 #define ALGORITHM_HPP
 
+#include "basic_int.hpp"
 #include "os2ip.hpp"
+
 #include <algorithm>
 #include <cstdint>
 #include <random>
@@ -12,7 +14,7 @@ namespace cry
 {
     namespace
     {
-        constexpr int prime_checks(int b)
+        constexpr int prime_checks(int b) noexcept
         {
             return (b) >= 1300 ? 2 : (b) >= 850 ? 3 : (b) >= 650 ? 4 : (b) >= 550 ? 5 : (b) >= 450 ? 6 : (b) >= 400 ? 7 : (b) >= 350 ? 8 : (b) >= 300 ? 9 : (b) >= 250 ? 12 : (b) >= 200 ? 15 : (b) >= 150 ? 18 : /* b >= 100 */ 27;
         }
@@ -20,19 +22,13 @@ namespace cry
         template <class T>
         struct is_bigint
         {
-            enum
-            {
-                value = false
-            };
+            static constexpr bool value = false;
         };
 
         template <class P>
         struct is_bigint<cry::basic_int<P>>
         {
-            enum
-            {
-                value = true
-            };
+            static constexpr bool value = true;
         };
 
         template <bool is_bigint>
@@ -154,13 +150,13 @@ namespace cry
     }
 
     template <class T>
-    bool is_even(const T& arg)
+    bool is_even(const T& arg) noexcept
     {
         return is_even_impl<is_bigint<T>::value>()(arg);
     }
 
     template <class T>
-    bool is_odd(const T& arg)
+    bool is_odd(const T& arg) noexcept
     {
         return is_odd_impl<is_bigint<T>::value>()(arg);
     }
