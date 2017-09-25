@@ -16,6 +16,78 @@ namespace cry
         {
             return (b) >= 1300 ? 2 : (b) >= 850 ? 3 : (b) >= 650 ? 4 : (b) >= 550 ? 5 : (b) >= 450 ? 6 : (b) >= 400 ? 7 : (b) >= 350 ? 8 : (b) >= 300 ? 9 : (b) >= 250 ? 12 : (b) >= 200 ? 15 : (b) >= 150 ? 18 : /* b >= 100 */ 27;
         }
+
+        template <class T>
+        struct is_bigint
+        {
+            enum
+            {
+                value = false
+            };
+        };
+
+        template <class P>
+        struct is_bigint<cry::basic_int<P>>
+        {
+            enum
+            {
+                value = true
+            };
+        };
+
+        template <bool is_bigint>
+        struct is_odd_impl;
+
+        template <>
+        struct is_odd_impl<false>
+        {
+            template <class T>
+            constexpr bool operator()(const T& t) const noexcept
+            {
+                return (t & 0x01) == 0x01;
+            }
+        };
+
+        template <>
+        struct is_odd_impl<true>
+        {
+            template <class T>
+            bool operator()(const T& t) const noexcept
+            {
+                const auto& ref = t.polynomial();
+
+                auto end = ref.end();
+
+                return (*(--end) & 0x01) == 0x01;
+            }
+        };
+
+        template <bool is_bigint>
+        struct is_even_impl;
+
+        template <>
+        struct is_even_impl<false>
+        {
+            template <class T>
+            constexpr bool operator()(const T& t) const noexcept
+            {
+                return (t & 0x01) == 0x00;
+            }
+        };
+
+        template <>
+        struct is_even_impl<true>
+        {
+            template <class T>
+            bool operator()(const T& t) const noexcept
+            {
+                const auto& ref = t.polynomial();
+
+                auto end = ref.end();
+
+                return (*(--end) & 0x01) == 0x00;
+            }
+        };
     }
 
     template <class T>
@@ -84,21 +156,17 @@ namespace cry
     template <class T>
     bool is_even(const T& arg)
     {
-        bool f = (arg % 2) == 0;
-
-        return f;
+        return is_even_impl<is_bigint<T>::value>()(arg);
     }
 
     template <class T>
     bool is_odd(const T& arg)
     {
-        bool f = (arg % 2) == 1;
-
-        return f;
+        return is_odd_impl<is_bigint<T>::value>()(arg);
     }
 
     template <class T>
-    const T pow(const T& arg, const T& exp)
+    T pow(const T& arg, const T& exp)
     {
         T y = 1;
         T a = arg;
@@ -119,7 +187,7 @@ namespace cry
     }
 
     template <class T>
-    const T pow_mod(const T& arg, const T& exp, const T& mod)
+    T pow_mod(const T& arg, const T& exp, const T& mod)
     {
         T y = 1;
         T a = arg;
@@ -127,7 +195,7 @@ namespace cry
 
         while (e > 0)
         {
-            if (e % 2 == 1)
+            if (is_odd(e))
             {
                 y *= a;
                 y %= mod;
