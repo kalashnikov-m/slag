@@ -9,6 +9,26 @@ namespace cry
     template <class T>
     struct OS2IP;
 
+    template <class T>
+    struct OS2IP
+    {
+        T operator()(const std::vector<uint8_t>& octets) const noexcept
+        {
+
+            std::vector<uint8_t>::const_reverse_iterator rfirst     = octets.rbegin();
+            const std::vector<uint8_t>::const_reverse_iterator rend = octets.rend();
+
+            T x        = 0;
+            size_t idx = 0;
+            for (; rfirst != rend && idx != sizeof(T); ++rfirst, ++idx)
+            {
+                x = (static_cast<T>(*rfirst) << 8 * idx) | x;
+            }
+
+            return x;
+        }
+    };
+
     template <class P>
     struct OS2IP<cry::basic_int<P>>
     {
