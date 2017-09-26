@@ -15,17 +15,27 @@ namespace cry
         static OutputIterator encode(InputIterator first, InputIterator last, OutputIterator result, size_t k, const std::vector<uint8_t>& randVal = std::vector<uint8_t>())
         {
             const size_t mLen = std::distance(first, last);
-            size_t psLen      = k - mLen - 3;
+            if (mLen > k - 11)
+            {
+                throw std::runtime_error("message too long");
+            }
+
+            size_t psLen = k - mLen - 3;
 
             *result++ = 0x00;
             *result++ = 0x02;
 
-            std::random_device rd;
-            std::mt19937 gen(rd());
-            std::uniform_int_distribution<> uid(1, 255);
+            auto rand = randVal;
+            if (rand.empty())
+            {
+                std::random_device rd;
+                std::mt19937 gen(rd());
+                std::uniform_int_distribution<> uid(1, 255);
 
-            std::generate_n(result, psLen, [&uid, &gen]() { return uid(gen); });
-            result += psLen;
+                result = std::generate_n(result, psLen, [&uid, &gen]() { return uid(gen); });
+            }
+
+            // result += psLen;
 
             *result++ = 0x00;
 
@@ -35,7 +45,7 @@ namespace cry
         }
 
         template <class InputIterator, class OutputIterator>
-        static OutputIterator decode(InputIterator first, InputIterator last, OutputIterator result, size_t k)
+        static OutputIterator decode(InputIterator first, InputIterator last, OutputIterator result)
         {
             if (first != last && *first++ != 0x00)
                 throw std::runtime_error("decryption error");
