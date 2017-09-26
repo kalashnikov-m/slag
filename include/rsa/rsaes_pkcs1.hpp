@@ -26,7 +26,7 @@ namespace cry
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // 1. Apply the EME-PKCS1-v1_5 encoding operation to the message M to produce an encoded message EM of length k–1 octets:
             std::vector<uint8_t> EM(k);
-            Encoder::encode(first, last, EM.begin(), k - 1);
+            Encoder::encode(first, last, EM.begin(), k/* - 1*/);
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // 2. Convert the encoded message EM to an integer message representative m
@@ -38,7 +38,7 @@ namespace cry
 
             ///////////////////////////////////////////////////////////////////////////////////
             // 4. Convert the ciphertext representative c to a ciphertext C of length k octets
-            const std::vector<uint8_t> C = IP2OS<Integer>()(c);
+            const std::vector<uint8_t> C = I2OSP<Integer>()(c);
 
             result = std::copy(C.begin(), C.end(), result);
 
@@ -70,7 +70,7 @@ namespace cry
 
             /////////////////////////////////////////////////////////////////////////////////////////
             // 4. Convert the message representative m to an encoded message EM of length k–1 octets:
-            const std::vector<uint8_t> EM = IP2OS<Integer>()(m);
+            const std::vector<uint8_t> EM = I2OSP<Integer>()(m);
 
             result = Encoder::decode(EM.begin(), EM.end(), result);
 
