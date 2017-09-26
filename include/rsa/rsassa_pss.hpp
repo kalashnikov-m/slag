@@ -34,7 +34,7 @@ namespace cry
 
             //////////////////////////////////////////////////////////////////////////////////
             // 2c. Convert the signature representative s to a signature S of length k octets
-            const std::vector<uint8_t> S = IP2OS<Integer>()(s);
+            const std::vector<uint8_t> S = I2OSP<Integer>()(s);
 
             result = std::copy(S.begin(), S.end(), result);
 
@@ -63,7 +63,7 @@ namespace cry
 
             ///////////////////////////////////////////////////////////////////////
             // 2c. Convert the message representative m to an encoded message EM
-            const std::vector<uint8_t> EM = IP2OS<Integer>()(m);
+            const std::vector<uint8_t> EM = I2OSP<Integer>()(m);
 
             ////////////////////////////
             // 3. EMSA - PSS verification :

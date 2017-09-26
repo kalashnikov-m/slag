@@ -54,7 +54,7 @@ namespace cry
 
             ///////////////////////////////////////////////////////////////////////////////////
             // c. Convert the ciphertext representative c to a ciphertext C of length koctets
-            const std::vector<uint8_t> C = IP2OS<Integer>()(c);
+            const std::vector<uint8_t> C = I2OSP<Integer>()(c);
 
             result = std::copy(C.begin(), C.end(), result);
 
@@ -100,7 +100,7 @@ namespace cry
 
             ////////////////////////////////////////////////////////////////////////////////////////
             // c. Convert the message representative m to an encoded message EM of length k octets:
-            const std::vector<uint8_t> EM = IP2OS<Integer>()(m);
+            const std::vector<uint8_t> EM = I2OSP<Integer>()(m);
 
             ///////////////////////////
             // 3. EME - OAEP decoding:

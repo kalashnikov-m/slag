@@ -14,9 +14,8 @@ namespace cry
     {
         T operator()(const std::vector<uint8_t>& octets) const noexcept
         {
-
-            std::vector<uint8_t>::const_reverse_iterator rfirst     = octets.rbegin();
-            const std::vector<uint8_t>::const_reverse_iterator rend = octets.rend();
+	        auto rfirst     = octets.rbegin();
+            const auto rend = octets.rend();
 
             T x        = 0;
             size_t idx = 0;
@@ -83,10 +82,10 @@ namespace cry
     };
 
     template <class T>
-    struct IP2OS;
+    struct I2OSP;
 
     template <>
-    struct IP2OS<uint8_t>
+    struct I2OSP<uint8_t>
     {
         template <class OctetIterator>
         OctetIterator operator()(uint8_t x, OctetIterator result) const noexcept
@@ -98,7 +97,7 @@ namespace cry
     };
 
     template <>
-    struct IP2OS<uint16_t>
+    struct I2OSP<uint16_t>
     {
         template <class OctetIterator>
         OctetIterator operator()(uint16_t x, OctetIterator result) const noexcept
@@ -111,7 +110,7 @@ namespace cry
     };
 
     template <>
-    struct IP2OS<uint32_t>
+    struct I2OSP<uint32_t>
     {
         template <class OctetIterator>
         OctetIterator operator()(uint32_t x, OctetIterator result) const noexcept
@@ -126,7 +125,7 @@ namespace cry
     };
 
     template <>
-    struct IP2OS<uint64_t>
+    struct I2OSP<uint64_t>
     {
         template <class OctetIterator>
         OctetIterator operator()(uint64_t x, OctetIterator result) const noexcept
@@ -145,7 +144,7 @@ namespace cry
     };
 
     template <class P>
-    struct IP2OS<basic_int<P>>
+    struct I2OSP<basic_int<P>>
     {
         std::vector<uint8_t> operator()(const basic_int<P>& ip)
         {
@@ -165,7 +164,7 @@ namespace cry
             for (auto xVal : polynomial)
             {
                 // auto x = swap_bytes()(xVal);
-                octetIt = IP2OS<P>()(xVal, octetIt);
+                octetIt = I2OSP<P>()(xVal, octetIt);
             }
 
             return octetIt;

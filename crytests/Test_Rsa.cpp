@@ -6,12 +6,12 @@
 #include "basic_int.hpp"
 #include "eme_oaep.hpp"
 #include "emsa_pkcs1.hpp"
+#include "os2ip.hpp"
 #include "rsa/rsaes_oaep.hpp"
+#include "rsa/rsaes_pkcs1.hpp"
 #include "rsa/rsassa_pkcs1.hpp"
 #include "rsa/rsassa_pss.hpp"
 #include "sha1.hpp"
-#include "rsa/rsaes_pkcs1.hpp"
-#include "os2ip.hpp"
 
 using namespace std;
 using namespace cry;
@@ -22,24 +22,95 @@ class Test_Rsa : public ::testing::Test
 
 TEST(Test_Rsa, Encrypt_EME_PKCS1_1024)
 {
-	auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const std::vector<uint8_t>& rand, const std::vector<uint8_t>& m, const bigint8_t& cipher) {
-		std::vector<uint8_t> C(128);
-		rsaes_pkcs1<eme_pkcs1>::encrypt(m.begin(), m.end(), C.begin(), e, n, 1024);
-		EXPECT_EQ(OS2IP<bigint8_t>()(C), cipher);
+    auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const std::vector<uint8_t>& rand, const std::vector<uint8_t>& m) {
+        std::vector<uint8_t> C(128);
+        auto it = m.begin(), end = m.end();
+        for (; *it == 0 && it != end; ++it)
+            ;
 
-		std::vector<uint8_t> D(128);
-		auto end = rsaes_oaep<eme_oaep<sha1>>::decrypt(C.begin(), C.end(), D.begin(), d, n, 1024);
-		EXPECT_EQ(OS2IP<bigint8_t>()(m), bigint8_t(D.begin(), end));
-	};
+        rsaes_pkcs1<eme_pkcs1>::encrypt(it, end, C.begin(), e, n, 1024);
 
-	bigint8_t n("bcb47b2e0dafcba81ff2a2b5cb115ca7e757184c9d72bcdcda707a146b3b4e29989ddc660bd694865b932b71ca24a335cf4d339c719183e6222e4c9ea6875acd528a49ba21863fe08147c3a47e41990b51a03f77d22137f8d74c43a5a45f4e9e18a2d15db051dc89385db9cf8374b63a8cc88113710e6d8179075b7dc79ee76b");
-	bigint8_t e("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010001");
-	bigint8_t d("383a6f19e1ea27fd08c7fbc3bfa684bd6329888c0bbe4c98625e7181f411cfd0853144a3039404dda41bce2e31d588ec57c0e148146f0fa65b39008ba5835f829ba35ae2f155d61b8a12581b99c927fd2f22252c5e73cba4a610db3973e019ee0f95130d4319ed413432f2e5e20d5215cdd27c2164206b3f80edee51938a25c1");
-	bigint8_t Msg("1248f62a4389f42f7b4bb131053d6c88a994db2075b912ccbe3ea7dc611714f14e075c104858f2f6e6cfd6abdedf015a821d03608bf4eba3169a6725ec422cd9069498b5515a9608ae7cc30e3d2ecfc1db6825f3e996ce9a5092926bc1cf61aa42d7f240e6f7aa0edb38bf81aa929d66bb5d890018088458720d72d569247b0c");
-	bigint8_t C("682cf53c1145d22a50caa9eb1a9ba70670c5915e0fdfde6457a765de2a8fe12de9794172a78d14e668d498acedad616504bb1764d094607070080592c3a69c343d982bd77865873d35e24822caf43443cc10249af6a1e26ef344f28b9ef6f14e09ad839748e5148bcceb0fd2aa63709cb48975cbf9c7b49abc66a1dc6cb5b31a");
+        std::vector<uint8_t> D(128);
+        auto d_end = rsaes_pkcs1<eme_pkcs1>::decrypt(C.begin(), C.end(), D.begin(), d, n, 1024);
+        std::vector<uint8_t> decrypt(D.begin(), d_end);
+        auto d1 = OS2IP<bigint8_t>()(m);
+        auto d2 = OS2IP<bigint8_t>()(decrypt);
+        EXPECT_EQ(d1, d2);
+    };
 
-    auto m = IP2OS<bigint8_t>()(Msg);
-	//test(n, e, d, std::vector<uint8_t>(), m, C);
+    bigint8_t n("bcb47b2e0dafcba81ff2a2b5cb115ca7e757184c9d72bcdcda707a146b3b4e29989ddc660bd694865b932b71ca24a335cf4d339c719183e6222e4c9ea6875acd528a49ba21863fe08147c3a47e41990b51a03f77d22137f8d74c43a5a45f4e9e18a2d15db051dc89385db9cf8374b63a8cc88113710e6d8179075b7dc79ee76b");
+    bigint8_t e("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010001");
+    bigint8_t d("383a6f19e1ea27fd08c7fbc3bfa684bd6329888c0bbe4c98625e7181f411cfd0853144a3039404dda41bce2e31d588ec57c0e148146f0fa65b39008ba5835f829ba35ae2f155d61b8a12581b99c927fd2f22252c5e73cba4a610db3973e019ee0f95130d4319ed413432f2e5e20d5215cdd27c2164206b3f80edee51938a25c1");
+
+    {
+        bigint8_t Msg("1248f62a4389f42f7b4bb131053d6c88a994db2075b912ccbe3ea7dc611714f14e075c104858f2f6e6cfd6abdedf015a821d03608bf4eba3169a6725ec422cd9069498b5515a9608ae7cc30e3d2ecfc1db6825f3e996ce9a5092926bc1cf61aa42d7f240e6f7aa0edb38bf81aa929d66bb5d890018");
+
+        auto m = I2OSP<bigint8_t>()(Msg);
+        test(n, e, d, std::vector<uint8_t>(), m);
+    }
+
+	{
+		bigint8_t Msg("58439043890584359034808043850384584385048043850983450843");
+
+		auto m = I2OSP<bigint8_t>()(Msg);
+		test(n, e, d, std::vector<uint8_t>(), m);
+	}
+
+	{
+		bigint8_t Msg("584385904380583580928590829384590283905834095825882543252577893475934757943759843795877437598437583495783");
+
+		auto m = I2OSP<bigint8_t>()(Msg);
+		test(n, e, d, std::vector<uint8_t>(), m);
+	}
+
+	{
+		bigint8_t Msg("1248f62a4389f42f7b4bb131053d6c88a994db2075b912ccbe3ea7dc611714f14e075c104858f2f6e6cfd6abdedf015a821d03608bf4eba3169a6725ec422cd9069498b5515a9608ae7cc30e3d2ecfc1db6825f3e996ce9a5092926bc1cf61aa42d7f240e6f7aa0edb38bf81aa929d66bb5d890018");
+
+		auto m = I2OSP<bigint8_t>()(Msg);
+		test(n, e, d, std::vector<uint8_t>(), m);
+	}
+
+	{
+		bigint8_t Msg("5874385438590843589043850834590438905834859038405804305834589034850834850438059843");
+
+		auto m = I2OSP<bigint8_t>()(Msg);
+		test(n, e, d, std::vector<uint8_t>(), m);
+	}
+
+	{
+		bigint8_t Msg("5889043859084358904385098345843858348904380598435843850834850438580435");
+
+		auto m = I2OSP<bigint8_t>()(Msg);
+		test(n, e, d, std::vector<uint8_t>(), m);
+	}
+
+	{
+		bigint8_t Msg("47543af58094850348503");
+
+		auto m = I2OSP<bigint8_t>()(Msg);
+		test(n, e, d, std::vector<uint8_t>(), m);
+	}
+
+	{
+		bigint8_t Msg("584385903489058358904385835803480584385903890840");
+
+		auto m = I2OSP<bigint8_t>()(Msg);
+		test(n, e, d, std::vector<uint8_t>(), m);
+	}
+
+	{
+		bigint8_t Msg("58943859043859038905890258902845902384182483248234802480320");
+
+		auto m = I2OSP<bigint8_t>()(Msg);
+		test(n, e, d, std::vector<uint8_t>(), m);
+	}
+
+	{
+		bigint8_t Msg("85038590438590438905834859038458043");
+
+		auto m = I2OSP<bigint8_t>()(Msg);
+		test(n, e, d, std::vector<uint8_t>(), m);
+	}
 }
 
 TEST(Test_Rsa, Encrypt_OAEP_SHA__1_1024)
@@ -52,7 +123,7 @@ TEST(Test_Rsa, Encrypt_OAEP_SHA__1_1024)
         std::vector<uint8_t> D(128);
         auto d_end = rsaes_oaep<eme_oaep<sha1>>::decrypt(C.begin(), C.end(), D.begin(), d, n, 1024);
 
-		std::vector<uint8_t> decrypted(D.begin(), d_end);
+        std::vector<uint8_t> decrypted(D.begin(), d_end);
         EXPECT_EQ(m, decrypted);
     };
 
@@ -108,18 +179,18 @@ TEST(Test_Rsa, Encrypt_OAEP_SHA__1_1024)
 TEST(Test_Rsa, SigGen_SHA__1_RSA_PSS_SHA1)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S, const std::vector<uint8_t>& saltVal) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(1024 / 8);
 
         rsassa_pss<emsa_pss<sha1>>::sign(plain.begin(), plain.end(), signature.begin(), n, d, 1024, saltVal);
-		//auto x = OS2IP<bigint8_t>()(signature);
+        // auto x = OS2IP<bigint8_t>()(signature);
         EXPECT_EQ(OS2IP<bigint8_t>()(signature), S);
 
         bool f = rsassa_pss<emsa_pss<sha1>>::verify(plain.begin(), plain.end(), signature.begin(), signature.end(), n, e, 1024);
         EXPECT_EQ(f, true);
     };
 
-	const std::vector<uint8_t> SaltVal = { 0x6f, 0x28, 0x41, 0x16, 0x6a, 0x64, 0x47, 0x1d, 0x4f, 0x0b, 0x8e, 0xd0, 0xdb, 0xb7, 0xdb, 0x32, 0x16, 0x1d, 0xa1, 0x3b };
+    const std::vector<uint8_t> SaltVal = {0x6f, 0x28, 0x41, 0x16, 0x6a, 0x64, 0x47, 0x1d, 0x4f, 0x0b, 0x8e, 0xd0, 0xdb, 0xb7, 0xdb, 0x32, 0x16, 0x1d, 0xa1, 0x3b};
     bigint8_t n("bcb47b2e0dafcba81ff2a2b5cb115ca7e757184c9d72bcdcda707a146b3b4e29989ddc660bd694865b932b71ca24a335cf4d339c719183e6222e4c9ea6875acd528a49ba21863fe08147c3a47e41990b51a03f77d22137f8d74c43a5a45f4e9e18a2d15db051dc89385db9cf8374b63a8cc88113710e6d8179075b7dc79ee76b");
     bigint8_t e("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010001");
     bigint8_t d("383a6f19e1ea27fd08c7fbc3bfa684bd6329888c0bbe4c98625e7181f411cfd0853144a3039404dda41bce2e31d588ec57c0e148146f0fa65b39008ba5835f829ba35ae2f155d61b8a12581b99c927fd2f22252c5e73cba4a610db3973e019ee0f95130d4319ed413432f2e5e20d5215cdd27c2164206b3f80edee51938a25c1");
@@ -209,7 +280,7 @@ TEST(Test_Rsa, SigGen_SHA__1_RSA_PKCS_1024)
 {
     // [mod = 1024]
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(128);
 
         rsassa_pkcs1<emsa_pkcs1<sha1>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1024);
@@ -401,7 +472,7 @@ TEST(Test_Rsa, SigGen_SHA__1_RSA_PKCS_1024)
 TEST(Test_Rsa, SigGen_SHA224_RSA_PKCS_1024)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(128);
 
         rsassa_pkcs1<emsa_pkcs1<sha224>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1024);
@@ -581,7 +652,7 @@ TEST(Test_Rsa, SigGen_SHA224_RSA_PKCS_1024)
 TEST(Test_Rsa, SigGen_SHA384_RSA_PKCS_1024)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(128);
 
         rsassa_pkcs1<emsa_pkcs1<sha384>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1024);
@@ -760,7 +831,7 @@ TEST(Test_Rsa, SigGen_SHA384_RSA_PKCS_1024)
 TEST(Test_Rsa, SigGen_SHA512_RSA_PKCS_1024)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(128);
 
         rsassa_pkcs1<emsa_pkcs1<sha512>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1024);
@@ -941,7 +1012,7 @@ TEST(Test_Rsa, SigGen_SHA256_RSA_PKCS_1024)
 {
     // [mod = 1024]
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(128);
 
         rsassa_pkcs1<emsa_pkcs1<sha256>>::sign<>(plain.begin(), plain.end(), signature.begin(), d, n, 1024);
@@ -1110,7 +1181,7 @@ TEST(Test_Rsa, SigGen_SHA__1_RSA_PKCS_1536)
 {
     // [mod = 1536]
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(1536 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha1>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1536);
@@ -1223,7 +1294,7 @@ TEST(Test_Rsa, SigGen_SHA224_RSA_PKCS_1536)
 {
     // [mod = 1536]
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(1536 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha224>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1536);
@@ -1337,7 +1408,7 @@ TEST(Test_Rsa, SigGen_SHA256_RSA_PKCS_1536)
 {
     // [mod = 1536]
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(1536 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha256>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1536);
@@ -1451,7 +1522,7 @@ TEST(Test_Rsa, SigGen_SHA384_RSA_PKCS_1536)
 {
     // [mod = 1536]
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(1536 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha384>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1536);
@@ -1565,7 +1636,7 @@ TEST(Test_Rsa, SigGen_SHA512_RSA_PKCS_1536)
 {
     // [mod = 1536]
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(1536 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha512>>::sign<>(plain.begin(), plain.end(), signature.begin(), d, n, 1536);
@@ -1679,7 +1750,7 @@ TEST(Test_Rsa, SigGen_SHA__1_RSA_PKCS_2048)
 {
     // [mod = 2048]
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(2048 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha1>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 2048);
@@ -1688,8 +1759,6 @@ TEST(Test_Rsa, SigGen_SHA__1_RSA_PKCS_2048)
         bool f = rsassa_pkcs1<emsa_pkcs1<sha1>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 2048);
         EXPECT_EQ(f, true);
     };
-
-  
 
     bigint8_t n("e0b14b99cd61cd3db9c2076668841324fa3174f33ce66ffd514394d34178d29a49493276b6777233e7d46a3e68bc7ca7e899e901d54f6dee0749c3e48ddf68685867ee2ae66df88eb563f6db137a9f6b175a112e0eda8368e88e45efe1ce14bc6016d52639627066af1872c72f60b9161c1d237eeb34b0f841b3f0896f9fe0e16b0f74"
                 "352d101292cc464a7e7861bbeb86f6df6151cb265417c66c565ed8974bd8fc984d5ddfd4eb91a3d5234ce1b5467f3ade375f802ec07293f1236efa3068bc91b158551c875c5dc0a9d6fa321bf9421f08deac910e35c1c28549ee8eed8330cf70595ff70b94b49907e27698a9d911f7ac0706afcb1a4a39feb38b0a8049");
@@ -1792,7 +1861,7 @@ TEST(Test_Rsa, SigGen_SHA__1_RSA_PKCS_2048)
 TEST(Test_Rsa, SigGen_SHA224_RSA_PKCS_2048)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(2048 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha224>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 2048);
@@ -1903,7 +1972,7 @@ TEST(Test_Rsa, SigGen_SHA224_RSA_PKCS_2048)
 TEST(Test_Rsa, SigGen_SHA256_RSA_PKCS_2048)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(2048 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha256>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 2048);
@@ -2014,7 +2083,7 @@ TEST(Test_Rsa, SigGen_SHA256_RSA_PKCS_2048)
 TEST(Test_Rsa, SigGen_SHA384_RSA_PKCS_2048)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(2048 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha384>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 2048);
@@ -2122,7 +2191,7 @@ TEST(Test_Rsa, SigGen_SHA384_RSA_PKCS_2048)
 TEST(Test_Rsa, SigGen_SHA512_RSA_PKCS_2048)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(2048 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha512>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 2048);
@@ -2223,7 +2292,7 @@ TEST(Test_Rsa, SigGen_SHA512_RSA_PKCS_2048)
 TEST(Test_Rsa, SigGen_SHA__1_RSA_PKCS_3072)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(3072 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha1>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 3072);
@@ -2342,7 +2411,7 @@ TEST(Test_Rsa, SigGen_SHA__1_RSA_PKCS_3072)
 TEST(Test_Rsa, SigGen_SHA224_RSA_PKCS_3072)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(3072 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha224>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 3072);
@@ -2466,7 +2535,7 @@ TEST(Test_Rsa, SigGen_SHA224_RSA_PKCS_3072)
 TEST(Test_Rsa, SigGen_SHA256_RSA_PKCS_3072)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(3072 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha256>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 3072);
@@ -2589,7 +2658,7 @@ TEST(Test_Rsa, SigGen_SHA256_RSA_PKCS_3072)
 TEST(Test_Rsa, SigGen_SHA384_RSA_PKCS_3072)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(3072 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha384>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 3072);
@@ -2713,7 +2782,7 @@ TEST(Test_Rsa, SigGen_SHA384_RSA_PKCS_3072)
 TEST(Test_Rsa, SigGen_SHA512_RSA_PKCS_3072)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(3072 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha512>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 3072);
@@ -2837,7 +2906,7 @@ TEST(Test_Rsa, SigGen_SHA512_RSA_PKCS_3072)
 TEST(Test_Rsa, SigGen_SHA__1_RSA_PKCS_4096)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(4096 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha1>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 4096);
@@ -2973,7 +3042,7 @@ TEST(Test_Rsa, SigGen_SHA__1_RSA_PKCS_4096)
 TEST(Test_Rsa, SigGen_SHA224_RSA_PKCS_4096)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(4096 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha224>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 4096);
@@ -3110,7 +3179,7 @@ TEST(Test_Rsa, SigGen_SHA224_RSA_PKCS_4096)
 TEST(Test_Rsa, SigGen_SHA256_RSA_PKCS_4096)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(4096 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha256>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 4096);
@@ -3245,7 +3314,7 @@ TEST(Test_Rsa, SigGen_SHA256_RSA_PKCS_4096)
 TEST(Test_Rsa, SigGen_SHA384_RSA_PKCS_4096)
 {
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(4096 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha384>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 4096);
@@ -3383,7 +3452,7 @@ TEST(Test_Rsa, SigGen_SHA512_RSA_PKCS_4096)
 {
     // [mod = 4096]
     auto test = [](const bigint8_t& n, const bigint8_t& e, const bigint8_t& d, const bigint8_t& Msg, const bigint8_t& S) {
-        std::vector<uint8_t> plain = IP2OS<bigint8_t>()(Msg);
+        std::vector<uint8_t> plain = I2OSP<bigint8_t>()(Msg);
         std::vector<uint8_t> signature(4096 / 8);
 
         rsassa_pkcs1<emsa_pkcs1<sha512>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 4096);
@@ -3583,7 +3652,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
     }
 
     {
-     
+
         bigint8_t n("ab04b223f82347bab2547e2cc0abb18ffda653a5284916d90a1fb4c24315a18c778709b18a71abe1a385b305d25813308467d2c29263ca468d5c12e519f8749f267d17df5398b473fbfac9f5b4e98cf5c90e5a65d1a4561c69d82616f1a379bf2c1d0f8477e5339d925082a0bab01f8823d4e46ace967cc526985e03c0e52a4f");
         bigint8_t e("e23bc7155efb1817eae0633b99b178ec507dfce68c2ce2631a625123ebe9cf0b8c142464ed1766b69d7eb5c50bc8c63238b615ebfce42d087ed87c6cb3cd7d83d561dd350f9aee914cb73edcbfcb307e1cf03ea2be449e902d3c15d582c446d9e92eecb5e5fbca71054a857f");
         bigint8_t d("060a93b479b6b56f7655fccf0770321733cedc646711244f08d12b56456e360b879c4007df0d93f35b57b7c51cd1b4f624631d5c3d656d6c67866001f5668a318bdc5259381db72eb50995c95cfdc45fbc3902bc65a1ce9dc92d1622e087db9f6abbee353371d700d5c2efcce47dd044bf5061853e729cdc28bd407837d93bb7");
@@ -3595,7 +3664,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
     }
 
     {
-        
+
         bigint8_t n("9d6c06ee50f4528b0d44ab99a87d27f180a73e8fd98512b11cd795fd417173cf44a55f050f5c1df9a80a4917230b4c9a2d4c76e36e4c845abe717e8384e0fe312429ead5a02d0ed98b37c85d034dc88f42d756546215df2bd5c739c1d43b3a37841caa7ade44be1e089eb0bd7cd7205e66cf7539d8ea1126d21b9a6411430c2b");
         bigint8_t e("6367395890cd978cfd461fe82f3bb22f074c6c33ec4ccf395799ab830fbcc73196c8d52f036b4737cc82a3bc596fb56ccb664c98abd4fc3f21682bf7d1f58dc7ec16c3c10da1827e071d840349c281b57f7d11c7f67432f04da27baff2beee40a9f9dd3f39ec1201fcfaa04b");
         bigint8_t d("16de900b71da7850b6c774035beecac0861b29ca03903020b2cf8d573f160a36ed73ac4e28c57a17f460d2ca400a48a239cc2aca97903c9eaae57a1c6d39148a9465795ed87116cd82445eb4998ed913cd3b01c19e08cf91a212a03479fdc1e4db717d0ddf04bd35c17da598f0b7d0dee5a5379ead70e939fdb12f99572bd4fb");
@@ -3605,7 +3674,6 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
 
         test(n, e, d, c, k);
     }
-    
 
     {
 
@@ -3642,7 +3710,6 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
         test(n, e, d, c, k);
     }
 
-
     {
         bigint8_t n("bc73128135abff03786ca76b4ca58692c53511eda689bbbc3e90bd23591c416ecdb7e22833cedfa1de94ef047b6d17a8c5f0eb084ba9677ce38039b1b10c72c87f4de26186bda671c855c8798e4b16b6619c012e4679f1d04d90a15da8db1973b1d4bf7b6d94cabe1130f19b34e2a616d8d59684406b23dffebec41a0262247d");
         bigint8_t e("65a07403091e668a7511be81a6e583ed9677699b25069a079cc133ab7860c946f4c4ae7d46497d33070a9a9684a27fdaad4e4380ededa4695e681519359b24ca418181e0c075641c050086f878be7a1b3b3b7138db33b94f0f232d38dc78a8c73db2538038b98aaf25e886f9");
@@ -3654,7 +3721,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
         test(n, e, d, c, k);
     }
 
-    { 
+    {
 
         bigint8_t n("eab017d025220d1c3bf6e89ee591aaca4d5a96a3b7f8ccc1932bb98344ef442fb41a1c82029de53dec19d1f448fa4b9b4615992259e3a85cab1a9495ec13458cf2059caa2263255521f80859fb4062aaa6dec660b6bc3685e8fcc296aa9f2a56ea46e65dca824e83f0a6f4000e5a743d6d366bd8134c886a8e466743e19a94b1");
         bigint8_t e("760e3c5173bef4fb2b3e4b103ad8082249c14baa80e85fe0bcf8a253dd36dfd2744533a593165b021872f5ce857da213ecab759e432beeb23cae1ad0836581105496558519fa901451856d68bf52a57db2d87a34341c4c871bf58078144f57425c3fc3dfa090fbb680e17e4b");
@@ -3666,9 +3733,8 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
         test(n, e, d, c, k);
     }
 
-          
     {
-  
+
         bigint8_t n("de6486187b72e8c5ea8fd6599e268315dd277be512b6f88c9a593a65b8fa1573d5c297df5182fa9754911c0df37246407869770fecfb1a8d447e5eeea618c13abda8f15c61586420f9aa1446126cf1fd4b96bb48841f9931e337e236e2d7bdfdd91c02b0b2abb5f2965dacdd45bd1a969b215bb31916857e3144ad72c7030ea7");
         bigint8_t e("d4ea9c310623c90f1c04c6c2fe9c0adcf6e6ebaa083c4cd3b8f7e0bf7a2245fe79b02ec78147e3275d82222141bb2da8857889646ac721582fe23999ea86b5a2c843f6674bf9cb1c6a0bd0e13ff33c19f0cbb72ff70654d2a64c460a1188a26a4beb414075682a595c90939b");
         bigint8_t d("024110ab2212a6ffb81008ccdb18c9cf2398c4e1cf8277aa59c162d69a60585624fc50e3e80dd9d60f4ddd7168b55f3cb533dc2f96f6d4720432dd6e9e508c6534d6ac3b4f07246347a40d3af8dfbc5bf46998810357125871733e4eed010c632f53b28b4226e09b73e0cdef172a0a7cbe72320b0f1a8aace8149c697486d853");
@@ -3691,7 +3757,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
     }
 
     {
-        
+
         bigint8_t n("946fbef313db4feb475be7623aee647290d318b912a58f4406ad3223cb91ff639987bfb207851d249908547fba3b10437e25622238f0bd1dc6aaba45dd0312e0606766d179f2e5dc9e9b0f764850b6acb729282f1056860bc16242da9fedb2e0a26c2bb8485d1ec78cfccc45980b332f16b331a2ca2c90ec38612babea7ae94d");
         bigint8_t e("a6b6836f2ff7266120779fa67b5e4663cce025b16ce02864819d1a6ef480282adfa8844e290594dac85aa91e3efb8d3af0292f4401d18d5c34a652d9e5eafebe6a8330c67004e4649c2a742a439ae9a9a530c1b060238f0521a244e581580bd9fd7b2261b3f5e173ad078a31");
         bigint8_t d("23e28b6c311d1273ede5f035fd6ef4bfdde1602b1ac633e4c0bd76f0fead6b16559854a8c4e22cbebe094647af7461d8f48a6b3fdae287ff605cb0802292b47f59b0e5a5f0c3cf0950e4883fe62c7498c4cc2ff1683a2f911d42265311651aaf7075e79eedc4167421fc1bd06f048ea8892d67672724612230ce866921c48ed1");
@@ -3703,7 +3769,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
     }
 
     {
-        
+
         bigint8_t n("c808f0ecab4b7ed4a221296651aaa1198325e6a84c831cfa575e7197b26a2c88803a8219dfd4b1375a2725624e4117a775174328ca3ac6f79e512a021c2fcc13cc9fc854e41842c20a837b27c6e282fc11e40a3535121f0d314a50d0ea5df1c3723e0185474c073e17587ca0489b8c795aee3eaf0428fab71623f86b4efc6a93");
         bigint8_t e("2bbefc263e208c3b464aa3728f017932d188a998a10dd18480242453d81985e859cf4060eb9b613400d6aa81313430c0359314430cee62f354d83b1751dc39e358b0239f9e59ceff6db2e18f02e6ecc0d5fbbd09a662bf76ece012141620bcddbdd20a798d11ed9a302f82d5");
         bigint8_t d("07f5bdae6528c0e55abfb79f96aa63f748efc95c05e406b067e309aeccf62d4e7fc27839c0ec54ecfef42890e211af4bd23010e9445585dcae485d91108eff679ec8d578bfe06f475a5fc3772d37ac205b5abbda1a903c4e19f4d3172197d94a2f342009ca3cd307c0eb0456c91f2782193be1c8891a6411c5780ce7f2fb551d");
@@ -3715,7 +3781,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
     }
 
     {
-        
+
         bigint8_t n("ce5b881879dac0e0cdc0c86279e0cb930e56f396190cd5e4b23c1d48b22ca6d5c1f4ceaab5806c03e18351974dcd07822094b0d99c76abb45b79a302e428d621858a0997ea8e2b254cb494c5ecc404781b0d6db70bc8373f21656c862cd70d2ec616f7bcd808ac2e3c346c33f99dd80d188d659ea22404505bfccb3844861eb3");
         bigint8_t e("74dfc453110baeb77206b4c8d50f315f36b15a1de4687a971fa8f0f0ace78b1f0ce3833c0732a1e13feda7319eb8e4637598758e3ff0262a9cb0f8ebab4d7f84d2361ff6f67a5077d53ec036950502e6378b4bbe0f9484746d69dec6d731592ec1831137c1cad42f3ce660b");
         bigint8_t d("401a65cfad9dbbcc9517c8fff3d8df2f1c8e49086b31fbb69263373f00902df13f5d564829e976c8cf3172e3b7a9e8da7dc9468b0e3a339c25699aa8beed58cfbebb2d8169a8ca2d43d902fac5fcd4168fc668cdaa7ac19b8ccf1f980c83d4612dfefe95c655dd2d44ddcdab795eaf541ffa68647bb0f289abaf6bc3df9e87eb");
@@ -3726,18 +3792,17 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
         test(n, e, d, c, k);
     }
 
-    //{        
-        //n = e30789a24f07e1c958ebbb76d3512a6f59521fd56d26e5cd090f37b3fbd4375f2d0dd52b0138c7c4becc90f113e02e33ec976f39ac6baab1f9f80b1baa7544231746beff105323da123e5815052a90169eeb465ce973f25e5a6d124b77685b75d3e2e764f627efb32f63649c2df96fa4d99885dc30b9ac3d37d5dd851b71330d
-        //e = 38866527c4c4e12b06f42473e3e3dbeb562f771c1638122087011d7d22b2408959bbb1563c55124d43e54d3fbcc1914cd32b96d0e6721ab8e35cbd1f85927a3a538abb4968f9244700df6720ded241f514d48cd668d282470e7d6f543300731dd31d29616bee987bad9326d9
-        //d = 2f4da1568038e4b1408b2f9d94a229665df873ad38b1c7f0d1df619a13cbbec368283539660cc2217d97ce1c1460718d1478da990ece59ced6edb7bc786883e7369c83a009acf38a2d1eb6643511dc13d9e889fbbd7562e49d22f51a69c957bc4a5a30668e092b2bcd88d2b4b8869272fba0068068e49d8907cece5173a0e403
-        //c = b6782051716f0677b2cbd5a69704b2b99e712765b80dd41b9f7a622f6a46b9395f6e73bc0820900589c56b56303fec444e6f005e45fb460fe34e0cc6eee0795300b70b95952e455263f5a166ea59cc204bc512e95d891726fedbc960a71b92a2445cd223421f8c25e961601decd9b9143e7b474d2840b02899298246bd826dee
-        //Result = Pass
-        //k = 258552b857b95bf5f4f2db3224973380799ae77e062004e25b87fad17706d5d9ec5762789e0197d9b9fffbe8ba60a4cda0b35df9562ac4a8e19ba86832b386328c07a1f663ec8477f7d14295dbfb918fe6f25ca0724b618852c290a2e3f66abf72170560c8e1687fb8104c68c720c78f552d62d6b25890b6afee769ac9e5d6e8
+    //{
+    // n = e30789a24f07e1c958ebbb76d3512a6f59521fd56d26e5cd090f37b3fbd4375f2d0dd52b0138c7c4becc90f113e02e33ec976f39ac6baab1f9f80b1baa7544231746beff105323da123e5815052a90169eeb465ce973f25e5a6d124b77685b75d3e2e764f627efb32f63649c2df96fa4d99885dc30b9ac3d37d5dd851b71330d
+    // e = 38866527c4c4e12b06f42473e3e3dbeb562f771c1638122087011d7d22b2408959bbb1563c55124d43e54d3fbcc1914cd32b96d0e6721ab8e35cbd1f85927a3a538abb4968f9244700df6720ded241f514d48cd668d282470e7d6f543300731dd31d29616bee987bad9326d9
+    // d = 2f4da1568038e4b1408b2f9d94a229665df873ad38b1c7f0d1df619a13cbbec368283539660cc2217d97ce1c1460718d1478da990ece59ced6edb7bc786883e7369c83a009acf38a2d1eb6643511dc13d9e889fbbd7562e49d22f51a69c957bc4a5a30668e092b2bcd88d2b4b8869272fba0068068e49d8907cece5173a0e403
+    // c = b6782051716f0677b2cbd5a69704b2b99e712765b80dd41b9f7a622f6a46b9395f6e73bc0820900589c56b56303fec444e6f005e45fb460fe34e0cc6eee0795300b70b95952e455263f5a166ea59cc204bc512e95d891726fedbc960a71b92a2445cd223421f8c25e961601decd9b9143e7b474d2840b02899298246bd826dee
+    // Result = Pass
+    // k = 258552b857b95bf5f4f2db3224973380799ae77e062004e25b87fad17706d5d9ec5762789e0197d9b9fffbe8ba60a4cda0b35df9562ac4a8e19ba86832b386328c07a1f663ec8477f7d14295dbfb918fe6f25ca0724b618852c290a2e3f66abf72170560c8e1687fb8104c68c720c78f552d62d6b25890b6afee769ac9e5d6e8
     //}
 
-       
     {
-     
+
         bigint8_t n("b0e1efdb536c975763911df7eeb139cdafae27c5ea29610955638ec4da6dfe86d2a9dd2bd7c93514a51bdac4f74457255077d1911558b714f91c10749242708759defa3ba10964fa180e7690d475773c5fff4240f0feed247e1cbcc732c214b582716c58d5e07c6b8ae22aeb0c75bbd798203d459847aae06c5b8a5c7c4fc249");
         bigint8_t e("b6f97acab38255ba1e1811ac2944a9ff08e89db629787fe8322a2a72898fecd06210c28e5ee1450ea4848e9e1851c7f17e3779eb4cb7d4f270b6de12e05c36356f1cc00b8be098cf36a0380ea55a553ccf6e2ea16caa6f39e89c1a581a13c8e9e03e345bf4d284229a456d03");
         bigint8_t d("0215d844c912d19149979c498f997b8660790157541071cc63fb21f284e0abb8275528c0e2879e832b7a87742573f22df8fb668a103b775c0ff69785dff3dbe5420d24ce3ebeb1922d02bd6e6cd5a3e1b12b3bc71d8cd3efeda287f40073eb49b1e69f30330a2d00dc8a12342466bd6622b5f26e363213c0c8afd8092fc2b9ab");
@@ -3747,8 +3812,6 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
 
         test(n, e, d, c, k);
     }
-
-    
 
     {
         bigint8_t n("89a93f490bafacf6e029b8f9cc3af75a5d59664aaf5dfdc8adb6b0cb5afaf7f6389745efe9a00dbf0256fd128a660a0a8bfbc822e9c80de806d6ea31f3f521f80bde9e52ebc108e2ae07797f20f33adadbe23c16b241158ec81b29e1f789664a8900c4f5ba6e564315ae2c0fd91d3ec3eca88bddef42e3e0abf02494360d9bf5");
@@ -3761,9 +3824,8 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
         test(n, e, d, c, k);
     }
 
-    
     {
-        
+
         bigint8_t n("d9a098da000ac58efb7d6c989b7468444d369d9865eec8696a4bc54ef47f4d04bb5fb531134d9edc1254c9665f96462c190a1c47ccf970b3a00a922a37e5ceb548ad638c425ee96310db234a97ed04342de813b5b6a4eb1ace5fef5b0c22e2330e4f285a76fb3d955ef13df1e2288c7e8974220f773b436029e5a8b03f7c9d1c"
                     "8743ad2e6edab6604fae212244039c0bc2dffe1fb8a37fa8b935fb314764c76f5aba87e9d5466ec413ce3a72af0eebd0b483f2c298b35248538823d527f40e221557c8b25257a131adc7f81adf9b481c8c24405356ea42009676bd6606e7fede6b76a6a264a97507f15f0f12dec9d7bd473af9e0ae86399cf1f2d4021f13325"
                     "d");
@@ -3783,9 +3845,8 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
         test(n, e, d, c, k);
     }
 
-     
     {
-   
+
         bigint8_t n("dacf6b379186d92a38e18adf394dd56b2cfdbdb41b22d7c4c6171bc994df4d37edfcbc58f25a6ebf9ce9c4e979ca750f5a5243fcedcf97fbb6c78721028a1b6d6b6ce82d336dc1d8227531fd33103f3166d82fa55e5402459b12f79433c2390078e593a62493ec863622613a9bcba7fbdc09611decc074e4e46a8b657cfeb640"
                     "c43c3f2a6d89ebc797fa0ee76eb782145e8a983eb6f63d4613087b5c8f5a025bfd3580887a6bc3215ffbfb594a3dfde21fc07c8813ff97ff5613d26e4b6f0db333bb706b2194718e86aa22238d64517732b9cb6a203a9937bc960b0e81d695ceff4b1c52120d6905e010a7b191c9caffa2da694faa6e8c3cbe41660de6f46e9"
                     "3");
@@ -3806,7 +3867,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
     }
 
     {
-   
+
         bigint8_t n("a2ba78dacf4a1b12888bd52b7eb4af5736a5f578337642ce72fc33bbc4ae1cb195f56c8158feb16c732d841e840ca1cffe799222849298605356d38ca6f057d1cc8fd8a5fd7775b792aa9c24edbd2c73d848d13f15dd48884b67ddc5d082283cfa43d72bdc4c36a48aad2543508f1fad909554e5da069472c92da84d5f004d79"
                     "4c8f743046c5b516d11f4870d8e1cc4e18a97e48350624aba96136435e7460c9b7e498c36a94ddda52a317a41958d5e1f14286e5cd31718e59bb1aaa7c100e812e68cae3cae7dcd5164b22d4bc84c52e9b95749874cc3d9dcbb98582170d5279425cbc8143d3d96141fac99bcdaf34d880557a531f359de2de618a5a87f969f"
                     "7");
@@ -3827,7 +3888,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
     }
 
     {
-     
+
         bigint8_t n("c13dd5aa8d4697085ef847d809956cd8fa2c7057f206713ce61a3a1c7a56aea2a00e07d46a04479646e0f6cd306646658b5dbafb209036a0e9f61766d83a51cb6f45d7b38ef7be5483fe46b2b80a50b80737d8fa1f7f9987f0e2bad6f3fb5d8b8a4e7fdbfc29e4496c423f675872d17c307c016b4123a7c813ab507aa0bae63b"
                     "6e23157b08191b1afaa11e85b8208a0bd4a14795ecde7608feb1f51d0da6171b2e2c8e4fa625c629a5b5eaef65a0a71a6c08bdd8a3cb2e9d1eb4c4584689da81fd2106e349df8cf8f50fe9cecc709e1462e3270cc9f934223ce463bf955cd68e36502a059895d9c45fc0d5029dc009d3b629380ee7477a1236064e014241dae"
                     "1");
@@ -3848,7 +3909,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
     }
 
     {
-        //COUNT = 6
+        // COUNT = 6
         bigint8_t n("ba1faaa97aabcb0b18afdf3d1f5d67ab589c9442f24f8ce53f55260eb8d6ed1ba72d102d4a8306ce089810aa55df9874b4d85d57672e11816ef895d6754aeed7baa1805a7c94135678a0f80ed3858c2d5e60b331c1ee648c064deea2278e3c83c38a318796bccd5293ad99845bb2dff97d7a5c27c7fed5b892dfa0da9c231ad6"
                     "7ec374f86aba1ebec52b3104a1c9aa294430f639bfa6d26e8112a17866eadf3ea4b437ecae54f4203bd40dc2d196969079a74e9d20e3d69a4a5eebed2bf4e1a92c254ec04341c8c84212d6dd28a5293946c09fdbad4ea0953a43f29372b4f24a98740937ac93144c7095feff2a7833f58bb268bc55528d49b45a4307febf659"
                     "b");
@@ -3869,7 +3930,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
     }
 
     {
-        //COUNT = 7
+        // COUNT = 7
         bigint8_t n("bee45e6ca63b88af2c7c4010eefc78ed53c112ee43f0ed6c3289ed4e5ac04014b9e6c9b8d3922c14ef77ad05c0c7853eb084ead872df7d7a4d0cf6eff52914677ce5b0e5ee703d17028cb7e7e6b381748b4b5eb7adafea963c0c5efabda0ab2f2bcdbf97ec6aa8f631235479e54314ba97c538895b750e7eb558c4d673716ba8"
                     "45fbbf7184062dc8f1c839f1a266b698934133f7b633fc75ebba50487165910dd43087585378cc0aef6317cc3ae59598c9f569c88c26d02afde784d0430461120b73577f0ae868b2be68bfd18a95af50167e759afdd787d80a96805d7aba0419e1ea89415c51cd056ed66a20d188e366cff495354cb6b4e3f18d0881aab58a3"
                     "7");
@@ -3890,7 +3951,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
     }
 
     {
-        //COUNT = 8
+        // COUNT = 8
         bigint8_t n("d37689a77d930ac8a12af47830e94b62e4ac68d670deeebd675ddabe059b5dd1a788828783891cedac28813e069a3f417c6eaebfa6090b5e0e10526d859b46de9ebd0e760c579a83669ce25622306a8e7090916dbf7c40b1b03fc013cd0198a8ae78838c00b8e90cc9d2343095635810f546b9332175fb857b57b88fcf3a56ff"
                     "506e9c81cf7c11caae57044ed2808adf37a15302651e389a1d94ff4c7f30ca1ec481a8f72b94101d36914e8f3482adf9928b7238661f85ce087f7354ce3dbc1924173bb603d08160bc00b8304f81be0470e221c503c2b4ca5dc3d1c751105944ff2428382d000aa2a20db754cfa224c91368aeda229fb73842aa08ebfd27551"
                     "d");
@@ -3911,7 +3972,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
     }
 
     {
-        //COUNT = 9
+        // COUNT = 9
         bigint8_t n("cab0e5eb5d84ff2bf60980815098f51fa06eda89b32b330b43fe15f4c14fbf72e3ce364fa107e9f86dafd3decb14f817f37d71c7c94d0fe11823e842117c01b48445a5c5d40d091334f8b7939868f6e1545c1f7153718cf8bd0b4b953e582bde07061f81a0940f3846f97621f8a459b234f2cab4e0ef3f35074c894b514fcc81"
                     "b7ebc337ebc70a7ec53f4e8425b5e6b367c463ee6467ba73095f75414035a06ed614544cdae9eae9d22a84e9870688d38f29e178c685833a5d899e6fd1aa6d316d3d5cfb716521222566952f9097ef2e4d946956ac52d8e6ea48f98294884871c361ca877b304aebcca85c234e08279736e4e890f1a2e45a466ea622f26a231"
                     "3");
@@ -3932,7 +3993,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
     }
 
     {
-        //COUNT = 10
+        // COUNT = 10
         bigint8_t n("b39b390eb567e531a8a9a4616a45dce89b9a3fd3e9bc592bb83211374c9eaef8ee45ffce12138b095514b65b859a034f6c296f25f168a8c23a7c144362675b488fed726b7ed1cd99a2bb4a41c05ff6954883be8110e80f753d39543f291c3027125d07c3f337cc2c43d6d7c1e2c83624d7a17f25ad1d1b7737bd022248c406e7"
                     "ac028746d31257fa390ce506d8e13fa4ed3dcc69b63ec495fbd6ab67cdf33e657d97a792673d1e94c88a2a87618dc21bb6d72779d546d47f2b5ff4f8e3734a3c4e7238d7a4c6701990df7eb9a6a15f42c2f6728b6c8db7fda5b16303ea7bc3bc803a9689891b98d37930aa0c137ee73db52d9b3fb35840e90f306ae51262b00"
                     "1");
@@ -3953,7 +4014,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
     }
 
     {
-        //COUNT = 11
+        // COUNT = 11
         bigint8_t n("bd36ab9135d9297c1822cd7d37e8431e2cd4a892fc86b347861fa433abeababa2cadccde47642f20350ecab36f4d352913780d55f53b32e5fe21e402dbe7b462495e682aa5ee3e438f498b09492b16beef675c8478f552f478c560e2e42d97806a9ef2aa56acbca322cc629c2529c9b6880b467f2d843c21f0f623c8ccd4475b"
                     "9cfdf099f99f801a422e2fbeb336e5f569835833241850c66567355d5a74b389a0b7bd11b6cd3a8728e0f12e6323ccc030759fc972ee643294a0e424e224073d0e6a2299afdcebcd3a254726b30e276b2f89d508368aed69f6d1f83f16abeb7d26fb811516472b72162b4cb92a295cbde9293b6a39886b7f0676c55bbce0f55"
                     "7");
@@ -4016,47 +4077,46 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
     }
 
     {
-        //COUNT = 14
+        // COUNT = 14
 
-        //n =
-        //d61c70c1d95d144b07dfc8cb9bdafdc0bf47fe948fdc29365d3f129b53dc0b94129eb0f19030faac918e38b61521a944d84d9bda2111ba523cf7b5848e216bec4a149119c72aa24c5f0ae7c6597aea87dd1ff8c40ff168570602b4b8ad01e80d4f97820ac3ed979d898adebc348eb022ecc66f8b952f9e124e886b2035a91e54688d9a177e4183dcc3a9bf1349899cc8445a908f9fb4d6b698dc45f734bb43c3db07ff9e8d9342fc629ae0451bc41738eeb30fce79fc903b1006f58e2e22a8585f9c080f560deed22fe4894d388dffe07ef572b0345fb3fc07a241f73882e8f74eaa3e4557fcab444bb8808f016cc1b8273666d8c48490362027eab709806393
-        //e =
-        //4f1a10816ac1774f7032d1fead8293b85a4bffcfdc7238c1ad3cafc862c0f3b637ad578e10f4f46097ddb45022ab30786dd565d650290f9d85d0c38ee9ca5705b07d54dc4f9ac1534d437324b6bb5e3b9506b364ef6471a773b022bd9a0b5d0b02f1af786463b065a6c3b762da11ce3357fed0e0582bea5007e8872d225cb9475b7ac79c38edecd5dd38da0cf5f00a957d87468bd77bc54ea8786166297fe67302a182e934acbabe49121d1c0c0b811a1dd68b3ca9ddc401158b3bb5a639b92441b91c6e976424abbc94834a3f1c6659cf21c7f9681ed35e6e8294cd0cd171e45c3c531354183be66506c155
-        //d =
-        //08be6d66ca7bf007f4137309cff63cb84caf1c125b3912a1cc4b749444bf4e491454aa28cd578c7b4e2d54bcb9f1ebc65c67a67954ad75e823f1bd76d48db5c422a10ddef0d8eb0d56ca7f0c9f89904dd5abf9004b781575e5eddb97a9972d9547941c4e0623a1ad15e0ab92db71f78ae567c02619449667d2c60156bc9e00d2360747c3a3a660b0c78c9f85626e3b50cd7cbae7e6b875913876ea1fb55406de167b747ff8250e8ed4e0e2443d8da05c9a89f858ed10deffdf2b98515ba79c48077697253435ed18a9cebc5b36dd7c72fb6f8510a59b412e44bb8477c3e0439346b829887be238f61d278aa7b441f44c832ef39fd0dd1dbb1b37ba502a76c009
-        //c =
-        //de6a71c63591b31f166ce57e57c9aec1f4030dba0426ee77eb54fcc7d068b7f952d8c6e776e08e34e4dd03d154f7bec64302512feaa6d78470becf1e5fff2af755daa2b2fca34edb3bf2736fae4a9e9f54f8efd1883eb8e833b147c53fe0ff0d4f36ae2dad221a9c8374dd604f0b73d491ad92a8c636b9299af50cc35a535fc4a8b5916272a41b00252ce8ad1d8168ee61e9e0bd8dd504d10f51c720969f72a3c81ff3593473788e87df3d5d02f6a2742b738117c365be68f98f20e5dd0e5f32173c7e19d9d55acf12588478e5b04cee59141ebe522c1274c075be1916e64ff9fed4d8aa4a13e9492e5e6407adf88ce452945fbb2073267fcbcc4ac429706981
-        //Result = Fail
+        // n =
+        // d61c70c1d95d144b07dfc8cb9bdafdc0bf47fe948fdc29365d3f129b53dc0b94129eb0f19030faac918e38b61521a944d84d9bda2111ba523cf7b5848e216bec4a149119c72aa24c5f0ae7c6597aea87dd1ff8c40ff168570602b4b8ad01e80d4f97820ac3ed979d898adebc348eb022ecc66f8b952f9e124e886b2035a91e54688d9a177e4183dcc3a9bf1349899cc8445a908f9fb4d6b698dc45f734bb43c3db07ff9e8d9342fc629ae0451bc41738eeb30fce79fc903b1006f58e2e22a8585f9c080f560deed22fe4894d388dffe07ef572b0345fb3fc07a241f73882e8f74eaa3e4557fcab444bb8808f016cc1b8273666d8c48490362027eab709806393
+        // e =
+        // 4f1a10816ac1774f7032d1fead8293b85a4bffcfdc7238c1ad3cafc862c0f3b637ad578e10f4f46097ddb45022ab30786dd565d650290f9d85d0c38ee9ca5705b07d54dc4f9ac1534d437324b6bb5e3b9506b364ef6471a773b022bd9a0b5d0b02f1af786463b065a6c3b762da11ce3357fed0e0582bea5007e8872d225cb9475b7ac79c38edecd5dd38da0cf5f00a957d87468bd77bc54ea8786166297fe67302a182e934acbabe49121d1c0c0b811a1dd68b3ca9ddc401158b3bb5a639b92441b91c6e976424abbc94834a3f1c6659cf21c7f9681ed35e6e8294cd0cd171e45c3c531354183be66506c155
+        // d =
+        // 08be6d66ca7bf007f4137309cff63cb84caf1c125b3912a1cc4b749444bf4e491454aa28cd578c7b4e2d54bcb9f1ebc65c67a67954ad75e823f1bd76d48db5c422a10ddef0d8eb0d56ca7f0c9f89904dd5abf9004b781575e5eddb97a9972d9547941c4e0623a1ad15e0ab92db71f78ae567c02619449667d2c60156bc9e00d2360747c3a3a660b0c78c9f85626e3b50cd7cbae7e6b875913876ea1fb55406de167b747ff8250e8ed4e0e2443d8da05c9a89f858ed10deffdf2b98515ba79c48077697253435ed18a9cebc5b36dd7c72fb6f8510a59b412e44bb8477c3e0439346b829887be238f61d278aa7b441f44c832ef39fd0dd1dbb1b37ba502a76c009
+        // c =
+        // de6a71c63591b31f166ce57e57c9aec1f4030dba0426ee77eb54fcc7d068b7f952d8c6e776e08e34e4dd03d154f7bec64302512feaa6d78470becf1e5fff2af755daa2b2fca34edb3bf2736fae4a9e9f54f8efd1883eb8e833b147c53fe0ff0d4f36ae2dad221a9c8374dd604f0b73d491ad92a8c636b9299af50cc35a535fc4a8b5916272a41b00252ce8ad1d8168ee61e9e0bd8dd504d10f51c720969f72a3c81ff3593473788e87df3d5d02f6a2742b738117c365be68f98f20e5dd0e5f32173c7e19d9d55acf12588478e5b04cee59141ebe522c1274c075be1916e64ff9fed4d8aa4a13e9492e5e6407adf88ce452945fbb2073267fcbcc4ac429706981
+        // Result = Fail
     }
 
     {
-        //COUNT = 15
-        //n =
-        //91bf251bef75b328aead5a7152d01bceeea88e40de0336bfb75dc0e850889a6e22a63e457ccc255719d6087cfa2f16c88293c774e3bff44316a3fada996fe5a81a80134ecd1c3c8a9f914b7bc9c2e373fab41b35dfe1e74bbbfedf97b91f39aa8c5489dabdc8bb6e3a6fec63e0395160e0437a69f421032c1137dd807532fc0fc4a84a020dd00ea9527bbfec3c2821c277c8fc26095749814cdc0a661e5283648d1ef06e9b75a6bfbed01332c851a81d9cbc8ee9b7e47f5ec794b1831e302e9e52f5fbf607eb979349d9519b4936e27650509ea0bc0ef74e7fd7aec176f8341c9efcad43d55ebb7111e3548e0ddbc21c1afb3f36ad2d32101a468a8fa9a628f7
-        //e =
-        //c326aeaa1013cf86d4526d1c5b7b78acd6cb0532deaf2679d518cbca03db7ade6d925cace25ab5fe18bcde6e5b0333e1a6dc0ad579565f54fd92b25c8438f5fff8c0db00bdf53595d0bf5be7f8afedba0e32395dc002f9bfd98d76093081a4f0fa09a22b402060ed0de71dc051fa1204165085f81a9c53f07b83134d208d0e49dc278b0558bd0b10882f2c9bdec304684f461f50edbbb96f72b2f5c5eca85db571cd1b7c493a3be536c23a2f3db981fe77346ad82e18af85d079788536be47192081d7184aed05e2580ca16582d23e9d00a70c420000ecb8a2e25e1b057a53d20fc6153c653d77c7035bebb7
-        //d =
-        //32eaeb4ffc89beb539a34c4bc5ff910f29c277beb4e5613897b941b63db990bf3226f9bf6e91a1e2be63908fe1eebdb73f9d31aef783bf51a67c3336d93448b3203da6bd2fa5676e5bf3425f9cce2e90b02b55942c46acf95307fb1669b5235faa2af59cc1df5e9cca704d623bb3fbdd1340c3d09c15bbf4e2d5d6efd876bcd9ba922c0651b3546c79e71d4d9f1f1a3593be6e58ce24aaed481bc7d664678db92d757d168b63c699db22f8e6216b41c472e9d6c386583a27421ce42c5ad42f6e1f4ace9613acbbe927a95e1598fd1188946fc4f8b27b1cb023c2b61a20fa2cd7819cfc6164c86584a5735e67af7321f412e7fec8565f6d6cfb85ca02e43f028f
-        //c =
-        //ee4bd9ab7450472ec11ff32049b103e17710666fe6bdb0e3d44f253fd45e1366c29f666cfc507610cfd7238730a6247cad619c54a343eeb6b0bed34b6b61aac253ff0f18060eae16b44d591bd2aa591b136202e8946a8bb0560e1cc7f2d827a788b3fc36f950984756c9be6298844ac8915bc1b222f92cdaaf87273cd089351e4902564e3ddfdcab9e927ae6e8fe9e8a0f93003ab5ba7b3aa1731d326d3c7a2e7e3645e83a83214a74f2b42f2bdefd6a7553e809b67320db1518252f31bb9edf0f95f08d58030f2dc12f95c3caed116eabe3a1a68bedc3c2f4c068bd84cd4a39e56880c4ff294f5b6b92442c2bf37fa0998b52999ef00bf924b10d63ce392645
+        // COUNT = 15
+        // n =
+        // 91bf251bef75b328aead5a7152d01bceeea88e40de0336bfb75dc0e850889a6e22a63e457ccc255719d6087cfa2f16c88293c774e3bff44316a3fada996fe5a81a80134ecd1c3c8a9f914b7bc9c2e373fab41b35dfe1e74bbbfedf97b91f39aa8c5489dabdc8bb6e3a6fec63e0395160e0437a69f421032c1137dd807532fc0fc4a84a020dd00ea9527bbfec3c2821c277c8fc26095749814cdc0a661e5283648d1ef06e9b75a6bfbed01332c851a81d9cbc8ee9b7e47f5ec794b1831e302e9e52f5fbf607eb979349d9519b4936e27650509ea0bc0ef74e7fd7aec176f8341c9efcad43d55ebb7111e3548e0ddbc21c1afb3f36ad2d32101a468a8fa9a628f7
+        // e =
+        // c326aeaa1013cf86d4526d1c5b7b78acd6cb0532deaf2679d518cbca03db7ade6d925cace25ab5fe18bcde6e5b0333e1a6dc0ad579565f54fd92b25c8438f5fff8c0db00bdf53595d0bf5be7f8afedba0e32395dc002f9bfd98d76093081a4f0fa09a22b402060ed0de71dc051fa1204165085f81a9c53f07b83134d208d0e49dc278b0558bd0b10882f2c9bdec304684f461f50edbbb96f72b2f5c5eca85db571cd1b7c493a3be536c23a2f3db981fe77346ad82e18af85d079788536be47192081d7184aed05e2580ca16582d23e9d00a70c420000ecb8a2e25e1b057a53d20fc6153c653d77c7035bebb7
+        // d =
+        // 32eaeb4ffc89beb539a34c4bc5ff910f29c277beb4e5613897b941b63db990bf3226f9bf6e91a1e2be63908fe1eebdb73f9d31aef783bf51a67c3336d93448b3203da6bd2fa5676e5bf3425f9cce2e90b02b55942c46acf95307fb1669b5235faa2af59cc1df5e9cca704d623bb3fbdd1340c3d09c15bbf4e2d5d6efd876bcd9ba922c0651b3546c79e71d4d9f1f1a3593be6e58ce24aaed481bc7d664678db92d757d168b63c699db22f8e6216b41c472e9d6c386583a27421ce42c5ad42f6e1f4ace9613acbbe927a95e1598fd1188946fc4f8b27b1cb023c2b61a20fa2cd7819cfc6164c86584a5735e67af7321f412e7fec8565f6d6cfb85ca02e43f028f
+        // c =
+        // ee4bd9ab7450472ec11ff32049b103e17710666fe6bdb0e3d44f253fd45e1366c29f666cfc507610cfd7238730a6247cad619c54a343eeb6b0bed34b6b61aac253ff0f18060eae16b44d591bd2aa591b136202e8946a8bb0560e1cc7f2d827a788b3fc36f950984756c9be6298844ac8915bc1b222f92cdaaf87273cd089351e4902564e3ddfdcab9e927ae6e8fe9e8a0f93003ab5ba7b3aa1731d326d3c7a2e7e3645e83a83214a74f2b42f2bdefd6a7553e809b67320db1518252f31bb9edf0f95f08d58030f2dc12f95c3caed116eabe3a1a68bedc3c2f4c068bd84cd4a39e56880c4ff294f5b6b92442c2bf37fa0998b52999ef00bf924b10d63ce392645
     }
 
-    {        
-
-        //n =
-        //84da326b6c8aa5d02621803201750014b539bedb67002f56006c0c448cd5cc7881ad5c0ed95d3dc285fea85d30db72b89182352903a88caa2b3393d6a4cd9b9d8a543dfa60d14880dd4bb806ffe632d8b3fbccd78a4d5c5f10f12b0645f2dffa924c8cd8ac85bc92555721360513726d05ad984e1ee75c5473d1d3d30c247f3871785adc4b298e4731756f208470f0efde356fbd18a1240a49e670b91aad23f07b1f343f3e5d3d6f5ddd85870ca29aeb9060810de962df81392835ce7924e537e4e456e8118c8418203c5f2b2629fc2080bf233ad1fa376b4ef367d6ea6516409014ebf515ecbe9c7ae9fed7b026ded71108a307b20596010477754223165245
-        //e =
-        //963e85936ae0a94a8fe3e9be076490cb5acbd51c1665b605cad96dfac7b95171609f30c9588e4dc9041928da8f46f0e1074d106fc94521d8c52069130f81cabffd9e240ba50538b684d00d277223f96880ac966479cbbcd41164a8bbd0ca43702f384bfb17cff76b2ba6ad2740e752ab3c8968104197ea873a0a2f3e13b85a655007628cf78ec8e9ebe55c6212e77a9a818a223116dc4580e22b622d6cdf1548d9c0361de30c11312a620eccc4c7480a28dbffc9a824d85966c4b7e894887c7e5a4490e1025c9009f6e420d340620fd2f7d8fb912bcd42659e81deac115960bb79331aaa4fe2acc9edfb71f3
-        //d =
-        //1327930132316cc458e2e6a04a3da993d6e3e2c700045957752cfbc4145a8c5dffd1a635614ab362cb97c3559d762575a41bec36c3b4f6bff8e0dd3e85ddb2f883fcef768d18b5dd6cd97498e371a0829c8c80ed2cb4d1e7d113f1e3327e08aac8bf45411bd7c840d7d6174d079fe83863f4ae0c6eca48bb24f55a0e49ae8cb34b9aaa4f58549059049e748b30a553aa56d273623a3eb0d9fd3a98dbc8924dc507cfff9d93d87b9530db0b00a255fd9cdfdc540892ada7d97fff712bea05c203e25ceb66a170d33146310d92bb1f01b1833acf7fa73b4540578c377d3b5947bb40d1b0d3101e215c24451aa85db0f2f51a6e2e8c273c8f1801093f19ea141fcb
-        //c =
-        //c02eb4df9968f68f64b157f0fa12155625b6fb72a9e385de852f45f676f085eabdf42e112272e980394183dce448966c19366672e57309bcb156cb76c598d0420a08fb8b14810f155f1914d9d99cfd11a139878f0f7a6452f47a995b235225bd30d4e3f4777cb17760a3d291e2f6916c4627276f2ee2dfc9d503784e9806cb83b6beaef4544a17cec44685a9063e9ba68f680eba4a92c249dd5930f72d9c0bbb24302335b2d589411169f4cc4e5c63e6056404196c7255f992e489fde9fc2d8d03910b5c99044ff8d176e8a0c03831552e83d1339a6ae0027e0c4b09d50e7922d9492e1411bfb01c8bd429cd67bb4d1b952e3cb2de62aa8c293a3dc2f7bb36a2
-
-    }
-
-    
     {
-        
+
+        // n =
+        // 84da326b6c8aa5d02621803201750014b539bedb67002f56006c0c448cd5cc7881ad5c0ed95d3dc285fea85d30db72b89182352903a88caa2b3393d6a4cd9b9d8a543dfa60d14880dd4bb806ffe632d8b3fbccd78a4d5c5f10f12b0645f2dffa924c8cd8ac85bc92555721360513726d05ad984e1ee75c5473d1d3d30c247f3871785adc4b298e4731756f208470f0efde356fbd18a1240a49e670b91aad23f07b1f343f3e5d3d6f5ddd85870ca29aeb9060810de962df81392835ce7924e537e4e456e8118c8418203c5f2b2629fc2080bf233ad1fa376b4ef367d6ea6516409014ebf515ecbe9c7ae9fed7b026ded71108a307b20596010477754223165245
+        // e =
+        // 963e85936ae0a94a8fe3e9be076490cb5acbd51c1665b605cad96dfac7b95171609f30c9588e4dc9041928da8f46f0e1074d106fc94521d8c52069130f81cabffd9e240ba50538b684d00d277223f96880ac966479cbbcd41164a8bbd0ca43702f384bfb17cff76b2ba6ad2740e752ab3c8968104197ea873a0a2f3e13b85a655007628cf78ec8e9ebe55c6212e77a9a818a223116dc4580e22b622d6cdf1548d9c0361de30c11312a620eccc4c7480a28dbffc9a824d85966c4b7e894887c7e5a4490e1025c9009f6e420d340620fd2f7d8fb912bcd42659e81deac115960bb79331aaa4fe2acc9edfb71f3
+        // d =
+        // 1327930132316cc458e2e6a04a3da993d6e3e2c700045957752cfbc4145a8c5dffd1a635614ab362cb97c3559d762575a41bec36c3b4f6bff8e0dd3e85ddb2f883fcef768d18b5dd6cd97498e371a0829c8c80ed2cb4d1e7d113f1e3327e08aac8bf45411bd7c840d7d6174d079fe83863f4ae0c6eca48bb24f55a0e49ae8cb34b9aaa4f58549059049e748b30a553aa56d273623a3eb0d9fd3a98dbc8924dc507cfff9d93d87b9530db0b00a255fd9cdfdc540892ada7d97fff712bea05c203e25ceb66a170d33146310d92bb1f01b1833acf7fa73b4540578c377d3b5947bb40d1b0d3101e215c24451aa85db0f2f51a6e2e8c273c8f1801093f19ea141fcb
+        // c =
+        // c02eb4df9968f68f64b157f0fa12155625b6fb72a9e385de852f45f676f085eabdf42e112272e980394183dce448966c19366672e57309bcb156cb76c598d0420a08fb8b14810f155f1914d9d99cfd11a139878f0f7a6452f47a995b235225bd30d4e3f4777cb17760a3d291e2f6916c4627276f2ee2dfc9d503784e9806cb83b6beaef4544a17cec44685a9063e9ba68f680eba4a92c249dd5930f72d9c0bbb24302335b2d589411169f4cc4e5c63e6056404196c7255f992e489fde9fc2d8d03910b5c99044ff8d176e8a0c03831552e83d1339a6ae0027e0c4b09d50e7922d9492e1411bfb01c8bd429cd67bb4d1b952e3cb2de62aa8c293a3dc2f7bb36a2
+
+    }
+
+    {
+
         bigint8_t n("b4784cd9b3ba0d7321414dcb1ada0e22bb9f64d98bba019b5cc28f4ae82af35636edb89b43d5ecd40a6ec87d6eb8b245477955e3ff44b838620033c2224328dc61a923045331f8708057920587abd8194ab7c248be45f1b4d216da870fd17da7a024e9bcab6fb2ee3680f2160df09ff3c619a098a88b8bba57ee57d231626e89"
                     "9121aaec1b11e606cbd59b7d6b982da291c91e401dc6377b49488370dcffbdea2841230d7cb878ef910763bb5369878e92c78ba155c4c48eeed803526217c3b6b8d4a3014d49da8dd2d6b02b7b353f9dbd8f1376d31e15568a3ffe8332a2443acab2b1011706fd1b43ca86048f0c1ea3a405730a903ff6479899da079c1c469"
                     "9");
@@ -4077,7 +4137,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
     }
 
     {
-        //COUNT = 19
+        // COUNT = 19
         bigint8_t n("cd929c5058128e7d913dfcc070018c1a6ecaaf0ee9b92e6cfd27c0fc2b1c959eaacb93654ba56cd710edb1838f335697dd8f956778fe47a7d0ed7a756582b9372773d398dbc3318691ecca8d97494cc42eee4b7ea7b263838a3ee9af6cb037321582d45aec54e9172738d59611cef8302912e9bfc43352f652b7e247d30dc955"
                     "dd17df99d1bb2a1ae7c101e02d27226aa16a73ae65e0cd09881e605fca8c10d61c864ad0eeb59523af085fd2a823be836d9d3a4172f367341fa85fa6f8b59d1ff442b1a57aa4013f7603a6d769d0f097d20fa306fb55f77a18baf92443200d421d9de7d7c5fe4512a1f5f301580dd7bcec70dc9ecd415e8443028ca24531cb5"
                     "3");
@@ -4118,9 +4178,8 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
         test(n, e, d, c, k);
     }
 
-    
     {
-        //COUNT = 23
+        // COUNT = 23
         bigint8_t n("ab7274933e9f2ae41740fe62bce2a1d54f6a86cd74cd21dd50236761911b06bb47073dfd210eb51dcab5ed1472389a598a65c8a915937aece2af26db13ee74401b1e2cf9627b9737caae78319b6b0b31b51771e9e21898c95a16fdc57e992136bfb1b80bb35e0c439db6aa114b0b122eb925c8fb78736f7ec0a0478c16d544e8"
                     "f17f571150d26f173575a8bb0216c841cad877dd51e03d7734729dee4dc7bb696292785459d8a15bc796d714b095f97ab84535929f24a4e2375545230aaa8331ca8758b19d6a0b36e6efbedff5305385493e6087e4271d45dfc011ba9cf054482fc80e95897d787dc173f3b66778f93e9da7efddee6ceb2866f44661639bbea"
                     "5");
@@ -4140,7 +4199,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
         test(n, e, d, c, k);
     }
     {
-        //COUNT = 24
+        // COUNT = 24
         bigint8_t n("e7bf89dd14eb3132f9098ce62ea46bed94a97d3bc7de936913d250bf6a3740915249ff91a5655eeaa301c799c807a27653cf3d8a2a4d3d85b9ac8d74dcf58c1e2ae8fabf52ce40866be0564cdc45430587f53def99e24e5da73f8d8ed3ff674b597e2eba42f5f2d7c2fa33ee5271737677d807cc0823f6f1bfa3fa4a497e299e"
                     "8459aa64a62bf5122f9b8cdb40a0cc55a4fb06897db080bdbc56b1dbdaa531443a285189a047b8c60d63e11d5f3d502a9d0f2e655ee30607fa5fc8481ecacc709f2cb356c77d3d94b58ff0f3af8ef68b1c2a2b4f0ebfdfd229e609fcd672df3e18bd76e0c5209f503a52f5bea21b8a34a94901888dd7173e836710c1ff26f9c"
                     "3");
@@ -4161,7 +4220,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
     }
 
     {
-        //COUNT = 25
+        // COUNT = 25
         bigint8_t n("86bb1ddc17af216ab1c963a34fb53918f01001b042e94534dfe2b4e1d55b1f11797261f297d2c8d40a3bd565253863e142af9ca30a25688e0796e263dbc9008e7b84bb581df4b7e91c105e39eff549f8d0ae6de8c70a1697e1522cff3271ac7d33db74ba8178c1d168b95599bc3a89e3538daf71f0d8a557d43bf6ffc5a6c6c4"
                     "2fca154f04dfb1b69cd3aac3c4d2af89ac5d2c9db0457b6e0439af27af6fb73a928d1604dd0fbb9dee7c880a6840870070754a12dab46aa6d2a201c5556505cbe318c74153589fcb4a5af181fff097cdf1790d8fc72261601c5e68833b1fedb7345e96c0bdeb4fd96506c94530a2cba2f496f816fac60261ea32706aab5a04c"
                     "9");
@@ -4203,7 +4262,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
     }
 
     {
-        //COUNT = 27
+        // COUNT = 27
         bigint8_t n("b2db46421619b868b90e66b3378fbec47648f4e00b60ab6de51327bfe7960f72acb5598ff79046b4441a9e0145f2195a2372265827a28ae03bc5fa25707adbad06af93cbad705529dd8a4022c1b304e93711bc71ea56423ec5f4052b0483a396dec1e60cd372b01bc96bdfe4d72c676f821f5b8bf5f767df767b759d50382bd7"
                     "11050b09761ae1ca8ee70e70b3cabd545bbb7228ff8e1b2ca1358e21b1a48a63bd618d23093f0b48e2d7b8ecc69352e97fabec8d3422ef20ba48b3f3c940271a5043ae724453af99c4a71c5577cdf6e57fb0b3de1511bc77e64ebfbaa9f8f942a53a054896321a98d612172a340d71b5db74bbc7b37de5e88370313406f4fe9"
                     "3");
@@ -4221,7 +4280,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
                     "9");
 
         test(n, e, d, c, k);
-    }    
+    }
 }
 
 /*TEST(Test_Rsa, FIPS_186_4_RSA_PKCS1_v1_5_RSASP1_Signature_Primitive_Component)
@@ -4291,7 +4350,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
                        "73d687525f29d1829d2baf104e24eedec19a25fe57276c176af6fea1cd67ad3f5243dbea52205be786fdacb131412e2b29fe173d0d824315893fc603d755826b5bf29d52e230e82e2afcd2708cf81bf0e4a38741473a0f11a5b578e0a5dfd62c0ad83189fd1fefd2bfb53c8fb67c0747ab0591db02d3b997dafcd35139e8f34"
                        "d3"));
 
-        
+
 
         // COUNT = 5
         test(bigint8_t("9cc61aadbc7866db61cb03f389782e7369bc9314337efd861e334c7460bac0e6dd9c32e899b88c0e820093a6ef56403b78c459a512538a239c75cb08f3197caeb925a12b7e1685a22632a9022bad2f3e6fb17995292046b8d5bd801474b58797a1d712e902f9c02e61f16d8e72d9880d7fafa40cc7b8d48d1720700e3c310cf"
@@ -4314,7 +4373,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
                        "8605c3101c4c479b369cf40deab87e60ee0de6e0f6ca964c4b7b9e4e25e981b6e6b985bc231fb29d11b9a169b0a790f9390a76ca4dbe9dfb0fc53314688c0008bdf6027a594de193ef47cc0f4505334910017e9297a194b26384058287f6036c70172ba1e2897044f54bdf148904b2ad406d196dda716d2278e859b8516a86c"
                        "7e"));
 
-        
+
 
         // COUNT = 7
         test(bigint8_t("c25b9f2a113e6da122df3784f9ae4da81f2b3383d0ac214945a6cd6c9e0521e1da7bb607ed0c759847c6530e3a3c9bb8260f37dfed7c89b7abf0d9197f4e3bbd8ce61c26b994a47092b4424747c7aef64385f3d793bcc14fa3870fdc4aac72d3cce366ebd3004f0df540fd275ce1d6f845a6d345d050c08ae3800b4c1abf02a"
@@ -4337,7 +4396,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
                        "486bdb9f2bf8fc996391b8f47576a49cca50cc90744fab3b687d72f0400f96143281bcfde9633d3c4367f5872ed8e2e6e5ac546b9cfa92114ad4c901b0fe1777a7f9a008807f38099c0ca4be29cf5182798aa04b74bb042fe5505cd5a9e766da8b6f81ffb7911f2fb8c8326754ba5b55a8932be5c640dab3b06bba69b7ef0bb"
                        "85"));
 
-        
+
 
         // COUNT = 9
         test(bigint8_t("9ae1bda92193873d8b43ac607463544bcd3cc847c9b6b54a8f7772b57e810f7a5cb2593a2a65d2be9cd81bc0c2281df19f45ae70e75aeff6cfda6b76bffcc493c50f7df53c24ed04e27b32ffca5f480c5e6514f4b3426feb0d43f72818eccc6ed0e830a020c055cf9edbf32f734ffd397b16820938bea0dd3197a38dbcc448e"
@@ -4360,9 +4419,9 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
                        "c8f67dea2f8ed63fa7b51c3d571de1d8185778ed53b11521f2f79323aed476eb6c950e5da3519c46787ae32b37211aba1019162f25e3b09b8a8a0d8fad230c00efba623d030dcb9061f1d3fa8712c12b6319406b36f178a364771a6bde2d90f4692a23eec16e61669ddc6d3f7abf743884b5639d175f32e276029d4b85c5353"
                        "b4"));
 
-        
 
-        
+
+
 
         // COUNT = 13
         test(bigint8_t("9f6c1310001d11601224f8167bb9066760ec6a2f393c67dadb5a8aa5388694b3db66f37450473c1d676e219c46d3286cdb96a9086cdf4a8c08718df0236c8a582b18ef72dd511e730a4270b27587b344c72ed267687777e0ebb507cf0972b072834192d72e4ae32be704713fb27bda22198d5e23e08f1be66883cf049ce30e3"
@@ -4405,7 +4464,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
              bigint8_t("0e32579a2cba08ceaa6c07bd09591bd819b7b649cc3edcab72734d0ae6eecf9f41a38b6cffcce4c7bb7ce45f32592d50692dd7320785cc6a4e418ac2af4b381490598a72314b0b0186d97bd282092439bb244af3371bebcd9eeac4c5805b70389a84ab81f0d9651c1788e511eb0ae54fcab5c7acc4b1673edc0c1831e5e1443"
                        "e7f00db6698e3e7f53d353bc98c16efbde0d0615f3044dba7a75c1fd9b5ccb0a9c4381d4b68c4d7194fdd27227598b18563c120eac08b42147317296461327c813740771d217dc49a4df6d300f6d4ef17b91989bf87fd05ed4716f60f3498d73f08e4f2af54548a1e07db2240c26e7da0ebd58402c5075aebafe21605579cd3"
                        "40"));
-                
+
         // COUNT = 18
         test(bigint8_t("cdbc7d659f98aba9a7ba2e8be0e6f5664ffe1cef25395d21965f9e08fb99574834c6acb8bc6fb3281ef0bb6c2e07211f056c3fc7686ac21d0bf737c0ea17aacd234bae70fa8c7520ffd7e6663677bdac6432e4d2c47fd45bef7c11d75f27d4be0e8c4caeedaa8b6fe58415679ab15e604967c1f92c9f8705fe80c3ded59793b"
                        "8573dcb221c23446828250edf89006677deac83b64a36f82a123711b2f0a8073e55345375e250d949b8334c1055dfea02dbfdbe83651153ab1d8e309bd14c04ed85f1a406c78e3723993ddb2e790cf8319cce0ab2b433a77bfaac8e153e78467b9ce5a40caf8c685e738a8756f31ed6657644e68523f76e8f1a59cc0327f426"
@@ -4427,7 +4486,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
                        "a8a71e69c14e865cd2bf92deb756eae2410cd4c51c1b7fad52cfc2f280081a0db68b7160a2120bb2858a5dcffe3d88823a60035b9d85bb29eb9e47e012d4044e6b53c32b455623f3a7a89f15d79f19774d43bd8e6bc753acba2864363591776c6a254a77d61745c51e1cb15b7890009f575545fcd5f9938286732e52292d10a"
                        "f3"));
 
-        
+
 
         // COUNT = 20
         test(bigint8_t("98e9a73ffaa11016b424f7b7c7704170246013400683821fb07c2d5fe5651393f4aa38a6b2b3717867cf8a46d626d41f21678dbf1766f797500e8f01ffdb7db386a6b7b248b17c54b9cf219f29ef32c2a6e9996fb3d8cc34dce6c0346b96bc26456073123d4eb2e7b931bce0144838127a49152a22a0127610d2d5a265a6df7"
@@ -4450,7 +4509,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
                        "5722342677cc22453f665841a08f916311e884d6a53e7791d636be3ef5b7d88bfd59b792cc558047b1f4e6febf484a40ed0da68425cce96bc110ad3def6712954d92d8cd0cbc98201cf6d7b4de47e5fbdd7a68cce37e6ee1fbf598283550219d3330688b765c483017b6a8fabdd2ad7fc60cc6abf12effb07368022843de020"
                        "76"));
 
-        
+
 
         // COUNT = 23
         test(bigint8_t("b233a6f3852556ca64dcaaf7a7a6040280ffbc1ebc2ca20538be2cfdc57e2e91a240ea1f1c3e4b2255fcff5322539b98fdee3951af8b1e91e9489329513d726147f0f47a14dd1e4b99c0ea0844fae41a08101a5e702e53a6f363b445ccf194304062b4973e9385ce7c9c0cd11282c50cd2e119efeb9e09a44125f87843c5639"
@@ -4494,7 +4553,7 @@ TEST(Test_Rsa, SP800_56B_Section_7_1_2RSADP_Decryption_Operation_Primitive_Compo
                        "6580de1153bf9761ea0a7c6c88411061b03e97c9b2a376661cea7ccb969e8e25c2d1eac4c98038483c9b8de73d26e033f9aa47587d44db54e2b00224f64e1aed09e5b7eda74568e338b11a18e4be1e1618b8cf0c4c18f7c9f9bf67fc5226f2131fbabf3f026c16f917058a0b9032a66c9da8bf2a5603781f04a36dcfde48b9f"
                        "13"));
 
-        
+
 
         // COUNT = 26
         test(bigint8_t("ac9f9c620fb18a36ad93a206e86471a0cd420637cc5e03114813a6e0c37de6bc57a189cde2305aeee9fab2928edf6ec478d7895c7432f64c8183c9cf211e58ea32b5202dbf29dd5f9ece3fb86c298b562a7e3bd47d626ec3af777c9b6b13272cb6f10246ae69de01c839711e2907e1cf5aa4760ea6a1f60da8d2797e700c4e3"

@@ -1278,7 +1278,7 @@ TEST(Test_Bigint, OS2IP_IP2OS)
         std::vector<uint8_t> octets = {1, 2, 3, 4, 5, 6, 7, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
         auto ip                     = OS2IP<bigint8_t>()(octets);
 
-        auto os = IP2OS<bigint8_t>()(ip);
+        auto os = I2OSP<bigint8_t>()(ip);
 
         ASSERT_BYTES_EQ(octets.begin(), octets.end(), os.begin(), os.end());
     }
@@ -1287,7 +1287,7 @@ TEST(Test_Bigint, OS2IP_IP2OS)
         std::vector<uint8_t> octets = {1, 2, 3, 4, 5, 6, 7, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
         auto ip                     = OS2IP<bigint16_t>()(octets);
 
-        auto os = IP2OS<bigint16_t>()(ip);
+        auto os = I2OSP<bigint16_t>()(ip);
 
         ASSERT_BYTES_EQ(octets.begin(), octets.end(), os.begin(), os.end());
     }
@@ -1296,7 +1296,7 @@ TEST(Test_Bigint, OS2IP_IP2OS)
         std::vector<uint8_t> octets = {1, 2, 3, 4, 5, 6, 7, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
         auto ip                     = OS2IP<bigint32_t>()(octets);
 
-        auto os = IP2OS<bigint32_t>()(ip);
+        auto os = I2OSP<bigint32_t>()(ip);
 
         ASSERT_BYTES_EQ(octets.begin(), octets.end(), os.begin(), os.end());
     }
@@ -1305,7 +1305,7 @@ TEST(Test_Bigint, OS2IP_IP2OS)
 		std::vector<uint8_t> octets = { 1, 2, 3, 4, 5, 6, 7, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f };
 		auto ip = OS2IP<bigint64_t>()(octets);
 
-		auto os = IP2OS<bigint64_t>()(ip);
+		auto os = I2OSP<bigint64_t>()(ip);
 
 		ASSERT_BYTES_EQ(octets.begin(), octets.end(), os.begin(), os.end());
 	}

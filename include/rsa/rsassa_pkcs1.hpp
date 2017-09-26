@@ -23,7 +23,7 @@ namespace cry
             const Integer arg = OS2IP<Integer>()(encoded.begin(), encoded.end());
             const Integer s   = cry::pow_mod(arg, d, n);
 
-            const std::vector<uint8_t> S = IP2OS<Integer>()(s);
+            const std::vector<uint8_t> S = I2OSP<Integer>()(s);
 
             result = std::copy(S.begin(), S.end(), result);
 
@@ -56,7 +56,7 @@ namespace cry
 
             ////////////////////////////////////////////////////////////////////////////////////////
             // 2c. Convert the message representative m to an encoded message EM of length k octets
-            const std::vector<uint8_t> EM = IP2OS<Integer>()(m);
+            const std::vector<uint8_t> EM = I2OSP<Integer>()(m);
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // 3. Apply the EMSA-PKCS1-v1_5 encoding operation to the message M to produce a second encoded message EM’ of length k octets:
