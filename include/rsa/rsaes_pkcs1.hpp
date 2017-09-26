@@ -5,10 +5,10 @@
 #ifndef RSAES_PKCS1_H
 #define RSAES_PKCS1_H
 
-#include "os2ip.hpp"
 #include "algorithm.hpp"
 #include "basic_int.hpp"
 #include "eme_pkcs1.hpp"
+#include "os2ip.hpp"
 
 namespace cry
 {
@@ -16,17 +16,27 @@ namespace cry
     template <class Encoder = eme_pkcs1, class Integer = bigint8_t>
     struct rsaes_pkcs1
     {
+        /**
+         * \brief
+         * \tparam InputIterator
+         * \tparam OutputIterator
+         * \param first
+         * \param last
+         * \param result
+         * \param e
+         * \param n
+         * \param modBits
+         * \return
+         */
         template <class InputIterator, class OutputIterator>
         static OutputIterator encrypt(InputIterator first, InputIterator last, OutputIterator result, const Integer& e, const Integer& n, size_t modBits)
         {
-            size_t k = modBits / 8;
-            if (modBits % 8 != 0)
-                k++;
+            const auto k = (modBits + 7) / 8;
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // 1. Apply the EME-PKCS1-v1_5 encoding operation to the message M to produce an encoded message EM of length k–1 octets:
             std::vector<uint8_t> EM(k);
-            Encoder::encode(first, last, EM.begin(), k/* - 1*/);
+            Encoder::encode(first, last, EM.begin(), k /* - 1*/);
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // 2. Convert the encoded message EM to an integer message representative m
@@ -45,12 +55,22 @@ namespace cry
             return result;
         }
 
+        /**
+         * \brief
+         * \tparam InputIterator
+         * \tparam OutputIterator
+         * \param first
+         * \param last
+         * \param result
+         * \param d
+         * \param n
+         * \param modBits
+         * \return
+         */
         template <class InputIterator, class OutputIterator>
         static OutputIterator decrypt(InputIterator first, InputIterator last, OutputIterator result, const Integer& d, const Integer& n, size_t modBits)
         {
-            size_t k = modBits / 8;
-            if (modBits % 8 != 0)
-                k++;
+            const auto k = (modBits + 7) / 8;
 
             ////////////////////////////////////////////////////////////////////////////////////////////
             // 1. If the length of the ciphertext C is not k octets, output “decryption error” and stop.

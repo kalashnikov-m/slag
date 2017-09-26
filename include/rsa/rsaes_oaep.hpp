@@ -15,6 +15,20 @@ namespace cry
     template <class Encoder = eme_oaep<>, class Integer = bigint8_t>
     struct rsaes_oaep
     {
+        /**
+         * \brief
+         * \tparam InputIterator
+         * \tparam OutputIterator
+         * \param first
+         * \param last
+         * \param result
+         * \param e
+         * \param n
+         * \param modBits
+         * \param seed
+         * \param label
+         * \return
+         */
         template <class InputIterator, class OutputIterator>
         static OutputIterator encrypt(InputIterator first, InputIterator last, OutputIterator result, const Integer& e, const Integer& n, size_t modBits, const std::vector<uint8_t>& seed = std::vector<uint8_t>(), const std::vector<uint8_t>& label = std::vector<uint8_t>())
         {
@@ -25,7 +39,7 @@ namespace cry
             ////////////////////////////////////////////////////////////////
             // If mLen > k � 2hLen � 2, output �message too long� and stop.
 
-            const size_t k    = modBits / 8;
+            const auto k      = (modBits + 7) / 8;
             const size_t mLen = std::distance(first, last);
 
             if (mLen > k - 2 * Encoder::hash_type::size - 2)
@@ -61,6 +75,18 @@ namespace cry
             return result;
         }
 
+        /**
+         * \brief
+         * \tparam InputIterator
+         * \tparam OutputIterator
+         * \param c_first
+         * \param c_last
+         * \param result
+         * \param d
+         * \param n
+         * \param modBits
+         * \return
+         */
         template <class InputIterator, class OutputIterator>
         static OutputIterator decrypt(InputIterator c_first, InputIterator c_last, OutputIterator result, const Integer& d, const Integer& n, size_t modBits)
         {
@@ -68,7 +94,7 @@ namespace cry
             ///////////////////////
             // 1. Length checking:
 
-            const size_t k    = modBits / 8;
+            const auto k      = (modBits + 7) / 8;
             const size_t cLen = std::distance(c_first, c_last);
 
             ////////////////////////////////////////////////////////////////////////////////////////////

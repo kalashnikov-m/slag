@@ -13,6 +13,19 @@ namespace cry
     template <class Encoder = emsa_pss<>, class Integer = bigint8_t>
     struct rsassa_pss
     {
+        /**
+         * \brief
+         * \tparam InputIterator
+         * \tparam OutputIterator
+         * \param m_first
+         * \param m_last
+         * \param result
+         * \param n
+         * \param d
+         * \param modBits
+         * \param salt
+         * \return
+         */
         template <class InputIterator, class OutputIterator>
         static OutputIterator sign(InputIterator m_first, InputIterator m_last, OutputIterator result, const Integer& n, const Integer& d, size_t modBits, const vector<uint8_t>& salt = vector<uint8_t>())
         {
@@ -41,6 +54,19 @@ namespace cry
             return result;
         }
 
+        /**
+         * \brief
+         * \tparam MInputIterator
+         * \tparam InputIterator
+         * \param m_first
+         * \param m_last
+         * \param s_first
+         * \param s_last
+         * \param n
+         * \param e
+         * \param modBits
+         * \return
+         */
         template <class MInputIterator, class InputIterator>
         static bool verify(MInputIterator m_first, MInputIterator m_last, InputIterator s_first, InputIterator s_last, const Integer& n, const Integer& e, size_t modBits)
         {

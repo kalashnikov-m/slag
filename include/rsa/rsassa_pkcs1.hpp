@@ -13,10 +13,22 @@ namespace cry
     template <class Encoder = emsa_pkcs1<>, class Integer = bigint8_t>
     struct rsassa_pkcs1
     {
+        /**
+         * \brief
+         * \tparam InputIterator
+         * \tparam OutputIterator
+         * \param first
+         * \param last
+         * \param result
+         * \param d
+         * \param n
+         * \param modBits
+         * \return
+         */
         template <class InputIterator, class OutputIterator>
         static OutputIterator sign(InputIterator first, InputIterator last, OutputIterator result, const Integer& d, const Integer& n, size_t modBits)
         {
-            const size_t emLen = modBits / 8;
+            const auto emLen = (modBits + 7) / 8;
             std::vector<uint8_t> encoded(emLen);
             auto end = Encoder::encode(first, last, encoded.begin(), emLen);
 
@@ -30,14 +42,26 @@ namespace cry
             return result;
         }
 
+        /**
+         * \brief
+         * \tparam InputIterator
+         * \param s_first
+         * \param s_last
+         * \param m_first
+         * \param m_last
+         * \param e
+         * \param n
+         * \param modulusBits
+         * \return
+         */
         template <class InputIterator>
         static bool verify(InputIterator s_first, InputIterator s_last, InputIterator m_first, InputIterator m_last, const Integer& e, const Integer& n, size_t modulusBits)
         {
 
             ///////////////////////
             // 1. Length checking:
-            const size_t k = modulusBits / 8;
-            auto sz        = std::distance(s_first, s_last);
+            const auto k = (modulusBits + 7) / 8;
+            auto sz      = std::distance(s_first, s_last);
             if (k != sz)
             {
                 return false;
