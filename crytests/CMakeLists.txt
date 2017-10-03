@@ -26,7 +26,7 @@ set (HEADERS
 	../include/sha512.hpp
 	../utility/encoders.hpp
 	../utility/os2ip.hpp
-	../include/internal/cry_core.hpp
+	../include/internal/cry_engine.hpp
 )
 
 set (SOURCES
