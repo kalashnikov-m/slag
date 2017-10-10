@@ -18,39 +18,39 @@ using namespace std;
 namespace cry
 {
     template <class IntType>
-    class basic_int
+    class basic_integer
     {
       public:
-        basic_int() : m_Polynomial(1), m_Negative(false)
+        basic_integer() : m_Polynomial(1), m_Negative(false)
         {
         }
 
-        ~basic_int()
+        ~basic_integer()
         {
         }
 
-        constexpr basic_int(const basic_int& other) : m_Polynomial(other.m_Polynomial), m_Negative(other.m_Negative)
+        constexpr basic_integer(const basic_integer& other) : m_Polynomial(other.m_Polynomial), m_Negative(other.m_Negative)
         {
         }
 
-        basic_int(basic_int&& other) noexcept
+        basic_integer(basic_integer&& other) noexcept
         {
             *this = std::move(other);
         }
 
-        basic_int(const std::initializer_list<IntType>& il, bool negative = false) : basic_int(std::begin(il), std::end(il), negative)
+        basic_integer(const std::initializer_list<IntType>& il, bool negative = false) : basic_integer(std::begin(il), std::end(il), negative)
         {
         }
 
-        basic_int(const std::vector<IntType>& iv, bool negative = false) : basic_int(std::begin(iv), std::end(iv), negative)
+        basic_integer(const std::vector<IntType>& iv, bool negative = false) : basic_integer(std::begin(iv), std::end(iv), negative)
         {
         }
 
-        basic_int(uint32_t x) : basic_int({static_cast<IntType>((x & 0xff000000) >> 24), static_cast<IntType>((x & 0x00ff0000) >> 16), static_cast<IntType>((x & 0x0000ff00) >> 8), static_cast<IntType>(x & 0x000000ff)})
+        basic_integer(uint32_t x) : basic_integer({static_cast<IntType>((x & 0xff000000) >> 24), static_cast<IntType>((x & 0x00ff0000) >> 16), static_cast<IntType>((x & 0x0000ff00) >> 8), static_cast<IntType>(x & 0x000000ff)})
         {
         }
 
-        basic_int(const std::string& hex) : m_Polynomial(1), m_Negative(false)
+        basic_integer(const std::string& hex) : m_Polynomial(1), m_Negative(false)
         {
             if (hex.empty())
             {
@@ -116,7 +116,7 @@ namespace cry
         }
 
         template <class InputIterator>
-        basic_int(InputIterator first, InputIterator last, bool negative = false) : m_Polynomial(1), m_Negative(false)
+        basic_integer(InputIterator first, InputIterator last, bool negative = false) : m_Polynomial(1), m_Negative(false)
         {
             for (; first != last && *first == 0x00; ++first)
                 ;
@@ -133,54 +133,54 @@ namespace cry
             return m_Polynomial;
         }
 
-        basic_int& operator=(const basic_int& other);
+        basic_integer& operator=(const basic_integer& other);
 
-        basic_int& operator=(basic_int&& other) noexcept;
+        basic_integer& operator=(basic_integer&& other) noexcept;
 
         explicit operator bool() const;
 
-        const basic_int operator<<(int) const;
+        const basic_integer operator<<(int) const;
 
-        const basic_int operator>>(int) const;
+        const basic_integer operator>>(int) const;
 
-        basic_int& operator<<=(int nbits);
+        basic_integer& operator<<=(int nbits);
 
-        basic_int& operator>>=(int nbits);
+        basic_integer& operator>>=(int nbits);
 
-        basic_int& operator++();
+        basic_integer& operator++();
 
-        basic_int& operator--();
+        basic_integer& operator--();
 
-        basic_int& operator+();
+        basic_integer& operator+();
 
-        const basic_int operator++(int);
+        const basic_integer operator++(int);
 
-        const basic_int operator--(int);
+        const basic_integer operator--(int);
 
-        const basic_int operator-() const;
+        const basic_integer operator-() const;
 
-        const basic_int operator~() const;
+        const basic_integer operator~() const;
 
-        basic_int& operator+=(const basic_int& rhs);
+        basic_integer& operator+=(const basic_integer& rhs);
 
-        basic_int& operator-=(const basic_int& rhs);
+        basic_integer& operator-=(const basic_integer& rhs);
 
-        basic_int& operator%=(const basic_int& rhs);
+        basic_integer& operator%=(const basic_integer& rhs);
 
-        basic_int& operator&=(const basic_int& rhs);
+        basic_integer& operator&=(const basic_integer& rhs);
 
-        basic_int& operator|=(const basic_int& rhs);
+        basic_integer& operator|=(const basic_integer& rhs);
 
-        basic_int& operator^=(const basic_int& rhs);
+        basic_integer& operator^=(const basic_integer& rhs);
 
-        basic_int& operator*=(const basic_int& rhs);
+        basic_integer& operator*=(const basic_integer& rhs);
 
-        basic_int& operator/=(const basic_int& rhs);
+        basic_integer& operator/=(const basic_integer& rhs);
 
         template <class X>
-        friend ostream& operator<<(ostream& stream, const basic_int<X>& huge);
+        friend ostream& operator<<(ostream& stream, const basic_integer<X>& huge);
 
-        friend bool operator&&(const basic_int& lhs, const basic_int& rhs)
+        friend bool operator&&(const basic_integer& lhs, const basic_integer& rhs)
         {
             const auto f1 = static_cast<bool>(lhs);
             const auto f2 = static_cast<bool>(rhs);
@@ -188,7 +188,7 @@ namespace cry
             return (f1 && f2);
         }
 
-        friend bool operator||(const basic_int& lhs, const basic_int& rhs)
+        friend bool operator||(const basic_integer& lhs, const basic_integer& rhs)
         {
             const auto f1 = static_cast<bool>(lhs);
             const auto f2 = static_cast<bool>(rhs);
@@ -196,41 +196,41 @@ namespace cry
             return (f1 || f2);
         }
 
-        friend bool operator<(const basic_int& lhs, const basic_int& rhs)
+        friend bool operator<(const basic_integer& lhs, const basic_integer& rhs)
         {
             const short cmp = compare(lhs, rhs);
 
             return (cmp == -1);
         }
 
-        friend bool operator>(const basic_int& lhs, const basic_int& rhs)
+        friend bool operator>(const basic_integer& lhs, const basic_integer& rhs)
         {
             return rhs < lhs;
         }
 
-        friend bool operator<=(const basic_int& lhs, const basic_int& rhs)
+        friend bool operator<=(const basic_integer& lhs, const basic_integer& rhs)
         {
             return !(lhs > rhs);
         }
 
-        friend bool operator>=(const basic_int& lhs, const basic_int& rhs)
+        friend bool operator>=(const basic_integer& lhs, const basic_integer& rhs)
         {
             return !(lhs < rhs);
         }
 
-        friend bool operator==(const basic_int& lhs, const basic_int& rhs)
+        friend bool operator==(const basic_integer& lhs, const basic_integer& rhs)
         {
             const short cmp = compare(lhs, rhs);
 
             return (cmp == 0);
         }
 
-        friend bool operator!=(const basic_int& lhs, const basic_int& rhs)
+        friend bool operator!=(const basic_integer& lhs, const basic_integer& rhs)
         {
             return !(lhs == rhs);
         }
 
-        friend const basic_int operator&(const basic_int& lhs, const basic_int& rhs)
+        friend const basic_integer operator&(const basic_integer& lhs, const basic_integer& rhs)
         {
             const auto& a = lhs.m_Polynomial;
             const auto& b = rhs.m_Polynomial;
@@ -241,10 +241,10 @@ namespace cry
 
             Cry_and(&out[0] + out.size(), &lhs.m_Polynomial[0], &lhs.m_Polynomial[0] + lhs.m_Polynomial.size(), &rhs.m_Polynomial[0], &rhs.m_Polynomial[0] + rhs.m_Polynomial.size());
 
-            return basic_int(out);
+            return basic_integer(out);
         }
 
-        friend const basic_int operator|(const basic_int& lhs, const basic_int& rhs)
+        friend const basic_integer operator|(const basic_integer& lhs, const basic_integer& rhs)
         {
             const auto& a = lhs.m_Polynomial;
             const auto& b = rhs.m_Polynomial;
@@ -255,10 +255,10 @@ namespace cry
 
             Cry_or(&out[0] + out.size(), &lhs.m_Polynomial[0], &lhs.m_Polynomial[0] + lhs.m_Polynomial.size(), &rhs.m_Polynomial[0], &rhs.m_Polynomial[0] + rhs.m_Polynomial.size());
 
-            return basic_int(out);
+            return basic_integer(out);
         }
 
-        friend const basic_int operator^(const basic_int& lhs, const basic_int& rhs)
+        friend const basic_integer operator^(const basic_integer& lhs, const basic_integer& rhs)
         {
             const auto& a = lhs.m_Polynomial;
             const auto& b = rhs.m_Polynomial;
@@ -269,10 +269,10 @@ namespace cry
 
             Cry_xor(&out[0] + out.size(), &lhs.m_Polynomial[0], &lhs.m_Polynomial[0] + lhs.m_Polynomial.size(), &rhs.m_Polynomial[0], &rhs.m_Polynomial[0] + rhs.m_Polynomial.size());
 
-            return basic_int(out);
+            return basic_integer(out);
         }
 
-        friend const basic_int operator+(const basic_int& lhs, const basic_int& rhs)
+        friend const basic_integer operator+(const basic_integer& lhs, const basic_integer& rhs)
         {
             const auto& a = lhs.m_Polynomial;
             const auto& b = rhs.m_Polynomial;
@@ -291,27 +291,27 @@ namespace cry
                 { // (|a| < |b|) ==> (|b| - |a|)
                     Cry_subtract(&out[0] + out.size(), &b[0], &b[0] + rsize, &a[0], &a[0] + lsize);
 
-                    return basic_int(out, rhs.m_Negative);
+                    return basic_integer(out, rhs.m_Negative);
                 }
                 else if (cmp == +1)
                 {
                     // (|a| > |b|) ==> (|a| - |b|)
                     Cry_subtract(&out[0] + out.size(), &a[0], &a[0] + lsize, &b[0], &b[0] + rsize);
 
-                    return basic_int(out, lhs.m_Negative);
+                    return basic_integer(out, lhs.m_Negative);
                 }
             }
             else
             { // если знаки аргументов одинаковы
                 Cry_add(&out[0] + out.size(), &a[0], &a[0] + lsize, &b[0], &b[0] + rsize);
 
-                return basic_int<IntType>(out, lhs.m_Negative & rhs.m_Negative);
+                return basic_integer<IntType>(out, lhs.m_Negative & rhs.m_Negative);
             }
 
-            return basic_int();
+            return basic_integer();
         }
 
-        friend const basic_int operator-(const basic_int& lhs, const basic_int& rhs)
+        friend const basic_integer operator-(const basic_integer& lhs, const basic_integer& rhs)
         {
             const auto& a = lhs.m_Polynomial;
             const auto& b = rhs.m_Polynomial;
@@ -321,7 +321,7 @@ namespace cry
             // если знаки аргументов различны: (a)-(-b), (-a)-(b) ==> ?(a+b)
             if (lhs.m_Negative ^ rhs.m_Negative)
             {
-                basic_int temp((cmp == -1) ? rhs : lhs);
+                basic_integer temp((cmp == -1) ? rhs : lhs);
 
                 Cry_add(&temp.m_Polynomial[0] + temp.m_Polynomial.size(), &a[0], &a[0] + a.size(), &b[0], &b[0] + b.size());
 
@@ -333,7 +333,7 @@ namespace cry
             // если знаки аргументов одинаковы:
             if (cmp == -1)
             { // (|a| < |b|) ==> (|b| - |a|)
-                basic_int temp(rhs);
+                basic_integer temp(rhs);
 
                 Cry_subtract(&temp.m_Polynomial[0] + temp.m_Polynomial.size(), &b[0], &b[0] + b.size(), &a[0], &a[0] + a.size());
 
@@ -344,7 +344,7 @@ namespace cry
             if (cmp == +1)
             {
                 // (|a| > |b|) ==> (|a| - |b|)
-                basic_int temp(lhs);
+                basic_integer temp(lhs);
 
                 Cry_subtract(&temp.m_Polynomial[0] + temp.m_Polynomial.size(), &a[0], &a[0] + a.size(), &b[0], &b[0] + b.size());
 
@@ -353,10 +353,10 @@ namespace cry
                 return temp;
             }
 
-            return basic_int();
+            return basic_integer();
         }
 
-        friend const basic_int operator*(const basic_int& lhs, const basic_int& rhs)
+        friend const basic_integer operator*(const basic_integer& lhs, const basic_integer& rhs)
         {
             const auto& a = lhs.m_Polynomial;
             const auto& b = rhs.m_Polynomial;
@@ -368,33 +368,33 @@ namespace cry
 
             Cry_multiply(&out[0] + out.size(), &a[0], &a[0] + l_size, &b[0], &b[0] + r_size);
 
-            return basic_int(out, lhs.m_Negative ^ rhs.m_Negative);
+            return basic_integer(out, lhs.m_Negative ^ rhs.m_Negative);
         }
 
-        friend const basic_int operator/(const basic_int& lhs, const basic_int& rhs)
+        friend const basic_integer operator/(const basic_integer& lhs, const basic_integer& rhs)
         {
-            basic_int div;
-            basic_int rem;
+            basic_integer div;
+            basic_integer rem;
 
             lhs.divide(div, rem, rhs);
 
             return div;
         }
 
-        friend const basic_int operator%(const basic_int& lhs, const basic_int& rhs)
+        friend const basic_integer operator%(const basic_integer& lhs, const basic_integer& rhs)
         {
-            basic_int div;
-            basic_int rem;
+            basic_integer div;
+            basic_integer rem;
 
             lhs.divide(div, rem, rhs);
 
             return rem;
         }
 
-        void divide(basic_int& q, basic_int& r, const basic_int& other) const;
+        void divide(basic_integer& q, basic_integer& r, const basic_integer& other) const;
 
       protected:
-        void __swap(basic_int& other) noexcept
+        void __swap(basic_integer& other) noexcept
         {
             m_Polynomial.swap(other.m_Polynomial);
 
@@ -402,7 +402,7 @@ namespace cry
         }
 
         template <class X>
-        friend short compare(const basic_int<X>& lhs, const basic_int<X>& rhs);
+        friend short compare(const basic_integer<X>& lhs, const basic_integer<X>& rhs);
 
       private:
         std::vector<IntType> m_Polynomial;
@@ -412,7 +412,7 @@ namespace cry
     // =================================================================================
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator=(const basic_int<X>& other)
+    basic_integer<X>& basic_integer<X>::operator=(const basic_integer<X>& other)
     {
         if (this != &other)
         {
@@ -425,7 +425,7 @@ namespace cry
     }
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator=(basic_int<X>&& other) noexcept
+    basic_integer<X>& basic_integer<X>::operator=(basic_integer<X>&& other) noexcept
     {
         if (this != &other)
         {
@@ -437,7 +437,7 @@ namespace cry
     }
 
     template <class X>
-    basic_int<X>::operator bool() const
+    basic_integer<X>::operator bool() const
     {
         const bool flag = Cry_is_zero(&m_Polynomial[0], (&m_Polynomial[0] + m_Polynomial.size()));
 
@@ -445,7 +445,7 @@ namespace cry
     }
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator++()
+    basic_integer<X>& basic_integer<X>::operator++()
     {
         Cry_increment(&m_Polynomial[0], &m_Polynomial[0] + m_Polynomial.size());
 
@@ -453,7 +453,7 @@ namespace cry
     }
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator--()
+    basic_integer<X>& basic_integer<X>::operator--()
     {
         Cry_decrement(&m_Polynomial[0], &m_Polynomial[0] + m_Polynomial.size());
 
@@ -461,9 +461,9 @@ namespace cry
     }
 
     template <class X>
-    const basic_int<X> basic_int<X>::operator++(int)
+    const basic_integer<X> basic_integer<X>::operator++(int)
     {
-        basic_int temp(*this);
+        basic_integer temp(*this);
 
         ++(*this);
 
@@ -471,9 +471,9 @@ namespace cry
     }
 
     template <class X>
-    const basic_int<X> basic_int<X>::operator--(int)
+    const basic_integer<X> basic_integer<X>::operator--(int)
     {
-        basic_int temp(*this);
+        basic_integer temp(*this);
 
         --(*this);
 
@@ -481,7 +481,7 @@ namespace cry
     }
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator+=(const basic_int<X>& rhs)
+    basic_integer<X>& basic_integer<X>::operator+=(const basic_integer<X>& rhs)
     {
         *this = *this + rhs;
 
@@ -489,7 +489,7 @@ namespace cry
     }
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator-=(const basic_int<X>& rhs)
+    basic_integer<X>& basic_integer<X>::operator-=(const basic_integer<X>& rhs)
     {
         *this = *this - rhs;
 
@@ -497,21 +497,21 @@ namespace cry
     }
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator+()
+    basic_integer<X>& basic_integer<X>::operator+()
     {
         return (*this);
     }
 
     template <class X>
-    const basic_int<X> basic_int<X>::operator-() const
+    const basic_integer<X> basic_integer<X>::operator-() const
     {
-        return basic_int(m_Polynomial, !m_Negative);
+        return basic_integer(m_Polynomial, !m_Negative);
     }
 
     template <class X>
-    const basic_int<X> basic_int<X>::operator~() const
+    const basic_integer<X> basic_integer<X>::operator~() const
     {
-        basic_int temp(*this);
+        basic_integer temp(*this);
 
         Cry_inverse(&temp.m_Polynomial[0], &temp.m_Polynomial[0] + temp.m_Polynomial.size());
 
@@ -519,7 +519,7 @@ namespace cry
     }
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator%=(const basic_int<X>& rhs)
+    basic_integer<X>& basic_integer<X>::operator%=(const basic_integer<X>& rhs)
     {
         *this = *this % rhs;
 
@@ -527,7 +527,7 @@ namespace cry
     }
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator&=(const basic_int<X>& rhs)
+    basic_integer<X>& basic_integer<X>::operator&=(const basic_integer<X>& rhs)
     {
         *this = *this & rhs;
 
@@ -535,7 +535,7 @@ namespace cry
     }
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator|=(const basic_int<X>& rhs)
+    basic_integer<X>& basic_integer<X>::operator|=(const basic_integer<X>& rhs)
     {
         *this = *this | rhs;
 
@@ -543,7 +543,7 @@ namespace cry
     }
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator^=(const basic_int<X>& rhs)
+    basic_integer<X>& basic_integer<X>::operator^=(const basic_integer<X>& rhs)
     {
         *this = *this ^ rhs;
 
@@ -551,7 +551,7 @@ namespace cry
     }
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator*=(const basic_int<X>& rhs)
+    basic_integer<X>& basic_integer<X>::operator*=(const basic_integer<X>& rhs)
     {
         *this = *this * rhs;
 
@@ -559,7 +559,7 @@ namespace cry
     }
 
     template <class X>
-    basic_int<X>& basic_int<X>::operator/=(const basic_int<X>& rhs)
+    basic_integer<X>& basic_integer<X>::operator/=(const basic_integer<X>& rhs)
     {
         *this = *this / rhs;
 
@@ -567,7 +567,7 @@ namespace cry
     }
 
     template <class X>
-    ostream& operator<<(ostream& stream, const basic_int<X>& huge)
+    ostream& operator<<(ostream& stream, const basic_integer<X>& huge)
     {
         stringstream ss;
 
@@ -588,7 +588,7 @@ namespace cry
     }
 
     template <class T>
-    short compare(const basic_int<T>& lhs, const basic_int<T>& rhs)
+    short compare(const basic_integer<T>& lhs, const basic_integer<T>& rhs)
     {
         const auto& a = lhs.m_Polynomial;
         const auto& b = rhs.m_Polynomial;
@@ -618,17 +618,17 @@ namespace cry
     }
 
     template <class T>
-    const basic_int<T> basic_int<T>::operator<<(int nbits) const
+    const basic_integer<T> basic_integer<T>::operator<<(int nbits) const
     {
         std::vector<T> out(m_Polynomial);
 
         Cry_lshift(&out[0], &out[0] + out.size(), nbits);
 
-        return basic_int<T>(out);
+        return basic_integer<T>(out);
     }
 
     template <class T>
-    basic_int<T>& basic_int<T>::operator<<=(int nbits)
+    basic_integer<T>& basic_integer<T>::operator<<=(int nbits)
     {
         *this = *this << nbits;
 
@@ -636,17 +636,17 @@ namespace cry
     }
 
     template <class T>
-    const basic_int<T> basic_int<T>::operator>>(int nbits) const
+    const basic_integer<T> basic_integer<T>::operator>>(int nbits) const
     {
         std::vector<T> out(m_Polynomial);
 
         Cry_rshift(&out[0], &out[0] + out.size(), nbits);
 
-        return basic_int<T>(out);
+        return basic_integer<T>(out);
     }
 
     template <class T>
-    basic_int<T>& basic_int<T>::operator>>=(int nbits)
+    basic_integer<T>& basic_integer<T>::operator>>=(int nbits)
     {
         *this = *this >> nbits;
 
@@ -654,7 +654,7 @@ namespace cry
     }
 
     template <class X>
-    bool operator!(const basic_int<X>& h)
+    bool operator!(const basic_integer<X>& h)
     {
         const auto f = static_cast<bool>(h);
 
@@ -662,7 +662,7 @@ namespace cry
     }
 
     template <class T>
-    void basic_int<T>::divide(basic_int<T>& q, basic_int<T>& r, const basic_int<T>& other) const
+    void basic_integer<T>::divide(basic_integer<T>& q, basic_integer<T>& r, const basic_integer<T>& other) const
     {
         const bool is_zero = Cry_is_zero(&other.m_Polynomial[0], &other.m_Polynomial[0] + other.m_Polynomial.size());
         if (is_zero)
@@ -673,7 +673,7 @@ namespace cry
         const short cmp = Cry_compare(&m_Polynomial[0], &m_Polynomial[0] + m_Polynomial.size(), &other.m_Polynomial[0], &other.m_Polynomial[0] + other.m_Polynomial.size());
         if (cmp == -1)
         {
-            q = basic_int<T>();
+            q = basic_integer<T>();
             r = *this;
             return;
         }
@@ -685,17 +685,17 @@ namespace cry
 
         Cry_divide(&v_div[0] + v_div.size(), &v_rem[0] + v_rem.size(), &m_Polynomial[0], &m_Polynomial[0] + m_Polynomial.size(), &other.m_Polynomial[0], &other.m_Polynomial[0] + other.m_Polynomial.size());
 
-        const basic_int<T> div(v_div, this->m_Negative ^ other.m_Negative);
-        const basic_int<T> rem(v_rem, this->m_Negative ^ other.m_Negative);
+        const basic_integer<T> div(v_div, this->m_Negative ^ other.m_Negative);
+        const basic_integer<T> rem(v_rem, this->m_Negative ^ other.m_Negative);
 
         q = div;
         r = rem;
     }
 
-    using bigint8_t  = basic_int<uint32_t>;
-    using bigint16_t = basic_int<uint16_t>;
-    using bigint32_t = basic_int<uint32_t>;
-    using bigint64_t = basic_int<uint64_t>;
+    using bigint_t  = basic_integer<uint32_t>;
+    using bigint16_t = basic_integer<uint16_t>;
+    using bigint32_t = basic_integer<uint32_t>;
+    using bigint64_t = basic_integer<uint64_t>;
 }
 
 #endif
