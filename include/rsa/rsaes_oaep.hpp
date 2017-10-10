@@ -6,13 +6,13 @@
 #define RSAES_OAEP_H
 
 #include "algorithm.hpp"
-#include "basic_int.hpp"
+#include "basic_integer.hpp"
 #include "os2ip.hpp"
 
 namespace cry
 {
 
-    template <class Encoder = eme_oaep<>, class Integer = bigint8_t>
+    template <class Encoder = eme_oaep<>, class Integer = bigint_t>
     struct rsaes_oaep
     {
         /**

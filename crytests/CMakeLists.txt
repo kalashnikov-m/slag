@@ -12,7 +12,7 @@ set (HEADERS
 	../include/rsa/rsaes_oaep.hpp
 	../include/rsa/rsaes_pkcs1.hpp
 	../include/algorithm.hpp
-	../include/basic_int.hpp
+        ../include/basic_integer.hpp
 	../include/mgf.hpp
 	../include/oid.hpp
 	../include/emsa_pkcs1.hpp

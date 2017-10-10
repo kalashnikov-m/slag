@@ -7,12 +7,12 @@
 
 #include <algorithm.hpp>
 
-#include "basic_int.hpp"
+#include "basic_integer.hpp"
 
 namespace cry
 {
 
-    template <class T = bigint8_t>
+    template <class T = bigint_t>
     class rsa
     {
 

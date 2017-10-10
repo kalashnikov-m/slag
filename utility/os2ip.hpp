@@ -1,7 +1,7 @@
 #ifndef OS2IP_HPP
 #define OS2IP_HPP
 
-#include "basic_int.hpp"
+#include "basic_integer.hpp"
 
 namespace cry
 {
@@ -29,15 +29,15 @@ namespace cry
     };
 
     template <class P>
-    struct OS2IP<cry::basic_int<P>>
+    struct OS2IP<cry::basic_integer<P>>
     {
-        cry::basic_int<P> operator()(const std::vector<uint8_t>& octets) const noexcept
+        cry::basic_integer<P> operator()(const std::vector<uint8_t>& octets) const noexcept
         {
             return operator()(octets.begin(), octets.end());
         }
 
         template <class OctetIterator>
-        cry::basic_int<P> operator()(OctetIterator first, OctetIterator last) const noexcept
+        cry::basic_integer<P> operator()(OctetIterator first, OctetIterator last) const noexcept
         {
             /////////////////////////////////
             // skiping zeros and whitespaces
@@ -75,7 +75,7 @@ namespace cry
                 *result++ = word;
             }
 
-            cry::basic_int<P> out(dst);
+            cry::basic_integer<P> out(dst);
 
             return out;
         }
@@ -144,9 +144,9 @@ namespace cry
     };
 
     template <class P>
-    struct I2OSP<basic_int<P>>
+    struct I2OSP<basic_integer<P>>
     {
-        std::vector<uint8_t> operator()(const basic_int<P>& ip)
+        std::vector<uint8_t> operator()(const basic_integer<P>& ip)
         {
             std::vector<uint8_t> octets;
             octets.reserve(ip.polynomial().size() * sizeof(P));
@@ -157,7 +157,7 @@ namespace cry
         }
 
         template <class OutputIterator>
-        OutputIterator operator()(const basic_int<P>& ip, OutputIterator octetIt)
+        OutputIterator operator()(const basic_integer<P>& ip, OutputIterator octetIt)
         {
             const auto& polynomial = ip.polynomial();
 

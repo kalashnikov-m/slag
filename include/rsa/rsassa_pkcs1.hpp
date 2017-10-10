@@ -5,12 +5,12 @@
 #ifndef RSASSA_PKCS1_HPP
 #define RSASSA_PKCS1_HPP
 
-#include "basic_int.hpp"
+#include "basic_integer.hpp"
 
 namespace cry
 {
 
-    template <class Encoder = emsa_pkcs1<>, class Integer = bigint8_t>
+    template <class Encoder = emsa_pkcs1<>, class Integer = bigint_t>
     struct rsassa_pkcs1
     {
         /**
@@ -83,12 +83,12 @@ namespace cry
             const std::vector<uint8_t> EM = I2OSP<Integer>()(m);
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            // 3. Apply the EMSA-PKCS1-v1_5 encoding operation to the message M to produce a second encoded message EM’ of length k octets:
+            // 3. Apply the EMSA-PKCS1-v1_5 encoding operation to the message M to produce a second encoded message EMï¿½ of length k octets:
             std::vector<uint8_t> EM_(k);
             Encoder::encode(m_first, m_last, EM_.begin(), k);
 
             ////////////////////////////////////////////////////////////////////////
-            // 4. Compare the encoded message EM and the second encoded message EM’
+            // 4. Compare the encoded message EM and the second encoded message EMï¿½
             auto it(EM_.begin());
 
             if (EM_.size() != EM.size())

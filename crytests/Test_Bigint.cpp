@@ -3,7 +3,7 @@
 
 #include "algorithm.hpp"
 
-#include "basic_int.hpp"
+#include "basic_integer.hpp"
 #include "os2ip.hpp"
 
 using namespace std;
@@ -37,13 +37,13 @@ using byte = uint8_t;
 TEST(Test_Bigint, LogicalNOT)
 {
     {
-        basic_int<byte> a = {0x01, 0x02, 0x03};
+        basic_integer<byte> a = {0x01, 0x02, 0x03};
 
         EXPECT_FALSE(!a);
     }
 
     {
-        basic_int<byte> a = {0x00, 0x00, 0x00};
+        basic_integer<byte> a = {0x00, 0x00, 0x00};
 
         EXPECT_TRUE(!a);
     }
@@ -51,7 +51,7 @@ TEST(Test_Bigint, LogicalNOT)
 
 TEST(Test_Bigint, Modulus)
 {
-    auto ModulusTest = [](const basic_int<byte>& arg1, const basic_int<byte>& arg2, const basic_int<byte>& expected) -> void {
+    auto ModulusTest = [](const basic_integer<byte>& arg1, const basic_integer<byte>& arg2, const basic_integer<byte>& expected) -> void {
         auto mod = arg1 % arg2;
 
         EXPECT_TRUE(mod == expected);
@@ -64,7 +64,7 @@ TEST(Test_Bigint, Modulus)
 
 TEST(Test_Bigint, ModulusAssignment)
 {
-    auto ModulusAssignmentTest = [](basic_int<byte>&& arg1, const basic_int<byte>& arg2, const basic_int<byte>& expected) {
+    auto ModulusAssignmentTest = [](basic_integer<byte>&& arg1, const basic_integer<byte>& arg2, const basic_integer<byte>& expected) {
         arg1 %= arg2;
         EXPECT_TRUE(arg1 == expected);
     };
@@ -75,11 +75,11 @@ TEST(Test_Bigint, ModulusAssignment)
 TEST(Test_Bigint, BitwiseAND)
 {
     {
-        basic_int<byte> a = {0x01, 0x02, 0x03};
-        basic_int<byte> b = {0x01, 0x02, 0x03};
+        basic_integer<byte> a = {0x01, 0x02, 0x03};
+        basic_integer<byte> b = {0x01, 0x02, 0x03};
 
-        basic_int<byte> c;
-        basic_int<byte> ex = {0x01, 0x02, 0x03};
+        basic_integer<byte> c;
+        basic_integer<byte> ex = {0x01, 0x02, 0x03};
 
         c = (a & b);
 
@@ -90,9 +90,9 @@ TEST(Test_Bigint, BitwiseAND)
 TEST(Test_Bigint, BitwiseANDassignment)
 {
     auto Test = [](const std::initializer_list<byte>& arg1, const std::initializer_list<byte>& arg2, const std::initializer_list<byte>& arg3) -> void {
-        basic_int<byte> a(arg1);
-        basic_int<byte> b(arg2);
-        basic_int<byte> expect(arg3);
+        basic_integer<byte> a(arg1);
+        basic_integer<byte> b(arg2);
+        basic_integer<byte> expect(arg3);
 
         a &= b;
 
@@ -103,11 +103,11 @@ TEST(Test_Bigint, BitwiseANDassignment)
     Test({0x11, 0x22, 0x33}, {0x11, 0x22, 0x33}, {0x11, 0x22, 0x33});
 
     {
-        basic_int<byte> a = {0x11, 0x22, 0x33};
-        basic_int<byte> b = {0x10, 0x20, 0x30};
-        basic_int<byte> c = {0x01, 0x02, 0x03};
+        basic_integer<byte> a = {0x11, 0x22, 0x33};
+        basic_integer<byte> b = {0x10, 0x20, 0x30};
+        basic_integer<byte> c = {0x01, 0x02, 0x03};
 
-        basic_int<byte> expect = {0x00, 0x00, 0x00};
+        basic_integer<byte> expect = {0x00, 0x00, 0x00};
 
         (b &= a) &= c;
 
@@ -118,8 +118,8 @@ TEST(Test_Bigint, BitwiseANDassignment)
 TEST(Test_Bigint, LogicalAND)
 {
     auto Test = [](const std::initializer_list<byte>& arg1, const std::initializer_list<byte>& arg2, bool expect) -> void {
-        basic_int<byte> a = arg1;
-        basic_int<byte> b = arg2;
+        basic_integer<byte> a = arg1;
+        basic_integer<byte> b = arg2;
 
         EXPECT_TRUE((a && b) == expect);
     };
@@ -132,16 +132,16 @@ TEST(Test_Bigint, LogicalAND)
 TEST(Test_Bigint, UnaryPlus)
 {
     {
-        basic_int<byte> a = {0x01, 0x02, 0x03};
-        basic_int<byte> b = {0x01, 0x02, 0x03};
+        basic_integer<byte> a = {0x01, 0x02, 0x03};
+        basic_integer<byte> b = {0x01, 0x02, 0x03};
 
         EXPECT_TRUE(a == b);
         EXPECT_TRUE(a == +b);
     }
 
     {
-        basic_int<byte> a = {0x02, 0x02, 0x03};
-        basic_int<byte> b = {0x01, 0x02, 0x03};
+        basic_integer<byte> a = {0x02, 0x02, 0x03};
+        basic_integer<byte> b = {0x01, 0x02, 0x03};
 
         EXPECT_FALSE(a == b);
         EXPECT_FALSE(a == +b);
@@ -151,8 +151,8 @@ TEST(Test_Bigint, UnaryPlus)
 TEST(Test_Bigint, UnaryNegation)
 {
     {
-        basic_int<byte> a = {0x01, 0x02, 0x03};
-        basic_int<byte> b = {0x01, 0x02, 0x03};
+        basic_integer<byte> a = {0x01, 0x02, 0x03};
+        basic_integer<byte> b = {0x01, 0x02, 0x03};
 
         EXPECT_TRUE(a == b);
 
@@ -169,8 +169,8 @@ TEST(Test_Bigint, UnaryNegation)
 TEST(Test_Bigint, Decrement)
 {
     {
-        basic_int<byte> a      = {0x01, 0x02, 0x03};
-        basic_int<byte> expect = {0x01, 0x02, 0x02};
+        basic_integer<byte> a      = {0x01, 0x02, 0x03};
+        basic_integer<byte> expect = {0x01, 0x02, 0x02};
 
         a--;
 
@@ -178,8 +178,8 @@ TEST(Test_Bigint, Decrement)
     }
 
     {
-        basic_int<byte> a      = {0x01, 0x02, 0x03};
-        basic_int<byte> expect = {0x01, 0x02, 0x02};
+        basic_integer<byte> a      = {0x01, 0x02, 0x03};
+        basic_integer<byte> expect = {0x01, 0x02, 0x02};
 
         --a;
 
@@ -187,10 +187,10 @@ TEST(Test_Bigint, Decrement)
     }
 
     {
-        basic_int<byte> a = {0x45, 0x38, 0x17};
-        basic_int<byte> b;
-        basic_int<byte> expect1 = {0x45, 0x38, 0x17};
-        basic_int<byte> expect2 = {0x45, 0x38, 0x16};
+        basic_integer<byte> a = {0x45, 0x38, 0x17};
+        basic_integer<byte> b;
+        basic_integer<byte> expect1 = {0x45, 0x38, 0x17};
+        basic_integer<byte> expect2 = {0x45, 0x38, 0x16};
 
         b = a--;
 
@@ -202,22 +202,22 @@ TEST(Test_Bigint, Decrement)
 TEST(Test_Bigint, LogicalOR)
 {
     {
-        basic_int<byte> a = {0x01, 0x02, 0x03};
-        basic_int<byte> b = {0x01, 0x02, 0x03};
+        basic_integer<byte> a = {0x01, 0x02, 0x03};
+        basic_integer<byte> b = {0x01, 0x02, 0x03};
 
         EXPECT_TRUE(a || b);
     }
 
     {
-        basic_int<byte> a = {0x00, 0x00, 0x00};
-        basic_int<byte> b = {0x01, 0x02, 0x03};
+        basic_integer<byte> a = {0x00, 0x00, 0x00};
+        basic_integer<byte> b = {0x01, 0x02, 0x03};
 
         EXPECT_TRUE(a || b);
     }
 
     {
-        basic_int<byte> a = {0x00, 0x00, 0x00};
-        basic_int<byte> b = {0x00, 0x00, 0x00};
+        basic_integer<byte> a = {0x00, 0x00, 0x00};
+        basic_integer<byte> b = {0x00, 0x00, 0x00};
 
         EXPECT_FALSE(a || b);
     }
@@ -226,10 +226,10 @@ TEST(Test_Bigint, LogicalOR)
 TEST(Test_Bigint, BitwiseORassignment)
 {
     {
-        basic_int<byte> a = {0x11, 0x22, 0x33};
-        basic_int<byte> b = {0x00, 0x00, 0x00};
+        basic_integer<byte> a = {0x11, 0x22, 0x33};
+        basic_integer<byte> b = {0x00, 0x00, 0x00};
 
-        basic_int<byte> expect = {0x11, 0x22, 0x33};
+        basic_integer<byte> expect = {0x11, 0x22, 0x33};
 
         a |= b;
 
@@ -237,11 +237,11 @@ TEST(Test_Bigint, BitwiseORassignment)
     }
 
     {
-        basic_int<byte> a = {0x11, 0x22, 0x33};
-        basic_int<byte> b = {0x10, 0x20, 0x30};
-        basic_int<byte> c = {0x04, 0x04, 0x04};
+        basic_integer<byte> a = {0x11, 0x22, 0x33};
+        basic_integer<byte> b = {0x10, 0x20, 0x30};
+        basic_integer<byte> c = {0x04, 0x04, 0x04};
 
-        basic_int<byte> expect = {0x15, 0x26, 0x37};
+        basic_integer<byte> expect = {0x15, 0x26, 0x37};
 
         (b |= a) |= c;
 
@@ -252,11 +252,11 @@ TEST(Test_Bigint, BitwiseORassignment)
 TEST(Test_Bigint, BitwiseOR)
 {
     {
-        basic_int<byte> a        = {0x01, 0x02, 0x03};
-        basic_int<byte> b        = {0x11, 0x00, 0x33};
-        basic_int<byte> expected = {0x11, 0x02, 0x33};
+        basic_integer<byte> a        = {0x01, 0x02, 0x03};
+        basic_integer<byte> b        = {0x11, 0x00, 0x33};
+        basic_integer<byte> expected = {0x11, 0x02, 0x33};
 
-        basic_int<byte> c = a | b;
+        basic_integer<byte> c = a | b;
 
         EXPECT_TRUE(expected == c);
     }
@@ -265,11 +265,11 @@ TEST(Test_Bigint, BitwiseOR)
 TEST(Test_Bigint, ExclusiveOR)
 {
     {
-        basic_int<byte> a        = {0x01, 0x02, 0x03};
-        basic_int<byte> b        = {0x11, 0x00, 0x33};
-        basic_int<byte> expected = {0x10, 0x02, 0x30};
+        basic_integer<byte> a        = {0x01, 0x02, 0x03};
+        basic_integer<byte> b        = {0x11, 0x00, 0x33};
+        basic_integer<byte> expected = {0x10, 0x02, 0x30};
 
-        basic_int<byte> c = a ^ b;
+        basic_integer<byte> c = a ^ b;
 
         EXPECT_TRUE(expected == c);
     }
@@ -278,10 +278,10 @@ TEST(Test_Bigint, ExclusiveOR)
 TEST(Test_Bigint, ExclusiveORassignment)
 {
     {
-        basic_int<byte> a = {0x11, 0x22, 0x33};
-        basic_int<byte> b = {0x00, 0x00, 0x00};
+        basic_integer<byte> a = {0x11, 0x22, 0x33};
+        basic_integer<byte> b = {0x00, 0x00, 0x00};
 
-        basic_int<byte> expect = {0x11, 0x22, 0x33};
+        basic_integer<byte> expect = {0x11, 0x22, 0x33};
 
         a ^= b;
 
@@ -289,11 +289,11 @@ TEST(Test_Bigint, ExclusiveORassignment)
     }
 
     {
-        basic_int<byte> a = {0x11, 0x22, 0x33};
-        basic_int<byte> b = {0x10, 0x20, 0x30};
-        basic_int<byte> c = {0x04, 0x04, 0x04};
+        basic_integer<byte> a = {0x11, 0x22, 0x33};
+        basic_integer<byte> b = {0x10, 0x20, 0x30};
+        basic_integer<byte> c = {0x04, 0x04, 0x04};
 
-        basic_int<byte> expect = {0x05, 0x06, 0x07};
+        basic_integer<byte> expect = {0x05, 0x06, 0x07};
 
         (b ^= a) ^= c;
 
@@ -304,21 +304,21 @@ TEST(Test_Bigint, ExclusiveORassignment)
 TEST(Test_Bigint, BitwiseInverse)
 {
     {
-        basic_int<byte> a = {0x05};
-        basic_int<byte> b(~a);
+        basic_integer<byte> a = {0x05};
+        basic_integer<byte> b(~a);
 
-        basic_int<byte> ex = {0xFA};
+        basic_integer<byte> ex = {0xFA};
 
         EXPECT_TRUE(ex == b);
     }
 
     {
-        basic_int<byte> a = {0x05};
-        basic_int<byte> b;
+        basic_integer<byte> a = {0x05};
+        basic_integer<byte> b;
 
         b = ~a;
 
-        basic_int<byte> ex = {0xFA};
+        basic_integer<byte> ex = {0xFA};
 
         EXPECT_TRUE(ex == b);
     }
@@ -327,10 +327,10 @@ TEST(Test_Bigint, BitwiseInverse)
 TEST(Test_Bigint, Addition)
 {
     {
-        basic_int<byte> a = {0x01, 0x02, 0x03};
-        basic_int<byte> b = {0x17, 0x20, 0x11};
+        basic_integer<byte> a = {0x01, 0x02, 0x03};
+        basic_integer<byte> b = {0x17, 0x20, 0x11};
 
-        basic_int<byte> expect = {0x18, 0x22, 0x14};
+        basic_integer<byte> expect = {0x18, 0x22, 0x14};
 
         auto c = a + b;
 
@@ -338,10 +338,10 @@ TEST(Test_Bigint, Addition)
     }
 
     {
-        basic_int<byte> a = {0x01, 0x02, 0x03};
-        basic_int<byte> b = {0x17, 0x20, 0x11};
+        basic_integer<byte> a = {0x01, 0x02, 0x03};
+        basic_integer<byte> b = {0x17, 0x20, 0x11};
 
-        basic_int<byte> expect = {0x16, 0x1e, 0x0e};
+        basic_integer<byte> expect = {0x16, 0x1e, 0x0e};
 
         auto c = a + (-b);
 
@@ -349,10 +349,10 @@ TEST(Test_Bigint, Addition)
     }
 
     {
-        basic_int<byte> a = {0x01, 0x02, 0x03};
-        basic_int<byte> b = {0x17, 0x20, 0x11};
+        basic_integer<byte> a = {0x01, 0x02, 0x03};
+        basic_integer<byte> b = {0x17, 0x20, 0x11};
 
-        basic_int<byte> expect = {0x18, 0x22, 0x14};
+        basic_integer<byte> expect = {0x18, 0x22, 0x14};
 
         auto c = -a + (-b);
 
@@ -360,10 +360,10 @@ TEST(Test_Bigint, Addition)
     }
 
     {
-        basic_int<byte> a = {0x01, 0x02, 0x03};
-        basic_int<byte> b = {0x17, 0x20, 0x11};
+        basic_integer<byte> a = {0x01, 0x02, 0x03};
+        basic_integer<byte> b = {0x17, 0x20, 0x11};
 
-        basic_int<byte> expect = {0x16, 0x1e, 0x0e};
+        basic_integer<byte> expect = {0x16, 0x1e, 0x0e};
 
         auto c = -a + (b);
 
@@ -371,10 +371,10 @@ TEST(Test_Bigint, Addition)
     }
 
     {
-        basic_int<byte> a = {0x01, 0x02, 0x03};
-        basic_int<byte> b = {0x00};
+        basic_integer<byte> a = {0x01, 0x02, 0x03};
+        basic_integer<byte> b = {0x00};
 
-        basic_int<byte> expect = {0x01, 0x02, 0x03};
+        basic_integer<byte> expect = {0x01, 0x02, 0x03};
 
         auto c = a + b;
 
@@ -382,10 +382,10 @@ TEST(Test_Bigint, Addition)
     }
 
     {
-        basic_int<byte> a = {0x00};
-        basic_int<byte> b = {0x17, 0x20, 0x11};
+        basic_integer<byte> a = {0x00};
+        basic_integer<byte> b = {0x17, 0x20, 0x11};
 
-        basic_int<byte> expect = {0x17, 0x20, 0x11};
+        basic_integer<byte> expect = {0x17, 0x20, 0x11};
 
         auto c = a + b;
 
@@ -396,9 +396,9 @@ TEST(Test_Bigint, Addition)
 TEST(Test_Bigint, AdditionAssigment)
 {
     {
-        basic_int<byte> a      = {0x01, 0x02, 0x03};
-        basic_int<byte> b      = {0x11, 0x27, 0x0a};
-        basic_int<byte> expect = {0x12, 0x29, 0x0d};
+        basic_integer<byte> a      = {0x01, 0x02, 0x03};
+        basic_integer<byte> b      = {0x11, 0x27, 0x0a};
+        basic_integer<byte> expect = {0x12, 0x29, 0x0d};
 
         a += b;
 
@@ -406,9 +406,9 @@ TEST(Test_Bigint, AdditionAssigment)
     }
 
     {
-        basic_int<byte> a      = {0x01, 0x02, 0x03};
-        basic_int<byte> b      = {0x00};
-        basic_int<byte> expect = {0x01, 0x02, 0x03};
+        basic_integer<byte> a      = {0x01, 0x02, 0x03};
+        basic_integer<byte> b      = {0x00};
+        basic_integer<byte> expect = {0x01, 0x02, 0x03};
 
         a += b;
 
@@ -419,8 +419,8 @@ TEST(Test_Bigint, AdditionAssigment)
 TEST(Test_Bigint, Increment)
 {
     {
-        basic_int<byte> a      = {0x01, 0x02, 0x03};
-        basic_int<byte> expect = {0x01, 0x02, 0x04};
+        basic_integer<byte> a      = {0x01, 0x02, 0x03};
+        basic_integer<byte> expect = {0x01, 0x02, 0x04};
 
         a++;
 
@@ -428,8 +428,8 @@ TEST(Test_Bigint, Increment)
     }
 
     {
-        basic_int<byte> a      = {0x01, 0x02, 0x03};
-        basic_int<byte> expect = {0x01, 0x02, 0x04};
+        basic_integer<byte> a      = {0x01, 0x02, 0x03};
+        basic_integer<byte> expect = {0x01, 0x02, 0x04};
 
         ++a;
 
@@ -437,10 +437,10 @@ TEST(Test_Bigint, Increment)
     }
 
     {
-        basic_int<byte> a = {0x45, 0x38, 0x17};
-        basic_int<byte> b;
-        basic_int<byte> expect1 = {0x45, 0x38, 0x17};
-        basic_int<byte> expect2 = {0x45, 0x38, 0x18};
+        basic_integer<byte> a = {0x45, 0x38, 0x17};
+        basic_integer<byte> b;
+        basic_integer<byte> expect1 = {0x45, 0x38, 0x17};
+        basic_integer<byte> expect2 = {0x45, 0x38, 0x18};
 
         b = a++;
 
@@ -456,9 +456,9 @@ TEST(Test_Bigint, Subtraction)
         std::initializer_list<byte> il2 = {0x00};
         std::initializer_list<byte> il3 = {0x38, 0x22, 0x12};
 
-        basic_int<byte> a(il1, true);
-        basic_int<byte> b(il2);
-        basic_int<byte> expected(il3, true);
+        basic_integer<byte> a(il1, true);
+        basic_integer<byte> b(il2);
+        basic_integer<byte> expected(il3, true);
 
         auto c = a - b;
 
@@ -470,9 +470,9 @@ TEST(Test_Bigint, Subtraction)
         std::initializer_list<byte> il2 = {0x22, 0x12};
         std::initializer_list<byte> il3 = {0x38, 0x44, 0x24};
 
-        basic_int<byte> a(il1, true);
-        basic_int<byte> b(il2);
-        basic_int<byte> expected(il3, true);
+        basic_integer<byte> a(il1, true);
+        basic_integer<byte> b(il2);
+        basic_integer<byte> expected(il3, true);
 
         auto c = a - b;
 
@@ -484,10 +484,10 @@ TEST(Test_Bigint, Subtraction)
         std::initializer_list<byte> il2 = {0x17, 0x11, 0x99};
         std::initializer_list<byte> il3 = {0x4f, 0x33, 0xab};
 
-        basic_int<byte> a(il1);
-        basic_int<byte> b(il2, true);
+        basic_integer<byte> a(il1);
+        basic_integer<byte> b(il2, true);
 
-        basic_int<byte> expected(il3);
+        basic_integer<byte> expected(il3);
 
         auto c = a - b;
 
@@ -499,9 +499,9 @@ TEST(Test_Bigint, Subtraction)
         std::initializer_list<byte> il2 = {0x38, 0x22, 0x12};
         std::initializer_list<byte> il3 = {0x38, 0x44, 0x24};
 
-        basic_int<byte> a(il1, true);
-        basic_int<byte> b(il2);
-        basic_int<byte> expected(il3, true);
+        basic_integer<byte> a(il1, true);
+        basic_integer<byte> b(il2);
+        basic_integer<byte> expected(il3, true);
 
         auto c = a - b;
 
@@ -513,10 +513,10 @@ TEST(Test_Bigint, Subtraction)
         std::initializer_list<byte> il2 = {0x38, 0x22, 0x12};
         std::initializer_list<byte> il3 = {0x4f, 0x33, 0xab};
 
-        basic_int<byte> a(il1);
-        basic_int<byte> b(il2, true);
+        basic_integer<byte> a(il1);
+        basic_integer<byte> b(il2, true);
 
-        basic_int<byte> expected(il3);
+        basic_integer<byte> expected(il3);
 
         auto c = a - b;
 
@@ -530,10 +530,10 @@ TEST(Test_Bigint, Subtraction)
         std::initializer_list<byte> il2 = {0x28, 0x11, 0x99};
         std::initializer_list<byte> il3 = {0x10, 0xef, 0x87};
 
-        basic_int<byte> a(il1, true);
-        basic_int<byte> b(il2, true);
+        basic_integer<byte> a(il1, true);
+        basic_integer<byte> b(il2, true);
 
-        basic_int<byte> expected(il3);
+        basic_integer<byte> expected(il3);
 
         auto c = a - b;
 
@@ -545,10 +545,10 @@ TEST(Test_Bigint, Subtraction)
         std::initializer_list<byte> il2 = {0x28, 0x11, 0x99};
         std::initializer_list<byte> il3 = {0x10, 0xef, 0x87};
 
-        basic_int<byte> a(il1);
-        basic_int<byte> b(il2);
+        basic_integer<byte> a(il1);
+        basic_integer<byte> b(il2);
 
-        basic_int<byte> expected(il3, true);
+        basic_integer<byte> expected(il3, true);
 
         auto c = a - b;
 
@@ -560,10 +560,10 @@ TEST(Test_Bigint, Subtraction)
         std::initializer_list<byte> il2 = {0x17, 0x22, 0x12};
         std::initializer_list<byte> il3 = {0x10, 0xef, 0x87};
 
-        basic_int<byte> a(il1, true);
-        basic_int<byte> b(il2, true);
+        basic_integer<byte> a(il1, true);
+        basic_integer<byte> b(il2, true);
 
-        basic_int<byte> expected(il3, true);
+        basic_integer<byte> expected(il3, true);
 
         auto c = a - b;
 
@@ -575,10 +575,10 @@ TEST(Test_Bigint, Subtraction)
         std::initializer_list<byte> il2 = {0x17, 0x22, 0x12};
         std::initializer_list<byte> il3 = {0x10, 0xef, 0x87};
 
-        basic_int<byte> a(il1);
-        basic_int<byte> b(il2);
+        basic_integer<byte> a(il1);
+        basic_integer<byte> b(il2);
 
-        basic_int<byte> expected(il3);
+        basic_integer<byte> expected(il3);
 
         auto c = a - b;
 
@@ -593,10 +593,10 @@ TEST(Test_Bigint, SubtractionAssigment)
         std::initializer_list<byte> il2 = {0x06};
         std::initializer_list<byte> il3 = {0x04};
 
-        basic_int<byte> a(il1);
-        basic_int<byte> b(il2);
+        basic_integer<byte> a(il1);
+        basic_integer<byte> b(il2);
 
-        basic_int<byte> expected(il3);
+        basic_integer<byte> expected(il3);
 
         a -= b;
 
@@ -611,11 +611,11 @@ TEST(Test_Bigint, Multiplication)
         std::initializer_list<byte> il2 = {0x06};
         std::initializer_list<byte> il3 = {0x3c};
 
-        basic_int<byte> a(il1);
-        basic_int<byte> b(il2);
-        basic_int<byte> expected(il3);
+        basic_integer<byte> a(il1);
+        basic_integer<byte> b(il2);
+        basic_integer<byte> expected(il3);
 
-        basic_int<byte> c = a * b;
+        basic_integer<byte> c = a * b;
         EXPECT_TRUE(c == expected);
     }
 
@@ -624,11 +624,11 @@ TEST(Test_Bigint, Multiplication)
         std::initializer_list<byte> il2 = {0x06};
         std::initializer_list<byte> il3 = {0x05, 0xdc, 0x3c};
 
-        basic_int<byte> a(il1);
-        basic_int<byte> b(il2);
-        basic_int<byte> expected(il3);
+        basic_integer<byte> a(il1);
+        basic_integer<byte> b(il2);
+        basic_integer<byte> expected(il3);
 
-        basic_int<byte> c = a * b;
+        basic_integer<byte> c = a * b;
         EXPECT_TRUE(c == expected);
     }
 }
@@ -639,9 +639,9 @@ TEST(Test_Bigint, MultiplicationAssignment)
     std::initializer_list<byte> il2 = {0x06};
     std::initializer_list<byte> il3 = {0x05, 0xdc, 0x3c};
 
-    basic_int<byte> a(il1);
-    basic_int<byte> b(il2);
-    basic_int<byte> expected(il3);
+    basic_integer<byte> a(il1);
+    basic_integer<byte> b(il2);
+    basic_integer<byte> expected(il3);
 
     a *= b;
 
@@ -655,9 +655,9 @@ TEST(Test_Bigint, Division)
         std::initializer_list<byte> il2 = {0x06};
         std::initializer_list<byte> il3 = {0x2a, 0xaa};
 
-        basic_int<byte> a(il1);
-        basic_int<byte> b(il2);
-        basic_int<byte> expected_div(il3);
+        basic_integer<byte> a(il1);
+        basic_integer<byte> b(il2);
+        basic_integer<byte> expected_div(il3);
 
         auto c = a / b;
 
@@ -669,9 +669,9 @@ TEST(Test_Bigint, Division)
         std::initializer_list<byte> il2 = {0xf6, 0xf5};
         std::initializer_list<byte> il3 = {0x01};
 
-        basic_int<byte> a(il1);
-        basic_int<byte> b(il2);
-        basic_int<byte> expected_div(il3);
+        basic_integer<byte> a(il1);
+        basic_integer<byte> b(il2);
+        basic_integer<byte> expected_div(il3);
 
         auto c = a / b;
 
@@ -683,9 +683,9 @@ TEST(Test_Bigint, Division)
         std::initializer_list<byte> il2 = {0xf6, 0xf5, 0x03, 17};
         std::initializer_list<byte> il3 = {0x01, 0x09, 0x51, 0x3e};
 
-        basic_int<byte> a(il1);
-        basic_int<byte> b(il2);
-        basic_int<byte> expected_div(il3);
+        basic_integer<byte> a(il1);
+        basic_integer<byte> b(il2);
+        basic_integer<byte> expected_div(il3);
 
         auto c = a / b;
 
@@ -697,9 +697,9 @@ TEST(Test_Bigint, Division)
         std::initializer_list<byte> il2 = {0x17, 0x12};
         std::initializer_list<byte> il3 = {0x04, 0xd0};
 
-        basic_int<byte> a(il1);
-        basic_int<byte> b(il2, true);
-        basic_int<byte> expected_div(il3, true);
+        basic_integer<byte> a(il1);
+        basic_integer<byte> b(il2, true);
+        basic_integer<byte> expected_div(il3, true);
 
         auto c = a / b;
 
@@ -714,9 +714,9 @@ TEST(Test_Bigint, DivisionAssignment)
         std::initializer_list<byte> il2 = {0x06};
         std::initializer_list<byte> il3 = {0x2a, 0xaa};
 
-        basic_int<byte> a(il1);
-        basic_int<byte> b(il2);
-        basic_int<byte> expected_div(il3);
+        basic_integer<byte> a(il1);
+        basic_integer<byte> b(il2);
+        basic_integer<byte> expected_div(il3);
 
         a /= b;
 
@@ -727,17 +727,17 @@ TEST(Test_Bigint, DivisionAssignment)
 TEST(Test_Bigint, LeftShift)
 {
     {
-        basic_int<byte> a = {0x22, 0x12};
-        basic_int<byte> b(a << 1);
-        basic_int<byte> expect = {0x44, 0x24};
+        basic_integer<byte> a = {0x22, 0x12};
+        basic_integer<byte> b(a << 1);
+        basic_integer<byte> expect = {0x44, 0x24};
 
         EXPECT_TRUE(expect == b);
     }
 
     {
-        basic_int<byte> a = {0x32, 0x06, 0x12, 0x22, 0x12};
-        basic_int<byte> c(a << 2);
-        basic_int<byte> expect = {0xC8, 0x18, 0x48, 0x88, 0x48};
+        basic_integer<byte> a = {0x32, 0x06, 0x12, 0x22, 0x12};
+        basic_integer<byte> c(a << 2);
+        basic_integer<byte> expect = {0xC8, 0x18, 0x48, 0x88, 0x48};
 
         EXPECT_TRUE(expect == c);
     }
@@ -746,19 +746,19 @@ TEST(Test_Bigint, LeftShift)
 TEST(Test_Bigint, LeftShiftAssigment)
 {
     {
-        basic_int<byte> a = {0x22, 0x12};
+        basic_integer<byte> a = {0x22, 0x12};
 
         a <<= 1;
 
-        basic_int<byte> expect = {0x44, 0x24};
+        basic_integer<byte> expect = {0x44, 0x24};
 
         EXPECT_TRUE(expect == a);
     }
 
     {
-        basic_int<byte> a = {0x32, 0x06, 0x12, 0x22, 0x12};
-        basic_int<byte> c(a << 2);
-        basic_int<byte> expect = {0xC8, 0x18, 0x48, 0x88, 0x48};
+        basic_integer<byte> a = {0x32, 0x06, 0x12, 0x22, 0x12};
+        basic_integer<byte> c(a << 2);
+        basic_integer<byte> expect = {0xC8, 0x18, 0x48, 0x88, 0x48};
 
         EXPECT_TRUE(expect == c);
     }
@@ -767,17 +767,17 @@ TEST(Test_Bigint, LeftShiftAssigment)
 TEST(Test_Bigint, RightShift)
 {
     {
-        basic_int<byte> a = {0x22, 0x12};
-        basic_int<byte> b(a >> 1);
-        basic_int<byte> expect = {0x11, 0x09};
+        basic_integer<byte> a = {0x22, 0x12};
+        basic_integer<byte> b(a >> 1);
+        basic_integer<byte> expect = {0x11, 0x09};
 
         EXPECT_TRUE(expect == b);
     }
 
     {
-        basic_int<byte> a = {0x32, 0x06, 0x12, 0x22, 0x12};
-        basic_int<byte> c(a >> 2);
-        basic_int<byte> expect = {0x0C, 0x81, 0x84, 0x88, 0x84};
+        basic_integer<byte> a = {0x32, 0x06, 0x12, 0x22, 0x12};
+        basic_integer<byte> c(a >> 2);
+        basic_integer<byte> expect = {0x0C, 0x81, 0x84, 0x88, 0x84};
 
         EXPECT_TRUE(expect == c);
     }
@@ -786,21 +786,21 @@ TEST(Test_Bigint, RightShift)
 TEST(Test_Bigint, RightShiftAssignment)
 {
     {
-        basic_int<byte> a = {0x22, 0x12};
+        basic_integer<byte> a = {0x22, 0x12};
 
         a >>= 1;
 
-        basic_int<byte> expect = {0x11, 0x09};
+        basic_integer<byte> expect = {0x11, 0x09};
 
         EXPECT_TRUE(expect == a);
     }
 
     {
-        basic_int<byte> a = {0x32, 0x06, 0x12, 0x22, 0x12};
+        basic_integer<byte> a = {0x32, 0x06, 0x12, 0x22, 0x12};
 
         a >>= 2;
 
-        basic_int<byte> expect = {0x0C, 0x81, 0x84, 0x88, 0x84};
+        basic_integer<byte> expect = {0x0C, 0x81, 0x84, 0x88, 0x84};
 
         EXPECT_TRUE(expect == a);
     }
@@ -809,43 +809,43 @@ TEST(Test_Bigint, RightShiftAssignment)
 TEST(Test_Bigint, Less)
 {
     {
-        basic_int<byte> a = {0x22, 0x12};
-        basic_int<byte> b = {0x22, 0x12};
+        basic_integer<byte> a = {0x22, 0x12};
+        basic_integer<byte> b = {0x22, 0x12};
 
         EXPECT_FALSE(a < b);
     }
 
     {
-        basic_int<byte> a = {0x38, 0x22, 0x12};
-        basic_int<byte> b = {0x22, 0x12};
+        basic_integer<byte> a = {0x38, 0x22, 0x12};
+        basic_integer<byte> b = {0x22, 0x12};
 
         EXPECT_FALSE(a < b);
     }
 
     {
-        basic_int<byte> a = {0x21, 0x12};
-        basic_int<byte> b = {0x22, 0x12};
+        basic_integer<byte> a = {0x21, 0x12};
+        basic_integer<byte> b = {0x22, 0x12};
 
         EXPECT_TRUE(a < b);
     }
 
     {
-        basic_int<byte> a = {0x00, 0x00};
-        basic_int<byte> b = {0x22, 0x12};
+        basic_integer<byte> a = {0x00, 0x00};
+        basic_integer<byte> b = {0x22, 0x12};
 
         EXPECT_TRUE(a < b);
     }
 
     {
-        basic_int<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
-        basic_int<byte> b = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
+        basic_integer<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
+        basic_integer<byte> b = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
 
         EXPECT_FALSE(a < b);
     }
 
     {
-        basic_int<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
-        basic_int<byte> b = {0x01, 0x02, 0x03, 0x05, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
+        basic_integer<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
+        basic_integer<byte> b = {0x01, 0x02, 0x03, 0x05, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
 
         EXPECT_TRUE(a < b);
     }
@@ -854,8 +854,8 @@ TEST(Test_Bigint, Less)
 TEST(Test_Bigint, LessEqual)
 {
     {
-        basic_int<byte> a = {0x22, 0x12};
-        basic_int<byte> b = {0x22, 0x12};
+        basic_integer<byte> a = {0x22, 0x12};
+        basic_integer<byte> b = {0x22, 0x12};
 
         EXPECT_TRUE(a <= b);
     }
@@ -864,36 +864,36 @@ TEST(Test_Bigint, LessEqual)
         std::initializer_list<byte> il1 = {0x38, 0x22, 0x12};
         std::initializer_list<byte> il2 = {0x22, 0x12};
 
-        basic_int<byte> a(il1);
-        basic_int<byte> b(il2, true);
+        basic_integer<byte> a(il1);
+        basic_integer<byte> b(il2, true);
 
         EXPECT_FALSE(a <= b);
     }
 
     {
-        basic_int<byte> a = {0x21, 0x12};
-        basic_int<byte> b = {0x22, 0x12};
+        basic_integer<byte> a = {0x21, 0x12};
+        basic_integer<byte> b = {0x22, 0x12};
 
         EXPECT_TRUE(a <= b);
     }
 
     {
-        basic_int<byte> a = {0x00, 0x00};
-        basic_int<byte> b = {0x22, 0x12};
+        basic_integer<byte> a = {0x00, 0x00};
+        basic_integer<byte> b = {0x22, 0x12};
 
         EXPECT_TRUE(a <= b);
     }
 
     {
-        basic_int<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
-        basic_int<byte> b = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
+        basic_integer<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
+        basic_integer<byte> b = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
 
         EXPECT_TRUE(a <= b);
     }
 
     {
-        basic_int<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
-        basic_int<byte> b = {0x01, 0x02, 0x03, 0x05, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
+        basic_integer<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
+        basic_integer<byte> b = {0x01, 0x02, 0x03, 0x05, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
 
         EXPECT_TRUE(a <= b);
     }
@@ -902,8 +902,8 @@ TEST(Test_Bigint, LessEqual)
         std::initializer_list<byte> il1 = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
         std::initializer_list<byte> il2 = {0x01, 0x02, 0x03, 0x18, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
 
-        basic_int<byte> a(il1, true);
-        basic_int<byte> b(il2);
+        basic_integer<byte> a(il1, true);
+        basic_integer<byte> b(il2);
 
         EXPECT_TRUE(a <= b);
     }
@@ -912,43 +912,43 @@ TEST(Test_Bigint, LessEqual)
 TEST(Test_Bigint, Greather)
 {
     {
-        basic_int<byte> a = {0x22, 0x12};
-        basic_int<byte> b = {0x22, 0x12};
+        basic_integer<byte> a = {0x22, 0x12};
+        basic_integer<byte> b = {0x22, 0x12};
 
         EXPECT_FALSE(a > b);
     }
 
     {
-        basic_int<byte> a = {0x38, 0x22, 0x12};
-        basic_int<byte> b = {0x22, 0x12};
+        basic_integer<byte> a = {0x38, 0x22, 0x12};
+        basic_integer<byte> b = {0x22, 0x12};
 
         EXPECT_TRUE(a > b);
     }
 
     {
-        basic_int<byte> a = {0x21, 0x12};
-        basic_int<byte> b = {0x22, 0x12};
+        basic_integer<byte> a = {0x21, 0x12};
+        basic_integer<byte> b = {0x22, 0x12};
 
         EXPECT_FALSE(a > b);
     }
 
     {
-        basic_int<byte> a = {0x00, 0x00};
-        basic_int<byte> b = {0x22, 0x12};
+        basic_integer<byte> a = {0x00, 0x00};
+        basic_integer<byte> b = {0x22, 0x12};
 
         EXPECT_FALSE(a > b);
     }
 
     {
-        basic_int<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
-        basic_int<byte> b = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
+        basic_integer<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
+        basic_integer<byte> b = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
 
         EXPECT_FALSE(a > b);
     }
 
     {
-        basic_int<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
-        basic_int<byte> b = {0x01, 0x02, 0x03, 0x05, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
+        basic_integer<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
+        basic_integer<byte> b = {0x01, 0x02, 0x03, 0x05, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
 
         EXPECT_FALSE(a > b);
     }
@@ -957,43 +957,43 @@ TEST(Test_Bigint, Greather)
 TEST(Test_Bigint, GreatherEqual)
 {
     {
-        basic_int<byte> a = {0x22, 0x12};
-        basic_int<byte> b = {0x22, 0x12};
+        basic_integer<byte> a = {0x22, 0x12};
+        basic_integer<byte> b = {0x22, 0x12};
 
         EXPECT_TRUE(a >= b);
     }
 
     {
-        basic_int<byte> a = {0x38, 0x22, 0x12};
-        basic_int<byte> b = {0x22, 0x12};
+        basic_integer<byte> a = {0x38, 0x22, 0x12};
+        basic_integer<byte> b = {0x22, 0x12};
 
         EXPECT_TRUE(a >= b);
     }
 
     {
-        basic_int<byte> a = {0x21, 0x12};
-        basic_int<byte> b = {0x22, 0x12};
+        basic_integer<byte> a = {0x21, 0x12};
+        basic_integer<byte> b = {0x22, 0x12};
 
         EXPECT_FALSE(a >= b);
     }
 
     {
-        basic_int<byte> a = {0x00, 0x00};
-        basic_int<byte> b = {0x22, 0x12};
+        basic_integer<byte> a = {0x00, 0x00};
+        basic_integer<byte> b = {0x22, 0x12};
 
         EXPECT_FALSE(a >= b);
     }
 
     {
-        basic_int<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
-        basic_int<byte> b = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
+        basic_integer<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
+        basic_integer<byte> b = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
 
         EXPECT_TRUE(a >= b);
     }
 
     {
-        basic_int<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
-        basic_int<byte> b = {0x01, 0x02, 0x03, 0x05, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
+        basic_integer<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
+        basic_integer<byte> b = {0x01, 0x02, 0x03, 0x05, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
 
         EXPECT_FALSE(a >= b);
     }
@@ -1002,43 +1002,43 @@ TEST(Test_Bigint, GreatherEqual)
 TEST(Test_Bigint, Equal)
 {
     {
-        basic_int<byte> a = {0x22, 0x12};
-        basic_int<byte> b = {0x22, 0x12};
+        basic_integer<byte> a = {0x22, 0x12};
+        basic_integer<byte> b = {0x22, 0x12};
 
         EXPECT_TRUE(a == b);
     }
 
     {
-        basic_int<byte> a = {0x38, 0x22, 0x12};
-        basic_int<byte> b = {0x22, 0x12};
+        basic_integer<byte> a = {0x38, 0x22, 0x12};
+        basic_integer<byte> b = {0x22, 0x12};
 
         EXPECT_FALSE(a == b);
     }
 
     {
-        basic_int<byte> a = {0x21, 0x12};
-        basic_int<byte> b = {0x22, 0x12};
+        basic_integer<byte> a = {0x21, 0x12};
+        basic_integer<byte> b = {0x22, 0x12};
 
         EXPECT_FALSE(a == b);
     }
 
     {
-        basic_int<byte> a = {0x00, 0x00};
-        basic_int<byte> b = {0x22, 0x12};
+        basic_integer<byte> a = {0x00, 0x00};
+        basic_integer<byte> b = {0x22, 0x12};
 
         EXPECT_FALSE(a == b);
     }
 
     {
-        basic_int<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
-        basic_int<byte> b = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
+        basic_integer<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
+        basic_integer<byte> b = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
 
         EXPECT_TRUE(a == b);
     }
 
     {
-        basic_int<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
-        basic_int<byte> b = {0x01, 0x02, 0x03, 0x05, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
+        basic_integer<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
+        basic_integer<byte> b = {0x01, 0x02, 0x03, 0x05, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
 
         EXPECT_FALSE(a == b);
     }
@@ -1046,15 +1046,15 @@ TEST(Test_Bigint, Equal)
     std::initializer_list<byte> il = {0x01, 0x02};
 
     {
-        basic_int<byte> a(il, true); // -258
-        basic_int<byte> b(il, true); // -258
+        basic_integer<byte> a(il, true); // -258
+        basic_integer<byte> b(il, true); // -258
 
         EXPECT_TRUE(a == b);
     }
 
     {
-        basic_int<byte> a(il, false); // 258
-        basic_int<byte> b(il, true);  // -258
+        basic_integer<byte> a(il, false); // 258
+        basic_integer<byte> b(il, true);  // -258
 
         EXPECT_FALSE(a == b);
     }
@@ -1062,7 +1062,7 @@ TEST(Test_Bigint, Equal)
 
 TEST(Test_Bigint, Inequality)
 {
-    auto InequalityTest = [](const basic_int<byte>& arg1, const basic_int<byte>& arg2, bool expected) {
+    auto InequalityTest = [](const basic_integer<byte>& arg1, const basic_integer<byte>& arg2, bool expected) {
         bool eq = arg1 != arg2;
         EXPECT_TRUE(eq == expected);
     };
@@ -1078,7 +1078,7 @@ TEST(Test_Bigint, Inequality)
 TEST(Test_Bigint, BOOL)
 {
     {
-        basic_int<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
+        basic_integer<byte> a = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c};
 
         bool f = (bool)a;
 
@@ -1086,7 +1086,7 @@ TEST(Test_Bigint, BOOL)
     }
 
     {
-        basic_int<byte> a = {0x00, 0x00, 0x00};
+        basic_integer<byte> a = {0x00, 0x00, 0x00};
 
         bool f = (bool)a;
 
@@ -1097,10 +1097,10 @@ TEST(Test_Bigint, BOOL)
 TEST(Test_Bigint, Gcd)
 {
     {
-        basic_int<byte> a      = {0x04, 0x2f};       // 1071
-        basic_int<byte> b      = {0x01, 0xce};       // 462
-        basic_int<byte> nod    = {0x15};             // 21
-        basic_int<byte> actual = {0x00, 0x00, 0x00}; //
+        basic_integer<byte> a      = {0x04, 0x2f};       // 1071
+        basic_integer<byte> b      = {0x01, 0xce};       // 462
+        basic_integer<byte> nod    = {0x15};             // 21
+        basic_integer<byte> actual = {0x00, 0x00, 0x00}; //
 
         actual = cry::gcd(a, b); // a.gcd(b);
 
@@ -1110,10 +1110,10 @@ TEST(Test_Bigint, Gcd)
     }
 
     {
-        basic_int<byte> a      = {18};   //
-        basic_int<byte> b      = {30};   //
-        basic_int<byte> nod    = {6};    //
-        basic_int<byte> actual = {0x00}; //
+        basic_integer<byte> a      = {18};   //
+        basic_integer<byte> b      = {30};   //
+        basic_integer<byte> nod    = {6};    //
+        basic_integer<byte> actual = {0x00}; //
 
         actual = cry::gcd(a, b); // a.gcd(b);
 
@@ -1123,10 +1123,10 @@ TEST(Test_Bigint, Gcd)
     }
 
     {
-        basic_int<byte> a      = {0x6b, 0x7d}; //
-        basic_int<byte> b      = {0x31, 0x4a}; //
-        basic_int<byte> nod    = {0x01};       //
-        basic_int<byte> actual = {0x00, 0x00}; //
+        basic_integer<byte> a      = {0x6b, 0x7d}; //
+        basic_integer<byte> b      = {0x31, 0x4a}; //
+        basic_integer<byte> nod    = {0x01};       //
+        basic_integer<byte> actual = {0x00, 0x00}; //
 
         actual = cry::gcd(a, b); // a.gcd(b);
 
@@ -1138,8 +1138,8 @@ TEST(Test_Bigint, Gcd)
 
 TEST(Test_Bigint, ModInvserse)
 {
-    auto ModInverseTest = [](const basic_int<byte>& arg1, const basic_int<byte>& mod, const basic_int<byte>& inv) {
-        basic_int<byte> actual;
+    auto ModInverseTest = [](const basic_integer<byte>& arg1, const basic_integer<byte>& mod, const basic_integer<byte>& inv) {
+        basic_integer<byte> actual;
 
         bool exists = cry::mod_inverse(actual, arg1, mod); // arg1.mod_inverse(actual, mod);
 
@@ -1158,13 +1158,13 @@ TEST(Test_Bigint, ModInvserse)
 TEST(Test_Bigint, DivRem)
 {
     {
-        basic_int<byte> expected_div(1);
-        basic_int<byte> expected_rem(0);
+        basic_integer<byte> expected_div(1);
+        basic_integer<byte> expected_rem(0);
 
-        basic_int<byte> a = 2;
-        basic_int<byte> b = 2;
+        basic_integer<byte> a = 2;
+        basic_integer<byte> b = 2;
 
-        basic_int<byte> q, r;
+        basic_integer<byte> q, r;
 		q = a / b; 
 		r = a % b;
 
@@ -1177,13 +1177,13 @@ TEST(Test_Bigint, DivRem)
         std::initializer_list<byte> il2 = {0x06};
         std::initializer_list<byte> il3 = {0x2a, 0xaa};
 
-        basic_int<byte> a(il1);
-        basic_int<byte> b(il2);
-        basic_int<byte> expected_div(il3);
-        basic_int<byte> expected_rem({(byte)0x03});
+        basic_integer<byte> a(il1);
+        basic_integer<byte> b(il2);
+        basic_integer<byte> expected_div(il3);
+        basic_integer<byte> expected_rem({(byte)0x03});
 
-        basic_int<byte> q;
-        basic_int<byte> r;
+        basic_integer<byte> q;
+        basic_integer<byte> r;
 
 		q = a / b;
 		r = a % b;
@@ -1193,13 +1193,13 @@ TEST(Test_Bigint, DivRem)
     }
 
     {
-        basic_int<byte> a({0x10, 0x22, 0xd2, 0x74, 0x02, 0x72, 0x19, 0x2d});
-        basic_int<byte> b({0x98, 0x66, 0x06, 0x3b});
-        basic_int<byte> expected_div({0x1b, 0x1a, 0xfb, 0x05});
-        basic_int<byte> expected_rem({0x25, 0x5a, 0x21, 0x06});
+        basic_integer<byte> a({0x10, 0x22, 0xd2, 0x74, 0x02, 0x72, 0x19, 0x2d});
+        basic_integer<byte> b({0x98, 0x66, 0x06, 0x3b});
+        basic_integer<byte> expected_div({0x1b, 0x1a, 0xfb, 0x05});
+        basic_integer<byte> expected_rem({0x25, 0x5a, 0x21, 0x06});
 
-        basic_int<byte> q;
-        basic_int<byte> r;
+        basic_integer<byte> q;
+        basic_integer<byte> r;
 
 		q = a / b;
 		r = a % b;
@@ -1211,7 +1211,7 @@ TEST(Test_Bigint, DivRem)
 
 TEST(Test_Bigint, EvenOdd)
 {
-    auto EvenOddTest = [](const basic_int<byte>& argEven, bool flagEven, const basic_int<byte>& argOdd, bool flagOdd) {
+    auto EvenOddTest = [](const basic_integer<byte>& argEven, bool flagEven, const basic_integer<byte>& argOdd, bool flagOdd) {
         bool even = cry::is_even(argEven);
         EXPECT_TRUE(even == flagEven);
 
@@ -1227,8 +1227,8 @@ TEST(Test_Bigint, EvenOdd)
 
 TEST(Test_Bigint, PowMod)
 {
-    auto ModPowTest = [](const basic_int<byte>& a, const basic_int<byte>& exponent, const basic_int<byte>& modulus, const basic_int<byte>& expected) {
-        basic_int<byte> actual = cry::pow_mod(a, exponent, modulus);
+    auto ModPowTest = [](const basic_integer<byte>& a, const basic_integer<byte>& exponent, const basic_integer<byte>& modulus, const basic_integer<byte>& expected) {
+        basic_integer<byte> actual = cry::pow_mod(a, exponent, modulus);
 
         bool f = (expected == actual);
 
@@ -1247,9 +1247,9 @@ TEST(Test_Bigint, PowMod)
 
 TEST(Test_Bigint, StringInit)
 {
-    auto StringInit_EXPECT_TRUE = [](const std::string& hex, const basic_int<byte>& expected) {
+    auto StringInit_EXPECT_TRUE = [](const std::string& hex, const basic_integer<byte>& expected) {
 
-        basic_int<byte> x(hex);
+        basic_integer<byte> x(hex);
 
         bool eq = (x == expected);
 
@@ -1258,7 +1258,7 @@ TEST(Test_Bigint, StringInit)
 
     auto StringInit_EXPECT_ANY_THROW = [](const std::string& hex) {
 
-        EXPECT_ANY_THROW(basic_int<byte> x(hex));
+        EXPECT_ANY_THROW(basic_integer<byte> x(hex));
 
     };
 
@@ -1276,9 +1276,9 @@ TEST(Test_Bigint, OS2IP_IP2OS)
 {
     {
         std::vector<uint8_t> octets = {1, 2, 3, 4, 5, 6, 7, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
-        auto ip                     = OS2IP<bigint8_t>()(octets);
+        auto ip                     = OS2IP<bigint_t>()(octets);
 
-        auto os = I2OSP<bigint8_t>()(ip);
+        auto os = I2OSP<bigint_t>()(ip);
 
         ASSERT_BYTES_EQ(octets.begin(), octets.end(), os.begin(), os.end());
     }

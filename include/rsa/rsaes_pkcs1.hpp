@@ -6,14 +6,14 @@
 #define RSAES_PKCS1_H
 
 #include "algorithm.hpp"
-#include "basic_int.hpp"
+#include "basic_integer.hpp"
 #include "eme_pkcs1.hpp"
 #include "os2ip.hpp"
 
 namespace cry
 {
 
-    template <class Encoder = eme_pkcs1, class Integer = bigint8_t>
+    template <class Encoder = eme_pkcs1, class Integer = bigint_t>
     struct rsaes_pkcs1
     {
         /**
@@ -34,7 +34,7 @@ namespace cry
             const auto k = (modBits + 7) / 8;
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            // 1. Apply the EME-PKCS1-v1_5 encoding operation to the message M to produce an encoded message EM of length k–1 octets:
+            // 1. Apply the EME-PKCS1-v1_5 encoding operation to the message M to produce an encoded message EM of length kï¿½1 octets:
             std::vector<uint8_t> EM(k);
             Encoder::encode(first, last, EM.begin(), k /* - 1*/);
 
@@ -73,7 +73,7 @@ namespace cry
             const auto k = (modBits + 7) / 8;
 
             ////////////////////////////////////////////////////////////////////////////////////////////
-            // 1. If the length of the ciphertext C is not k octets, output “decryption error” and stop.
+            // 1. If the length of the ciphertext C is not k octets, output ï¿½decryption errorï¿½ and stop.
             auto cLen = std::distance(first, last);
             if (cLen != k)
             {
@@ -89,7 +89,7 @@ namespace cry
             const Integer m = cry::pow_mod(c, d, n);
 
             /////////////////////////////////////////////////////////////////////////////////////////
-            // 4. Convert the message representative m to an encoded message EM of length k–1 octets:
+            // 4. Convert the message representative m to an encoded message EM of length kï¿½1 octets:
             const std::vector<uint8_t> EM = I2OSP<Integer>()(m);
 
             result = Encoder::decode(EM.begin(), EM.end(), result);

@@ -2,7 +2,7 @@
 #ifndef ALGORITHM_HPP
 #define ALGORITHM_HPP
 
-#include "basic_int.hpp"
+#include "basic_integer.hpp"
 #include "os2ip.hpp"
 
 #include <algorithm>
@@ -26,7 +26,7 @@ namespace cry
         };
 
         template <class P>
-        struct is_bigint<cry::basic_int<P>>
+        struct is_bigint<cry::basic_integer<P>>
         {
             static constexpr bool value = true;
         };

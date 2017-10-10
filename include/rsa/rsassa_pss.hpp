@@ -5,12 +5,12 @@
 #ifndef RSAPSS_PSS_H
 #define RSAPSS_PSS_H
 
-#include "basic_int.hpp"
+#include "basic_integer.hpp"
 #include "emsa_pss.hpp"
 
 namespace cry
 {
-    template <class Encoder = emsa_pss<>, class Integer = bigint8_t>
+    template <class Encoder = emsa_pss<>, class Integer = bigint_t>
     struct rsassa_pss
     {
         /**
