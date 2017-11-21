@@ -10,7 +10,6 @@
 #include <cctype>
 #include <cstdint>
 
-#include "encoders.hpp"
 #include <cry_engine.hpp>
 
 using namespace std;
@@ -239,7 +238,7 @@ namespace cry
 
             std::vector<IntType> out(max);
 
-            Cry_and(&out[0] + out.size(), &lhs.m_Polynomial[0], &lhs.m_Polynomial[0] + lhs.m_Polynomial.size(), &rhs.m_Polynomial[0], &rhs.m_Polynomial[0] + rhs.m_Polynomial.size());
+            Cry_and(&out[0] + out.size(), &a[0], &a[0] + a.size(), &b[0], &b[0] + b.size());
 
             return basic_integer(out);
         }
@@ -253,7 +252,7 @@ namespace cry
 
             std::vector<IntType> out(max);
 
-            Cry_or(&out[0] + out.size(), &lhs.m_Polynomial[0], &lhs.m_Polynomial[0] + lhs.m_Polynomial.size(), &rhs.m_Polynomial[0], &rhs.m_Polynomial[0] + rhs.m_Polynomial.size());
+            Cry_or(&out[0] + out.size(), &a[0], &a[0] + a.size(), &b[0], &b[0] + b.size());
 
             return basic_integer(out);
         }
@@ -293,7 +292,7 @@ namespace cry
 
                     return basic_integer(out, rhs.m_Negative);
                 }
-                else if (cmp == +1)
+                if (cmp == +1)
                 {
                     // (|a| > |b|) ==> (|a| - |b|)
                     Cry_subtract(&out[0] + out.size(), &a[0], &a[0] + lsize, &b[0], &b[0] + rsize);
@@ -322,8 +321,9 @@ namespace cry
             if (lhs.m_Negative ^ rhs.m_Negative)
             {
                 basic_integer temp((cmp == -1) ? rhs : lhs);
+                auto& out = temp.m_Polynomial;
 
-                Cry_add(&temp.m_Polynomial[0] + temp.m_Polynomial.size(), &a[0], &a[0] + a.size(), &b[0], &b[0] + b.size());
+                Cry_add(&out[0] + out.size(), &a[0], &a[0] + a.size(), &b[0], &b[0] + b.size());
 
                 temp.m_Negative = lhs.m_Negative;
 
@@ -334,8 +334,9 @@ namespace cry
             if (cmp == -1)
             { // (|a| < |b|) ==> (|b| - |a|)
                 basic_integer temp(rhs);
+                auto& out = temp.m_Polynomial;
 
-                Cry_subtract(&temp.m_Polynomial[0] + temp.m_Polynomial.size(), &b[0], &b[0] + b.size(), &a[0], &a[0] + a.size());
+                Cry_subtract(&out[0] + out.size(), &b[0], &b[0] + b.size(), &a[0], &a[0] + a.size());
 
                 temp.m_Negative = (!lhs.m_Negative & !rhs.m_Negative);
 
@@ -345,8 +346,9 @@ namespace cry
             {
                 // (|a| > |b|) ==> (|a| - |b|)
                 basic_integer temp(lhs);
+                auto& out = temp.m_Polynomial;
 
-                Cry_subtract(&temp.m_Polynomial[0] + temp.m_Polynomial.size(), &a[0], &a[0] + a.size(), &b[0], &b[0] + b.size());
+                Cry_subtract(&out[0] + out.size(), &a[0], &a[0] + a.size(), &b[0], &b[0] + b.size());
 
                 temp.m_Negative = (lhs.m_Negative & rhs.m_Negative);
 
@@ -513,7 +515,9 @@ namespace cry
     {
         basic_integer temp(*this);
 
-        Cry_inverse(&temp.m_Polynomial[0], &temp.m_Polynomial[0] + temp.m_Polynomial.size());
+        auto& a = temp.m_Polynomial;
+
+        Cry_inverse(&a[0], &a[0] + a.size());
 
         return temp;
     }
@@ -664,13 +668,16 @@ namespace cry
     template <class T>
     void basic_integer<T>::divide(basic_integer<T>& q, basic_integer<T>& r, const basic_integer<T>& other) const
     {
-        const bool is_zero = Cry_is_zero(&other.m_Polynomial[0], &other.m_Polynomial[0] + other.m_Polynomial.size());
+        const auto& a = m_Polynomial;
+        const auto& b = other.m_Polynomial;
+
+        const bool is_zero = Cry_is_zero(&b[0], &b[0] + b.size());
         if (is_zero)
         {
             throw std::runtime_error("division by zero");
         }
 
-        const short cmp = Cry_compare(&m_Polynomial[0], &m_Polynomial[0] + m_Polynomial.size(), &other.m_Polynomial[0], &other.m_Polynomial[0] + other.m_Polynomial.size());
+        const short cmp = Cry_compare(&a[0], &a[0] + a.size(), &b[0], &b[0] + b.size());
         if (cmp == -1)
         {
             q = basic_integer<T>();
@@ -678,12 +685,12 @@ namespace cry
             return;
         }
 
-        size_t l_size = this->m_Polynomial.size();
+        size_t l_size = a.size();
 
         std::vector<T> v_div(l_size);
         std::vector<T> v_rem(l_size);
 
-        Cry_divide(&v_div[0] + v_div.size(), &v_rem[0] + v_rem.size(), &m_Polynomial[0], &m_Polynomial[0] + m_Polynomial.size(), &other.m_Polynomial[0], &other.m_Polynomial[0] + other.m_Polynomial.size());
+        Cry_divide(&v_div[0] + v_div.size(), &v_rem[0] + v_rem.size(), &a[0], &a[0] + a.size(), &b[0], &b[0] + b.size());
 
         const basic_integer<T> div(v_div, this->m_Negative ^ other.m_Negative);
         const basic_integer<T> rem(v_rem, this->m_Negative ^ other.m_Negative);
@@ -692,7 +699,7 @@ namespace cry
         r = rem;
     }
 
-    using bigint_t  = basic_integer<uint32_t>;
+    using bigint_t   = basic_integer<uint32_t>;
     using bigint16_t = basic_integer<uint16_t>;
     using bigint32_t = basic_integer<uint32_t>;
     using bigint64_t = basic_integer<uint64_t>;
