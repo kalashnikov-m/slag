@@ -1283,7 +1283,7 @@ TEST(Test_Bigint, OS2IP_IP2OS)
         ASSERT_BYTES_EQ(octets.begin(), octets.end(), os.begin(), os.end());
     }
 
-    {
+    /*{
         std::vector<uint8_t> octets = {1, 2, 3, 4, 5, 6, 7, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
         auto ip                     = OS2IP<bigint16_t>()(octets);
 
@@ -1308,5 +1308,5 @@ TEST(Test_Bigint, OS2IP_IP2OS)
 		auto os = I2OSP<bigint64_t>()(ip);
 
 		ASSERT_BYTES_EQ(octets.begin(), octets.end(), os.begin(), os.end());
-	}
+	}*/
 }
