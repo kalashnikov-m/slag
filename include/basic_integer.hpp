@@ -571,24 +571,46 @@ namespace cry
     }
 
     template <class X>
-    ostream& operator<<(ostream& stream, const basic_integer<X>& huge)
+    ostream& operator<<(ostream& outStream, const basic_integer<X>& huge)
     {
         stringstream ss;
 
-        ss.flags(std::ios::hex | std::ios::uppercase);
-        ss.fill('0');
+        const auto flags = outStream.flags();
 
-        const std::vector<X>& buf = huge.m_Polynomial;
-        for (const auto& x : buf)
+        ss.flags(flags);
+
+        auto octets = I2OSP<basic_integer<X>>()(huge);
+
+        ////////////
+        // decimal
+        if (flags & std::ios::dec)
         {
-            ss.width(2);
-            ss << static_cast<uint16_t>(x);
+            auto dec = hex2dec(octets);
+            ss << dec;
+        }
+        /////////
+        // hex
+        else if (flags & std::ios::hex)
+        {
+            ss.fill('0');
+
+            auto cit(octets.begin());
+            const auto cend(octets.end());
+            for (; cit != cend && *cit == 0x00; ++cit)
+                ;
+
+            for (; cit != cend; ++cit)
+            {
+                ss.width(2);
+                ss << static_cast<uint16_t>(*cit);
+            }
         }
 
         if (huge.m_Negative)
-            stream << "-";
-        stream << ss.str();
-        return stream;
+            outStream << "-";
+
+        outStream << ss.str();
+        return outStream;
     }
 
     template <class T>
@@ -699,10 +721,60 @@ namespace cry
         r = rem;
     }
 
-    using bigint_t   = basic_integer<uint32_t>;
-    using bigint16_t = basic_integer<uint16_t>;
-    using bigint32_t = basic_integer<uint32_t>;
-    using bigint64_t = basic_integer<uint64_t>;
+    using bigint_t = basic_integer<uint32_t>;
+}
+
+namespace
+{
+    size_t uiceil(double x)
+    {
+        if (x < 0)
+            return 0;
+
+        auto c = static_cast<size_t>(x);
+        if ((x - c) > 0.0)
+            c++;
+
+        return c;
+    }
+
+    std::string hex2dec(const std::vector<uint8_t>& bytes)
+    {
+        const char DEC_DIGITS[] = "0123456789";
+        const auto nbytes       = bytes.size();
+
+        const auto factor = 2.40824; /* log(256)/log(10)=2.40824 */
+        const auto declen = uiceil(factor * nbytes);
+
+        std::vector<uint8_t> decdigits(declen);
+
+        for (size_t i = 0; i < nbytes; i++)
+        {
+            uint32_t temp = bytes[i];
+            for (size_t j = declen; j > 0; j--)
+            {
+                temp += static_cast<uint32_t>(decdigits[j - 1]) * 256;
+                decdigits[j - 1] = static_cast<uint8_t>(temp % 10);
+                temp /= 10;
+            }
+        }
+
+        /////////////////////////
+        // we have a hex array
+        std::string decimal;
+
+        auto cit(decdigits.begin());
+        const auto cend(decdigits.end());
+        for (; cit != cend && *cit == 0x00; ++cit)
+            ;
+
+        for (; cit != cend; ++cit)
+        {
+            decimal.push_back(DEC_DIGITS[*cit]);
+        }
+
+        return decimal;
+    }
 }
 
 #endif
