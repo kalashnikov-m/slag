@@ -29,7 +29,7 @@ namespace myNamespace
         std::cout << "Phi: " << Phi << std::endl;
 
         T D;
-        auto f = cry::mod_inverse(D, e, Phi);
+        const bool f = cry::mod_inverse(D, T(e), Phi);
         if (!f)
         {
             throw std::runtime_error("invserse does not exists");

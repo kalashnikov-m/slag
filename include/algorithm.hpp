@@ -384,19 +384,19 @@ namespace cry
 
         /////////////////////////////////////////////////////////////
         // 2. calculate remainders of primeCandidate % primes2000[i]
-	    const size_t nprimes = sizeof(primes2K) / sizeof(uint16_t);
+        const size_t nprimes = sizeof(primes2K) / sizeof(uint16_t);
         std::vector<uint32_t> remainders;
         remainders.reserve(nprimes);
 
         for (auto prime : primes2K)
         {
-			T rem = primeCandidate % prime;
+            T rem = primeCandidate % prime;
 
-			auto os = I2OSP<T>()(rem);
-			auto ip = OS2IP<uint32_t>()(os);
+            auto os = I2OSP<T>()(rem);
+            auto ip = OS2IP<uint32_t>()(os);
 
-            //auto rem = primeCandidate % prime;
-            remainders.push_back(/*rem*/ip);
+            // auto rem = primeCandidate % prime;
+            remainders.push_back(/*rem*/ ip);
             if (rem == 0x00)
             {
                 isDivisible = true;
@@ -441,6 +441,7 @@ namespace cry
         T gcd = cry::gcd<T>(primeCandidate, e);
         if (gcd != 1)
         {
+            isDivisible = true;
             goto step2;
         }
 
