@@ -388,9 +388,9 @@ namespace cry
         std::vector<uint32_t> remainders;
         remainders.reserve(nprimes);
 
-        for (auto prime : primes2K)
+        for (auto p : primes2K)
         {
-            T rem = primeCandidate % prime;
+            T rem = primeCandidate % p;
 
             auto os = I2OSP<T>()(rem);
             auto ip = OS2IP<uint32_t>()(os);
@@ -412,9 +412,9 @@ namespace cry
 
             auto it = remainders.begin();
 
-            for (auto prime : primes2K)
+            for (auto p : primes2K)
             {
-                *it = (*it + 2) % prime;
+                *it = (*it + 2) % p;
                 if (*it == 0x00)
                 {
                     isDivisible = true;

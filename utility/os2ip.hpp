@@ -14,7 +14,7 @@ namespace cry
     {
         T operator()(const std::vector<uint8_t>& octets) const noexcept
         {
-	        auto rfirst     = octets.rbegin();
+            auto rfirst     = octets.rbegin();
             const auto rend = octets.rend();
 
             T x        = 0;

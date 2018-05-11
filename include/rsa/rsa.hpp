@@ -11,51 +11,60 @@
 
 namespace cry
 {
-
-    template <class T = bigint_t>
-    class rsa
+    namespace rsa
     {
-
-      public:
-        struct rsa_key
+        template <class T>
+        void generate_key_pair(T& n, T& d, uint32_t e, uint32_t modulusbits)
         {
-            T exponent;
-            T modulus;
-        };
+            for (;;)
+            {
+                T p, q;
+                cry::generate_probably_prime<T>(std::ref(p), modulusbits / 2, e);
+                cry::generate_probably_prime<T>(std::ref(q), modulusbits / 2, e);
 
-      public:
-        void generate_key_pair(const T& p, const T& q)
-        {
+                T N   = p * q;
+                T Phi = (p - 1) * (q - 1);
+
+                T D;
+
+                const bool f = cry::mod_inverse(D, T(e), Phi);
+                if (f)
+                {
+                    n = N;
+                    d = D;
+
+                    break;
+                }
+            }
         }
 
-        void generate_key_pair(rsa_key& pub, rsa_key& prv, const T& e, uint32_t modulusbits)
+        template <class T>
+        void generate_key_pair_mt(T& n, T& d, uint32_t e, uint32_t modulusbits)
         {
-            T p, q;
+            for (;;)
+            {
+                T p, q;
 
-            p = cry::generate_probably_prime<T>(modulusbits, e);
-            q = cry::generate_probably_prime<T>(modulusbits, e);
+                std::thread pThread(cry::generate_probably_prime<T>, std::ref(p), modulusbits / 2, e);
+                std::thread qThread(cry::generate_probably_prime<T>, std::ref(q), modulusbits / 2, e);
 
-            std::cout << "p: " << p << std::endl;
-            std::cout << "q: " << q << std::endl;
+                pThread.join();
+                qThread.join();
 
-            T N = p * q;
+                T N   = p * q;
+                T Phi = (p - 1) * (q - 1);
 
-            std::cout << "N: " << N << std::endl;
-
-            T Phi = (p - 1) * (q - 1);
-            std::cout << "Phi: " << Phi << std::endl;
-
-            T d;
-            cry::mod_inverse(d, T(e), Phi);
-            std::cout << "d: " << d << std::endl;
-
-            pub.exponent = e;
-            pub.modulus  = N;
-
-            prv.exponent = d;
-            prv.modulus  = N;
+                T D;
+                const bool f = cry::mod_inverse(D, T(e), Phi);
+                if (f)
+                {
+                    n = N;
+                    d = D;
+                    break;
+                }
+            }
         }
-    };
+    }
 }
 
-#endif // CRY_RSA_H
+#endif // CRY_RSA_HPP

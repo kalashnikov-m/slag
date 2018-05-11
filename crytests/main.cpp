@@ -8,76 +8,38 @@
 #include "algorithm.hpp"
 #include "googletest/include/gtest/gtest.h"
 #include <thread>
+#include "rsa/rsa.hpp"
+#include "rsa/rsaes_oaep.hpp"
 
-namespace myNamespace
+namespace
 {
-    template <class T>
-    void generate_key_pair(T& n, T& d, uint32_t e, uint32_t modulusbits)
-    {
-        T p, q;
-        cry::generate_probably_prime<T>(std::ref(p), modulusbits / 2, e);
-        cry::generate_probably_prime<T>(std::ref(q), modulusbits / 2, e);
 
-        std::cout << "p: " << p << std::endl;
-        std::cout << "q: " << q << std::endl;
-
-        T N = p * q;
-
-        std::cout << "N: " << N << std::endl;
-
-        T Phi = (p - 1) * (q - 1);
-        std::cout << "Phi: " << Phi << std::endl;
-
-        T D;
-        const bool f = cry::mod_inverse(D, T(e), Phi);
-        if (!f)
-        {
-            throw std::runtime_error("invserse does not exists");
-        }
-
-        std::cout << "D: " << D << std::endl;
-
-        n = N;
-        d = D;
-    }
-
-    template <class T>
-    void generate_key_pair_mt(T& n, T& d, uint32_t e, uint32_t modulusbits)
-    {
-        T p, q;
-
-        std::thread pThread(cry::generate_probably_prime<T>, std::ref(p), modulusbits / 2, e);
-        std::thread qThread(cry::generate_probably_prime<T>, std::ref(q), modulusbits / 2, e);
-
-        pThread.join();
-        qThread.join();
-
-        std::cout << "p: " << p << std::endl;
-        std::cout << "q: " << q << std::endl;
-
-        T N = p * q;
-
-        std::cout << "N: " << N << std::endl;
-
-        T Phi = (p - 1) * (q - 1);
-        std::cout << "Phi: " << Phi << std::endl;
-
-        T D;
-        const bool f = cry::mod_inverse(D, T(e), Phi);
-        if (!f)
-        {
-            throw std::runtime_error("invserse does not exists");
-        }
-
-        std::cout << "D: " << D << std::endl;
-
-        n = N;
-        d = D;
-    }
 }
 
 int main(int argc, char** argv)
 {
+    /*cry::bigint_t modulus;
+    cry::bigint_t d;
+    cry::bigint_t e = 65537;
+
+    cry::rsa::generate_key_pair_mt(modulus, d, 65537, 1024);
+
+    std::cout << modulus << "\n";
+    std::cout << d << "\n";
+
+    std::vector<uint8_t> plain = {'a', 'b', 'c'};
+
+	std::vector<uint8_t> dst(128);
+	cry::rsa::rsaes_oaep<>::encrypt(plain.begin(), plain.end(), dst.begin(), e, modulus, 1024);
+
+	std::vector<uint8_t> p;
+	cry::rsa::rsaes_oaep<>::decrypt(dst.begin(), dst.end(), std::back_inserter(p), d, modulus, 1024);
+
+    /*auto plainText = cry::OS2IP<cry::bigint_t>()(plain.begin(), plain.end());
+
+    auto signature = cry::pow_mod(plainText, d, modulus);
+
+    auto dst = cry::pow_mod(signature, e, modulus);*/
 
     ::testing::InitGoogleTest(&argc, argv);
 
