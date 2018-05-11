@@ -22,8 +22,14 @@ namespace cry
             template <class InputIterator, class OutputIterator>
             static OutputIterator encode(InputIterator first, InputIterator last, OutputIterator result, size_t k, const std::vector<uint8_t>& seedVal = std::vector<uint8_t>(), const std::vector<uint8_t>& L = std::vector<uint8_t>())
             {
-
                 auto mLen = std::distance(first, last);
+
+                ////////////////////////////////////////////////////////////////
+                // If mLen > k * 2hLen * 2, output "message too long" and stop.
+                if (mLen > k - 2 * hLen - 2)
+                {
+                    throw std::runtime_error("message too long");
+                }
 
                 ///////////////////////////////////////////////////////////
                 // a. Let lHash = Hash (L), an octet string of length hLen

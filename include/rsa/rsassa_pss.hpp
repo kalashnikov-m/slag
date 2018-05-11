@@ -13,7 +13,7 @@ namespace cry
     namespace rsa
     {
 
-        template <class Encoder = rsa::emsa_pss<>, class Integer = bigint_t>
+        template <class Digest = sha1, class MGFType = mgf1<sha1>, size_t sLen = Digest::size, class Integer = bigint_t>
         struct rsassa_pss
         {
             /**
@@ -35,7 +35,7 @@ namespace cry
                 //////////////////////////
                 // 1. EMSA-PSS encoding:
                 std::vector<uint8_t> EM(modBits / 8);
-                Encoder::encode(m_first, m_last, EM.begin(), modBits - 1, salt);
+                emsa_pss<Digest, MGFType, sLen>::encode(m_first, m_last, EM.begin(), modBits - 1, salt);
 
                 //////////////////////////
                 // 2. RSA signature:
@@ -94,10 +94,9 @@ namespace cry
                 // 2c. Convert the message representative m to an encoded message EM
                 const std::vector<uint8_t> EM = I2OSP<Integer>()(m);
 
-                ////////////////////////////
-                // 3. EMSA - PSS verification :
-
-                const bool result = Encoder::verify(m_first, m_last, EM.begin(), EM.end(), modBits - 1);
+                //////////////////////////////
+                // 3. EMSA - PSS verification
+                const bool result = emsa_pss<Digest, MGFType, sLen>::verify(m_first, m_last, EM.begin(), EM.end(), modBits - 1);
 
                 return result;
             }

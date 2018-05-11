@@ -14,7 +14,7 @@ namespace cry
 {
     namespace rsa
     {
-        template <class Encoder = eme_oaep<>, class Integer = bigint_t>
+        template <class Digest = sha1, class MGFType = mgf1<sha1>, size_t hLen = Digest::size, class Integer = bigint_t>
         struct rsaes_oaep
         {
             /**
@@ -34,25 +34,12 @@ namespace cry
             template <class InputIterator, class OutputIterator>
             static OutputIterator encrypt(InputIterator first, InputIterator last, OutputIterator result, const Integer& e, const Integer& n, size_t modBits, const std::vector<uint8_t>& seed = std::vector<uint8_t>(), const std::vector<uint8_t>& label = std::vector<uint8_t>())
             {
-
-                ///////////////////////
-                // 1. Length checking:
-
-                ////////////////////////////////////////////////////////////////
-                // If mLen > k � 2hLen � 2, output �message too long� and stop.
-
-                const auto k      = (modBits + 7) / 8;
-                const size_t mLen = std::distance(first, last);
-
-                if (mLen > k - 2 * Encoder::hash_type::size - 2)
-                {
-                    throw std::runtime_error("message too long");
-                }
+                const auto k = (modBits + 7) / 8;
 
                 /////////////////////////
                 // 2. EME-OAEP encoding
                 std::vector<uint8_t> EM(k);
-                Encoder::encode(first, last, EM.begin(), k, seed, label);
+                eme_oaep<Digest, MGFType, hLen>::encode(first, last, EM.begin(), k, seed, label);
 
                 ///////////////////////
                 // 3. RSA encryption:
@@ -108,8 +95,7 @@ namespace cry
 
                 ///////////////////////////////////////////////////////////
                 // c. If k < 2hLen + 2, output �decryption error� and stop.
-
-                if (k < 2 * Encoder::hash_type::size + 2)
+                if (k < 2 * hLen + 2)
                 {
                     throw std::runtime_error("decryption error");
                 }
@@ -132,7 +118,7 @@ namespace cry
 
                 ///////////////////////////
                 // 3. EME - OAEP decoding:
-                result = Encoder::decode(EM.begin(), EM.end(), result, k);
+                result = eme_oaep<Digest, MGFType, hLen>::decode(EM.begin(), EM.end(), result, k);
 
                 return result;
             }

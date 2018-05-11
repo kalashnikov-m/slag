@@ -12,7 +12,7 @@ namespace cry
 
     namespace rsa
     {
-        template <class Encoder = rsa::emsa_pkcs1<>, class Integer = bigint_t>
+        template <class DigestType = sha1, class Integer = bigint_t>
         struct rsassa_pkcs1
         {
             /**
@@ -32,7 +32,10 @@ namespace cry
             {
                 const auto emLen = (modBits + 7) / 8;
                 std::vector<uint8_t> encoded(emLen);
-                auto end = Encoder::encode(first, last, encoded.begin(), emLen);
+
+				////////////////////////////////////////////////////
+				// Apply the EMSA - PKCS1 - v1_5 encoding operation
+                auto end = emsa_pkcs1<DigestType>::encode(first, last, encoded.begin(), emLen);
 
                 const Integer arg = OS2IP<Integer>()(encoded.begin(), encoded.end());
                 const Integer s   = cry::pow_mod(arg, d, n);
@@ -87,7 +90,7 @@ namespace cry
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 // 3. Apply the EMSA-PKCS1-v1_5 encoding operation to the message M to produce a second encoded message EM� of length k octets:
                 std::vector<uint8_t> EM_(k);
-                Encoder::encode(m_first, m_last, EM_.begin(), k);
+                emsa_pkcs1<DigestType>::encode(m_first, m_last, EM_.begin(), k);
 
                 ////////////////////////////////////////////////////////////////////////
                 // 4. Compare the encoded message EM and the second encoded message EM�

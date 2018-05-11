@@ -4,7 +4,6 @@
 #include "algorithm.hpp"
 
 #include "basic_integer.hpp"
-#include "rsa/eme_oaep.hpp"
 #include "rsa/emsa_pkcs1.hpp"
 #include "os2ip.hpp"
 #include "rsa/rsaes_oaep.hpp"
@@ -29,10 +28,10 @@ TEST(Test_Rsa, Encrypt_EME_PKCS1_1024)
         for (; *it == 0 && it != end; ++it)
             ;
 
-        rsa::rsaes_pkcs1<rsa::eme_pkcs1>::encrypt(it, end, C.begin(), e, n, 1024);
+        rsa::rsaes_pkcs1<>::encrypt(it, end, C.begin(), e, n, 1024);
 
         std::vector<uint8_t> D(128);
-        auto d_end = rsa::rsaes_pkcs1<rsa::eme_pkcs1>::decrypt(C.begin(), C.end(), D.begin(), d, n, 1024);
+        auto d_end = rsa::rsaes_pkcs1<>::decrypt(C.begin(), C.end(), D.begin(), d, n, 1024);
         std::vector<uint8_t> decrypt(D.begin(), d_end);
         auto d1 = OS2IP<bigint_t>()(m);
         auto d2 = OS2IP<bigint_t>()(decrypt);
@@ -118,11 +117,11 @@ TEST(Test_Rsa, Encrypt_OAEP_SHA__1_1024)
 {
     auto test = [](const bigint_t& n, const bigint_t& e, const bigint_t& d, const std::vector<uint8_t>& seed, const std::vector<uint8_t>& m, const bigint_t& cipher) {
         std::vector<uint8_t> C(128);
-        rsa::rsaes_oaep<eme_oaep<sha1>>::encrypt(m.begin(), m.end(), C.begin(), e, n, 1024, seed);
+        rsa::rsaes_oaep<sha1>::encrypt(m.begin(), m.end(), C.begin(), e, n, 1024, seed);
         EXPECT_EQ(cipher, OS2IP<bigint_t>()(C));
 
         std::vector<uint8_t> D(128);
-        auto d_end = rsa::rsaes_oaep<eme_oaep<sha1>>::decrypt(C.begin(), C.end(), D.begin(), d, n, 1024);
+        auto d_end = rsa::rsaes_oaep<sha1>::decrypt(C.begin(), C.end(), D.begin(), d, n, 1024);
 
         std::vector<uint8_t> decrypted(D.begin(), d_end);
         EXPECT_EQ(m, decrypted);
@@ -183,11 +182,11 @@ TEST(Test_Rsa, SigGen_SHA__1_RSA_PSS_SHA1)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(1024 / 8);
 
-        rsassa_pss<emsa_pss<sha1>>::sign(plain.begin(), plain.end(), signature.begin(), n, d, 1024, saltVal);
+        rsassa_pss<sha1>::sign(plain.begin(), plain.end(), signature.begin(), n, d, 1024, saltVal);
         // auto x = OS2IP<bigint_t>()(signature);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pss<emsa_pss<sha1>>::verify(plain.begin(), plain.end(), signature.begin(), signature.end(), n, e, 1024);
+        bool f = rsassa_pss<sha1>::verify(plain.begin(), plain.end(), signature.begin(), signature.end(), n, e, 1024);
         EXPECT_EQ(f, true);
     };
 
@@ -284,10 +283,10 @@ TEST(Test_Rsa, SigGen_SHA__1_RSA_PKCS_1024)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(128);
 
-        rsassa_pkcs1<emsa_pkcs1<sha1>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1024);
+        rsassa_pkcs1<sha1>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1024);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pkcs1<emsa_pkcs1<sha1>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1024);
+        bool f = rsassa_pkcs1<sha1>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1024);
         EXPECT_EQ(f, true);
     };
 
@@ -476,10 +475,10 @@ TEST(Test_Rsa, SigGen_SHA224_RSA_PKCS_1024)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(128);
 
-        rsassa_pkcs1<emsa_pkcs1<sha224>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1024);
+        rsassa_pkcs1<sha224>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1024);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pkcs1<emsa_pkcs1<sha224>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1024);
+        bool f = rsassa_pkcs1<sha224>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1024);
         EXPECT_EQ(f, true);
     };
 
@@ -656,10 +655,10 @@ TEST(Test_Rsa, SigGen_SHA384_RSA_PKCS_1024)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(128);
 
-        rsassa_pkcs1<emsa_pkcs1<sha384>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1024);
+        rsassa_pkcs1<sha384>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1024);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pkcs1<emsa_pkcs1<sha384>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1024);
+        bool f = rsassa_pkcs1<sha384>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1024);
         EXPECT_EQ(f, true);
     };
 
@@ -835,10 +834,10 @@ TEST(Test_Rsa, SigGen_SHA512_RSA_PKCS_1024)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(128);
 
-        rsassa_pkcs1<emsa_pkcs1<sha512>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1024);
+        rsassa_pkcs1<sha512>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1024);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pkcs1<emsa_pkcs1<sha512>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1024);
+        bool f = rsassa_pkcs1<sha512>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1024);
         EXPECT_EQ(f, true);
     };
 
@@ -1016,10 +1015,10 @@ TEST(Test_Rsa, SigGen_SHA256_RSA_PKCS_1024)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(128);
 
-        rsassa_pkcs1<emsa_pkcs1<sha256>>::sign<>(plain.begin(), plain.end(), signature.begin(), d, n, 1024);
+        rsassa_pkcs1<sha256>::sign<>(plain.begin(), plain.end(), signature.begin(), d, n, 1024);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pkcs1<emsa_pkcs1<sha256>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1024);
+        bool f = rsassa_pkcs1<sha256>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1024);
         EXPECT_EQ(f, true);
     };
 
@@ -1185,10 +1184,10 @@ TEST(Test_Rsa, SigGen_SHA__1_RSA_PKCS_1536)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(1536 / 8);
 
-        rsassa_pkcs1<emsa_pkcs1<sha1>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1536);
+        rsassa_pkcs1<sha1>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1536);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pkcs1<emsa_pkcs1<sha1>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1536);
+        bool f = rsassa_pkcs1<sha1>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1536);
         EXPECT_EQ(f, true);
     };
 
@@ -1298,10 +1297,10 @@ TEST(Test_Rsa, SigGen_SHA224_RSA_PKCS_1536)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(1536 / 8);
 
-        rsassa_pkcs1<emsa_pkcs1<sha224>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1536);
+        rsassa_pkcs1<sha224>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1536);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pkcs1<emsa_pkcs1<sha224>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1536);
+        bool f = rsassa_pkcs1<sha224>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1536);
         EXPECT_EQ(f, true);
     };
 
@@ -1412,10 +1411,10 @@ TEST(Test_Rsa, SigGen_SHA256_RSA_PKCS_1536)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(1536 / 8);
 
-        rsassa_pkcs1<emsa_pkcs1<sha256>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1536);
+        rsassa_pkcs1<sha256>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1536);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pkcs1<emsa_pkcs1<sha256>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1536);
+        bool f = rsassa_pkcs1<sha256>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1536);
         EXPECT_EQ(f, true);
     };
 
@@ -1526,10 +1525,10 @@ TEST(Test_Rsa, SigGen_SHA384_RSA_PKCS_1536)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(1536 / 8);
 
-        rsassa_pkcs1<emsa_pkcs1<sha384>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1536);
+        rsassa_pkcs1<sha384>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 1536);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pkcs1<emsa_pkcs1<sha384>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1536);
+        bool f = rsassa_pkcs1<sha384>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1536);
         EXPECT_EQ(f, true);
     };
 
@@ -1640,10 +1639,10 @@ TEST(Test_Rsa, SigGen_SHA512_RSA_PKCS_1536)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(1536 / 8);
 
-        rsassa_pkcs1<emsa_pkcs1<sha512>>::sign<>(plain.begin(), plain.end(), signature.begin(), d, n, 1536);
+        rsassa_pkcs1<sha512>::sign<>(plain.begin(), plain.end(), signature.begin(), d, n, 1536);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pkcs1<emsa_pkcs1<sha512>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1536);
+        bool f = rsassa_pkcs1<sha512>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 1536);
         EXPECT_EQ(f, true);
     };
 
@@ -1754,10 +1753,10 @@ TEST(Test_Rsa, SigGen_SHA__1_RSA_PKCS_2048)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(2048 / 8);
 
-        rsassa_pkcs1<emsa_pkcs1<sha1>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 2048);
+        rsassa_pkcs1<sha1>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 2048);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pkcs1<emsa_pkcs1<sha1>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 2048);
+        bool f = rsassa_pkcs1<sha1>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 2048);
         EXPECT_EQ(f, true);
     };
 
@@ -1865,10 +1864,10 @@ TEST(Test_Rsa, SigGen_SHA224_RSA_PKCS_2048)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(2048 / 8);
 
-        rsassa_pkcs1<emsa_pkcs1<sha224>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 2048);
+        rsassa_pkcs1<sha224>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 2048);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pkcs1<emsa_pkcs1<sha224>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 2048);
+        bool f = rsassa_pkcs1<sha224>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 2048);
         EXPECT_EQ(f, true);
     };
 
@@ -1976,10 +1975,10 @@ TEST(Test_Rsa, SigGen_SHA256_RSA_PKCS_2048)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(2048 / 8);
 
-        rsassa_pkcs1<emsa_pkcs1<sha256>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 2048);
+        rsassa_pkcs1<sha256>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 2048);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pkcs1<emsa_pkcs1<sha256>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 2048);
+        bool f = rsassa_pkcs1<sha256>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 2048);
         EXPECT_EQ(f, true);
     };
 
@@ -2087,10 +2086,10 @@ TEST(Test_Rsa, SigGen_SHA384_RSA_PKCS_2048)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(2048 / 8);
 
-        rsassa_pkcs1<emsa_pkcs1<sha384>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 2048);
+        rsassa_pkcs1<sha384>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 2048);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pkcs1<emsa_pkcs1<sha384>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 2048);
+        bool f = rsassa_pkcs1<sha384>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 2048);
         EXPECT_EQ(f, true);
     };
 
@@ -2195,10 +2194,10 @@ TEST(Test_Rsa, SigGen_SHA512_RSA_PKCS_2048)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(2048 / 8);
 
-        rsassa_pkcs1<emsa_pkcs1<sha512>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 2048);
+        rsassa_pkcs1<sha512>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 2048);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pkcs1<emsa_pkcs1<sha512>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 2048);
+        bool f = rsassa_pkcs1<sha512>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 2048);
         EXPECT_EQ(f, true);
     };
 
@@ -2296,10 +2295,10 @@ TEST(Test_Rsa, SigGen_SHA__1_RSA_PKCS_3072)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(3072 / 8);
 
-        rsassa_pkcs1<emsa_pkcs1<sha1>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 3072);
+        rsassa_pkcs1<sha1>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 3072);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pkcs1<emsa_pkcs1<sha1>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 3072);
+        bool f = rsassa_pkcs1<sha1>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 3072);
         EXPECT_EQ(f, true);
     };
 
@@ -2415,10 +2414,10 @@ TEST(Test_Rsa, SigGen_SHA224_RSA_PKCS_3072)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(3072 / 8);
 
-        rsassa_pkcs1<emsa_pkcs1<sha224>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 3072);
+        rsassa_pkcs1<sha224>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 3072);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pkcs1<emsa_pkcs1<sha224>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 3072);
+        bool f = rsassa_pkcs1<sha224>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 3072);
         EXPECT_EQ(f, true);
     };
 
@@ -2539,10 +2538,10 @@ TEST(Test_Rsa, SigGen_SHA256_RSA_PKCS_3072)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(3072 / 8);
 
-        rsassa_pkcs1<emsa_pkcs1<sha256>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 3072);
+        rsassa_pkcs1<sha256>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 3072);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pkcs1<emsa_pkcs1<sha256>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 3072);
+        bool f = rsassa_pkcs1<sha256>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 3072);
         EXPECT_EQ(f, true);
     };
 
@@ -2662,10 +2661,10 @@ TEST(Test_Rsa, SigGen_SHA384_RSA_PKCS_3072)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(3072 / 8);
 
-        rsassa_pkcs1<emsa_pkcs1<sha384>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 3072);
+        rsassa_pkcs1<sha384>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 3072);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pkcs1<emsa_pkcs1<sha384>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 3072);
+        bool f = rsassa_pkcs1<sha384>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 3072);
         EXPECT_EQ(f, true);
     };
 
@@ -2786,10 +2785,10 @@ TEST(Test_Rsa, SigGen_SHA512_RSA_PKCS_3072)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(3072 / 8);
 
-        rsassa_pkcs1<emsa_pkcs1<sha512>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 3072);
+        rsassa_pkcs1<sha512>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 3072);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pkcs1<emsa_pkcs1<sha512>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 3072);
+        bool f = rsassa_pkcs1<sha512>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 3072);
         EXPECT_EQ(f, true);
     };
 
@@ -2910,10 +2909,10 @@ TEST(Test_Rsa, SigGen_SHA__1_RSA_PKCS_4096)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(4096 / 8);
 
-        rsassa_pkcs1<emsa_pkcs1<sha1>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 4096);
+        rsassa_pkcs1<sha1>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 4096);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pkcs1<emsa_pkcs1<sha1>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 4096);
+        bool f = rsassa_pkcs1<sha1>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 4096);
         EXPECT_EQ(f, true);
     };
 
@@ -3046,10 +3045,10 @@ TEST(Test_Rsa, SigGen_SHA224_RSA_PKCS_4096)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(4096 / 8);
 
-        rsassa_pkcs1<emsa_pkcs1<sha224>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 4096);
+        rsassa_pkcs1<sha224>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 4096);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pkcs1<emsa_pkcs1<sha224>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 4096);
+        bool f = rsassa_pkcs1<sha224>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 4096);
         EXPECT_EQ(f, true);
     };
 
@@ -3183,10 +3182,10 @@ TEST(Test_Rsa, SigGen_SHA256_RSA_PKCS_4096)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(4096 / 8);
 
-        rsassa_pkcs1<emsa_pkcs1<sha256>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 4096);
+        rsassa_pkcs1<sha256>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 4096);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pkcs1<emsa_pkcs1<sha256>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 4096);
+        bool f = rsassa_pkcs1<sha256>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 4096);
         EXPECT_EQ(f, true);
     };
 
@@ -3318,10 +3317,10 @@ TEST(Test_Rsa, SigGen_SHA384_RSA_PKCS_4096)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(4096 / 8);
 
-        rsassa_pkcs1<emsa_pkcs1<sha384>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 4096);
+        rsassa_pkcs1<sha384>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 4096);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pkcs1<emsa_pkcs1<sha384>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 4096);
+        bool f = rsassa_pkcs1<sha384>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 4096);
         EXPECT_EQ(f, true);
     };
 
@@ -3456,10 +3455,10 @@ TEST(Test_Rsa, SigGen_SHA512_RSA_PKCS_4096)
         std::vector<uint8_t> plain = I2OSP<bigint_t>()(Msg);
         std::vector<uint8_t> signature(4096 / 8);
 
-        rsassa_pkcs1<emsa_pkcs1<sha512>>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 4096);
+        rsassa_pkcs1<sha512>::sign(plain.begin(), plain.end(), signature.begin(), d, n, 4096);
         EXPECT_EQ(OS2IP<bigint_t>()(signature), S);
 
-        bool f = rsassa_pkcs1<emsa_pkcs1<sha512>>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 4096);
+        bool f = rsassa_pkcs1<sha512>::verify(signature.begin(), signature.end(), plain.begin(), plain.end(), e, n, 4096);
         EXPECT_EQ(f, true);
     };
 

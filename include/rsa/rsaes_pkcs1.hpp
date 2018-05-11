@@ -14,7 +14,7 @@ namespace cry
 {
     namespace rsa
     {
-        template <class Encoder = rsa::eme_pkcs1, class Integer = bigint_t>
+        template <class Integer = bigint_t>
         struct rsaes_pkcs1
         {
             /**
@@ -37,7 +37,7 @@ namespace cry
                 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 // 1. Apply the EME-PKCS1-v1_5 encoding operation to the message M to produce an encoded message EM of length k�1 octets:
                 std::vector<uint8_t> EM(k);
-                Encoder::encode(first, last, EM.begin(), k /* - 1*/);
+                eme_pkcs1::encode(first, last, EM.begin(), k);
 
                 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 // 2. Convert the encoded message EM to an integer message representative m
@@ -93,7 +93,9 @@ namespace cry
                 // 4. Convert the message representative m to an encoded message EM of length k�1 octets:
                 const std::vector<uint8_t> EM = I2OSP<Integer>()(m);
 
-                result = Encoder::decode(EM.begin(), EM.end(), result);
+				//////////////////////////////////////////////////
+				// 5. Apply EME - PKCS1 - v1_5 decoding operation
+                result = eme_pkcs1::decode(EM.begin(), EM.end(), result);
 
                 return result;
             }
