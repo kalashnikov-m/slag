@@ -11,14 +11,14 @@ set (HEADERS
 	../include/rsa/rsassa_pkcs1.hpp
 	../include/rsa/rsaes_oaep.hpp
 	../include/rsa/rsaes_pkcs1.hpp
-	../include/algorithm.hpp
-        ../include/basic_integer.hpp
-	../include/mgf.hpp
-	../include/oid.hpp
-	../include/emsa_pkcs1.hpp
-	../include/emsa_pss.hpp
-	../include/eme_pkcs1.hpp
-	../include/eme_oaep.hpp
+    ../include/rsa/emsa_pkcs1.hpp
+	../include/rsa/emsa_pss.hpp
+	../include/rsa/eme_pkcs1.hpp
+	../include/rsa/eme_oaep.hpp	
+    ../include/algorithm.hpp
+    ../include/basic_integer.hpp
+	../include/rsa/mgf.hpp
+	../include/oid.hpp	
 	../include/sha1.hpp
 	../include/sha224.hpp
 	../include/sha256.hpp

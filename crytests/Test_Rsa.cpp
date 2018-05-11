@@ -4,8 +4,8 @@
 #include "algorithm.hpp"
 
 #include "basic_integer.hpp"
-#include "eme_oaep.hpp"
-#include "emsa_pkcs1.hpp"
+#include "rsa/eme_oaep.hpp"
+#include "rsa/emsa_pkcs1.hpp"
 #include "os2ip.hpp"
 #include "rsa/rsaes_oaep.hpp"
 #include "rsa/rsaes_pkcs1.hpp"
