@@ -3,7 +3,7 @@
 
 #include <iterator>
 
-#include <mgf.hpp>
+#include <rsa/mgf.hpp>
 
 #include "sha1.hpp"
 

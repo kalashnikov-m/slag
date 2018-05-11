@@ -2,7 +2,7 @@
 #define EMSA_PSS_H
 
 #include <functional>
-#include <mgf.hpp>
+#include <rsa/mgf.hpp>
 #include <sha1.hpp>
 
 namespace cry
