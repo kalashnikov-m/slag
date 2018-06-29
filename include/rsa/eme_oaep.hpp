@@ -5,7 +5,7 @@
 
 #include <rsa/mgf.hpp>
 
-#include "sha1.hpp"
+#include "digest/sha1.hpp"
 
 namespace cry
 {

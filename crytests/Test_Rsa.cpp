@@ -10,7 +10,7 @@
 #include "rsa/rsaes_pkcs1.hpp"
 #include "rsa/rsassa_pkcs1.hpp"
 #include "rsa/rsassa_pss.hpp"
-#include "sha1.hpp"
+#include "digest/sha1.hpp"
 
 using namespace std;
 using namespace cry;

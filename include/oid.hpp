@@ -3,11 +3,11 @@
 
 #include <cstdint>
 
-#include <sha1.hpp>
-#include <sha224.hpp>
-#include <sha256.hpp>
-#include <sha384.hpp>
-#include <sha512.hpp>
+#include <digest/sha1.hpp>
+#include <digest/sha224.hpp>
+#include <digest/sha256.hpp>
+#include <digest/sha384.hpp>
+#include <digest/sha512.hpp>
 
 #include <vector>
 

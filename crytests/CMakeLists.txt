@@ -11,19 +11,19 @@ set (HEADERS
 	../include/rsa/rsassa_pkcs1.hpp
 	../include/rsa/rsaes_oaep.hpp
 	../include/rsa/rsaes_pkcs1.hpp
-    ../include/rsa/emsa_pkcs1.hpp
+    	../include/rsa/emsa_pkcs1.hpp
 	../include/rsa/emsa_pss.hpp
 	../include/rsa/eme_pkcs1.hpp
 	../include/rsa/eme_oaep.hpp	
-    ../include/algorithm.hpp
-    ../include/basic_integer.hpp
+    	../include/algorithm.hpp
+	../include/basic_integer.hpp
 	../include/rsa/mgf.hpp
 	../include/oid.hpp	
-	../include/sha1.hpp
-	../include/sha224.hpp
-	../include/sha256.hpp
-	../include/sha384.hpp
-	../include/sha512.hpp
+	../include/digest/sha1.hpp
+	../include/digest/sha224.hpp
+	../include/digest/sha256.hpp
+	../include/digest/sha384.hpp
+	../include/digest/sha512.hpp
 	../utility/encoders.hpp
 	../utility/os2ip.hpp
 	../include/internal/cry_engine.hpp
