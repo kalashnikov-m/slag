@@ -3,7 +3,7 @@
 #define ALGORITHM_HPP
 
 #include "basic_integer.hpp"
-#include "os2ip.hpp"
+#include "utility/os2ip.hpp"
 
 #include <algorithm>
 #include <cstdint>

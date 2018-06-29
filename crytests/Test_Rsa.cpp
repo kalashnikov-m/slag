@@ -5,7 +5,7 @@
 
 #include "basic_integer.hpp"
 #include "rsa/emsa_pkcs1.hpp"
-#include "os2ip.hpp"
+#include "utility/os2ip.hpp"
 #include "rsa/rsaes_oaep.hpp"
 #include "rsa/rsaes_pkcs1.hpp"
 #include "rsa/rsassa_pkcs1.hpp"

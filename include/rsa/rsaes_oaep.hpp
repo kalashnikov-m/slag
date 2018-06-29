@@ -8,7 +8,7 @@
 #include "algorithm.hpp"
 #include "basic_integer.hpp"
 #include "eme_oaep.hpp"
-#include "os2ip.hpp"
+#include "utility/os2ip.hpp"
 
 namespace cry
 {

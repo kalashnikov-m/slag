@@ -24,8 +24,8 @@ set (HEADERS
 	../include/digest/sha256.hpp
 	../include/digest/sha384.hpp
 	../include/digest/sha512.hpp
-	../utility/encoders.hpp
-	../utility/os2ip.hpp
+	../include/utility/encoders.hpp
+	../include/utility/os2ip.hpp
 	../include/internal/cry_engine.hpp
 )
 
@@ -44,8 +44,8 @@ include_directories(./googletest/include)
 
 add_executable(crytests ${HEADERS} ${SOURCES})
 
-if(UNIX)
+if(${CMAKE_SYSTEM_NAME} STREQUAL Linux)
     target_link_libraries(crytests gtest -lpthread)
-elseif(WIN32)
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL Windows)
     target_link_libraries(crytests gtest)
 endif()
