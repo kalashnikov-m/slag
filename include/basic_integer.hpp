@@ -14,6 +14,59 @@
 
 using namespace std;
 
+namespace
+{
+	size_t uiceil(double x)
+	{
+		if (x < 0)
+			return 0;
+
+		auto c = static_cast<size_t>(x);
+		if ((x - c) > 0.0)
+			c++;
+
+		return c;
+	}
+
+	std::string hex2dec(const std::vector<uint8_t>& bytes)
+	{
+		const char DEC_DIGITS[] = "0123456789";
+		const auto nbytes = bytes.size();
+
+		const auto factor = 2.40824; /* log(256)/log(10)=2.40824 */
+		const auto declen = uiceil(factor * nbytes);
+
+		std::vector<uint8_t> decdigits(declen);
+
+		for (size_t i = 0; i < nbytes; i++)
+		{
+			uint32_t temp = bytes[i];
+			for (size_t j = declen; j > 0; j--)
+			{
+				temp += static_cast<uint32_t>(decdigits[j - 1]) * 256;
+				decdigits[j - 1] = static_cast<uint8_t>(temp % 10);
+				temp /= 10;
+			}
+		}
+
+		/////////////////////////
+		// we have a hex array
+		std::string decimal;
+
+		auto cit(decdigits.begin());
+		const auto cend(decdigits.end());
+		for (; cit != cend && *cit == 0x00; ++cit)
+			;
+
+		for (; cit != cend; ++cit)
+		{
+			decimal.push_back(DEC_DIGITS[*cit]);
+		}
+
+		return decimal;
+	}
+}
+
 namespace cry
 {
     template <class IntType>
@@ -763,57 +816,6 @@ namespace cry
     using bigint_t = basic_integer<uint32_t>;
 }
 
-namespace
-{
-    size_t uiceil(double x)
-    {
-        if (x < 0)
-            return 0;
 
-        auto c = static_cast<size_t>(x);
-        if ((x - c) > 0.0)
-            c++;
-
-        return c;
-    }
-
-    std::string hex2dec(const std::vector<uint8_t>& bytes)
-    {
-        const char DEC_DIGITS[] = "0123456789";
-        const auto nbytes       = bytes.size();
-
-        const auto factor = 2.40824; /* log(256)/log(10)=2.40824 */
-        const auto declen = uiceil(factor * nbytes);
-
-        std::vector<uint8_t> decdigits(declen);
-
-        for (size_t i = 0; i < nbytes; i++)
-        {
-            uint32_t temp = bytes[i];
-            for (size_t j = declen; j > 0; j--)
-            {
-                temp += static_cast<uint32_t>(decdigits[j - 1]) * 256;
-                decdigits[j - 1] = static_cast<uint8_t>(temp % 10);
-                temp /= 10;
-            }
-        }
-
-        /////////////////////////
-        // we have a hex array
-        std::string decimal;
-
-        auto cit(decdigits.begin());
-        const auto cend(decdigits.end());
-        for (; cit != cend && *cit == 0x00; ++cit)
-            ;
-
-        for (; cit != cend; ++cit)
-        {
-            decimal.push_back(DEC_DIGITS[*cit]);
-        }
-
-        return decimal;
-    }
-}
 
 #endif
