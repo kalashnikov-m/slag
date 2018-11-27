@@ -138,6 +138,8 @@ namespace cry
 
         explicit operator bool() const;
 
+		operator std::vector<uint8_t>() const;
+
         const basic_integer operator<<(int) const;
 
         const basic_integer operator>>(int) const;
@@ -446,6 +448,43 @@ namespace cry
         return !flag;
     }
 
+	template<class X>
+	basic_integer<X>::operator std::vector<uint8_t>() const
+	{
+		std::vector<uint8_t> result;
+		result.reserve(m_Polynomial.size() * sizeof(X));
+
+		auto out = std::back_inserter(result);
+		for (auto x : m_Polynomial)
+		{
+			if (sizeof(X) == 2)
+			{
+				*out++ = (x & 0xff00) >> 8;
+				*out++ = (x & 0x00ff);
+			}
+			else if (sizeof(X) == 4)
+			{
+				*out++ = (x & 0xff000000) >> 24;
+				*out++ = (x & 0x00ff0000) >> 16;
+				*out++ = (x & 0x0000ff00) >> 8;
+				*out++ = (x & 0x000000ff);
+			}
+			else if (sizeof(X) == 8)
+			{
+				*out++ = static_cast<uint8_t>((x & 0xff00000000000000) >> 56);
+				*out++ = static_cast<uint8_t>((x & 0x00ff000000000000) >> 48);
+				*out++ = static_cast<uint8_t>((x & 0x0000ff0000000000) >> 40);
+				*out++ = static_cast<uint8_t>((x & 0x000000ff00000000) >> 32);
+				*out++ = static_cast<uint8_t>((x & 0x00000000ff000000) >> 24);
+				*out++ = static_cast<uint8_t>((x & 0x0000000000ff0000) >> 16);
+				*out++ = static_cast<uint8_t>((x & 0x000000000000ff00) >> 8);
+				*out++ = static_cast<uint8_t>((x & 0x00000000000000ff));
+			}
+		}
+
+		return result;
+	}
+
     template <class X>
     basic_integer<X>& basic_integer<X>::operator++()
     {
@@ -571,7 +610,7 @@ namespace cry
     }
 
     template <class X>
-    ostream& operator<<(ostream& outStream, const basic_integer<X>& huge)
+    ostream& operator<<(ostream& outStream, const basic_integer<X>& big)
     {
         stringstream ss;
 
@@ -579,7 +618,7 @@ namespace cry
 
         ss.flags(flags);
 
-        auto octets = I2OSP<basic_integer<X>>()(huge);
+		std::vector<uint8_t> octets = big;
 
         ////////////
         // decimal
@@ -606,7 +645,7 @@ namespace cry
             }
         }
 
-        if (huge.m_Negative)
+        if (big.m_Negative)
             outStream << "-";
 
         outStream << ss.str();
