@@ -9,7 +9,7 @@ namespace cry
 {
     namespace rsa
     {
-        template <class Digest = sha1, class MGFType = mgf1<sha1>, size_t sLen = Digest::size>
+        template <class Digest = sha1, class MGFType = mgf1<Digest>, size_t sLen = Digest::size>
         class emsa_pss
         {
 
@@ -20,13 +20,13 @@ namespace cry
                 const size_t k     = emBits / 8;
                 const size_t emLen = (emBits % 8) == 0 ? k : k + 1;
                 const size_t hLen  = Digest::size;
-                const size_t zBits = 8 * emLen - emBits;
+                const size_t zBits = (emBits - 1) & 0x7; // 8 * emLen - emBits;
 
                 ///////////////////////////////////////////////////////////
                 // 2. Let mHash = Hash(M), an octet string of length hLen.
-                std::vector<uint8_t> mHash;
-                mHash.reserve(hLen);
-                Digest()(first, last, std::back_inserter(mHash));
+                std::vector<uint8_t> mHash(first, last);
+                //mHash.reserve(hLen);
+                //Digest()(first, last, std::back_inserter(mHash));
 
                 ////////////////////////////////////////////////////////////////////
                 // 3.  If emLen < hLen + sLen + 2, output "encoding error" and stop.
@@ -77,7 +77,6 @@ namespace cry
                 ////////////////////////////////////
                 // 8.  Let DB = PS || 0x01 || salt;
                 // DB is an octet string of length emLen - hLen - 1.
-
                 const size_t dbLen = emLen - hLen - 1;
                 std::vector<uint8_t> DB(dbLen);
                 std::vector<uint8_t>::iterator itDb(DB.begin());
@@ -103,7 +102,7 @@ namespace cry
                 ///////////////////////////////////////////////////////////////////////////////////////
                 // 11. Set the leftmost 8emLen - emBits bits of the leftmost octet in maskedDB to zero.
                 if (zBits > 0)
-                    *maskedDB.begin() &= (0xFF >> (/*8 - */ zBits));
+                    *maskedDB.begin() &= (0xFF >> (8 - zBits));
 
                 ///////////////////////////////////////
                 // 12. Let EM = maskedDB || H || 0xbc.
@@ -122,7 +121,7 @@ namespace cry
                 const size_t k     = emBits / 8;
                 const size_t emLen = (emBits % 8) == 0 ? k : k + 1;
                 const size_t hLen  = Digest::size;
-                const size_t zBits = 8 * emLen - emBits;
+                const size_t zBits = (emBits - 1) & 0x7; //8 * emLen - emBits;
 
                 //////////////////////////////////////////////////////////
                 // 2. Let mHash = Hash(M), an octet string of length hLen.
@@ -158,7 +157,7 @@ namespace cry
                 // 6. If the leftmost 8emLen - emBits bits of the leftmost octet in maskedDB are not all equal to zero,
                 // output "inconsistent" and stop.
                 if (zBits > 0)
-                    if (*maskedDB.begin() >> zBits == (0xFF /*<<*/ >> zBits))
+                    if (*maskedDB.begin() & (0xFF << zBits)) // (EM[0] & (0xFF << MSBits))
                     {
                         throw std::runtime_error("inconsistent");
                     }
@@ -167,8 +166,8 @@ namespace cry
                 // 7. Let dbMask = MGF(H, emLen - hLen - 1).
                 std::vector<uint8_t> dbMask(dbLen);
 
-                MGFType mgf;
-                mgf(H.begin(), H.end(), dbMask.begin(), dbLen);
+                Digest mgf;
+                mgf(H.begin(), H.end(), dbMask.begin()/*, dbLen*/);
 
                 /////////////////////////////////////
                 // 8. Let DB = maskedDB \xor dbMask.
@@ -178,7 +177,7 @@ namespace cry
                 ////////////////////////////////////////////////////////////////////////////////
                 // 9. Set the leftmost 8emLen - emBits bits of the leftmost octet in DB to zero.
                 if (zBits > 0)
-                    *DB.begin() &= (0xFF >> (/*8 - */ zBits));
+                    *DB.begin() &= (0xFF >> (8 - zBits)); // DB[0] &= 0xFF >> (8 - MSBits);
 
                 /////////////////////////////////////////////////////////////////////////
                 // 10. If the emLen - hLen - sLen - 2 leftmost octets of DB are not zero
